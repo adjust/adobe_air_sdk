@@ -94,7 +94,7 @@ internal class ParametersObject {
         var k: Array = [];
 
         for (var key: String in _source) {
-            if (_source.hasOwnProperty(key) && ! _source[key] instanceof Function) {
+            if (_source.hasOwnProperty(key) && ! _source[key] is Function) {
                 k.push(key);
             }
         }
