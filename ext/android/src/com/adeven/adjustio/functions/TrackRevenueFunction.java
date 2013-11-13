@@ -27,17 +27,23 @@ public class TrackRevenueFunction extends NoopFunction implements FREFunction {
             return null;
         }
 
-        amountInCents = getAmountInCentsFromArg(args[0]);
+        try {
+            amountInCents = getAmountInCentsFromArg(args[0]);
 
-        if (args.length > 1) {
-            eventToken = getEventTokenFromArg(args[1]);
+            if (args.length > 1) {
+                eventToken = getEventTokenFromArg(args[1]);
+            }
+
+            if (args.length > 2) {
+                parameters = getParametersFromArg(args[2]);
+            }
+
+            AdjustIo.trackRevenue(amountInCents, eventToken, parameters);
+        } catch (FREInvalidObjectException e) {
+            Logger.error(e.getMessage());
+        } catch (FREWrongThreadException e) {
+            Logger.error(e.getMessage());
         }
-
-        if (args.length > 2) {
-            parameters = getParametersFromArg(args[2]);
-        }
-
-        AdjustIo.trackRevenue(amountInCents, eventToken, parameters);
 
         return null;
     }

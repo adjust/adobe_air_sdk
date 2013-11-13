@@ -25,13 +25,19 @@ public class TrackEventFunction extends NoopFunction implements FREFunction {
             return null;
         }
 
-        eventToken = getEventTokenFromArg(args[0]);
+        try {
+            eventToken = getEventTokenFromArg(args[0]);
 
-        if (args.length > 1) {
-            parameters = getParametersFromArg(args[1]);
+            if (args.length > 1) {
+                parameters = getParametersFromArg(args[1]);
+            }
+
+            AdjustIo.trackEvent(eventToken, parameters);
+        } catch (FREInvalidObjectException e) {
+            Logger.error(e.getMessage());
+        } catch (FREWrongThreadException e) {
+            Logger.error(e.getMessage());
         }
-
-        AdjustIo.trackEvent(eventToken, parameters);
 
         return null;
     }
