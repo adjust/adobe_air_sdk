@@ -28,7 +28,7 @@ public class AdjustIo extends EventDispatcher {
 
     public function trackEvent(eventToken: String, parameters: Object = null): void {
         if (parameters) {
-            extContext.call("trackEvent", eventToken, parameters);
+            extContext.call("trackEvent", eventToken, new ParametersObject(parameters));
         } else {
             extContext.call("trackEvent", eventToken);
         }
@@ -38,7 +38,7 @@ public class AdjustIo extends EventDispatcher {
         if (! eventToken && parameters) {
             throw new Error("You cannot track revenue parameters without eventToken specified.")
         }
-        extContext.call("trackRevenue", amountInCents, eventToken, parameters);
+        extContext.call("trackRevenue", amountInCents, eventToken, new ParametersObject(parameters));
     }
 
     public static function get instance(): AdjustIo {
@@ -77,6 +77,30 @@ public class AdjustIo extends EventDispatcher {
         onPause();
     }
 }
+}
+
+internal class ParametersObject {
+    private var _source: Object = {};
+
+    public function ParametersObject(object: Object) {
+        _source = object || {};
+    }
+
+    public function getValue(key: String): * {
+        return _source[key];
+    }
+
+    public function get keys(): Array {
+        var k: Array = [];
+
+        for (var key: String in _source) {
+            if (_source.hasOwnProperty(key) && ! _source[key] instanceof Function) {
+                k.push(key);
+            }
+        }
+
+        return k;
+    }
 }
 
 internal class SingletonEnforcer {}
