@@ -1,0 +1,3 @@
+[submodule "ext/android/sdk"]
+	path = ext/android/sdk
+	url = git@github.com:adeven/adjust_android_sdk.git
