@@ -30,7 +30,7 @@ public class AdjustIoExtensionContext extends FREContext {
         functions.put("onResume", new OnResumeFunction());
         functions.put("trackEvent", new TrackEventFunction());
         functions.put("trackRevenue", new TrackRevenueFunction());
-        functions.put("appDidLaunch", new NoopFunction());
+        functions.put("appDidLaunch", new AppDidLaunchFunction());
 
         return functions;
     }
