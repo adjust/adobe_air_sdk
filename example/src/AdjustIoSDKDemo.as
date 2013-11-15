@@ -33,7 +33,7 @@ public class AdjustIoSDKDemo extends Sprite {
     }
 
     private static function trackEvent(event: Event): void {
-        adjustio.trackEvent("token");
+        adjustio.trackEvent("token1");
     }
 
     private static function exitOnBackButtonClick(event: KeyboardEvent): void {
