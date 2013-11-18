@@ -8,6 +8,7 @@
 
 #import "FlashRuntimeExtensions.h"
 #import "AdjustIo.h"
+#import "FREUtils.h"
 
 FREObject appDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject onPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
