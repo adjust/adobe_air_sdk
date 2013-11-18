@@ -1,3 +1,5 @@
 *.swf
 *.swcout
 out
+*.xcodeproj/
+*.xcodeproj/*

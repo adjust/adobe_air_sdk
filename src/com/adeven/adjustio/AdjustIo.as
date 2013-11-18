@@ -66,7 +66,7 @@ public class AdjustIo extends EventDispatcher {
     }
 
     protected function handleAppLaunch(event: Event): void {
-        extContext.call("appDidLaunch");
+        trace(extContext.call("appDidLaunch", "amu9thg2tn3s"));
     }
 
     protected function handleActivation(event: Event): void {

@@ -8,14 +8,15 @@
                 <initializer>com.adeven.adjustio.AdjustIoExtension</initializer>
             </applicationDeployment>
         </platform>
-        <!--
+
         <platform name="iPhone-ARM">
             <applicationDeployment>
-                <nativeLibrary>AdjustIo.a</nativeLibrary>
-                <initializer>AdjustIoInitializer</initializer>
+                <nativeLibrary>libAdjustIoExtension.a</nativeLibrary>
+                <initializer>AdjustIoExtensionInitializer</initializer>
+                <finalizer>AdjustIoExtensionFinalizer</finalizer>
             </applicationDeployment>
         </platform>
-        -->
+
         <platform name="default">
             <applicationDeployment/>
         </platform>
