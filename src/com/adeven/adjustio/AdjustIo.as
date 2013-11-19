@@ -16,6 +16,10 @@ import flash.external.ExtensionContext;
 
 public class AdjustIo extends EventDispatcher {
     private static var _instance: AdjustIo;
+
+    private var appToken: String;
+    private var environment: String;
+    private var logLevel: int;
     private var extContext: ExtensionContext;
 
     public function onResume(): void {
@@ -41,8 +45,9 @@ public class AdjustIo extends EventDispatcher {
         extContext.call("trackRevenue", amountInCents, eventToken, new ParametersObject(parameters));
     }
 
-    public static function get instance(): AdjustIo {
-        _instance ||= new AdjustIo(new SingletonEnforcer());
+    public static function instance(appToken: String, environment: Environment, logLevel: LogLevel = null): AdjustIo {
+        logLevel  ||= LogLevel.INFO;
+        _instance ||= new AdjustIo(appToken, environment.valueOf(), logLevel.valueOf(), new SingletonEnforcer());
 
         return _instance;
     }
@@ -51,13 +56,17 @@ public class AdjustIo extends EventDispatcher {
         extContext.dispose();
     }
 
-    public function AdjustIo(enforcer: SingletonEnforcer) {
+    public function AdjustIo(appToken: String, environment: String, logLevel: int, enforcer: SingletonEnforcer) {
         super();
 
         extContext = ExtensionContext.createExtensionContext("com.adeven.adjustio", null);
         if (! extContext) {
             throw new Error("AdjustIo SDK is not supported on this platform.")
         }
+
+        this.appToken    = appToken;
+        this.environment = environment;
+        this.logLevel    = logLevel;
 
         var app: NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, handleActivation);
@@ -66,7 +75,7 @@ public class AdjustIo extends EventDispatcher {
     }
 
     protected function handleAppLaunch(event: Event): void {
-        trace(extContext.call("appDidLaunch", "amu9thg2tn3s"));
+        extContext.call("appDidLaunch", appToken, environment, logLevel);
     }
 
     protected function handleActivation(event: Event): void {
