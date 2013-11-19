@@ -46,7 +46,9 @@ FREObject appDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject 
         result = FREGetObjectAsUint32(argv[2], &logLevel);
         if (result != FRE_OK)
         {
-            [AILogger warn:[NSString stringWithFormat:@"Failed to fetch log level: %d. Falling back to default (INFO)", result]];
+            [AILogger warn:[NSString stringWithFormat:@"Failed to fetch log level: %d, falling back to INFO", result]];
+        } else {
+            logLevel += 1; // For conformity with Android part
         }
     }
     
