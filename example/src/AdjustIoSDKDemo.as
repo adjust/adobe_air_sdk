@@ -1,6 +1,8 @@
 package {
 
 import com.adeven.adjustio.AdjustIo;
+import com.adeven.adjustio.Environment;
+import com.adeven.adjustio.LogLevel;
 
 import flash.desktop.NativeApplication;
 import flash.desktop.SystemIdleMode;
@@ -14,7 +16,7 @@ import flash.events.TouchEvent;
 import flash.ui.Keyboard;
 
 public class AdjustIoSDKDemo extends Sprite {
-    private static var adjustio: AdjustIo = AdjustIo.instance;
+    private static var adjustio: AdjustIo = AdjustIo.instance("amu9thg2tn3s", Environment.SANDBOX);
 
     public function AdjustIoSDKDemo() {
         addEventListener(Event.ADDED_TO_STAGE, init);
