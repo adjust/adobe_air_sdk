@@ -20,6 +20,7 @@ public class AdjustIo extends EventDispatcher {
     private var appToken: String;
     private var environment: String;
     private var logLevel: int;
+    private var eventBufferingEnabled: Boolean;
     private var extContext: ExtensionContext;
 
     public function onResume(): void {
@@ -39,15 +40,22 @@ public class AdjustIo extends EventDispatcher {
     }
 
     public function trackRevenue(amountInCents: Number, eventToken: String = null, parameters: Object = null): void {
-        if (! eventToken && parameters) {
+        if (parameters && !eventToken) {
             throw new Error("You cannot track revenue parameters without eventToken specified.")
         }
-        extContext.call("trackRevenue", amountInCents, eventToken, new ParametersObject(parameters));
+
+        if (!eventToken) {
+            extContext.call("trackRevenue", amountInCents);
+        } else if (!parameters) {
+            extContext.call("trackRevenue", amountInCents, eventToken);
+        } else {
+            extContext.call("trackRevenue", amountInCents, eventToken, new ParametersObject(parameters));
+        }
     }
 
-    public static function initialize(appToken: String, environment: Environment, logLevel: LogLevel = null): void {
+    public static function initialize(appToken: String, environment: Environment, logLevel: LogLevel = null, eventBufferingEnabled: Boolean = false): void {
         logLevel  ||= LogLevel.INFO;
-        _instance = new AdjustIo(appToken, environment.valueOf(), logLevel.valueOf(), new SingletonEnforcer());
+        _instance = new AdjustIo(appToken, environment.valueOf(), logLevel.valueOf(), eventBufferingEnabled, new SingletonEnforcer());
     }
 
     public static function get instance(): AdjustIo {
@@ -62,7 +70,7 @@ public class AdjustIo extends EventDispatcher {
         extContext.dispose();
     }
 
-    public function AdjustIo(appToken: String, environment: String, logLevel: int, enforcer: SingletonEnforcer) {
+    public function AdjustIo(appToken: String, environment: String, logLevel: int, eventBufferingEnabled: Boolean, enforcer: SingletonEnforcer) {
         super();
 
         extContext = ExtensionContext.createExtensionContext("com.adeven.adjustio", null);
@@ -70,9 +78,10 @@ public class AdjustIo extends EventDispatcher {
             throw new Error("AdjustIo SDK is not supported on this platform.")
         }
 
-        this.appToken    = appToken;
-        this.environment = environment;
-        this.logLevel    = logLevel;
+        this.appToken              = appToken;
+        this.environment           = environment;
+        this.logLevel              = logLevel;
+        this.eventBufferingEnabled = eventBufferingEnabled;
 
         var app: NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, handleActivation);
@@ -81,7 +90,7 @@ public class AdjustIo extends EventDispatcher {
     }
 
     protected function handleAppLaunch(event: Event): void {
-        extContext.call("appDidLaunch", appToken, environment, logLevel);
+        extContext.call("appDidLaunch", appToken, environment, logLevel, eventBufferingEnabled);
     }
 
     protected function handleActivation(event: Event): void {
