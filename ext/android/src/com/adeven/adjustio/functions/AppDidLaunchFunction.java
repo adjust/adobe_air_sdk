@@ -12,14 +12,38 @@ package com.adeven.adjustio.functions;
 import com.adeven.adjustio.AdjustFREUtils;
 import com.adeven.adjustio.AdjustIo;
 import com.adeven.adjustio.Logger;
-import com.adobe.fre.FREContext;
-import com.adobe.fre.FREObject;
+import com.adobe.fre.*;
 
 public class AppDidLaunchFunction extends NoopFunction {
     @Override
     public FREObject call(FREContext context, FREObject[] args) {
         AdjustIo.onResume(context.getActivity());
 
+        if (args.length > 2) {
+            Logger.setLogLevel(getLogLevelFromArg(args[2]));
+        }
+
         return AdjustFREUtils.getFRETrue();
+    }
+
+    private Logger.LogLevel getLogLevelFromArg(FREObject arg) {
+        try {
+            Logger.LogLevel[] availableLevels = Logger.LogLevel.values();
+            int logLevel = arg.getAsInt();
+
+            if (logLevel < 0 || logLevel >= availableLevels.length) {
+                Logger.warn(String.format("Invalid log level provided (%d), alling back to INFO.", logLevel));
+            } else {
+                return availableLevels[logLevel];
+            }
+        } catch (FRETypeMismatchException e) {
+            Logger.warn(e.getMessage());
+        } catch (FREInvalidObjectException e) {
+            Logger.warn(e.getMessage());
+        } catch (FREWrongThreadException e) {
+            Logger.warn(e.getMessage());
+        }
+
+        return Logger.LogLevel.INFO;
     }
 }
