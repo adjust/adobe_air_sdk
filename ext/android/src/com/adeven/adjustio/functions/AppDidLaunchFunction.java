@@ -17,11 +17,33 @@ import com.adobe.fre.*;
 public class AppDidLaunchFunction extends SDKFunction {
     @Override
     public FREObject call(FREContext context, FREObject[] args) {
-        AdjustIo.onResume(context.getActivity());
-
-        if (args.length > 2) {
-            Logger.setLogLevel(getLogLevelFromArg(args[2]));
+        if (args.length == 0) {
+            // TODO: log about app token
+            return AdjustFREUtils.getFREFalse();
         }
+
+        // TODO welle: make these final
+        AdjustIo.setAppToken(getAppTokenFromArg(args[0]));
+
+        try {
+            if (args.length > 1) {
+                AdjustIo.setEnvironment(getEnvironmentFromArg(args[1]));
+            }
+            if (args.length > 2) {
+                AdjustIo.setLogLevel(getLogLevelFromArg(args[2]));
+            }
+            if (args.length > 3) {
+                AdjustIo.setEventBufferingEnabled(getEventBufferingEnabledFromArg(args[3]));
+            }
+        } catch (FREInvalidObjectException e) {
+            Logger.error(e.getMessage());
+            return AdjustFREUtils.getFREFalse();
+        } catch (FREWrongThreadException e) {
+            Logger.error(e.getMessage());
+            return AdjustFREUtils.getFREFalse();
+        }
+
+        AdjustIo.onResume(context.getActivity());
 
         return AdjustFREUtils.getFRETrue();
     }
@@ -45,5 +67,35 @@ public class AppDidLaunchFunction extends SDKFunction {
         }
 
         return Logger.LogLevel.INFO;
+    }
+
+    private String getAppTokenFromArg(FREObject arg) throws FREInvalidObjectException, FREWrongThreadException {
+        try {
+            return arg.getAsString();
+        } catch (FRETypeMismatchException e) {
+            Logger.error("App token type mismatch.");
+        }
+
+        return null;
+    }
+
+    private String getEnvironmentFromArg(FREObject arg) throws FREInvalidObjectException, FREWrongThreadException {
+        try {
+            return arg.getAsString();
+        } catch (FRETypeMismatchException e) {
+            Logger.error("Environment type mismatch.");
+        }
+
+        return null;
+    }
+
+    private String getEventBufferingEnabledFromArg(FREObject arg) throws FREInvalidObjectException, FREWrongThreadException {
+        try {
+            return arg.getAsBoolean();
+        } catch (FRETypeMismatchException e) {
+            Logger.error("EventBufferingEnabled type mismatch.");
+        }
+
+        return null;
     }
 }
