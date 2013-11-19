@@ -45,9 +45,15 @@ public class AdjustIo extends EventDispatcher {
         extContext.call("trackRevenue", amountInCents, eventToken, new ParametersObject(parameters));
     }
 
-    public static function instance(appToken: String, environment: Environment, logLevel: LogLevel = null): AdjustIo {
+    public static function initialize(appToken: String, environment: Environment, logLevel: LogLevel = null): void {
         logLevel  ||= LogLevel.INFO;
-        _instance ||= new AdjustIo(appToken, environment.valueOf(), logLevel.valueOf(), new SingletonEnforcer());
+        _instance = new AdjustIo(appToken, environment.valueOf(), logLevel.valueOf(), new SingletonEnforcer());
+    }
+
+    public static function get instance(): AdjustIo {
+        if (! _instance) {
+            throw new Error("You need to configure the AdjustIo SDK by calling AdjustIo.initialize() first.");
+        }
 
         return _instance;
     }

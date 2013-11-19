@@ -16,7 +16,7 @@ import flash.events.TouchEvent;
 import flash.ui.Keyboard;
 
 public class AdjustIoSDKDemo extends Sprite {
-    private static var adjustio: AdjustIo = AdjustIo.instance("amu9thg2tn3s", Environment.SANDBOX);
+    AdjustIo.initialize("amu9thg2tn3s", Environment.SANDBOX);
 
     public function AdjustIoSDKDemo() {
         addEventListener(Event.ADDED_TO_STAGE, init);
@@ -35,7 +35,7 @@ public class AdjustIoSDKDemo extends Sprite {
     }
 
     private static function trackEvent(event: Event): void {
-        adjustio.trackEvent("token1");
+        AdjustIo.instance.trackEvent("token1");
     }
 
     private static function exitOnBackButtonClick(event: KeyboardEvent): void {
