@@ -9,10 +9,15 @@
 #import "FlashRuntimeExtensions.h"
 
 #define ASSERT_FRE_OK(x) if (x != FRE_OK) { return x; }
-#define FRE_TRUE FRETrue()
-#define FRE_FALSE FREFalse()
+#define FRE_TRUE [AdjustFREUtils FRETrue]
+#define FRE_FALSE [AdjustFREUtils FREFalse]
 
-FREObject FRETrue();
-FREObject FREFalse();
+@interface AdjustFREUtils : NSObject
+
++(FREObject)FRETrue;
++(FREObject)FREFalse;
+
+@end
+
 FREResult FREGetObjectAsNSString(FREObject obj, NSString** str);
 FREResult FREGetObjectAsNSMutableDictionary(FREObject obj, NSMutableDictionary** dict);

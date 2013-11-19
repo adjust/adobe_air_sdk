@@ -8,24 +8,32 @@
 
 #import "FREUtils.h"
 
-FREObject FRETrue()
+@implementation AdjustFREUtils
+
+FREObject _FRE_TRUE  = NULL;
+FREObject _FRE_FALSE = NULL;
+
++(FREObject)FRETrue
 {
-    FREObject result;
+    if (! _FRE_TRUE)
+    {
+        FRENewObjectFromBool(true, &_FRE_TRUE);
+    }
     
-    FRENewObjectFromBool(true, &result);
-    
-    return result;
+    return _FRE_TRUE;
 }
 
-FREObject FREFalse()
++(FREObject)FREFalse
 {
-    FREObject result;
+    if (! _FRE_FALSE)
+    {
+        FRENewObjectFromBool(false, &_FRE_FALSE);
+    }
     
-    FRENewObjectFromBool(false, &result);
-    
-    return result;
+    return _FRE_FALSE;
 }
 
+@end
 
 FREResult FREGetObjectAsNSString(FREObject obj, NSString** str)
 {
