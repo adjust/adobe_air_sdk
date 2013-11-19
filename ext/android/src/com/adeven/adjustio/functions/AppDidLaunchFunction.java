@@ -32,7 +32,7 @@ public class AppDidLaunchFunction extends NoopFunction {
             int logLevel = arg.getAsInt();
 
             if (logLevel < 0 || logLevel >= availableLevels.length) {
-                Logger.warn(String.format("Invalid log level provided (%d), alling back to INFO.", logLevel));
+                Logger.warn(String.format("Invalid log level provided (%d), falling back to INFO.", logLevel));
             } else {
                 return availableLevels[logLevel];
             }
