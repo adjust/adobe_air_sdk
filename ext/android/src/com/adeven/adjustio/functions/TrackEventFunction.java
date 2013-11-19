@@ -14,7 +14,7 @@ import com.adobe.fre.*;
 
 import java.util.Map;
 
-public class TrackEventFunction extends NoopFunction implements FREFunction {
+public class TrackEventFunction extends SDKFunction implements FREFunction {
     @Override
     public FREObject call(FREContext context, FREObject[] args) {
         String eventToken;

@@ -16,7 +16,7 @@ import com.adobe.fre.*;
 
 import java.util.Map;
 
-public class TrackRevenueFunction extends NoopFunction implements FREFunction {
+public class TrackRevenueFunction extends SDKFunction implements FREFunction {
     @Override
     public FREObject call(FREContext context, FREObject[] args) {
         double amountInCents;

@@ -1,6 +1,6 @@
 /**
- * NoopFunction.java
- * NoopFunction
+ * SDKFunction.java
+ * SDKFunction
  *
  * Created by Andrew Slotin on 2013-11-12.
  * Copyright (c) 2012-2013 adeven. All rights reserved.
@@ -15,12 +15,7 @@ import com.adobe.fre.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NoopFunction implements FREFunction {
-    @Override
-    public FREObject call(FREContext context, FREObject[] args) {
-        return null;
-    }
-
+public abstract class SDKFunction implements FREFunction {
     protected double getAmountInCentsFromArg(FREObject arg) throws FREInvalidObjectException, FREWrongThreadException {
         try {
             return arg.getAsDouble();

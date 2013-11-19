@@ -14,7 +14,7 @@ import com.adeven.adjustio.AdjustIo;
 import com.adeven.adjustio.Logger;
 import com.adobe.fre.*;
 
-public class AppDidLaunchFunction extends NoopFunction {
+public class AppDidLaunchFunction extends SDKFunction {
     @Override
     public FREObject call(FREContext context, FREObject[] args) {
         AdjustIo.onResume(context.getActivity());
