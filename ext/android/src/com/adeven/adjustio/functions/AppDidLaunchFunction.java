@@ -9,6 +9,7 @@
 
 package com.adeven.adjustio.functions;
 
+import com.adeven.adjustio.AdjustFREUtils;
 import com.adeven.adjustio.AdjustIo;
 import com.adeven.adjustio.Logger;
 import com.adobe.fre.FREContext;
@@ -18,8 +19,7 @@ public class AppDidLaunchFunction extends NoopFunction {
     @Override
     public FREObject call(FREContext context, FREObject[] args) {
         AdjustIo.onResume(context.getActivity());
-        Logger.error("Initialized");
 
-        return null;
+        return AdjustFREUtils.getFRETrue();
     }
 }

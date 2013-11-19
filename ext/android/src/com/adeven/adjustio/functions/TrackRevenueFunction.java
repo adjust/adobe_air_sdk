@@ -9,6 +9,7 @@
 
 package com.adeven.adjustio.functions;
 
+import com.adeven.adjustio.AdjustFREUtils;
 import com.adeven.adjustio.AdjustIo;
 import com.adeven.adjustio.Logger;
 import com.adobe.fre.*;
@@ -24,7 +25,8 @@ public class TrackRevenueFunction extends NoopFunction implements FREFunction {
 
         if (args.length == 0) {
             Logger.error("Missing revenue amount.");
-            return null;
+
+            return AdjustFREUtils.getFREFalse();
         }
 
         try {
@@ -41,10 +43,14 @@ public class TrackRevenueFunction extends NoopFunction implements FREFunction {
             AdjustIo.trackRevenue(amountInCents, eventToken, parameters);
         } catch (FREInvalidObjectException e) {
             Logger.error(e.getMessage());
+
+            return AdjustFREUtils.getFREFalse();
         } catch (FREWrongThreadException e) {
             Logger.error(e.getMessage());
+
+            return AdjustFREUtils.getFREFalse();
         }
 
-        return null;
+        return AdjustFREUtils.getFRETrue();
     }
 }

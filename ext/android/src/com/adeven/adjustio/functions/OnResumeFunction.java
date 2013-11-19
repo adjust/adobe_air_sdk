@@ -9,6 +9,7 @@
 
 package com.adeven.adjustio.functions;
 
+import com.adeven.adjustio.AdjustFREUtils;
 import com.adeven.adjustio.AdjustIo;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
@@ -19,6 +20,6 @@ public class OnResumeFunction extends NoopFunction implements FREFunction {
     public FREObject call(FREContext context, FREObject[] args) {
         AdjustIo.onResume(context.getActivity());
 
-        return null;
+        return AdjustFREUtils.getFRETrue();
     }
 }

@@ -22,7 +22,8 @@ public class TrackEventFunction extends NoopFunction implements FREFunction {
 
         if (args.length == 0) {
             Logger.error("Missing event token.");
-            return null;
+
+            return AdjustFREUtils.getFREFalse();
         }
 
         try {
@@ -35,10 +36,14 @@ public class TrackEventFunction extends NoopFunction implements FREFunction {
             AdjustIo.trackEvent(eventToken, parameters);
         } catch (FREInvalidObjectException e) {
             Logger.error(e.getMessage());
+
+            return AdjustFREUtils.getFREFalse();
         } catch (FREWrongThreadException e) {
             Logger.error(e.getMessage());
+
+            return AdjustFREUtils.getFREFalse();
         }
 
-        return null;
+        return AdjustFREUtils.getFRETrue();
     }
 }
