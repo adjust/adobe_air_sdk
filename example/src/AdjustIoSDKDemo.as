@@ -16,7 +16,9 @@ import flash.events.TouchEvent;
 import flash.ui.Keyboard;
 
 public class AdjustIoSDKDemo extends Sprite {
-    AdjustIo.initialize("amu9thg2tn3s", Environment.SANDBOX);
+    private static const ADJUST_APP_TOKEN: String = "xxxxxxxxxxxx";
+
+    AdjustIo.initialize(ADJUST_APP_TOKEN, Environment.SANDBOX, LogLevel.VERBOSE, true);
 
     public function AdjustIoSDKDemo() {
         addEventListener(Event.ADDED_TO_STAGE, init);
@@ -35,7 +37,9 @@ public class AdjustIoSDKDemo extends Sprite {
     }
 
     private static function trackEvent(event: Event): void {
-        AdjustIo.instance.trackEvent("token1");
+        if (! AdjustIo.instance.trackEvent("token1")) {
+            trace("Failed to track event with token 'token1'!");
+        }
     }
 
     private static function exitOnBackButtonClick(event: KeyboardEvent): void {
