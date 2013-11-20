@@ -21,23 +21,29 @@ public class AdjustIo extends EventDispatcher {
     private var environment: String;
     private var logLevel: int;
 
-    public function onResume(): void {
+    public function onResume(): Boolean {
         _log("onResume() has been called");
+
+        return true;
     }
 
-    public function onPause(): void {
+    public function onPause(): Boolean {
         _log("onPause() has been called");
+
+        return true;
     }
 
-    public function trackEvent(eventToken: String, parameters: Object = null): void {
+    public function trackEvent(eventToken: String, parameters: Object = null): Boolean {
         if (parameters) {
             _log("an event with token '" + eventToken + "' has been tracked with parameters", parameters);
         } else {
             _log("an event with token '" + eventToken + "' has been tracked");
         }
+
+        return true;
     }
 
-    public function trackRevenue(amountInCents: Number, eventToken: String = null, parameters: Object = null): void {
+    public function trackRevenue(amountInCents: Number, eventToken: String = null, parameters: Object = null): Boolean {
         if (! eventToken && parameters) {
             throw new Error("You cannot track revenue parameters without eventToken specified.")
         }
@@ -49,6 +55,8 @@ public class AdjustIo extends EventDispatcher {
         } else {
             _log("tracked revenue with amount " + amountInCents.toString() + " with event token '" + eventToken + "' and parameters", parameters);
         }
+
+        return true;
     }
 
     public static function initialize(appToken: String, environment: Environment, logLevel: LogLevel = null): void {

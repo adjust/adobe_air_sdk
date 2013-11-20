@@ -23,33 +23,33 @@ public class AdjustIo extends EventDispatcher {
     private var eventBufferingEnabled: Boolean;
     private var extContext: ExtensionContext;
 
-    public function onResume(): void {
-        extContext.call("onResume", null);
+    public function onResume(): Boolean {
+        return extContext.call("onResume", null);
     }
 
-    public function onPause(): void {
-        extContext.call("onPause", null);
+    public function onPause(): Boolean {
+        return extContext.call("onPause", null);
     }
 
-    public function trackEvent(eventToken: String, parameters: Object = null): void {
+    public function trackEvent(eventToken: String, parameters: Object = null): Boolean {
         if (parameters) {
-            extContext.call("trackEvent", eventToken, new ParametersObject(parameters));
+            return extContext.call("trackEvent", eventToken, new ParametersObject(parameters));
         } else {
-            extContext.call("trackEvent", eventToken);
+            return extContext.call("trackEvent", eventToken);
         }
     }
 
-    public function trackRevenue(amountInCents: Number, eventToken: String = null, parameters: Object = null): void {
-        if (parameters && !eventToken) {
+    public function trackRevenue(amountInCents: Number, eventToken: String = null, parameters: Object = null): Boolean {
+        if (parameters && ! eventToken) {
             throw new Error("You cannot track revenue parameters without eventToken specified.")
         }
 
-        if (!eventToken) {
-            extContext.call("trackRevenue", amountInCents);
+        if (! eventToken) {
+            return extContext.call("trackRevenue", amountInCents);
         } else if (!parameters) {
-            extContext.call("trackRevenue", amountInCents, eventToken);
+            return extContext.call("trackRevenue", amountInCents, eventToken);
         } else {
-            extContext.call("trackRevenue", amountInCents, eventToken, new ParametersObject(parameters));
+            return extContext.call("trackRevenue", amountInCents, eventToken, new ParametersObject(parameters));
         }
     }
 
@@ -75,7 +75,7 @@ public class AdjustIo extends EventDispatcher {
 
         extContext = ExtensionContext.createExtensionContext("com.adeven.adjustio", null);
         if (! extContext) {
-            throw new Error("AdjustIo SDK is not supported on this platform.")
+            throw new Error("AdjustIo SDK is not supported on this platform.");
         }
 
         this.appToken              = appToken;
@@ -90,15 +90,21 @@ public class AdjustIo extends EventDispatcher {
     }
 
     protected function handleAppLaunch(event: Event): void {
-        extContext.call("appDidLaunch", appToken, environment, logLevel, eventBufferingEnabled);
+        if (! extContext.call("appDidLaunch", appToken, environment, logLevel, eventBufferingEnabled)) {
+            trace("AdjustIo: initialization failed. Please, check device logs for details.");
+        }
     }
 
     protected function handleActivation(event: Event): void {
-        onResume();
+        if (! onResume()) {
+            trace("AdjustIo: failed to track resume. Please, check device logs for details.");
+        }
     }
 
     protected function handleDeactivation(event: Event): void {
-        onPause();
+        if (! onPause()) {
+            trace("AdjustIo: failed to track pause. Please, check device logs for details.");
+        }
     }
 }
 }
