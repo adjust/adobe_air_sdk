@@ -11,29 +11,34 @@ package com.adeven.adjustio.functions;
 
 import com.adeven.adjustio.AdjustFREUtils;
 import com.adeven.adjustio.AdjustIo;
+import com.adeven.adjustio.AdjustIoSDKInitializer;
 import com.adeven.adjustio.Logger;
 import com.adobe.fre.*;
 
 public class AppDidLaunchFunction extends SDKFunction {
     @Override
     public FREObject call(FREContext context, FREObject[] args) {
+        String appToken;
+        String environment = null;
+        Boolean eventBufferingEnabled = false;
+
         if (args.length == 0) {
-            // TODO: log about app token
+            Logger.error("The app token is missing");
+
             return AdjustFREUtils.getFREFalse();
         }
 
-        // TODO welle: make these final
-        AdjustIo.setAppToken(getAppTokenFromArg(args[0]));
-
         try {
+            appToken = getAppTokenFromArg(args[0]);
+
             if (args.length > 1) {
-                AdjustIo.setEnvironment(getEnvironmentFromArg(args[1]));
+                environment = getEnvironmentFromArg(args[1]);
             }
             if (args.length > 2) {
-                AdjustIo.setLogLevel(getLogLevelFromArg(args[2]));
+                Logger.setLogLevel(getLogLevelFromArg(args[2]));
             }
             if (args.length > 3) {
-                AdjustIo.setEventBufferingEnabled(getEventBufferingEnabledFromArg(args[3]));
+                eventBufferingEnabled = getEventBufferingEnabledFromArg(args[3]);
             }
         } catch (FREInvalidObjectException e) {
             Logger.error(e.getMessage());
@@ -43,7 +48,7 @@ public class AppDidLaunchFunction extends SDKFunction {
             return AdjustFREUtils.getFREFalse();
         }
 
-        AdjustIo.onResume(context.getActivity());
+        AdjustIoSDKInitializer.initialize(context.getActivity(), appToken, environment, eventBufferingEnabled);
 
         return AdjustFREUtils.getFRETrue();
     }
@@ -89,9 +94,9 @@ public class AppDidLaunchFunction extends SDKFunction {
         return null;
     }
 
-    private String getEventBufferingEnabledFromArg(FREObject arg) throws FREInvalidObjectException, FREWrongThreadException {
+    private Boolean getEventBufferingEnabledFromArg(FREObject arg) throws FREInvalidObjectException, FREWrongThreadException {
         try {
-            return arg.getAsBoolean();
+            return arg.getAsBool();
         } catch (FRETypeMismatchException e) {
             Logger.error("EventBufferingEnabled type mismatch.");
         }
