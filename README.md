@@ -81,7 +81,7 @@ event buffering by passing ```true``` as a fourth parameter:
 AdjustIo.initialize(ADJUST_APP_TOKEN, Environment.SANDBOX, LogLevel.WARN, true);
 ```
 
-### <a id="step4"></a>4. Build your app
+### <a id="step4"></a>4. Adjust Android manifest
 
 Before building your AIR app for Android you need to make some adjustments:
 
@@ -94,6 +94,22 @@ Before building your AIR app for Android you need to make some adjustments:
 4. Add broadcast receiver:
 
 ![][receiver]
+
+## Debugging on device
+
+### Android device
+
+Use ```logcat``` tool that comes with Android SDK:
+
+```
+<path-to-android-sdk>/platform-tools/adb logcat AdjustIo:V *:S
+```
+
+### iOS device
+
+Check the Console at XCode's Device Organizer to access AdjustIo logs:
+
+![][xcode-logs]
 
 ## Additional features
 
@@ -173,6 +189,7 @@ AdjustIo.instance.trackRevenue(1.0, "abc123", parameters);
 [added]: https://raw.github.com/adeven/adjust_sdk/master/Resources/air/added.png
 [permissions]: https://raw.github.com/adeven/adjust_sdk/master/Resources/air/permissions.png
 [receiver]: https://raw.github.com/adeven/adjust_sdk/master/Resources/air/receiver.png
+[xcode-logs]: https://raw.github.com/adeven/adjust_sdk/master/Resources/air/xcode-logs.png
 
 ## License
 
