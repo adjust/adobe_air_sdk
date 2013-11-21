@@ -8,6 +8,8 @@ COMPC_OPTS = -swf-version 13 \
              -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
              -include-classes $(COMPC_CLASSES)
 
+VERSION = $(shell cat VERSION)
+
 SOURCEDIR = ./src
 BUILDDIR = ./build
 EXTDIR = ./ext
@@ -18,7 +20,7 @@ all: emulator $(EXTS) swc
 	unzip -d $(BUILDDIR)/ios -qq -o $(BUILDDIR)/AdjustIo.swc -x catalog.xml
 	cp -af $(SOURCEDIR)/platformoptions.xml $(BUILDDIR)/ios
 	cp -af $(SOURCEDIR)/extension.xml $(BUILDDIR)/
-	cd $(BUILDDIR); $(ADT) -package -target ane ../AdjustIo.ane extension.xml -swc AdjustIo.swc -platform Android-ARM -C android . -platform iPhone-ARM -C ios . -platformoptions ios/platformoptions.xml -platform default -C default .
+	cd $(BUILDDIR); $(ADT) -package -target ane ../AdjustIo-$(VERSION).ane extension.xml -swc AdjustIo.swc -platform Android-ARM -C android . -platform iPhone-ARM -C ios . -platformoptions ios/platformoptions.xml -platform default -C default .
 
 swc:
 	mkdir -p $(BUILDDIR)
@@ -32,7 +34,7 @@ emulator:
 	mkdir -p $(BUILDDIR)/default
 	cp $(shell ls ./src/com/adeven/adjustio/*.as | grep -v "AdjustIo.as") ./default/src/com/adeven/adjustio/
 	$(COMPC) -source-path default/src $(COMPC_OPTS) -directory=true -output $(BUILDDIR)/default
-	rm -rf $(BUILDDIR)/default/catalog.xml $(shell ls ./default/src/com/adeven/adjustio/*.as | grep -v "AdjustIo.as")
+	rm -rf $(BUILDDIR)/default/catalog.xml $(shell find default/src -name *.as -type f | grep -v "AdjustIo.as")
 
 clean:
 	cd ext/android; make clean
