@@ -20,6 +20,7 @@ public class AdjustIo extends EventDispatcher {
     private var appToken: String;
     private var environment: String;
     private var logLevel: int;
+    private var eventBufferingEnabled: Boolean;
 
     public function onResume(): Boolean {
         _log("onResume() has been called");
@@ -59,9 +60,9 @@ public class AdjustIo extends EventDispatcher {
         return true;
     }
 
-    public static function initialize(appToken: String, environment: Environment, logLevel: LogLevel = null): void {
+    public static function initialize(appToken: String, environment: Environment, logLevel: LogLevel = null, eventBufferingEnabled: Boolean = false): void {
         logLevel  ||= LogLevel.INFO;
-        _instance ||= new AdjustIo(appToken, environment.valueOf(), logLevel.valueOf(), new SingletonEnforcer());
+        _instance ||= new AdjustIo(appToken, environment.valueOf(), logLevel.valueOf(), eventBufferingEnabled, new SingletonEnforcer());
     }
 
     public static function get instance(): AdjustIo {
@@ -76,12 +77,13 @@ public class AdjustIo extends EventDispatcher {
         _log("disposed");
     }
 
-    public function AdjustIo(appToken: String, environment: String, logLevel: int, enforcer: SingletonEnforcer) {
+    public function AdjustIo(appToken: String, environment: String, logLevel: int, eventBufferingEnabled: Boolean, enforcer: SingletonEnforcer) {
         super();
 
-        this.appToken    = appToken;
-        this.environment = environment;
-        this.logLevel    = logLevel;
+        this.appToken              = appToken;
+        this.environment           = environment;
+        this.logLevel              = logLevel;
+        this.eventBufferingEnabled = eventBufferingEnabled;
 
         var app: NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, handleActivation);
@@ -93,6 +95,7 @@ public class AdjustIo extends EventDispatcher {
         _log("initialized with app token '" + appToken + "'");
         _log("using " + environment + " environment");
         _log("log level is set to " + logLevel);
+        _log("event buffering is " + (eventBufferingEnabled ? "enabled" : "disabled"));
     }
 
     protected function handleActivation(event: Event): void {

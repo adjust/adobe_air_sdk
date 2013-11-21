@@ -1,5 +1,5 @@
 OUTDIR ?= .
-SOURCEDIR = ./src
+SOURCEDIR = ./src/AdjustIoExtension
 CC = xcodebuild
 
 all:

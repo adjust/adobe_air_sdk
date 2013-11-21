@@ -54,10 +54,14 @@ FREObject appDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject 
     }
 
     if (argc > 3) {
-        result = FREGetObjectAsBool(argv[3], &eventBufferingEnabled);
+        uint32_t value;
+
+        result = FREGetObjectAsBool(argv[3], &value);
         if (result != FRE_OK)
         {
             [AILogger warn:@"Failed to fetch event buffering enabled: %d, turning it off", result];
+        } else {
+            eventBufferingEnabled = value != 0;
         }
     }
 

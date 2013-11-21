@@ -223,10 +223,6 @@
 
                 <!--<uses-feature android:required="true" android:name="android.hardware.touchscreen.multitouch"/>-->
                 <application android:enabled="true">
-                    <meta-data android:name="AdjustIoAppToken"    android:value="{YourAppToken}" />
-                    <meta-data android:name="AdjustIoLogLevel"    android:value="info" />
-                    <meta-data android:name="AdjustIoEnvironment" android:value="sandbox" />
-
                     <receiver android:name="com.adeven.adjustio.ReferrerReceiver" android:exported="true">
                         <intent-filter>
                             <action android:name="com.android.vending.INSTALL_REFERRER" />

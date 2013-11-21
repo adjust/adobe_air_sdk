@@ -73,6 +73,7 @@ public class AdjustIo extends EventDispatcher {
     public function AdjustIo(appToken: String, environment: String, logLevel: int, eventBufferingEnabled: Boolean, enforcer: SingletonEnforcer) {
         super();
 
+        var path: String = ExtensionContext.getExtensionDirectory("com.adeven.adjustio").nativePath;
         extContext = ExtensionContext.createExtensionContext("com.adeven.adjustio", null);
         if (! extContext) {
             throw new Error("AdjustIo SDK is not supported on this platform.");
@@ -86,7 +87,7 @@ public class AdjustIo extends EventDispatcher {
         var app: NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, handleActivation);
         app.addEventListener(Event.DEACTIVATE, handleDeactivation);
-        app.addEventListener(InvokeEvent.INVOKE, handleAppLaunch)
+        app.addEventListener(InvokeEvent.INVOKE, handleAppLaunch);
     }
 
     protected function handleAppLaunch(event: Event): void {

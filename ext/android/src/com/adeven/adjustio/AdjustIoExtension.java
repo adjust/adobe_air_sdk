@@ -19,12 +19,8 @@ public class AdjustIoExtension implements FREExtension {
     }
 
     @Override
-    public void dispose() {
-
-    }
+    public void dispose() {}
 
     @Override
-    public void initialize() {
-        AdjustIo.setSdkPrefix("air2.1.0");
-    }
+    public void initialize() {}
 }

@@ -18,9 +18,7 @@ import java.util.Map;
 
 public class AdjustIoExtensionContext extends FREContext {
     @Override
-    public void dispose() {
-
-    }
+    public void dispose() {}
 
     @Override
     public Map<String, FREFunction> getFunctions() {
