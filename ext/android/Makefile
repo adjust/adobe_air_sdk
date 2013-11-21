@@ -6,7 +6,7 @@ SRCS = $(shell find $(SOURCEDIR) -name *.java)
 CLASSES = $(SRCS:.java=.class)
 
 JC = javac
-JAR = jar
+JAR = zip
 JFLAGS = -Xlint:none \
          -classpath $(AIR_SDK_PATH)/lib/android/FlashRuntimeExtensions.jar:$(ANDROID_SDK_PATH)/platforms/android-$(ANDROID_VERSION)/android.jar \
          -sourcepath ./src:./sdk/AdjustIo/src \
@@ -15,7 +15,7 @@ JFLAGS = -Xlint:none \
 default: jar
 
 jar: classes
-	$(JAR) -cf $(OUTDIR)/AdjustIo.jar $(CLASSDIR)/*
+	cd $(CLASSDIR); $(JAR) $(OUTDIR)/AdjustIo.jar com
 
 classes: $(CLASSDIR)
 	$(JC) $(JFLAGS) $(SRCS)

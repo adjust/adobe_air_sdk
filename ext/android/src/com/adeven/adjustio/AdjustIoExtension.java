@@ -13,13 +13,19 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
 public class AdjustIoExtension implements FREExtension {
+    private static FREContext context;
+
     @Override
     public FREContext createContext(String contextType) {
-        return new AdjustIoExtensionContext();
+        context = new AdjustIoExtensionContext();
+
+        return context;
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+        context = null;
+    }
 
     @Override
     public void initialize() {}
