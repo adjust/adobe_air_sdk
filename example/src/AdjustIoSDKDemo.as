@@ -16,11 +16,11 @@ import flash.events.TouchEvent;
 import flash.ui.Keyboard;
 
 public class AdjustIoSDKDemo extends Sprite {
-    private static const ADJUST_APP_TOKEN: String = "kxrqhmmtwtr2";
-
-    AdjustIo.initialize(ADJUST_APP_TOKEN, Environment.SANDBOX, LogLevel.VERBOSE, true);
+    private static const ADJUST_APP_TOKEN: String = "xxxxxxxxxxxx";
 
     public function AdjustIoSDKDemo() {
+        AdjustIo.initialize(ADJUST_APP_TOKEN, Environment.SANDBOX, LogLevel.VERBOSE, true);
+
         addEventListener(Event.ADDED_TO_STAGE, init);
     }
 
