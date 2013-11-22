@@ -2,4 +2,5 @@
 *.swf
 *.swcout
 out
-build*.ane
+build
+*.ane

@@ -15,7 +15,7 @@ JFLAGS = -Xlint:none \
 default: jar
 
 jar: classes
-	cd $(CLASSDIR); $(JAR) $(OUTDIR)/AdjustIo.jar com
+	cd $(CLASSDIR); $(JAR) $(OUTDIR)/AdjustIo.jar *
 
 classes: $(CLASSDIR)
 	$(JC) $(JFLAGS) $(SRCS)
