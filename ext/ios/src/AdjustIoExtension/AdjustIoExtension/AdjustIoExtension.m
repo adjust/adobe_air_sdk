@@ -44,7 +44,7 @@ void ContextFinalizer(FREContext ctx) {
 
 void AdjustIoExtensionInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet)
 {
-    [AdjustIo setSdkPrefix:@"air2.1.0"];
+    [AdjustIo setSdkPrefix:@"air2.1.1"];
 
     *extDataToSet = NULL;
     *ctxInitializerToSet = &ContextInitializer;

@@ -14,7 +14,7 @@ import android.app.Activity;
 public class AdjustIoSDKInitializer {
     public static void initialize(Activity activity, String appToken, String environment, Boolean eventBufferingEnabled) {
         AdjustIo.appDidLaunch(activity, appToken, environment, eventBufferingEnabled);
-        AdjustIo.setSdkPrefix("air2.1.0");
+        AdjustIo.setSdkPrefix("air2.1.1");
         AdjustIo.onResume(activity);
     }
 }
