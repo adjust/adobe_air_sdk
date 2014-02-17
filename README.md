@@ -1,6 +1,6 @@
 ## Summary
 
-This is the AIR SDK of AdjustIo. You can read more about AdjustIo at
+This is the AIR SDK of adjust™. You can read more about adjust™ at
 [adjust.io].
 
 ## Basic Installation
@@ -25,9 +25,9 @@ them so you could easily check if everything works as expected.
 
 ![][added]
 
-### <a id="step3"></a>3. Integrate AdjustIo into your app
+### <a id="step3"></a>3. Integrate adjust into your app
 
-To start tracking with AdjustIo you need to initialize the SDK with your App Token.
+To start tracking with adjust you need to initialize the SDK with your App Token.
 You can find it in your [dashboard].
 
 ```actionscript
@@ -113,12 +113,12 @@ Check the Console at XCode's Device Organizer to access AdjustIo logs:
 
 ## Additional features
 
-Once you integrated the AdjustIo SDK into your project, you can take advantage
+Once you integrated the adjust SDK into your project, you can take advantage
 of the following features.
 
 ### Add tracking of custom events.
 
-You can tell AdjustIo about every event you want. Suppose you want to track
+You can tell adjust about every event you want. Suppose you want to track
 every tap on a button. You would have to create a new Event Token in your
 [dashboard]. Let's say that Event Token is `abc123`. In your button's
 click handler method you could then add the following line to track the click:
@@ -134,7 +134,7 @@ case you can also put some key-value-pairs in an object and pass it to the
 callback URL.
 
 For example, suppose you have registered the URL
-`http://www.adeven.com/callback` for your event with Event Token `abc123` and
+`http://www.adjust.com/callback` for your event with Event Token `abc123` and
 execute the following lines:
 
 ```actionscript
@@ -145,7 +145,7 @@ AdjustIo.instance.trackEvent("abc123", parameters);
 
 In that case we would track the event and send a request to:
 
-    http://www.adeven.com/callback?key=value&foo=bar
+    http://www.adjust.com/callback?key=value&foo=bar
 
 It should be mentioned that we support a variety of placeholders like `{idfa}`
 that can be used as parameter values. In the resulting callback this
