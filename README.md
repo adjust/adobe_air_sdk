@@ -1,7 +1,6 @@
 ## Summary
 
-This is the AIR SDK of adjust™. You can read more about adjust™ at
-[adjust.io].
+This is the AIR SDK of adjust.io™. You can read more about adjust.io™ at [adjust.io].
 
 ## Basic Installation
 
