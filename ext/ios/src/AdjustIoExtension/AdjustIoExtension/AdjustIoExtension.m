@@ -31,7 +31,7 @@ void ContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, u
     func[3].function = &trackEvent;
     
     
-    func[4].name = (const uint8_t*) "trackeRevenue";
+    func[4].name = (const uint8_t*) "trackRevenue";
     func[4].functionData = NULL;
     func[4].function = &trackRevenue;
     
@@ -44,7 +44,7 @@ void ContextFinalizer(FREContext ctx) {
 
 void AdjustIoExtensionInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet)
 {
-    [AdjustIo setSdkPrefix:@"air2.1.1"];
+    [AdjustIo setSdkPrefix:@"air2.1.4"];
 
     *extDataToSet = NULL;
     *ctxInitializerToSet = &ContextInitializer;
