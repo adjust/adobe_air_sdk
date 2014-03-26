@@ -120,16 +120,17 @@ internal class ParametersObject {
         return _source[key];
     }
 
-    public function get keys(): Array {
-        var k: Array = [];
+    public function keys(): Array {
+        var sourceKeys: Array = [];
 
-        for (var key: String in _source) {
-            if (_source.hasOwnProperty(key) && ! _source[key] is Function) {
-                k.push(key);
+        for (var k: String in _source) {
+            trace(k + ": " + typeof _source[k]);
+            if (_source.hasOwnProperty(k) && ! (_source[k] is Function)) {
+                sourceKeys.push(k);
             }
         }
 
-        return k;
+        return sourceKeys;
     }
 }
 
