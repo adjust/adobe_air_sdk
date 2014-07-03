@@ -3,7 +3,7 @@
 //  AdjustIoExtension
 //
 //  Created by Andrew Slotin on 15.11.13.
-//  Copyright (c) 2013 adeven. All rights reserved.
+//  Copyright (c) 2013 adjust GmbH.  All rights reserved.
 //
 
 #import "FlashRuntimeExtensions.h"

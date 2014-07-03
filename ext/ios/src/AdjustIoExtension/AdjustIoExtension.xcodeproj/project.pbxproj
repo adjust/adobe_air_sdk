@@ -258,7 +258,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
-				ORGANIZATIONNAME = "adeven GmbH";
+				ORGANIZATIONNAME = "adjust GmbH";
 			};
 			buildConfigurationList = A29DBE1A183E589700CD24DB /* Build configuration list for PBXProject "AdjustIoExtension" */;
 			compatibilityVersion = "Xcode 3.2";

@@ -1,6 +1,6 @@
 ## Summary
 
-This is the AIR SDK of adjust.io™. You can read more about adjust.io™ at [adjust.io].
+This is the AIR SDK of adjust™. You can read more about adjust™ at [adjust.com].
 
 ## Basic Installation
 
@@ -194,8 +194,8 @@ AdjustIo.instance.trackRevenue(1.0, "abc123", parameters);
 
 The adjust-sdk is licensed under the MIT License.
 
-Copyright (c) 2012-2013 adeven GmbH,
-http://www.adeven.com
+Copyright (c) 2012-2014 adjust GmbH,
+http://www.adjust.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
