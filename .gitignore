@@ -4,3 +4,6 @@
 out
 build
 *.ane
+gen
+.idea
+*.iml
