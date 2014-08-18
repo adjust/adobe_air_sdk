@@ -1,19 +1,19 @@
 <extension xmlns="http://ns.adobe.com/air/extension/3.1">
-    <id>com.adeven.adjustio</id>
-    <versionNumber>2.2.2</versionNumber>
+    <id>com.adjust.sdk</id>
+    <versionNumber>3.4.0</versionNumber>
     <platforms>
         <platform name="Android-ARM">
             <applicationDeployment>
-                <nativeLibrary>AdjustIo.jar</nativeLibrary>
-                <initializer>com.adeven.adjustio.AdjustIoExtension</initializer>
+                <nativeLibrary>Adjust.jar</nativeLibrary>
+                <initializer>com.adjust.sdk.AdjustExtension</initializer>
             </applicationDeployment>
         </platform>
 
         <platform name="iPhone-ARM">
             <applicationDeployment>
-                <nativeLibrary>libAdjustIoExtension.a</nativeLibrary>
-                <initializer>AdjustIoExtensionInitializer</initializer>
-                <finalizer>AdjustIoExtensionFinalizer</finalizer>
+                <nativeLibrary>libAdjustExtension.a</nativeLibrary>
+                <initializer>AdjustFREInitializer</initializer>
+                <finalizer>AdjustFREFinalizer</finalizer>
             </applicationDeployment>
         </platform>
 
