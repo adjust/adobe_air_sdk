@@ -1,12 +1,18 @@
 ADT = $(AIR_SDK_PATH)/bin/adt
 COMPC = $(AIR_SDK_PATH)/bin/compc
 
-COMPC_CLASSES = com.adeven.adjustio.AdjustIo \
-                com.adeven.adjustio.LogLevel \
-                com.adeven.adjustio.Environment
+COMPC_ADJUST = com.adjust.sdk.Adjust
+COMPC_CLASSES = $(COMPC_ADJUST) \
+                com.adjust.sdk.LogLevel \
+                com.adjust.sdk.Environment
 COMPC_OPTS = -swf-version 13 \
              -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
              -include-classes $(COMPC_CLASSES)
+
+COMPC_OPTS_EMU = -swf-version 13 \
+             -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
+             -include-classes $(COMPC_ADJUST)
+
 
 VERSION = $(shell cat VERSION)
 
@@ -16,25 +22,24 @@ EXTDIR = ./ext
 EXTS = $(patsubst $(EXTDIR)/%,%,$(wildcard $(EXTDIR)/*))
 
 all: emulator $(EXTS) swc
-	unzip -d $(BUILDDIR)/android -qq -o $(BUILDDIR)/AdjustIo.swc -x catalog.xml
-	unzip -d $(BUILDDIR)/ios -qq -o $(BUILDDIR)/AdjustIo.swc -x catalog.xml
+	unzip -d $(BUILDDIR)/android -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
+	unzip -d $(BUILDDIR)/ios -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
 	cp -af $(SOURCEDIR)/platformoptions.xml $(BUILDDIR)/ios
-	cp -af $(SOURCEDIR)/extension.xml $(BUILDDIR)/
-	cd $(BUILDDIR); $(ADT) -package -target ane ../AdjustIo-$(VERSION).ane extension.xml -swc AdjustIo.swc -platform Android-ARM -C android . -platform iPhone-ARM -C ios . -platformoptions ios/platformoptions.xml -platform default -C default .
+	cp -af $(SOURCEDIR)/extension.xml $(BUILDDIR)/extension.xml
+	cd $(BUILDDIR); $(ADT) -package -target ane ../Adjust-$(VERSION).ane extension.xml -swc Adjust.swc -platform Android-ARM -C android . -platform iPhone-ARM -C ios . -platformoptions ios/platformoptions.xml -platform default -C default .
 
 swc:
 	mkdir -p $(BUILDDIR)
-	$(COMPC) -source-path src $(COMPC_OPTS) -output $(BUILDDIR)/AdjustIo.swc
+	$(COMPC) -source-path src $(COMPC_OPTS) -output $(BUILDDIR)/Adjust.swc
 
 $(EXTS):
 	mkdir -p $(BUILDDIR)/$@
-	cd $(EXTDIR)/$@; make OUTDIR=$(realpath $(BUILDDIR))/$@/
+	cd $(EXTDIR)/$@; make OUTDIR=$(abspath $(BUILDDIR))/$@
 
 emulator:
 	mkdir -p $(BUILDDIR)/default
-	cp $(shell ls ./src/com/adeven/adjustio/*.as | grep -v "AdjustIo.as") ./default/src/com/adeven/adjustio/
-	$(COMPC) -source-path default/src $(COMPC_OPTS) -directory=true -output $(BUILDDIR)/default
-	rm -rf $(BUILDDIR)/default/catalog.xml $(shell find default/src -name *.as -type f | grep -v "AdjustIo.as")
+	$(COMPC) -source-path default/src $(COMPC_OPTS_EMU) -directory=true -output $(BUILDDIR)/default
+	rm -rf $(BUILDDIR)/default/catalog.xml
 
 clean:
 	cd ext/android; make clean
