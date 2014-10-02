@@ -52,11 +52,11 @@ public class Adjust extends EventDispatcher{
         return false;
     }
 
-    public static function onResume(): void {
+    public static function onResume(event:Event): void {
         logAdjust("onResume called");
     }
 
-    public static function onPause(): void {
+    public static function onPause(event:Event): void {
         logAdjust("onPause called");
     }
 

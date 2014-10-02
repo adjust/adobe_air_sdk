@@ -70,7 +70,7 @@ public class Adjust extends EventDispatcher{
         return isEnabled;
     }
 
-    public static function onResume(): void {
+    public static function onResume(event:Event): void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
@@ -78,7 +78,7 @@ public class Adjust extends EventDispatcher{
         extensionContext.call("onResume");
     }
 
-    public static function onPause(): void {
+    public static function onPause(event:Event): void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
