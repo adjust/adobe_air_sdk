@@ -34,7 +34,7 @@ public class Adjust extends EventDispatcher{
         app.addEventListener(Event.DEACTIVATE, onPause);
         //app.addEventListener(InvokeEvent.INVOKE, appDidLaunch);
 
-        extensionContext.call("appDidLaunch", appToken, environment, logLevel, eventBuffering, "air3.4.0");
+        extensionContext.call("appDidLaunch", appToken, environment, logLevel, eventBuffering, "air3.4.1");
     }
 
     public static function trackEvent(eventToken: String, parameters: Object = null): void {
@@ -70,7 +70,7 @@ public class Adjust extends EventDispatcher{
         return isEnabled;
     }
 
-    public static function onResume(): void {
+    public static function onResume(event:Event): void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
@@ -78,7 +78,7 @@ public class Adjust extends EventDispatcher{
         extensionContext.call("onResume");
     }
 
-    public static function onPause(): void {
+    public static function onPause(event:Event): void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
