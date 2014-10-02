@@ -34,7 +34,7 @@ public class Adjust extends EventDispatcher{
         app.addEventListener(Event.DEACTIVATE, onPause);
         //app.addEventListener(InvokeEvent.INVOKE, appDidLaunch);
 
-        extensionContext.call("appDidLaunch", appToken, environment, logLevel, eventBuffering, "air3.4.0");
+        extensionContext.call("appDidLaunch", appToken, environment, logLevel, eventBuffering, "air3.4.1");
     }
 
     public static function trackEvent(eventToken: String, parameters: Object = null): void {
