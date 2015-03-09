@@ -36,7 +36,7 @@ static id<AdjustDelegate> AdjustFunctionInstance = nil;
 
 @end
 
-FREObject appDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AIappDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     NSString *appToken;
     NSString *envirnoment;
@@ -60,7 +60,7 @@ FREObject appDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject 
     return return_value;
 }
 
-FREObject trackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     NSString *eventToken;
     NSDictionary *parameters;
@@ -75,7 +75,7 @@ FREObject trackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
     return return_value;
 }
 
-FREObject trackRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AItrackRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     double revenue;
     NSString *eventToken;
@@ -92,7 +92,7 @@ FREObject trackRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject 
     return return_value;
 }
 
-FREObject setEnable(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AIsetEnable(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     BOOL enable;
 
@@ -105,7 +105,7 @@ FREObject setEnable(FREContext ctx, void* funcData, uint32_t argc, FREObject arg
     return return_value;
 }
 
-FREObject isEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     BOOL isEnabled = [Adjust isEnabled];
 
@@ -114,27 +114,27 @@ FREObject isEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject arg
     return return_value;
 }
 
-FREObject setResponseDelegate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AIsetResponseDelegate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     AdjustFREContext = ctx;
     AdjustFunctionInstance = [[AdjustFunction alloc] init];
     [Adjust setDelegate:AdjustFunctionInstance];
 
     FREObject return_value;
-    FRENewObjectFromBool((uint32_t)isEnabled, &return_value);
+    FRENewObjectFromBool((uint32_t)AIisEnabled, &return_value);
     return return_value;
 }
 
-FREObject onResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AIonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     FREObject return_value;
-    FRENewObjectFromBool((uint32_t)isEnabled, &return_value);
+    FRENewObjectFromBool((uint32_t)AIisEnabled, &return_value);
     return return_value;
 }
 
-FREObject onPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject AIonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     FREObject return_value;
-    FRENewObjectFromBool((uint32_t)isEnabled, &return_value);
+    FRENewObjectFromBool((uint32_t)AIisEnabled, &return_value);
     return return_value;
 }
