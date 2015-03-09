@@ -10,29 +10,29 @@
 	<string>AdjustExtension</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>A5C7B716-38A4-40C0-B608-FD472B64A4F3</key>
+		<key>D797235CD034B41EA2F7F98988B14BCE70D19829</key>
 		<string>https://github.com/adjust/adobe_air_sdk.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>ext/ios/src/AdjustExtension/AdjustExtension.xcodeproj/project.xcworkspace</string>
+	<string>ext/ios/src/AdjustExtension/AdjustExtension.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>A5C7B716-38A4-40C0-B608-FD472B64A4F3</key>
+		<key>D797235CD034B41EA2F7F98988B14BCE70D19829</key>
 		<string>../../../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/adjust/adobe_air_sdk.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>A5C7B716-38A4-40C0-B608-FD472B64A4F3</string>
+	<string>D797235CD034B41EA2F7F98988B14BCE70D19829</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>A5C7B716-38A4-40C0-B608-FD472B64A4F3</string>
+			<string>D797235CD034B41EA2F7F98988B14BCE70D19829</string>
 			<key>IDESourceControlWCCName</key>
 			<string>adobe_air_sdk</string>
 		</dict>

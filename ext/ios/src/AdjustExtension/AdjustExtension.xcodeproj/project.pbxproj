@@ -26,13 +26,13 @@
 		96471C1F19939331000CD897 /* AITimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C0E19939331000CD897 /* AITimer.m */; };
 		96471C2019939331000CD897 /* AIUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C1019939331000CD897 /* AIUtil.m */; };
 		96471C231993B3F1000CD897 /* AdjustFREUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C221993B3F1000CD897 /* AdjustFREUtils.m */; };
+		965EA3351AAE196F002C97A0 /* libAdjustExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD31993872F004E270B /* libAdjustExtension.a */; };
 		9696C5F91993CF0D003B644E /* AdjustFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 9696C5F81993CF0D003B644E /* AdjustFunction.m */; };
 		96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
 		96E1BBDE1993872F004E270B /* AdjustExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBDD1993872F004E270B /* AdjustExtension.m */; };
 		96E1BBE51993872F004E270B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE41993872F004E270B /* XCTest.framework */; };
 		96E1BBE61993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
 		96E1BBE819938730004E270B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE719938730004E270B /* UIKit.framework */; };
-		96E1BBEB19938730004E270B /* libAdjustExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD31993872F004E270B /* libAdjustExtension.a */; };
 		96E1BBF119938730004E270B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96E1BBEF19938730004E270B /* InfoPlist.strings */; };
 		96E1BBF319938730004E270B /* AdjustExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBF219938730004E270B /* AdjustExtensionTests.m */; };
 /* End PBXBuildFile section */
@@ -118,6 +118,7 @@
 			files = (
 				96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */,
 				96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */,
+				965EA3351AAE196F002C97A0 /* libAdjustExtension.a in Frameworks */,
 				96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -128,7 +129,6 @@
 			files = (
 				96E1BBE51993872F004E270B /* XCTest.framework in Frameworks */,
 				96E1BBE819938730004E270B /* UIKit.framework in Frameworks */,
-				96E1BBEB19938730004E270B /* libAdjustExtension.a in Frameworks */,
 				96E1BBE61993872F004E270B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
