@@ -7,3 +7,4 @@ build
 gen
 .idea
 *.iml
+bin/

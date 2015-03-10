@@ -15,11 +15,11 @@
 
 @end
 
-FREObject appDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject trackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject trackRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject setEnable(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject isEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject onResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject onPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject setResponseDelegate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIappDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AItrackRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIsetEnable(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIsetResponseDelegate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

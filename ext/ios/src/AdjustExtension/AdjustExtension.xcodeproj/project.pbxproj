@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96332CBF1A8B982000D38FAF /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96332CC11A8B982600D38FAF /* iAd.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		96471C1119939331000CD897 /* Adjust.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471BF119939331000CD897 /* Adjust.m */; };
 		96471C1219939331000CD897 /* AIActivityHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471BF319939331000CD897 /* AIActivityHandler.m */; };
 		96471C1319939331000CD897 /* AIActivityKind.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471BF519939331000CD897 /* AIActivityKind.m */; };
@@ -24,13 +26,13 @@
 		96471C1F19939331000CD897 /* AITimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C0E19939331000CD897 /* AITimer.m */; };
 		96471C2019939331000CD897 /* AIUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C1019939331000CD897 /* AIUtil.m */; };
 		96471C231993B3F1000CD897 /* AdjustFREUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C221993B3F1000CD897 /* AdjustFREUtils.m */; };
+		965EA3351AAE196F002C97A0 /* libAdjustExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD31993872F004E270B /* libAdjustExtension.a */; };
 		9696C5F91993CF0D003B644E /* AdjustFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 9696C5F81993CF0D003B644E /* AdjustFunction.m */; };
 		96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
 		96E1BBDE1993872F004E270B /* AdjustExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBDD1993872F004E270B /* AdjustExtension.m */; };
 		96E1BBE51993872F004E270B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE41993872F004E270B /* XCTest.framework */; };
 		96E1BBE61993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
 		96E1BBE819938730004E270B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE719938730004E270B /* UIKit.framework */; };
-		96E1BBEB19938730004E270B /* libAdjustExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD31993872F004E270B /* libAdjustExtension.a */; };
 		96E1BBF119938730004E270B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96E1BBEF19938730004E270B /* InfoPlist.strings */; };
 		96E1BBF319938730004E270B /* AdjustExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBF219938730004E270B /* AdjustExtensionTests.m */; };
 /* End PBXBuildFile section */
@@ -58,6 +60,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		96332CBF1A8B982000D38FAF /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		96332CC11A8B982600D38FAF /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		96471BF019939331000CD897 /* Adjust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adjust.h; sourceTree = "<group>"; };
 		96471BF119939331000CD897 /* Adjust.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Adjust.m; sourceTree = "<group>"; };
 		96471BF219939331000CD897 /* AIActivityHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIActivityHandler.h; sourceTree = "<group>"; };
@@ -112,6 +116,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */,
+				96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */,
+				965EA3351AAE196F002C97A0 /* libAdjustExtension.a in Frameworks */,
 				96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -122,7 +129,6 @@
 			files = (
 				96E1BBE51993872F004E270B /* XCTest.framework in Frameworks */,
 				96E1BBE819938730004E270B /* UIKit.framework in Frameworks */,
-				96E1BBEB19938730004E270B /* libAdjustExtension.a in Frameworks */,
 				96E1BBE61993872F004E270B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -199,6 +205,8 @@
 		96E1BBD51993872F004E270B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				96332CC11A8B982600D38FAF /* iAd.framework */,
+				96332CBF1A8B982000D38FAF /* AdSupport.framework */,
 				96E1BBD61993872F004E270B /* Foundation.framework */,
 				96E1BBE41993872F004E270B /* XCTest.framework */,
 				96E1BBE719938730004E270B /* UIKit.framework */,
@@ -411,7 +419,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -442,7 +450,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
