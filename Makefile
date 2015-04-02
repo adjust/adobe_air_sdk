@@ -9,11 +9,6 @@ COMPC_OPTS = -swf-version 13 \
              -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
              -include-classes $(COMPC_CLASSES)
 
-COMPC_OPTS_EMU = -swf-version 13 \
-             -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
-             -include-classes $(COMPC_ADJUST)
-
-
 VERSION = $(shell cat VERSION)
 
 SOURCEDIR = ./src
@@ -38,7 +33,7 @@ $(EXTS):
 
 emulator:
 	mkdir -p $(BUILDDIR)/default
-	$(COMPC) -source-path default/src $(COMPC_OPTS_EMU) -directory=true -output $(BUILDDIR)/default
+	$(COMPC) -source-path default/src $(COMPC_OPTS) -directory=true -output $(BUILDDIR)/default
 	rm -rf $(BUILDDIR)/default/catalog.xml
 
 clean:
