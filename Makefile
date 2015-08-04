@@ -17,7 +17,6 @@ EXTDIR = ./ext
 EXTS = $(patsubst $(EXTDIR)/%,%,$(wildcard $(EXTDIR)/*))
 
 all: emulator $(EXTS) swc
-	cp ./Adjust.jar $(BUILDDIR)/android/Adjust.jar
 	unzip -d $(BUILDDIR)/android -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
 	unzip -d $(BUILDDIR)/ios -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
 	cp -af $(SOURCEDIR)/platformoptions.xml $(BUILDDIR)/ios
