@@ -4,7 +4,9 @@ COMPC = $(AIR_SDK_PATH)/bin/compc
 COMPC_ADJUST = com.adjust.sdk.Adjust
 COMPC_CLASSES = $(COMPC_ADJUST) \
                 com.adjust.sdk.LogLevel \
-                com.adjust.sdk.Environment
+                com.adjust.sdk.Environment \
+                com.adjust.sdk.AdjustConfig \
+                com.adjust.sdk.AdjustEvent
 COMPC_OPTS = -swf-version 13 \
              -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
              -include-classes $(COMPC_CLASSES)
@@ -37,6 +39,6 @@ emulator:
 	rm -rf $(BUILDDIR)/default/catalog.xml
 
 clean:
-	cd ext/android; make clean
+	cd ext/Android; make clean
 	cd ext/ios; make clean
 	rm -rf *.ane $(BUILDDIR)

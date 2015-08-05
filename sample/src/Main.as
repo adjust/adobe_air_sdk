@@ -1,6 +1,8 @@
 package {
 
 import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.AdjustEvent;
 import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 
@@ -37,45 +39,53 @@ public class Main extends Sprite {
 
     private static function startManuallyClick(Event:MouseEvent): void {
         trace("startManuallyClick");
-        Adjust.appDidLaunch("qwerty123456",Environment.SANDBOX, LogLevel.VERBOSE, false);
+        // Adjust.appDidLaunch("qwerty123456",Environment.SANDBOX, LogLevel.VERBOSE, false);
+
+        var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
+        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        Adjust.start(adjustConfig);
     }
 
     private static function TrackEventClick(Event:MouseEvent): void {
         trace("TrackEventClick");
-        Adjust.trackEvent("eve001");
 
-        var parameters: Object = new Object();
-        parameters["key"] = "value";
-        parameters["foo"] = "bar";
+        var adjustEvent:AdjustEvent = new AdjustEvent("uqg17r");
+        adjustEvent.addCallbackParameter("foo", "bar");
+        adjustEvent.addCallbackParameter("a", "b");
+        adjustEvent.addCallbackParameter("foo", "c");
 
-        Adjust.trackEvent("eve002", parameters);
+        Adjust.trackEvent(adjustEvent);
     }
 
     private static function TrackRevenueClick(Event:MouseEvent): void {
         trace("TrackRevenueClick");
-        Adjust.trackRevenue(3.44);
 
-        Adjust.trackRevenue(3.45, "rev001");
+        var adjustEvent:AdjustEvent = new AdjustEvent("71iltz");
+        adjustEvent.setRevenue(0.01, "EUR");
+        adjustEvent.addPartnerParameter("key", "value");
+        adjustEvent.addPartnerParameter("x", "y");
+        adjustEvent.addPartnerParameter("key", "z");
 
-        var parameters: Object = new Object();
-        parameters["key"] = "value";
-        parameters["foo"] = "bar";
-        Adjust.trackRevenue(0.1, "rev002", parameters);
+        Adjust.trackEvent(adjustEvent);
     }
 
     private static function SetEnableClick(Event:MouseEvent): void {
-        trace("SetEnableClick");
+        trace("SetEnabledClick");
+
         Adjust.setEnabled(true);
     }
 
     private static function SetDisableClick(Event:MouseEvent): void {
         trace("SetDisableClick");
+
         Adjust.setEnabled(false);
     }
 
     private static function IsEnabledClick(Event:MouseEvent): void {
         trace("IsEnabledClick");
+
         var isEnabled: Boolean = Adjust.isEnabled();
+
         if (isEnabled) {
             IsEnabledTextField.text = "Is enabled? true";
         } else {
@@ -85,7 +95,8 @@ public class Main extends Sprite {
 
     private static function SetCallbackClick(Event:MouseEvent): void {
         trace("SetCallbackClick");
-        Adjust.setResponseDelegate(ResponseDelegate);
+
+        // Adjust.setResponseDelegate(ResponseDelegate);
     }
 
     private static function ResponseDelegate(responseData: Object): void {

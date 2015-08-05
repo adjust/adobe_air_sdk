@@ -5,67 +5,101 @@ package com.adjust.sdk {
 import flash.desktop.NativeApplication;
 import flash.events.Event;
 import flash.events.EventDispatcher;
-import flash.events.InvokeEvent;
 import flash.events.StatusEvent;
 import flash.external.ExtensionContext;
-import flash.html.script.Package;
 
-public class Adjust extends EventDispatcher{
-    private static const LOGTAG: String = "Adjust: ";
+public class Adjust extends EventDispatcher {
+    private static var errorMessage: String = "adjust: SDK not started. Start it manually using the 'start' method";
+    private static var extensionContext: ExtensionContext;
+    private static var nativeResponseDelegate: Function;
+    
+    public static function start(adjustConfig:AdjustConfig):void {
+        if (extensionContext) {
+            trace("adjust warning: SDK already started");
+        }
 
-    public static function appDidLaunch(appToken: String, environment: String, logLevel: String, eventBuffering: Boolean): void {
+        extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
+
+        if (!extensionContext) {
+            trace("adjust error: cannot open ANE 'com.adjust.sdk' for this platform");
+            return;
+        }
+
         var app:NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, onResume);
         app.addEventListener(Event.DEACTIVATE, onPause);
-        //app.addEventListener(InvokeEvent.INVOKE, appDidLaunch);
 
-        logAdjust("appDidLaunch called with app token '" + appToken + "'");
-        logAdjust("using " + environment + " environment");
-        logAdjust("log level is set to " + logLevel);
-        logAdjust("event buffering is " + (eventBuffering ? "enabled" : "disabled"));
+        extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
+        adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled());
+
+        // For now, call onResume after onCreate.
+        extensionContext.call("onResume");
     }
 
-    public static function trackEvent(eventToken: String, parameters: Object = null): void {
-        if (parameters) {
-            logAdjust("trackEvent called with token '" + eventToken + "' and parameters: ");
-        } else {
-            logAdjust("trackEvent called with token '" + eventToken + "'");
+    public static function trackEvent(adjustEvent:AdjustEvent): void {
+        if (!extensionContext) {
+            trace(errorMessage);
+            return;
         }
-    }
 
-    public static function trackRevenue(amountInCents: Number, eventToken: String = null, parameters: Object = null): void {
-        if (! eventToken) {
-            logAdjust("trackRevenue called with amount " + amountInCents.toString());
-        } else if (! parameters) {
-            logAdjust("trackRevenue called with amount " + amountInCents.toString() + " with event token '" + eventToken + "'");
-        } else {
-            logAdjust("trackRevenue called with amount " + amountInCents.toString() + " with event token '" + eventToken + "' and parameters");
-        }
+        extensionContext.call("trackEvent", adjustEvent.getEventToken(), adjustEvent.getCurrency(),
+        adjustEvent.getRevenue(), adjustEvent.getCallbackParameters(), adjustEvent.getPartnerParameters());
     }
 
     public static function setEnabled(enabled: Boolean): void {
-        logAdjust("setEnabled called with enabled as " + enabled);
+        if (!extensionContext) {
+            trace(errorMessage);
+            return;
+        }
+
+        extensionContext.call("setEnabled", enabled);
     }
 
     public static function isEnabled(): Boolean {
-        logAdjust("isEnabled called");
-        return false;
+        if (!extensionContext) {
+            trace(errorMessage);
+            return false;
+        }
+
+        var isEnabled:int = int (extensionContext.call("isEnabled"));
+        return isEnabled;
     }
 
     public static function onResume(event:Event): void {
-        logAdjust("onResume called");
+        if (!extensionContext) {
+            trace(errorMessage);
+            return;
+        }
+
+        extensionContext.call("onResume");
     }
 
     public static function onPause(event:Event): void {
-        logAdjust("onPause called");
+        if (!extensionContext) {
+            trace(errorMessage);
+            return;
+        }
+
+        extensionContext.call("onPause");
     }
 
-    public static function setResponseDelegate(responseDelegate: Function): void {
-        logAdjust("setResponseDelegate called");
-    }
+    //    public static function setResponseDelegate(responseDelegate: Function): void {
+    //        if (!extensionContext) {
+    //            trace(errorMessage);
+    //            return;
+    //        }
+    //
+    //        nativeResponseDelegate = responseDelegate;
+    //        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+    //        extensionContext.call("setResponseDelegate");
+    //    }
 
-    private static function logAdjust(message: String, ...rest): void {
-        trace.apply(null, [LOGTAG + message].concat(rest));
-    }
+    //    private static function extensionResponseDelegate(statusEvent: StatusEvent): void {
+    //        if (statusEvent.code != "adjust_responseData") {
+    //            return;
+    //        }
+    //
+    //        nativeResponseDelegate(JSON.parse(statusEvent.level));
+    //    }
 }
 }
