@@ -11,7 +11,7 @@ import flash.external.ExtensionContext;
 public class Adjust extends EventDispatcher {
     private static var errorMessage: String = "adjust: SDK not started. Start it manually using the 'start' method";
     private static var extensionContext: ExtensionContext;
-    private static var nativeResponseDelegate: Function;
+    private static var attributionCallbackDelegate: Function;
     
     public static function start(adjustConfig:AdjustConfig):void {
         if (extensionContext) {
@@ -28,6 +28,9 @@ public class Adjust extends EventDispatcher {
         var app:NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, onResume);
         app.addEventListener(Event.DEACTIVATE, onPause);
+
+        attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
+        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
         extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
         adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled());
@@ -83,23 +86,50 @@ public class Adjust extends EventDispatcher {
         extensionContext.call("onPause");
     }
 
-    //    public static function setResponseDelegate(responseDelegate: Function): void {
-    //        if (!extensionContext) {
-    //            trace(errorMessage);
-    //            return;
-    //        }
-    //
-    //        nativeResponseDelegate = responseDelegate;
-    //        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-    //        extensionContext.call("setResponseDelegate");
-    //    }
+    private static function extensionResponseDelegate(statusEvent: StatusEvent): void {
+        if (statusEvent.code != "adjust_attributionData") {
+            return;
+        }
 
-    //    private static function extensionResponseDelegate(statusEvent: StatusEvent): void {
-    //        if (statusEvent.code != "adjust_responseData") {
-    //            return;
-    //        }
-    //
-    //        nativeResponseDelegate(JSON.parse(statusEvent.level));
-    //    }
+        var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
+
+        attributionCallbackDelegate(attribution);
+    }
+
+    private static function getAttributionFromResponse(response:String):AdjustAttribution {
+        var trackerToken:String = "";
+        var trackerName:String = "";
+        var campaign:String = "";
+        var network:String = "";
+        var creative:String = "";
+        var adgroup:String = "";
+        var clickLabel:String = "";
+
+        var attributionParts:Array = response.split(",");
+
+        for (var i:int = 0; i < attributionParts.length; i++) {
+            var attributionField:Array = attributionParts[i].split("=");
+            var key:String = attributionField[0];
+            var value:String = attributionField[1];
+
+            if (key == "trackerToken") {
+                trackerToken = value;
+            } else if (key == "trackerName") {
+                trackerName = value;
+            } else if (key == "campaign") {
+                campaign = value;
+            } else if (key == "network") {
+                network = value;
+            } else if (key == "creative") {
+                creative = value;
+            } else if (key == "adgroup") {
+                adgroup = value;
+            } else if (key == "clickLabel") {
+                clickLabel = value;
+            }
+        }
+
+        return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel);
+    }
 }
 }

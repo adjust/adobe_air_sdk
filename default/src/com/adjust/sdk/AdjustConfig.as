@@ -3,6 +3,7 @@ package com.adjust.sdk {
         private var appToken:String;
         private var environment:String;
         private var logLevel:String;
+        private var attributionCallbackDelegate: Function;
 
         private var eventBufferingEnabled:Boolean;
 
@@ -17,6 +18,10 @@ package com.adjust.sdk {
 
         public function setEventBufferingEnabled(eventBufferingEnabled:Boolean):void {
             this.eventBufferingEnabled = eventBufferingEnabled;
+        }
+
+        public function setAttributionCallbackDelegate(attributionCallback: Function): void {
+            this.attributionCallbackDelegate = attributionCallback;
         }
 
         // Getters.
@@ -34,6 +39,10 @@ package com.adjust.sdk {
 
         public function getEventBufferingEnabled():Boolean {
             return this.eventBufferingEnabled;
+        }
+
+        public function getAttributionCallbackDelegate():Function {
+            return this.attributionCallbackDelegate;
         }
     }
 }

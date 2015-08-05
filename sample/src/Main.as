@@ -3,6 +3,7 @@ package {
 import com.adjust.sdk.Adjust;
 import com.adjust.sdk.AdjustConfig;
 import com.adjust.sdk.AdjustEvent;
+import com.adjust.sdk.AdjustAttribution;
 import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 
@@ -29,26 +30,22 @@ public class Main extends Sprite {
         //addEventListener(Event.ADDED_TO_STAGE, init);
 
         buildButton(0, "Start Manually", startManuallyClick);
-        buildButton(1, "Trace Event", TrackEventClick);
-        buildButton(2, "Trace Revenue", TrackRevenueClick);
-        buildButton(3, "Set Enable", SetEnableClick);
-        buildButton(4, "Set Disable", SetDisableClick);
-        IsEnabledTextField = buildButton(5, "Is Enabled?", IsEnabledClick);
-        buildButton(6, "Set Callback", SetCallbackClick);
+        buildButton(1, "Track Simple Event", TrackEventClick);
+        buildButton(2, "Track Revenue Event", TrackRevenueClick);
+        buildButton(3, "Enable SDK", SetEnableClick);
+        buildButton(4, "Disable SDK", SetDisableClick);
+        IsEnabledTextField = buildButton(5, "Is SDK Enabled?", IsEnabledClick);
     }
 
-    private static function startManuallyClick(Event:MouseEvent): void {
-        trace("startManuallyClick");
-        // Adjust.appDidLaunch("qwerty123456",Environment.SANDBOX, LogLevel.VERBOSE, false);
-
+    private static function startManuallyClick(Event:MouseEvent):void {
         var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
         adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        adjustConfig.setAttributionCallbackDelegate(AttributionCallbackDelegate);
+
         Adjust.start(adjustConfig);
     }
 
-    private static function TrackEventClick(Event:MouseEvent): void {
-        trace("TrackEventClick");
-
+    private static function TrackEventClick(Event:MouseEvent):void {
         var adjustEvent:AdjustEvent = new AdjustEvent("uqg17r");
         adjustEvent.addCallbackParameter("foo", "bar");
         adjustEvent.addCallbackParameter("a", "b");
@@ -57,9 +54,7 @@ public class Main extends Sprite {
         Adjust.trackEvent(adjustEvent);
     }
 
-    private static function TrackRevenueClick(Event:MouseEvent): void {
-        trace("TrackRevenueClick");
-
+    private static function TrackRevenueClick(Event:MouseEvent):void {
         var adjustEvent:AdjustEvent = new AdjustEvent("71iltz");
         adjustEvent.setRevenue(0.01, "EUR");
         adjustEvent.addPartnerParameter("key", "value");
@@ -69,21 +64,15 @@ public class Main extends Sprite {
         Adjust.trackEvent(adjustEvent);
     }
 
-    private static function SetEnableClick(Event:MouseEvent): void {
-        trace("SetEnabledClick");
-
+    private static function SetEnableClick(Event:MouseEvent):void {
         Adjust.setEnabled(true);
     }
 
-    private static function SetDisableClick(Event:MouseEvent): void {
-        trace("SetDisableClick");
-
+    private static function SetDisableClick(Event:MouseEvent):void {
         Adjust.setEnabled(false);
     }
 
-    private static function IsEnabledClick(Event:MouseEvent): void {
-        trace("IsEnabledClick");
-
+    private static function IsEnabledClick(Event:MouseEvent):void {
         var isEnabled: Boolean = Adjust.isEnabled();
 
         if (isEnabled) {
@@ -93,13 +82,18 @@ public class Main extends Sprite {
         }
     }
 
-    private static function SetCallbackClick(Event:MouseEvent): void {
-        trace("SetCallbackClick");
-
-        // Adjust.setResponseDelegate(ResponseDelegate);
+    private static function AttributionCallbackDelegate(attribution:AdjustAttribution):void {
+        trace("Attribution changed!");
+        trace("Tracker token = " + attribution.getTrackerToken());
+        trace("Tracker name = " + attribution.getTrackerName());
+        trace("Campaign = " + attribution.getCampaign());
+        trace("Network = " + attribution.getNetwork());
+        trace("Creative = " + attribution.getCreative());
+        trace("Adgroup = " + attribution.getAdGroup());
+        trace("Click label = " + attribution.getClickLabel());
     }
 
-    private static function ResponseDelegate(responseData: Object): void {
+    private static function ResponseDelegate(responseData: Object):void {
         trace("ResponseDelegate callback")
         for (var key:String in responseData) {
             trace(key + ": " + responseData[key]);
