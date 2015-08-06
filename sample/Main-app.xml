@@ -8,11 +8,11 @@
 
      minimumPatchLevel - The minimum patch level of the AIR runtime required to run the application. Optional. -->
 
-<application xmlns="http://ns.adobe.com/air/application/3.9">
+<application xmlns="http://ns.adobe.com/air/application/18.0">
 
     <!-- A universally unique application identifier. Must be unique across all AIR applications.
          Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-    <id>Main</id>
+    <id>com.adjust.example</id>
 
     <!-- Used as the filename for the application. Required. -->
     <filename>Adjust AIR SDK Demo</filename>
@@ -222,7 +222,9 @@
                 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
                 <application android:enabled="true">
-                    <receiver android:name="com.adjust.sdk.AdjustReferrerReceiver" android:exported="true">
+                    <receiver
+                        android:name="com.adjust.sdk.AdjustReferrerReceiver"
+                        android:exported="true">
                         <intent-filter>
                             <action android:name="com.android.vending.INSTALL_REFERRER" />
                         </intent-filter>
