@@ -40,7 +40,7 @@ public class Main extends Sprite {
     private static function startManuallyClick(Event:MouseEvent):void {
         var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
         adjustConfig.setLogLevel(LogLevel.VERBOSE);
-        adjustConfig.setAttributionCallbackDelegate(AttributionCallbackDelegate);
+        // adjustConfig.setAttributionCallbackDelegate(AttributionCallbackDelegate);
 
         Adjust.start(adjustConfig);
     }

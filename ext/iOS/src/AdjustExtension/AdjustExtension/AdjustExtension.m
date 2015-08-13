@@ -23,15 +23,13 @@ void AdjustFREContextInitializer(void* extData,
 {
     *numFunctionsToSet = 8;
 
-    FRENamedFunction* func = (FRENamedFunction*)malloc(sizeof(FRENamedFunction)*8);
-    setNamedFunction(&func[0], (const uint8_t*)"appDidLaunch", &AIappDidLaunch);
+    FRENamedFunction* func = (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * 6);
+    setNamedFunction(&func[0], (const uint8_t*)"onCreate", &AIonCreate);
     setNamedFunction(&func[1], (const uint8_t*)"trackEvent", &AItrackEvent);
-    setNamedFunction(&func[2], (const uint8_t*)"trackRevenue", &AItrackRevenue);
-    setNamedFunction(&func[3], (const uint8_t*)"setEnable", &AIsetEnable);
-    setNamedFunction(&func[4], (const uint8_t*)"isEnabled", &AIisEnabled);
-    setNamedFunction(&func[5], (const uint8_t*)"onResume", &AIonResume);
-    setNamedFunction(&func[6], (const uint8_t*)"onPause", &AIonPause);
-    setNamedFunction(&func[7], (const uint8_t*)"setResponseDelegate", &AIsetResponseDelegate);
+    setNamedFunction(&func[2], (const uint8_t*)"setEnabled", &AIsetEnabled);
+    setNamedFunction(&func[3], (const uint8_t*)"isEnabled", &AIisEnabled);
+    setNamedFunction(&func[4], (const uint8_t*)"onResume", &AIonResume);
+    setNamedFunction(&func[5], (const uint8_t*)"onPause", &AIonPause);
 
     *functionsToSet = func;
 }

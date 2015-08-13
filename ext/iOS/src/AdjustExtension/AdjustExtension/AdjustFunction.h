@@ -11,15 +11,13 @@
 
 @interface AdjustFunction: NSObject<AdjustDelegate>
 
-- (void)adjustFinishedTrackingWithResponse:(AIResponseData *)responseData;
+- (void)adjustAttributionChanged:(ADJAttribution *)attribution;
 
 @end
 
-FREObject AIappDidLaunch(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AItrackRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AIsetEnable(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject AIsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject AIonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject AIonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AIsetResponseDelegate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
