@@ -8,13 +8,12 @@
 
 #import "AdjustFunction.h"
 #import "AdjustFREUtils.h"
-#import "ADJConfig.h"
 
 FREContext AdjustFREContext;
 
 @implementation AdjustFunction
 
-static id<AdjustDelegate> AdjustFunctionInstance = nil;
+static id<AdjustDelegate> adjustFunctionInstance = nil;
 
 - (id) init {
     self = [super init];
@@ -22,7 +21,7 @@ static id<AdjustDelegate> AdjustFunctionInstance = nil;
 }
 
 - (void)adjustAttributionChanged:(ADJAttribution *)attribution {
-    NSString *attributionString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,",
+    NSString *attributionString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@",
                                    @"trackerToken", attribution.trackerToken,
                                    @"trackerName", attribution.trackerName,
                                    @"campaign", attribution.campaign,
@@ -30,8 +29,10 @@ static id<AdjustDelegate> AdjustFunctionInstance = nil;
                                    @"creative", attribution.creative,
                                    @"adgroup", attribution.adgroup,
                                    @"clickLabel", attribution.clickLabel];
-    const char* cResponseData= [attributionString UTF8String];
-    
+    const char* cResponseData = [attributionString UTF8String];
+
+    NSLog(@"Sazdah enesstring = %@", attributionString);
+
     FREDispatchStatusEventAsync(AdjustFREContext,
                                 (const uint8_t *)"adjust_attributionData",
                                 (const uint8_t *)cResponseData);
@@ -43,17 +44,29 @@ FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 {
     NSString *appToken;
     NSString *environment;
-//    NSString *logLevel;
-//    BOOL eventBufferingEnabled;
+    NSString *logLevel;
+    BOOL eventBufferingEnabled;
+
+    AdjustFREContext = ctx;
 
     FREGetObjectAsNativeString(argv[0], &appToken);
     FREGetObjectAsNativeString(argv[1], &environment);
-//    FREGetObjectAsNativeString(argv[2], &logLevel);
-//    FREGetObjectAsNativeBool(argv[3], &eventBufferingEnabled);
+    FREGetObjectAsNativeString(argv[2], &logLevel);
 
     ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
-    [adjustConfig setLogLevel:ADJLogLevelVerbose];
+    [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:logLevel]];
+
+    if (argv[3] != nil) {
+        FREGetObjectAsNativeBool(argv[3], &eventBufferingEnabled);
+        [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
+    }
+
     [adjustConfig setSdkPrefix:@"adobe_air4.0.0"];
+
+    if (adjustFunctionInstance == nil) {
+        adjustFunctionInstance = [[AdjustFunction alloc] init];
+    }
+    [adjustConfig setDelegate:(id)adjustFunctionInstance];
 
     [Adjust appDidLaunch:adjustConfig];
 
@@ -67,16 +80,38 @@ FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject 
     NSString *eventToken;
     NSString *currency;
     double revenue;
+    NSMutableArray *callbackParameters;
+    NSMutableArray *partnerParameters;
 
     FREGetObjectAsNativeString(argv[0], &eventToken);
     FREGetObjectAsNativeString(argv[1], &currency);
     FREGetObjectAsDouble(argv[2], &revenue);
+    FREGetObjectAsNativeArray(argv[3], &callbackParameters);
+    FREGetObjectAsNativeArray(argv[4], &partnerParameters);
 
     if (eventToken != nil) {
         ADJEvent *adjustEvent = [ADJEvent eventWithEventToken:eventToken];
 
         if (currency != nil) {
             [adjustEvent setRevenue:revenue currency:currency];
+        }
+
+        if (callbackParameters != nil) {
+            for (int i = 0; i < [callbackParameters count]; i += 2) {
+                NSString *key = [callbackParameters objectAtIndex:i];
+                NSString *value = [callbackParameters objectAtIndex:(i+1)];
+
+                [adjustEvent addCallbackParameter:key value:value];
+            }
+        }
+
+        if (partnerParameters != nil) {
+            for (int i = 0; i < [partnerParameters count]; i += 2) {
+                NSString *key = [partnerParameters objectAtIndex:i];
+                NSString *value = [partnerParameters objectAtIndex:(i+1)];
+
+                [adjustEvent addPartnerParameter:key value:value];
+            }
         }
 
         [Adjust trackEvent:adjustEvent];
@@ -106,18 +141,6 @@ FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 
     FREObject return_value;
     FRENewObjectFromBool((uint32_t)isEnabled, &return_value);
-    return return_value;
-}
-
-FREObject AIsetResponseDelegate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
-    AdjustFREContext = ctx;
-    AdjustFunctionInstance = [[AdjustFunction alloc] init];
-
-    // [Adjust setDelegate:AdjustFunctionInstance];
-
-    FREObject return_value;
-    FRENewObjectFromBool((uint32_t)AIisEnabled, &return_value);
     return return_value;
 }
 

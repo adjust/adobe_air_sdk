@@ -34,6 +34,37 @@ FREResult FREGetObjectAsNativeBool(FREObject obj, BOOL* nativeBool)
     return result;
 }
 
+FREResult FREGetObjectAsNativeArray(FREObject obj, NSArray** nativeArray)
+{
+    FREResult result;
+    FREObject array = obj;
+    uint32_t arrayLength;
+    NSMutableArray *mutableArray;
+
+    result = FREGetArrayLength(array, &arrayLength);
+    ASSERT_FRE_OK(result);
+
+    mutableArray = [[NSMutableArray alloc] initWithCapacity:arrayLength];
+
+    for (uint32_t i = 0; i < arrayLength; i++) {
+        FREObject element;
+
+        result = FREGetArrayElementAt(array, i, &element);
+        ASSERT_FRE_OK(result);
+
+        NSString *nativeElement;
+
+        result = FREGetObjectAsNativeString(element, &nativeElement);
+        ASSERT_FRE_OK(result);
+
+        [mutableArray addObject:nativeElement];
+    }
+
+    *nativeArray = (NSArray *)mutableArray;
+
+    return result;
+}
+
 FREResult FREGetObjectAsNativeDictionary(FREObject obj, NSDictionary** nativeDictionary)
 {
     FREResult result;

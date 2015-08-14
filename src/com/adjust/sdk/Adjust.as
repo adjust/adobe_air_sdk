@@ -87,6 +87,8 @@ public class Adjust extends EventDispatcher {
     }
 
     private static function extensionResponseDelegate(statusEvent: StatusEvent): void {
+        trace("Jbote trejsuj nesto!");
+
         if (statusEvent.code != "adjust_attributionData") {
             return;
         }

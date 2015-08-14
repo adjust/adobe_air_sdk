@@ -11,4 +11,5 @@
 
 FREResult FREGetObjectAsNativeString(FREObject obj, NSString** nativeString);
 FREResult FREGetObjectAsNativeBool(FREObject obj, BOOL* nativeBool);
+FREResult FREGetObjectAsNativeArray(FREObject obj, NSArray** nativeArray);
 FREResult FREGetObjectAsNativeDictionary(FREObject obj, NSDictionary** nativeBool);

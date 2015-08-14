@@ -40,7 +40,7 @@ public class Main extends Sprite {
     private static function startManuallyClick(Event:MouseEvent):void {
         var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
         adjustConfig.setLogLevel(LogLevel.VERBOSE);
-        // adjustConfig.setAttributionCallbackDelegate(AttributionCallbackDelegate);
+        adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
 
         Adjust.start(adjustConfig);
     }
@@ -82,7 +82,7 @@ public class Main extends Sprite {
         }
     }
 
-    private static function AttributionCallbackDelegate(attribution:AdjustAttribution):void {
+    private static function attributionCallbackDelegate(attribution:AdjustAttribution):void {
         trace("Attribution changed!");
         trace("Tracker token = " + attribution.getTrackerToken());
         trace("Tracker name = " + attribution.getTrackerName());
@@ -91,13 +91,6 @@ public class Main extends Sprite {
         trace("Creative = " + attribution.getCreative());
         trace("Adgroup = " + attribution.getAdGroup());
         trace("Click label = " + attribution.getClickLabel());
-    }
-
-    private static function ResponseDelegate(responseData: Object):void {
-        trace("ResponseDelegate callback")
-        for (var key:String in responseData) {
-            trace(key + ": " + responseData[key]);
-        }
     }
 
     private function buildButton(number: int, text: String, clickFunction: Function): TextField {

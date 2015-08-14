@@ -1,4 +1,4 @@
-<extension xmlns="http://ns.adobe.com/air/extension/3.1">
+<extension xmlns="http://ns.adobe.com/air/extension/17.0">
     <id>com.adjust.sdk</id>
     <versionNumber>4.0.0</versionNumber>
     <platforms>
