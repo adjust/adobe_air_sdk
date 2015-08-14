@@ -1,17 +1,27 @@
 package com.adjust.sdk {
     public class AdjustEvent {
-        private var eventToken: String;
-        private var currency: String;
+        // For iOS & Android
         private var revenue: Number;
+
+        private var currency: String;
+        private var eventToken: String;
 
         private var partnerParameters: Array;
         private var callbackParameters: Array;
+
+        // iOS specific
+        private var receipt:String;
+        private var transactionId:String;
+
+        private var isReceiptSet:Boolean;
 
         public function AdjustEvent(eventToken:String) {
             this.eventToken = eventToken;
 
             this.partnerParameters = new Array();
             this.callbackParameters = new Array();
+
+            this.isReceiptSet = false;
 
             // Invalid revenue settings.
             this.revenue = -1;
@@ -33,7 +43,17 @@ package com.adjust.sdk {
             this.partnerParameters.push(value);
         }
 
-        // Getters.
+        public function setTransactionId(transactionId:String):void {
+            this.transactionId = transactionId;
+        }
+
+        public function setReceiptForTransactionId(receipt:String, transactionId:String) {
+            this.receipt = receipt;
+            this.transactionId = transactionId;
+            this.isReceiptSet = true;
+        }
+
+        // Getters
         public function getEventToken():String {
             return this.eventToken;
         }
@@ -52,6 +72,18 @@ package com.adjust.sdk {
 
         public function getPartnerParameters():Array {
             return this.partnerParameters;
+        }
+
+        public function getTransactionId():String {
+            return this.transactionId;
+        }
+
+        public function getReceipt():String {
+            return this.receipt;
+        }
+
+        public function getIsReceiptSet():Boolean {
+            return this.isReceiptSet;
         }
     }
 }

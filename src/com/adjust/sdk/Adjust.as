@@ -9,9 +9,9 @@ import flash.events.StatusEvent;
 import flash.external.ExtensionContext;
 
 public class Adjust extends EventDispatcher {
-    private static var errorMessage: String = "adjust: SDK not started. Start it manually using the 'start' method";
-    private static var extensionContext: ExtensionContext;
-    private static var attributionCallbackDelegate: Function;
+    private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
+    private static var extensionContext:ExtensionContext;
+    private static var attributionCallbackDelegate:Function;
     
     public static function start(adjustConfig:AdjustConfig):void {
         if (extensionContext) {
@@ -29,27 +29,35 @@ public class Adjust extends EventDispatcher {
         app.addEventListener(Event.ACTIVATE, onResume);
         app.addEventListener(Event.DEACTIVATE, onPause);
 
-        attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
-        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+        if (adjustConfig.getAttributionCallbackDelegate() != null) {
+            attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
+            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-        extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
-        adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled());
+            extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
+                    adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(), true,
+                    adjustConfig.getDefaultTracker(), adjustConfig.getMacMd5TrackingEnabled());
+        } else {
+            extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
+                    adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(), false,
+                    adjustConfig.getDefaultTracker(), adjustConfig.getMacMd5TrackingEnabled());
+        }
 
         // For now, call onResume after onCreate.
         extensionContext.call("onResume");
     }
 
-    public static function trackEvent(adjustEvent:AdjustEvent): void {
+    public static function trackEvent(adjustEvent:AdjustEvent):void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
         }
 
         extensionContext.call("trackEvent", adjustEvent.getEventToken(), adjustEvent.getCurrency(),
-        adjustEvent.getRevenue(), adjustEvent.getCallbackParameters(), adjustEvent.getPartnerParameters());
+        adjustEvent.getRevenue(), adjustEvent.getCallbackParameters(), adjustEvent.getPartnerParameters(),
+        adjustEvent.getTransactionId(), adjustEvent.getReceipt(), adjustEvent.getIsReceiptSet());
     }
 
-    public static function setEnabled(enabled: Boolean): void {
+    public static function setEnabled(enabled:Boolean):void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
@@ -58,7 +66,7 @@ public class Adjust extends EventDispatcher {
         extensionContext.call("setEnabled", enabled);
     }
 
-    public static function isEnabled(): Boolean {
+    public static function isEnabled():Boolean {
         if (!extensionContext) {
             trace(errorMessage);
             return false;
@@ -68,7 +76,7 @@ public class Adjust extends EventDispatcher {
         return isEnabled;
     }
 
-    public static function onResume(event:Event): void {
+    public static function onResume(event:Event):void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
@@ -77,7 +85,7 @@ public class Adjust extends EventDispatcher {
         extensionContext.call("onResume");
     }
 
-    public static function onPause(event:Event): void {
+    public static function onPause(event:Event):void {
         if (!extensionContext) {
             trace(errorMessage);
             return;
@@ -86,9 +94,7 @@ public class Adjust extends EventDispatcher {
         extensionContext.call("onPause");
     }
 
-    private static function extensionResponseDelegate(statusEvent: StatusEvent): void {
-        trace("Jbote trejsuj nesto!");
-
+    private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
         if (statusEvent.code != "adjust_attributionData") {
             return;
         }
