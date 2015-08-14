@@ -31,8 +31,6 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
                                    @"clickLabel", attribution.clickLabel];
     const char* cResponseData = [attributionString UTF8String];
 
-    NSLog(@"Sazdah enesstring = %@", attributionString);
-
     FREDispatchStatusEventAsync(AdjustFREContext,
                                 (const uint8_t *)"adjust_attributionData",
                                 (const uint8_t *)cResponseData);
@@ -42,33 +40,70 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 
 FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
-    NSString *appToken;
-    NSString *environment;
-    NSString *logLevel;
-    BOOL eventBufferingEnabled;
+    if (argc == 7) {
+        NSString *sdkPrefix = @"adobe_air4.0.0";
+        NSString *appToken;
+        NSString *environment;
+        NSString *logLevel;
+        NSString *defaultTracker;
 
-    AdjustFREContext = ctx;
+        BOOL eventBufferingEnabled;
+        BOOL macMd5TrackingEnabled;
+        BOOL isAttributionCallbackSet;
 
-    FREGetObjectAsNativeString(argv[0], &appToken);
-    FREGetObjectAsNativeString(argv[1], &environment);
-    FREGetObjectAsNativeString(argv[2], &logLevel);
+        AdjustFREContext = ctx;
 
-    ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
-    [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:logLevel]];
+        FREGetObjectAsNativeString(argv[0], &appToken);
+        FREGetObjectAsNativeString(argv[1], &environment);
 
-    if (argv[3] != nil) {
-        FREGetObjectAsNativeBool(argv[3], &eventBufferingEnabled);
-        [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
+        if (appToken != nil && environment != nil) {
+            ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
+
+            [adjustConfig setSdkPrefix:sdkPrefix];
+
+            if (argv[2] != nil) {
+                FREGetObjectAsNativeString(argv[2], &logLevel);
+
+                if (logLevel != nil) {
+                    [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:logLevel]];
+                }
+            }
+
+            if (argv[3] != nil) {
+                FREGetObjectAsNativeBool(argv[3], &eventBufferingEnabled);
+                [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
+            }
+
+            if (argv[4] != nil) {
+                FREGetObjectAsNativeBool(argv[4], &isAttributionCallbackSet);
+
+                if (isAttributionCallbackSet) {
+                    if (adjustFunctionInstance == nil) {
+                        adjustFunctionInstance = [[AdjustFunction alloc] init];
+                    }
+
+                    [adjustConfig setDelegate:(id)adjustFunctionInstance];
+                }
+            }
+
+            if (argv[5] != nil) {
+                FREGetObjectAsNativeString(argv[5], &defaultTracker);
+
+                if (defaultTracker != nil) {
+                    [adjustConfig setDefaultTracker:defaultTracker];
+                }
+            }
+
+            if (argv[6] != nil) {
+                FREGetObjectAsNativeBool(argv[6], &macMd5TrackingEnabled);
+                [adjustConfig setMacMd5TrackingEnabled:macMd5TrackingEnabled];
+            }
+
+            [Adjust appDidLaunch:adjustConfig];
+        }
+    } else {
+        NSLog(@"Adjust: Bridge onCreate method triggered with wrong number of arguments");
     }
-
-    [adjustConfig setSdkPrefix:@"adobe_air4.0.0"];
-
-    if (adjustFunctionInstance == nil) {
-        adjustFunctionInstance = [[AdjustFunction alloc] init];
-    }
-    [adjustConfig setDelegate:(id)adjustFunctionInstance];
-
-    [Adjust appDidLaunch:adjustConfig];
 
     FREObject return_value;
     FRENewObjectFromBool(true, &return_value);
@@ -77,44 +112,65 @@ FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 
 FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
-    NSString *eventToken;
-    NSString *currency;
-    double revenue;
-    NSMutableArray *callbackParameters;
-    NSMutableArray *partnerParameters;
+    if (argc == 8) {
+        double revenue;
 
-    FREGetObjectAsNativeString(argv[0], &eventToken);
-    FREGetObjectAsNativeString(argv[1], &currency);
-    FREGetObjectAsDouble(argv[2], &revenue);
-    FREGetObjectAsNativeArray(argv[3], &callbackParameters);
-    FREGetObjectAsNativeArray(argv[4], &partnerParameters);
+        BOOL isReceiptSet;
 
-    if (eventToken != nil) {
-        ADJEvent *adjustEvent = [ADJEvent eventWithEventToken:eventToken];
+        NSString *eventToken;
+        NSString *currency;
+        NSString *receipt;
+        NSString *transactionId;
 
-        if (currency != nil) {
-            [adjustEvent setRevenue:revenue currency:currency];
-        }
+        NSMutableArray *callbackParameters;
+        NSMutableArray *partnerParameters;
 
-        if (callbackParameters != nil) {
-            for (int i = 0; i < [callbackParameters count]; i += 2) {
-                NSString *key = [callbackParameters objectAtIndex:i];
-                NSString *value = [callbackParameters objectAtIndex:(i+1)];
+        FREGetObjectAsNativeString(argv[0], &eventToken);
+        FREGetObjectAsNativeString(argv[1], &currency);
+        FREGetObjectAsDouble(argv[2], &revenue);
+        FREGetObjectAsNativeArray(argv[3], &callbackParameters);
+        FREGetObjectAsNativeArray(argv[4], &partnerParameters);
+        FREGetObjectAsNativeString(argv[5], &transactionId);
+        FREGetObjectAsNativeString(argv[6], &receipt);
+        FREGetObjectAsNativeBool(argv[7], &isReceiptSet);
 
-                [adjustEvent addCallbackParameter:key value:value];
+        if (eventToken != nil) {
+            ADJEvent *adjustEvent = [ADJEvent eventWithEventToken:eventToken];
+
+            if (currency != nil) {
+                [adjustEvent setRevenue:revenue currency:currency];
             }
-        }
 
-        if (partnerParameters != nil) {
-            for (int i = 0; i < [partnerParameters count]; i += 2) {
-                NSString *key = [partnerParameters objectAtIndex:i];
-                NSString *value = [partnerParameters objectAtIndex:(i+1)];
+            if (callbackParameters != nil) {
+                for (int i = 0; i < [callbackParameters count]; i += 2) {
+                    NSString *key = [callbackParameters objectAtIndex:i];
+                    NSString *value = [callbackParameters objectAtIndex:(i+1)];
 
-                [adjustEvent addPartnerParameter:key value:value];
+                    [adjustEvent addCallbackParameter:key value:value];
+                }
             }
-        }
 
-        [Adjust trackEvent:adjustEvent];
+            if (partnerParameters != nil) {
+                for (int i = 0; i < [partnerParameters count]; i += 2) {
+                    NSString *key = [partnerParameters objectAtIndex:i];
+                    NSString *value = [partnerParameters objectAtIndex:(i+1)];
+
+                    [adjustEvent addPartnerParameter:key value:value];
+                }
+            }
+
+            if (isReceiptSet) {
+                [adjustEvent setReceipt:[receipt dataUsingEncoding:NSUTF8StringEncoding] transactionId:transactionId];
+            } else {
+                if (transactionId != nil) {
+                    [adjustEvent setTransactionId:transactionId];
+                }
+            }
+
+            [Adjust trackEvent:adjustEvent];
+        }
+    } else {
+        NSLog(@"Adjust: Bridge trackEvent method triggered with wrong number of arguments");
     }
 
     FREObject return_value;
@@ -124,11 +180,15 @@ FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject 
 
 FREObject AIsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
-    BOOL enable;
+    if (argc == 1) {
+        BOOL enable;
 
-    FREGetObjectAsNativeBool(argv[0], &enable);
+        FREGetObjectAsNativeBool(argv[0], &enable);
 
-    [Adjust setEnabled:enable];
+        [Adjust setEnabled:enable];
+    } else {
+        NSLog(@"Adjust: Bridge setEnabled method triggered with wrong number of arguments");
+    }
 
     FREObject return_value;
     FRENewObjectFromBool(true, &return_value);
@@ -137,11 +197,19 @@ FREObject AIsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject 
 
 FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
-    BOOL isEnabled = [Adjust isEnabled];
+    if (argc == 0) {
+        BOOL isEnabled = [Adjust isEnabled];
 
-    FREObject return_value;
-    FRENewObjectFromBool((uint32_t)isEnabled, &return_value);
-    return return_value;
+        FREObject return_value;
+        FRENewObjectFromBool((uint32_t)isEnabled, &return_value);
+        return return_value;
+    } else {
+        NSLog(@"Adjust: Bridge isEnabled method triggered with wrong number of arguments");
+
+        FREObject return_value;
+        FRENewObjectFromBool(false, &return_value);
+        return return_value;
+    }
 }
 
 FREObject AIonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
