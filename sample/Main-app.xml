@@ -175,21 +175,21 @@
     <!--</fileTypes>-->
 
     <!-- iOS specific capabilities -->
-    <!--<iPhone>-->
-    <!-- A list of plist key/value pairs to be added to the application Info.plist -->
-    <!--<InfoAdditions><![CDATA[-->
-    <!--<key>CFBundleURLTypes</key>-->
-    <!--<array>-->
-        <!--<dict>-->
-          <!--<key>CFBundleURLName</key>-->
-          <!--<string>com.adjust.example</string>-->
-          <!--<key>CFBundleURLSchemes</key>-->
-          <!--<array>-->
-            <!--<string>adjustExample</string>-->
-          <!--</array>-->
-        <!--</dict>-->
-    <!--</array>-->
-    <!--]]></InfoAdditions>-->
+    <iPhone>
+     <!--A list of plist key/value pairs to be added to the application Info.plist -->
+    <InfoAdditions><![CDATA[
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+          <key>CFBundleURLName</key>
+          <string>com.adjust.example</string>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <string>adjustExample</string>
+          </array>
+        </dict>
+    </array>
+    ]]></InfoAdditions>
 
     <!-- A list of plist key/value pairs to be added to the application Entitlements.plist -->
     <!--<Entitlements>
@@ -209,7 +209,7 @@
     <!-- File containing line separated list of external swf paths. These swfs won't be packaged inside the application
     and corresponding stripped swfs will be output in externalStrippedSwfs folder. -->
     <!--<externalSwfs></externalSwfs> -->
-    <!--</iPhone>-->
+    </iPhone>
 
     <!-- Android specific tags that get passed to AndroidManifest.xml file. -->
     <android>
