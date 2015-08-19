@@ -38,10 +38,10 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 
 @end
 
-FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     if (argc == 7) {
-        NSString *sdkPrefix = @"adobe_air4.0.0";
+        // NSString *sdkPrefix = @"adobe_air4.0.0";
         NSString *appToken;
         NSString *environment;
         NSString *logLevel;
@@ -59,7 +59,7 @@ FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
         if (appToken != nil && environment != nil) {
             ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
 
-            [adjustConfig setSdkPrefix:sdkPrefix];
+            [adjustConfig setSdkPrefix:@"adobe_air4.0.0"];
 
             if (argv[2] != nil) {
                 FREGetObjectAsNativeString(argv[2], &logLevel);
@@ -110,7 +110,7 @@ FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
     return return_value;
 }
 
-FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     if (argc == 8) {
         double revenue;
@@ -178,7 +178,7 @@ FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject 
     return return_value;
 }
 
-FREObject AIsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     if (argc == 1) {
         BOOL enable;
@@ -195,7 +195,7 @@ FREObject AIsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject 
     return return_value;
 }
 
-FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     if (argc == 0) {
         BOOL isEnabled = [Adjust isEnabled];
@@ -212,16 +212,16 @@ FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject a
     }
 }
 
-FREObject AIonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     FREObject return_value;
-    FRENewObjectFromBool((uint32_t)AIisEnabled, &return_value);
+    FRENewObjectFromBool((uint32_t)ADJisEnabled, &return_value);
     return return_value;
 }
 
-FREObject AIonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     FREObject return_value;
-    FRENewObjectFromBool((uint32_t)AIisEnabled, &return_value);
+    FRENewObjectFromBool((uint32_t)ADJisEnabled, &return_value);
     return return_value;
 }

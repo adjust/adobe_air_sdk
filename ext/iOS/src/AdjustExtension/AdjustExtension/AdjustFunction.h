@@ -15,9 +15,9 @@
 
 @end
 
-FREObject AIonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AItrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AIsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AIisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AIonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject AIonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

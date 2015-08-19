@@ -21,15 +21,15 @@ void AdjustFREContextInitializer(void* extData,
                                  uint32_t* numFunctionsToSet,
                                  const FRENamedFunction** functionsToSet)
 {
-    *numFunctionsToSet = 8;
+    *numFunctionsToSet = 6;
 
     FRENamedFunction* func = (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * 6);
-    setNamedFunction(&func[0], (const uint8_t*)"onCreate", &AIonCreate);
-    setNamedFunction(&func[1], (const uint8_t*)"trackEvent", &AItrackEvent);
-    setNamedFunction(&func[2], (const uint8_t*)"setEnabled", &AIsetEnabled);
-    setNamedFunction(&func[3], (const uint8_t*)"isEnabled", &AIisEnabled);
-    setNamedFunction(&func[4], (const uint8_t*)"onResume", &AIonResume);
-    setNamedFunction(&func[5], (const uint8_t*)"onPause", &AIonPause);
+    setNamedFunction(&func[0], (const uint8_t*)"onCreate", &ADJonCreate);
+    setNamedFunction(&func[1], (const uint8_t*)"trackEvent", &ADJtrackEvent);
+    setNamedFunction(&func[2], (const uint8_t*)"setEnabled", &ADJsetEnabled);
+    setNamedFunction(&func[3], (const uint8_t*)"isEnabled", &ADJisEnabled);
+    setNamedFunction(&func[4], (const uint8_t*)"onResume", &ADJonResume);
+    setNamedFunction(&func[5], (const uint8_t*)"onPause", &ADJonPause);
 
     *functionsToSet = func;
 }

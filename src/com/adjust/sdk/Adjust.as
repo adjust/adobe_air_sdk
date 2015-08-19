@@ -3,8 +3,10 @@
  */
 package com.adjust.sdk {
 import flash.desktop.NativeApplication;
+import flash.events.BrowserInvokeEvent;
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.events.InvokeEvent;
 import flash.events.StatusEvent;
 import flash.external.ExtensionContext;
 
@@ -18,7 +20,11 @@ public class Adjust extends EventDispatcher {
             trace("adjust warning: SDK already started");
         }
 
-        extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
+        try {
+            extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
+        } catch (exception) {
+            trace(exception.toString());
+        }
 
         if (!extensionContext) {
             trace("adjust error: cannot open ANE 'com.adjust.sdk' for this platform");
@@ -28,6 +34,8 @@ public class Adjust extends EventDispatcher {
         var app:NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, onResume);
         app.addEventListener(Event.DEACTIVATE, onPause);
+        // app.addEventListener(InvokeEvent.INVOKE, onInvoke);
+        // app.addEventListener(BrowserInvokeEvent.BROWSER_INVOKE, onBrowserInvoke);
 
         if (adjustConfig.getAttributionCallbackDelegate() != null) {
             attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
@@ -138,6 +146,21 @@ public class Adjust extends EventDispatcher {
         }
 
         return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel);
+    }
+
+    private static function onInvoke(event:InvokeEvent):void {
+        trace("Invoke 1");
+        trace(event.arguments.length);
+        trace("Number of arguments = " + event.arguments.length);
+
+        for (var i:int = 0; i < event.arguments.length; i++) {
+            var argument:String = event.arguments[i];
+            trace(argument);
+        }
+    }
+
+    private static function onBrowserInvoke(event:InvokeEvent):void {
+        trace("Invoke 2");
     }
 }
 }
