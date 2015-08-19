@@ -225,3 +225,26 @@ FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
     FRENewObjectFromBool((uint32_t)ADJisEnabled, &return_value);
     return return_value;
 }
+
+FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+{
+    if (argc == 1) {
+        NSString *pUrl;
+
+        FREGetObjectAsNativeString(argv[0], &pUrl);
+
+        NSURL *url = [NSURL URLWithString:pUrl];
+
+        [Adjust appWillOpenUrl:url];
+
+        FREObject return_value;
+        FRENewObjectFromBool(true, &return_value);
+        return return_value;
+    } else {
+        NSLog(@"Adjust: Bridge appWillOpenUrl method triggered with wrong number of arguments");
+
+        FREObject return_value;
+        FRENewObjectFromBool(false, &return_value);
+        return return_value;
+    }
+}

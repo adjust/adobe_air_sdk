@@ -21,3 +21,4 @@ FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject
 FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
