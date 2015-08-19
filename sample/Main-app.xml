@@ -185,7 +185,7 @@
           <string>com.adjust.example</string>
           <key>CFBundleURLSchemes</key>
           <array>
-            <string>adjustExample</string>
+            <string>adjustExampleAIR</string>
           </array>
         </dict>
     </array>
