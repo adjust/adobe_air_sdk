@@ -34,8 +34,6 @@ public class Adjust extends EventDispatcher {
         var app:NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, onResume);
         app.addEventListener(Event.DEACTIVATE, onPause);
-        app.addEventListener(InvokeEvent.INVOKE, onInvoke);
-        app.addEventListener(BrowserInvokeEvent.BROWSER_INVOKE, onBrowserInvoke);
 
         if (adjustConfig.getAttributionCallbackDelegate() != null) {
             attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
@@ -157,19 +155,23 @@ public class Adjust extends EventDispatcher {
         return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel);
     }
 
+    // This is how deep linking should be implemented in user's app.
+    // Method which responds to InvokeEvent.INVOKE event should process it like in onInvoke method.
+    // Of course, user needs to subscribe it's NativeApplication object (app) to this event like this:
+    // app.addEventListener(InvokeEvent.INVOKE, onInvoke);
+    /*
     private static function onInvoke(event:InvokeEvent):void {
         for (var i:int = 0; i < event.arguments.length; i++) {
             var argument:String = event.arguments[i];
             trace(argument);
 
-            extensionContext.call("appWillOpenUrl", argument);
+            // User needs to call this method from outside like this:
+            // Adjust.appWillOpenUrl(argument);
+            appWillOpenUrl(argument);
 
             break;
         }
     }
-
-    private static function onBrowserInvoke(event:InvokeEvent):void {
-        
-    }
+     */
 }
 }
