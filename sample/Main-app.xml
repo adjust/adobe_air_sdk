@@ -43,6 +43,8 @@
     <!-- Identifies the ActionScript extensions used by an application. -->
     <extensions>
         <extensionID>com.adjust.sdk</extensionID>
+        <!-- Uncomment this if you want to use Google Play Services ANE provided by adjust -->
+        <!--<extensionID>com.adjust.gps</extensionID>-->
     </extensions>
 
     <!-- Settings for the application's initial window. Required. -->
