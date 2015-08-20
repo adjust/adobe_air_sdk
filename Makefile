@@ -8,7 +8,7 @@ COMPC_CLASSES = $(COMPC_ADJUST) \
 				com.adjust.sdk.AdjustConfig \
 				com.adjust.sdk.AdjustEvent \
 				com.adjust.sdk.AdjustAttribution
-COMPC_OPTS = -swf-version 13 \
+COMPC_OPTS = -swf-version 24 \
 			 -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
              -include-classes $(COMPC_CLASSES)
 

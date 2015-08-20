@@ -1,7 +1,7 @@
-<platform xmlns="http://ns.adobe.com/air/extension/17.0">
+<platform xmlns="http://ns.adobe.com/air/extension/13.0">
     <sdkVersion>7.0</sdkVersion>
     <linkerOptions>
-        <option>-ios_version_min 7.0</option>
+        <option>-ios_version_min 5.0</option>
         <option>-framework AdSupport</option>
         <option>-framework iAd</option>
         <option>-liconv</option>
