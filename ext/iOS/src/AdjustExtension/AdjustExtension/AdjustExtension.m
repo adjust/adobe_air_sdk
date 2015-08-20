@@ -21,9 +21,11 @@ void AdjustFREContextInitializer(void* extData,
                                  uint32_t* numFunctionsToSet,
                                  const FRENamedFunction** functionsToSet)
 {
-    *numFunctionsToSet = 7;
+    uint32_t numberOfFunctions = 10;
 
-    FRENamedFunction* func = (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * 7);
+    *numFunctionsToSet = numberOfFunctions;
+
+    FRENamedFunction* func = (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * numberOfFunctions);
     setNamedFunction(&func[0], (const uint8_t*)"onCreate", &ADJonCreate);
     setNamedFunction(&func[1], (const uint8_t*)"trackEvent", &ADJtrackEvent);
     setNamedFunction(&func[2], (const uint8_t*)"setEnabled", &ADJsetEnabled);
@@ -31,6 +33,10 @@ void AdjustFREContextInitializer(void* extData,
     setNamedFunction(&func[4], (const uint8_t*)"onResume", &ADJonResume);
     setNamedFunction(&func[5], (const uint8_t*)"onPause", &ADJonPause);
     setNamedFunction(&func[6], (const uint8_t*)"appWillOpenUrl", &ADJappWillOpenUrl);
+    setNamedFunction(&func[7], (const uint8_t*)"setOfflineMode", &ADJsetOfflineMode);
+    setNamedFunction(&func[8], (const uint8_t*)"setDeviceToken", &ADJsetDeviceToken);
+
+    setNamedFunction(&func[9], (const uint8_t*)"setReferrer", &ADJsetReferrer);
 
     *functionsToSet = func;
 }

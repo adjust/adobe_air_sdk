@@ -9,7 +9,7 @@
 #import "AdjustFunction.h"
 #import "AdjustFREUtils.h"
 
-FREContext AdjustFREContext;
+FREContext adjustFREContext;
 
 @implementation AdjustFunction
 
@@ -31,7 +31,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
                                    @"clickLabel", attribution.clickLabel];
     const char* cResponseData = [attributionString UTF8String];
 
-    FREDispatchStatusEventAsync(AdjustFREContext,
+    FREDispatchStatusEventAsync(adjustFREContext,
                                 (const uint8_t *)"adjust_attributionData",
                                 (const uint8_t *)cResponseData);
 }
@@ -40,26 +40,24 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
-    if (argc == 7) {
-        // NSString *sdkPrefix = @"adobe_air4.0.0";
+    if (argc == 8) {
         NSString *appToken;
         NSString *environment;
         NSString *logLevel;
         NSString *defaultTracker;
+        NSString *sdkPrefix;
 
         BOOL eventBufferingEnabled;
         BOOL macMd5TrackingEnabled;
         BOOL isAttributionCallbackSet;
 
-        AdjustFREContext = ctx;
+        adjustFREContext = ctx;
 
         FREGetObjectAsNativeString(argv[0], &appToken);
         FREGetObjectAsNativeString(argv[1], &environment);
 
         if (appToken != nil && environment != nil) {
             ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
-
-            [adjustConfig setSdkPrefix:@"adobe_air4.0.0"];
 
             if (argv[2] != nil) {
                 FREGetObjectAsNativeString(argv[2], &logLevel);
@@ -97,6 +95,11 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             if (argv[6] != nil) {
                 FREGetObjectAsNativeBool(argv[6], &macMd5TrackingEnabled);
                 [adjustConfig setMacMd5TrackingEnabled:macMd5TrackingEnabled];
+            }
+
+            if (argv[7] != nil) {
+                FREGetObjectAsNativeString(argv[7], &sdkPrefix);
+                [adjustConfig setSdkPrefix:sdkPrefix];
             }
 
             [Adjust appDidLaunch:adjustConfig];
@@ -236,15 +239,54 @@ FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREOb
         NSURL *url = [NSURL URLWithString:pUrl];
 
         [Adjust appWillOpenUrl:url];
-
-        FREObject return_value;
-        FRENewObjectFromBool(true, &return_value);
-        return return_value;
     } else {
         NSLog(@"Adjust: Bridge appWillOpenUrl method triggered with wrong number of arguments");
-
-        FREObject return_value;
-        FRENewObjectFromBool(false, &return_value);
-        return return_value;
     }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+    return return_value;
+}
+
+FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+{
+    if (argc == 1) {
+        BOOL isOffline;
+
+        FREGetObjectAsNativeBool(argv[0], &isOffline);
+
+        [Adjust setOfflineMode:isOffline];
+    } else {
+        NSLog(@"Adjust: Bridge setOfflineMode method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+    return return_value;
+}
+
+FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+{
+    if (argc == 1) {
+        NSString *pDeviceToken;
+
+        FREGetObjectAsNativeString(argv[0], &pDeviceToken);
+
+        NSData *deviceToken = [pDeviceToken dataUsingEncoding:NSUTF8StringEncoding];
+
+        [Adjust setDeviceToken:deviceToken];
+    } else {
+        NSLog(@"Adjust: Bridge setDeviceToken method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+    return return_value;
+}
+
+FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
+{
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+    return return_value;
 }
