@@ -3,7 +3,6 @@
  */
 package com.adjust.sdk {
 import flash.desktop.NativeApplication;
-import flash.events.BrowserInvokeEvent;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.InvokeEvent;
@@ -24,6 +23,7 @@ public class Adjust extends EventDispatcher {
             extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
         } catch (exception) {
             trace(exception.toString());
+            return;
         }
 
         if (!extensionContext) {
@@ -34,19 +34,15 @@ public class Adjust extends EventDispatcher {
         var app:NativeApplication = NativeApplication.nativeApplication;
         app.addEventListener(Event.ACTIVATE, onResume);
         app.addEventListener(Event.DEACTIVATE, onPause);
+        app.addEventListener(InvokeEvent.INVOKE, onInvoke);
 
-        if (adjustConfig.getAttributionCallbackDelegate() != null) {
-            attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+        attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
+        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-            extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
-                    adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(), true,
-                    adjustConfig.getDefaultTracker(), adjustConfig.getMacMd5TrackingEnabled());
-        } else {
-            extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
-                    adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(), false,
-                    adjustConfig.getDefaultTracker(), adjustConfig.getMacMd5TrackingEnabled());
-        }
+        extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
+                adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(),
+                adjustConfig.getAttributionCallbackDelegate() != null, adjustConfig.getDefaultTracker(),
+                adjustConfig.getMacMd5TrackingEnabled());
 
         // For now, call onResume after onCreate.
         extensionContext.call("onResume");
@@ -155,23 +151,14 @@ public class Adjust extends EventDispatcher {
         return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel);
     }
 
-    // This is how deep linking should be implemented in user's app.
-    // Method which responds to InvokeEvent.INVOKE event should process it like in onInvoke method.
-    // Of course, user needs to subscribe it's NativeApplication object (app) to this event like this:
-    // app.addEventListener(InvokeEvent.INVOKE, onInvoke);
-    /*
     private static function onInvoke(event:InvokeEvent):void {
         for (var i:int = 0; i < event.arguments.length; i++) {
             var argument:String = event.arguments[i];
-            trace(argument);
 
-            // User needs to call this method from outside like this:
-            // Adjust.appWillOpenUrl(argument);
             appWillOpenUrl(argument);
 
             break;
         }
     }
-     */
 }
 }
