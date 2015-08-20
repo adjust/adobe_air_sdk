@@ -10,6 +10,7 @@ import flash.events.StatusEvent;
 import flash.external.ExtensionContext;
 
 public class Adjust extends EventDispatcher {
+    private static var sdkPrefix:String = "adobe_air4.0.0";
     private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
     private static var extensionContext:ExtensionContext;
     private static var attributionCallbackDelegate:Function;
@@ -42,7 +43,7 @@ public class Adjust extends EventDispatcher {
         extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
                 adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(),
                 adjustConfig.getAttributionCallbackDelegate() != null, adjustConfig.getDefaultTracker(),
-                adjustConfig.getMacMd5TrackingEnabled());
+                adjustConfig.getMacMd5TrackingEnabled(), sdkPrefix);
 
         // For now, call onResume after onCreate.
         extensionContext.call("onResume");
@@ -103,6 +104,33 @@ public class Adjust extends EventDispatcher {
         }
 
         extensionContext.call("appWillOpenUrl", url);
+    }
+
+    public static function setOfflineMode(isOffline:Boolean):void {
+        if (!extensionContext) {
+            trace(errorMessage);
+            return;
+        }
+
+        extensionContext.call("setOfflineMode", isOffline);
+    }
+
+    public static function setReferrer(referrer:String):void {
+        if (!extensionContext) {
+            trace(errorMessage);
+            return;
+        }
+
+        extensionContext.call("setReferrer", referrer);
+    }
+
+    public static function setDeviceToken(deviceToken:String):void {
+        if (!extensionContext) {
+            trace(errorMessage);
+            return;
+        }
+
+        extensionContext.call("setDeviceToken", deviceToken);
     }
 
     private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
