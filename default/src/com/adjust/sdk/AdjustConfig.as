@@ -1,11 +1,15 @@
 package com.adjust.sdk {
     public class AdjustConfig {
+        // For iOS & Android
         private var appToken:String;
         private var environment:String;
         private var logLevel:String;
         private var attributionCallbackDelegate: Function;
-
         private var eventBufferingEnabled:Boolean;
+        private var defaultTracker:String;
+
+        // iOS specific
+        private var macMd5TrackingEnabled:Boolean;
 
         public function AdjustConfig(appToken:String, environment:String) {
             this.appToken = appToken;
@@ -20,11 +24,19 @@ package com.adjust.sdk {
             this.eventBufferingEnabled = eventBufferingEnabled;
         }
 
-        public function setAttributionCallbackDelegate(attributionCallback: Function): void {
+        public function setAttributionCallbackDelegate(attributionCallback:Function):void {
             this.attributionCallbackDelegate = attributionCallback;
         }
 
-        // Getters.
+        public function setDefaultTracker(defaultTracker:String):void {
+            this.defaultTracker = defaultTracker;
+        }
+
+        public function setMacMd5TrackingEnabled(macMd5TrackingEnabled:Boolean):void {
+            this.macMd5TrackingEnabled = macMd5TrackingEnabled;
+        }
+
+        // Getters
         public function getAppToken():String {
             return this.appToken;
         }
@@ -43,6 +55,14 @@ package com.adjust.sdk {
 
         public function getAttributionCallbackDelegate():Function {
             return this.attributionCallbackDelegate;
+        }
+
+        public function getDefaultTracker():String {
+            return this.defaultTracker;
+        }
+
+        public function getMacMd5TrackingEnabled():Boolean {
+            return this.macMd5TrackingEnabled;
         }
     }
 }
