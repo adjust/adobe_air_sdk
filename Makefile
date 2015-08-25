@@ -20,11 +20,11 @@ EXTDIR = ./ext
 EXTS = $(patsubst $(EXTDIR)/%,%,$(wildcard $(EXTDIR)/*))
 
 all: emulator $(EXTS) swc
-	unzip -d $(BUILDDIR)/android -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
-	unzip -d $(BUILDDIR)/ios -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
-	cp -af $(SOURCEDIR)/platformoptions.xml $(BUILDDIR)/ios
+	unzip -d $(BUILDDIR)/Android -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
+	unzip -d $(BUILDDIR)/iOS -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
+	cp -af $(SOURCEDIR)/platformoptions.xml $(BUILDDIR)/iOS
 	cp -af $(SOURCEDIR)/extension.xml $(BUILDDIR)/extension.xml
-	cd $(BUILDDIR); $(ADT) -package -target ane ../Adjust-$(VERSION).ane extension.xml -swc Adjust.swc -platform Android-ARM -C android . -platform iPhone-ARM -C ios . -platformoptions ios/platformoptions.xml -platform default -C default .
+	cd $(BUILDDIR); $(ADT) -package -target ane ../Adjust-$(VERSION).ane extension.xml -swc Adjust.swc -platform Android-ARM -C Android . -platform iPhone-ARM -C iOS . -platformoptions iOS/platformoptions.xml -platform default -C default .
 
 swc:
 	mkdir -p $(BUILDDIR)
@@ -41,5 +41,5 @@ emulator:
 
 clean:
 	cd ext/Android; make clean
-	cd ext/ios; make clean
+	cd ext/iOS; make clean
 	rm -rf *.ane $(BUILDDIR)
