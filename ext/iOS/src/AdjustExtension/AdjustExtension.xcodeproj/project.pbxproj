@@ -18,7 +18,7 @@
 		96E1BBE819938730004E270B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE719938730004E270B /* UIKit.framework */; };
 		96E1BBF119938730004E270B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96E1BBEF19938730004E270B /* InfoPlist.strings */; };
 		96E1BBF319938730004E270B /* AdjustExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBF219938730004E270B /* AdjustExtensionTests.m */; };
-		9DCBBDD31B8CA123006DF348 /* libAdjust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBBDD21B8CA123006DF348 /* libAdjust.a */; };
+		9DCBBDD71B8CA7BE006DF348 /* Adjust.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,12 +61,7 @@
 		96E1BBF019938730004E270B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		96E1BBF219938730004E270B /* AdjustExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdjustExtensionTests.m; sourceTree = "<group>"; };
 		96E1BBFC1993897B004E270B /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashRuntimeExtensions.h; sourceTree = "<group>"; };
-		9DCBBDCD1B8CA123006DF348 /* ADJAttribution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJAttribution.h; path = include/Adjust/ADJAttribution.h; sourceTree = SOURCE_ROOT; };
-		9DCBBDCE1B8CA123006DF348 /* ADJConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJConfig.h; path = include/Adjust/ADJConfig.h; sourceTree = SOURCE_ROOT; };
-		9DCBBDCF1B8CA123006DF348 /* ADJEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEvent.h; path = include/Adjust/ADJEvent.h; sourceTree = SOURCE_ROOT; };
-		9DCBBDD01B8CA123006DF348 /* ADJLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJLogger.h; path = include/Adjust/ADJLogger.h; sourceTree = SOURCE_ROOT; };
-		9DCBBDD11B8CA123006DF348 /* Adjust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Adjust.h; path = include/Adjust/Adjust.h; sourceTree = SOURCE_ROOT; };
-		9DCBBDD21B8CA123006DF348 /* libAdjust.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAdjust.a; path = include/Adjust/libAdjust.a; sourceTree = SOURCE_ROOT; };
+		9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Adjust.framework; path = include/Adjust/Adjust.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DCBBDD31B8CA123006DF348 /* libAdjust.a in Frameworks */,
+				9DCBBDD71B8CA7BE006DF348 /* Adjust.framework in Frameworks */,
 				96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */,
 				96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */,
 				96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */,
@@ -116,6 +111,7 @@
 		96E1BBD51993872F004E270B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */,
 				96332CC11A8B982600D38FAF /* iAd.framework */,
 				96332CBF1A8B982000D38FAF /* AdSupport.framework */,
 				96E1BBD61993872F004E270B /* Foundation.framework */,
@@ -128,7 +124,6 @@
 		96E1BBD81993872F004E270B /* AdjustExtension */ = {
 			isa = PBXGroup;
 			children = (
-				9DE3B1521B7DE4C4006EC0A9 /* Adjust */,
 				96E1BBDD1993872F004E270B /* AdjustExtension.m */,
 				96E1BBD91993872F004E270B /* Supporting Files */,
 				96471C211993B3F1000CD897 /* AdjustFREUtils.h */,
@@ -164,19 +159,6 @@
 				96E1BBEF19938730004E270B /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		9DE3B1521B7DE4C4006EC0A9 /* Adjust */ = {
-			isa = PBXGroup;
-			children = (
-				9DCBBDCD1B8CA123006DF348 /* ADJAttribution.h */,
-				9DCBBDCE1B8CA123006DF348 /* ADJConfig.h */,
-				9DCBBDCF1B8CA123006DF348 /* ADJEvent.h */,
-				9DCBBDD01B8CA123006DF348 /* ADJLogger.h */,
-				9DCBBDD11B8CA123006DF348 /* Adjust.h */,
-				9DCBBDD21B8CA123006DF348 /* libAdjust.a */,
-			);
-			name = Adjust;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

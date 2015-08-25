@@ -33,7 +33,9 @@ public class Main extends Sprite {
     }
 
     private static function startManuallyClick(Event:MouseEvent):void {
-        var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", Environment.SANDBOX);
+        trace ("Start button tapped!");
+
+        var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
         adjustConfig.setLogLevel(LogLevel.VERBOSE);
         adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
 
@@ -41,12 +43,16 @@ public class Main extends Sprite {
     }
 
     private static function TrackEventClick(Event:MouseEvent):void {
+        trace ("Track simple event button tapped!");
+
         var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
 
         Adjust.trackEvent(adjustEvent);
     }
 
     private static function TrackRevenueClick(Event:MouseEvent):void {
+        trace ("Track revenue event button tapped!");
+
         var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
         adjustEvent.setRevenue(0.01, "EUR");
 
@@ -54,6 +60,8 @@ public class Main extends Sprite {
     }
 
     private static function TrackCallbackClick(Event:MouseEvent):void {
+        trace ("Track callback event button tapped!");
+
         var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
         adjustEvent.addCallbackParameter("foo", "bar");
         adjustEvent.addCallbackParameter("a", "b");
@@ -63,6 +71,8 @@ public class Main extends Sprite {
     }
 
     private static function TrackPartnerClick(Event:MouseEvent):void {
+        trace ("Track partner event button tapped!");
+
         var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
         adjustEvent.addPartnerParameter("foo", "bar");
         adjustEvent.addPartnerParameter("x", "y");

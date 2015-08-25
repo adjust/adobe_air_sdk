@@ -7,7 +7,7 @@
 //
 
 #import "FlashRuntimeExtensions.h"
-#import "Adjust.h"
+#import <Adjust/Adjust.h>
 
 @interface AdjustFunction: NSObject<AdjustDelegate>
 

@@ -6,4 +6,8 @@
         <option>-framework iAd</option>
         <option>-liconv</option>
     </linkerOptions>
+
+    <packagedDependencies>
+        <packagedDependency>Adjust.framework</packagedDependency>
+    </packagedDependencies>
 </platform>
