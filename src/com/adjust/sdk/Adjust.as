@@ -183,6 +183,9 @@ public class Adjust extends EventDispatcher {
         for (var i:int = 0; i < event.arguments.length; i++) {
             var argument:String = event.arguments[i];
 
+            trace("adjust: Trying to open deep link");
+            trace(argument);
+
             appWillOpenUrl(argument);
 
             break;
