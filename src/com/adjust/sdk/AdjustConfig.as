@@ -4,7 +4,7 @@ package com.adjust.sdk {
         private var appToken:String;
         private var environment:String;
         private var logLevel:String;
-        private var attributionCallbackDelegate: Function;
+        private var attributionCallbackDelegate:Function;
         private var eventBufferingEnabled:Boolean;
         private var defaultTracker:String;
 

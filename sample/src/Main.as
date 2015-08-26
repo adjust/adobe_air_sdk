@@ -13,7 +13,6 @@ import flash.events.MouseEvent;
 import flash.system.Capabilities;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
 
 public class Main extends Sprite {
     private static var IsEnabledTextField:TextField;
@@ -98,7 +97,7 @@ public class Main extends Sprite {
     }
 
     private static function IsEnabledClick(Event:MouseEvent):void {
-        var isEnabled: Boolean = Adjust.isEnabled();
+        var isEnabled:Boolean = Adjust.isEnabled();
 
         if (isEnabled) {
             IsEnabledTextField.text = "Is enabled? TRUE";
@@ -118,20 +117,20 @@ public class Main extends Sprite {
         trace("Click label = " + attribution.getClickLabel());
     }
 
-    private function buildButton(number: int, text: String, clickFunction: Function): TextField {
+    private function buildButton(number:int, text:String, clickFunction:Function):TextField {
         var buttonHeight:int = 40;
-        var yPosition: int = Capabilities.screenResolutionY * 0.25 +
+        var yPosition:int = Capabilities.screenResolutionY * 0.25 +
                 (number < 0 ? number * buttonHeight : (number - 1) * buttonHeight) + ((number != 1 && number != -1) ?
                 (number > 0 ? 20 * Math.abs(number) : -20 * Math.abs(number)) : number * 10);
 
-        var textField: TextField = new TextField();
+        var textField:TextField = new TextField();
         textField.text = text;
         textField.autoSize = TextFieldAutoSize.CENTER;
         textField.mouseEnabled = false;
         textField.x = (Capabilities.screenResolutionX - textField.width) * 0.5;
         textField.y = yPosition + 10;
 
-        var buttonSprite: Sprite = new Sprite();
+        var buttonSprite:Sprite = new Sprite();
         buttonSprite.graphics.beginFill(0x82F0FF);
         buttonSprite.graphics.drawRect((Capabilities.screenResolutionX - 250) * 0.5, yPosition, 250, buttonHeight);
         buttonSprite.graphics.endFill();

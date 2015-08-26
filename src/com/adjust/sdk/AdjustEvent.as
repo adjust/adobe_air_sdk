@@ -1,13 +1,13 @@
 package com.adjust.sdk {
     public class AdjustEvent {
         // For iOS & Android
-        private var revenue: Number;
+        private var revenue:Number;
 
-        private var currency: String;
-        private var eventToken: String;
+        private var currency:String;
+        private var eventToken:String;
 
-        private var partnerParameters: Array;
-        private var callbackParameters: Array;
+        private var partnerParameters:Array;
+        private var callbackParameters:Array;
 
         // iOS specific
         private var receipt:String;
