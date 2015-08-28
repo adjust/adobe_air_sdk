@@ -300,7 +300,62 @@ public class Example extends Sprite
 
 Please make sure to consider [applicable attribution data policies.][attribution-data]
 
-### 11. Event buffering
+### 11. Set up deep link reattributions
+
+You can set up the adjust SDK to handle deep links that are used to open your app. We will only read certain adjust
+specific parameters. This is essential if you are planning to run retargeting or re-engagement campaigns with deep
+links. Only thing you need to do is to properly set your app schema name in app descriptor file, usually located at
+`src/{YourProjectName}-app.xml`. By using this scheme name later for deep linking, our will handle deep linking
+automatically without need to set anything in your app source code.
+
+##### iOS
+
+In order to set scheme name for your iOS app, you should add following key-value pair into `<InfoAdditions>` section
+of app descriptor's `<iPhone>` section:
+
+```xml
+<iPhone>
+    <!-- ... --->
+    <InfoAdditions><![CDATA[
+        <key>CFBundleURLTypes</key>
+        <array>
+            <dict>
+              <key>CFBundleURLName</key>
+              <string>com.adjust.example</string>
+              <key>CFBundleURLSchemes</key>
+              <array>
+                <string>desired-scheme-name</string>
+              </array>
+            </dict>
+        </array>
+    ]]></InfoAdditions>
+    <!-- ... -->
+</iPhone>
+```
+
+##### Android
+
+In order to set scheme name for your Android app, you should add following `<intent-filter>` to activity you want to
+launch after deep linking:
+
+```xml
+<!-- ... -->
+    <activity>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="desired-scheme-name" />
+        </intent-filter>
+    </activity>
+<!-- ... -->
+```
+
+### 12. Event buffering
 
 If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in
 one batch every minute. You can enable event buffering by calling the `adjustConfig.setEventBufferingEnabled` method
@@ -310,7 +365,7 @@ with parameter `true`.
 adjustConfig.setEventBufferingEnabled(true);
 ```
 
-### 12. Disable tracking
+### 13. Disable tracking
 
 You can disable the adjust SDK from tracking by invoking the method `setEnabled` with the enabled parameter as
 `false`. This setting is remembered between sessions, but it can only be activated after the first session.
@@ -322,7 +377,7 @@ Adjust.setEnabled(false);
 You can verify if the adjust SDK is currently active with the method `isEnabled`. It is always possible
 to activate the adjust SDK by invoking `setEnabled` with the `enabled` parameter set to `true`.
 
-### 13. Offline mode
+### 14. Offline mode
 
 You can put the adjust SDK in offline mode to suspend transmission to our servers, while retaining tracked data to
 be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many
