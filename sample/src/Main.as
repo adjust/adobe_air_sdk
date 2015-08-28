@@ -34,7 +34,7 @@ public class Main extends Sprite {
     private static function startManuallyClick(Event:MouseEvent):void {
         trace ("Start button tapped!");
 
-        var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
+        var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", Environment.SANDBOX);
         adjustConfig.setLogLevel(LogLevel.VERBOSE);
         adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
 
