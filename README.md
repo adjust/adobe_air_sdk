@@ -254,15 +254,15 @@ You can verify if the adjust SDK is currently active with the method isEnabled. 
 [dashboard]: http://adjust.com
 [releases]: https://github.com/adjust/adjust_air_sdk/releases
 [permissions]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/permissions.png
-[xcode-logs]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/xcode-logs2.png
+[xcode-logs]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/xcode_logs.png
 
 [android-permissions]: https://github.com/adjust/android_sdk#4-add-permissions
 [brodcast-android]: https://github.com/adjust/android_sdk#6-add-broadcast-receiver
 [attribution-data]: https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
-[android-manifest]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/android-manifest.png
+[android-manifest]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/android_manifest.png
 [flash-builder]: https://github.com/adjust/adobe_air_sdk/blob/master/doc/flash_builder.md
-[idea-locate]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/idea_locate.png
-[idea-new-library]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/idea_new_library.png
+[idea-locate]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_locate.png
+[idea-new-library]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_new_library.png
 
 ## License
 
