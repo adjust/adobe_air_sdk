@@ -227,8 +227,8 @@ your callbacks.  If you haven't registered a callback for an event, these parame
 You can also add parameters to be transmitted to network partners, for the integrations that have been activated in
 your adjust dashboard.
 
-This works similarly to the callback parameters mentioned above, but can be added by calling the addPartnerParameter
-method on your `AdjustEvent` instance.
+This works similarly to the callback parameters mentioned above, but can be added by calling the 
+`addPartnerParameter` method on your `AdjustEvent` instance.
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -305,10 +305,10 @@ Please make sure to consider [applicable attribution data policies.][attribution
 You can set up the adjust SDK to handle deep links that are used to open your app. We will only read certain adjust
 specific parameters. This is essential if you are planning to run retargeting or re-engagement campaigns with deep
 links. Only thing you need to do is to properly set your app schema name in app descriptor file, usually located at
-`src/{YourProjectName}-app.xml`. By using this scheme name later for deep linking, our will handle deep linking
+`src/{YourProjectName}-app.xml`. By using this scheme name later for deep linking, our SDK will handle deep linking
 automatically without need to set anything in your app source code.
 
-##### iOS
+#### iOS
 
 In order to set scheme name for your iOS app, you should add following key-value pair into `<InfoAdditions>` section
 of app descriptor's `<iPhone>` section:
@@ -333,7 +333,7 @@ of app descriptor's `<iPhone>` section:
 </iPhone>
 ```
 
-##### Android
+#### Android
 
 In order to set scheme name for your Android app, you should add following `<intent-filter>` to activity you want to
 launch after deep linking:
@@ -403,6 +403,7 @@ mode whenever it is started, even if the app was terminated in offline mode.
 [google_play_services]: http://developer.android.com/google/play-services/setup.html
 [google_ad_id]: https://developer.android.com/google/play-services/id.html
 [attribution_data]: https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
+[special-partners]: https://docs.adjust.com/en/special-partners
 
 [android-permissions]: https://github.com/adjust/android_sdk#4-add-permissions
 [brodcast-android]: https://github.com/adjust/android_sdk#6-add-broadcast-receiver
