@@ -77,14 +77,6 @@ adjustConfig.setLogLevel(LogLevel.ERROR);   // disable warnings as well
 adjustConfig.setLogLevel(LogLevel.ASSERT);  // disable errors as well
 ```
 
-If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in
-one batch every minute. You can enable event buffering by calling the `adjustConfig.setEventBufferingEnabled` method
-with parameter `true`.
-
-```actionscript
-adjustConfig.setEventBufferingEnabled(true);
-```
-
 ### 4. Adjust Android manifest
 
 To use your AIR app for Android with our SDK it's necessary edit the Android mainfest file. To edit the Android
@@ -249,7 +241,7 @@ Adjust.trackEvent(adjustEvent);
 
 You can read more about special partners and these integrations in our [guide to special partners.][special-partners]
 
-### 9. Receive attribution change callback
+### 10. Receive attribution change callback
 
 You can register a callback to be notified of tracker attribution changes. Due to the different sources considered
 for attribution, this information can not by provided synchronously. Follow these steps to implement the optional 
@@ -308,7 +300,17 @@ public class Example extends Sprite
 
 Please make sure to consider [applicable attribution data policies.][attribution-data]
 
-### 10. Disable tracking
+### 11. Event buffering
+
+If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in
+one batch every minute. You can enable event buffering by calling the `adjustConfig.setEventBufferingEnabled` method
+with parameter `true`.
+
+```actionscript
+adjustConfig.setEventBufferingEnabled(true);
+```
+
+### 12. Disable tracking
 
 You can disable the adjust SDK from tracking by invoking the method `setEnabled` with the enabled parameter as
 `false`. This setting is remembered between sessions, but it can only be activated after the first session.
@@ -320,7 +322,7 @@ Adjust.setEnabled(false);
 You can verify if the adjust SDK is currently active with the method `isEnabled`. It is always possible
 to activate the adjust SDK by invoking `setEnabled` with the `enabled` parameter set to `true`.
 
-### 11. Offline mode
+### 13. Offline mode
 
 You can put the adjust SDK in offline mode to suspend transmission to our servers, while retaining tracked data to
 be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many
@@ -358,9 +360,9 @@ mode whenever it is started, even if the app was terminated in offline mode.
 
 ## License
 
-The adjust-sdk is licensed under the MIT License.
+The adjust SDK is licensed under the MIT License.
 
-Copyright (c) 2012-2014 adjust GmbH,
+Copyright (c) 2012-2015 adjust GmbH,
 http://www.adjust.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
