@@ -20,6 +20,8 @@ public class Adjust extends EventDispatcher {
 
     public static function isEnabled():Boolean {
         trace("adjust: isEnabled called");
+
+        return false;
     }
 
     public static function onResume(event:Event):void {

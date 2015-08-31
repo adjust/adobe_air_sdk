@@ -47,7 +47,7 @@ package com.adjust.sdk {
             this.transactionId = transactionId;
         }
 
-        public function setReceiptForTransactionId(receipt:String, transactionId:String) {
+        public function setReceiptForTransactionId(receipt:String, transactionId:String):void {
             this.receipt = receipt;
             this.transactionId = transactionId;
             this.isReceiptSet = true;
