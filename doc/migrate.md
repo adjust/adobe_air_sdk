@@ -44,10 +44,10 @@ public class Example extends Sprite
 {
     public function Example()
     {
-    	var yourAppToken:String = "{YourAppToken}";
+    	var appToken:String = "{YourAppToken}";
     	var environment:String = Environment.SANDBOX;
     	
-        var adjustConfig:AdjustConfig = new AdjustConfig(yourAppToken, environment);
+        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
         adjustConfig.setLogLevel(LogLevel.VERBOSE);
 
         Adjust.start(adjustConfig);
