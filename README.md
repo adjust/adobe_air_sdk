@@ -10,9 +10,9 @@ Download the latest version from our [releases page][releases]. Extract the arch
 
 ### 2. Add it to your project
 
-We assume that you are using IntelliJ IDEA as your IDE. If you are using Flash Builder follow the instructions [here][flash-builder].
+We assume that you are using IntelliJ IDEA as your IDE. If you are using Flash Builder, then follow the instructions [here][flash-builder].
 
-In IDEA's Project Structure pick your Module from the Project Settings. Choose the Dependencies tab and click the
+Pick your Module from the Project Settings in IDEA's Project Structure. Choose the Dependencies tab and click the
 plus button to add a dependency to your module. Pick the `New Library...` option.
 
 ![][idea-new-library]
@@ -23,7 +23,7 @@ Locate the `Adjust-x.y.z.ane` you just downloaded and click `OK`.
 
 ### 3. Integrate adjust into your app
 
-To start tracking with adjust you need to initialize the SDK. Add the following code to your main Sprite.
+To start tracking with adjust, you first need to initialize the SDK. Add the following code to your main Sprite.
 
 ```actionscript
 import com.adjust.sdk.Adjust;
@@ -79,10 +79,10 @@ adjustConfig.setLogLevel(LogLevel.ASSERT);  // disable errors as well
 
 ### 4. Adjust Android manifest
 
-To use your AIR app for Android with our SDK it's necessary edit the Android mainfest file. To edit the Android
+In order to use your AIR app for Android with our SDK, you must edit the Android manifest file. To edit the Android
 manifest of your AIR apps:
 
-1. Open the application descriptor file, usually located at `src/{YourProjectName}-app.xml`.
+1. Open the application descriptor file, which is typically located at `src/{YourProjectName}-app.xml`.
 2. Search for the `<android>` tag
 3. Edit between the `<manifest>`tag.
 
@@ -92,12 +92,12 @@ You can find the needed [permissions][android-permissions] and how to add [broad
 
 ### 5. Add Google Play Services
 
-Since the 1st of August of 2014, apps in the Google Play Store must use the [Google Advertising ID][google_ad_id] 
+Since 1st August 2014, all apps in the Google Play Store must use the [Google Advertising ID][google_ad_id] 
 to uniquely identify devices. To allow the adjust SDK to use the Google Advertising ID, you must integrate the
 [Google Play Services][google_play_services].
 
 In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other
-way) you can use `Google Play Services ANE` provided by adjust which is built to fit needs of our SDK. You can find
+way) you can use `Google Play Services ANE`, which is provided by adjust and is built to fit needs of our SDK. You can find
 our Google Play Services ANE as part of release on our [releases page][releases].
 
 You should just import downloaded ANE to your app and Google Play Services needed by our SDK will be successfully
@@ -105,8 +105,8 @@ added.
 
 ![][idea-new-library-gps]
 
-After having Google Play Services integrated in your app, add following lines to your app's Android manifest file
-as part of `<manifest` tag body:
+After integrating Google Play Services into your app, add the following lines to your app's Android manifest file
+as part of the `<manifest` tag body:
 
 ```xml
 <meta-data
@@ -133,13 +133,13 @@ Check the Console at XCode's Device Organizer to access AdjustIo logs:
 
 ## Additional features
 
-Once you integrated the adjust SDK into your project, you can take advantage of the following features.
+You can take advantage of the following features once the adjust SDK is integrated into your project.
 
 ### 6. Add tracking of custom events
 
-You can tell adjust about every event you want. Suppose you want to track every tap on a button. You would have to
-create a new Event Token in your [dashboard]. Let's say that Event Token is `abc123`. In your button's click handler
-method you could then add the following line to track the click:
+You can tell adjust about every event you want. Suppose you want to track every tap on a button. Simply
+create a new Event Token in your [dashboard]. Let's say that Event Token is `abc123`. You can add the following line in your button’s click handler method to track the click:
+
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -148,7 +148,7 @@ Adjust.trackEvent(adjustEvent);
 
 ### 7. Add tracking of revenue
 
-If your users can generate revenue by tapping on advertisements or making in-app purchases you can track those revenues with events. Lets say a tap is worth one Euro cent. You could then track the revenue event like this:
+If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track those revenues with events. Lets say a tap is worth €0.01. You could track the revenue event like this:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -160,8 +160,8 @@ Adjust.trackEvent(adjustEvent);
 
 ##### <a id="deduplication"></a> Revenue deduplication
 
-You can also pass in an optional transaction ID to avoid tracking duplicate revenues. The last ten transaction 
-IDs are remembered and revenue events with duplicate transaction IDs are skipped. This is especially useful for 
+You can also add an optional transaction ID to avoid tracking duplicate revenues. The last ten transaction 
+IDs are remembered, and revenue events with duplicate transaction IDs are skipped. This is especially useful for 
 in-app purchase tracking. See an example below.
 
 If you want to track in-app purchases, please make sure to call `trackEvent` only if the transaction is finished
@@ -178,9 +178,9 @@ Adjust.trackEvent(adjustEvent);
 
 ##### Receipt verification
 
-If you track in-app purchases, you can also attach the receipt to the tracked event. In that case our servers 
-will verify that receipt with Apple and discard the event if the verification failed. To make this work, you 
-also need to send us the transaction ID of the purchase. The transaction ID will also be used for SDK side 
+If you track in-app purchases, you can also attach the receipt to the tracked event. Our servers 
+will verify that receipt with Apple and discard the event if verification fails. To make this work, you will
+also need to send us the transaction ID of the purchase. The transaction ID will additionally be used for SDK side 
 deduplication as explained [above](#deduplication):
 
 ```actionscript
@@ -210,7 +210,7 @@ adjustEvent.addCallbackParameter("foo", "bar");
 Adjust.trackEvent(adjustEvent);
 ```
 
-In that case we would track the event and send a request to:
+In this case we would track the event and send a request to:
 
 ```
 http://www.adjust.com/callback?key=value&foo=bar
@@ -224,8 +224,8 @@ your callbacks.  If you haven't registered a callback for an event, these parame
 
 ### 9. Partner parameters
 
-You can also add parameters to be transmitted to network partners, for the integrations that have been activated in
-your adjust dashboard.
+You can also add parameters for integrations that have been activated in
+your adjust dashboard that are transmittable to network partners.
 
 This works similarly to the callback parameters mentioned above, but can be added by calling the 
 `addPartnerParameter` method on your `AdjustEvent` instance.
@@ -302,16 +302,15 @@ Please make sure to consider [applicable attribution data policies.][attribution
 
 ### 11. Set up deep link reattributions
 
-You can set up the adjust SDK to handle deep links that are used to open your app. We will only read certain adjust
-specific parameters. This is essential if you are planning to run retargeting or re-engagement campaigns with deep
-links. Only thing you need to do is to properly set your app schema name in app descriptor file, usually located at
+You can set up the adjust SDK to handle deep links that are used to open your app. We will only read certain, adjust-specific parameters. This is essential if you are planning to run retargeting or re-engagement campaigns with deep
+links. The only thing you need to do is to properly set your app schema name in app descriptor file, which is usually located at
 `src/{YourProjectName}-app.xml`. By using this scheme name later for deep linking, our SDK will handle deep linking
 automatically without need to set anything in your app source code.
 
 #### iOS
 
-In order to set scheme name for your iOS app, you should add following key-value pair into `<InfoAdditions>` section
-of app descriptor's `<iPhone>` section:
+In order to set scheme name for your iOS app, you should add the following key-value pair into the `<InfoAdditions>` section
+of the app descriptor's `<iPhone>` section:
 
 ```xml
 <iPhone>
@@ -335,7 +334,7 @@ of app descriptor's `<iPhone>` section:
 
 #### Android
 
-In order to set scheme name for your Android app, you should add following `<intent-filter>` to activity you want to
+To set a scheme name for your Android app, you should add the following `<intent-filter>` to the activity you want to
 launch after deep linking:
 
 ```xml
@@ -358,7 +357,7 @@ launch after deep linking:
 ### 12. Event buffering
 
 If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in
-one batch every minute. You can enable event buffering by calling the `adjustConfig.setEventBufferingEnabled` method
+a single batch every minute. You can enable event buffering by calling the `adjustConfig.setEventBufferingEnabled` method
 with parameter `true`.
 
 ```actionscript
@@ -379,7 +378,7 @@ to activate the adjust SDK by invoking `setEnabled` with the `enabled` parameter
 
 ### 14. Offline mode
 
-You can put the adjust SDK in offline mode to suspend transmission to our servers, while retaining tracked data to
+You can put the adjust SDK in offline mode to suspend transmission to our servers, while still retaining tracked data to
 be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many
 events while in offline mode.
 
@@ -390,9 +389,9 @@ Adjust.setOfflineMode(true);
 ```
 
 Conversely, you can deactivate offline mode by calling `setOfflineMode` with `false`. When the adjust SDK is put
-back in online mode, all saved information is send to our servers with the correct time information.
+back in online mode, all saved information is sent to our servers with the correct timstamps.
 
-Unlike disabling tracking, this setting is *not remembered* bettween sessions. This means that the SDK is in online
+Unlike disabling tracking, this setting is *not remembered* between sessions. This means that the SDK is in online
 mode whenever it is started, even if the app was terminated in offline mode.
 
 [adjust.com]: http://adjust.com
