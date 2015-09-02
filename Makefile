@@ -3,10 +3,13 @@ COMPC = $(AIR_SDK_PATH)/bin/compc
 
 COMPC_ADJUST = com.adjust.sdk.Adjust
 COMPC_CLASSES = $(COMPC_ADJUST) \
-                com.adjust.sdk.LogLevel \
-                com.adjust.sdk.Environment
-COMPC_OPTS = -swf-version 13 \
-             -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
+				com.adjust.sdk.LogLevel \
+				com.adjust.sdk.Environment \
+				com.adjust.sdk.AdjustConfig \
+				com.adjust.sdk.AdjustEvent \
+				com.adjust.sdk.AdjustAttribution
+COMPC_OPTS = -swf-version 24 \
+			 -external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
              -include-classes $(COMPC_CLASSES)
 
 VERSION = $(shell cat VERSION)
@@ -17,11 +20,11 @@ EXTDIR = ./ext
 EXTS = $(patsubst $(EXTDIR)/%,%,$(wildcard $(EXTDIR)/*))
 
 all: emulator $(EXTS) swc
-	unzip -d $(BUILDDIR)/android -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
-	unzip -d $(BUILDDIR)/ios -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
-	cp -af $(SOURCEDIR)/platformoptions.xml $(BUILDDIR)/ios
+	unzip -d $(BUILDDIR)/Android -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
+	unzip -d $(BUILDDIR)/iOS -qq -o $(BUILDDIR)/Adjust.swc -x catalog.xml
+	cp -af $(SOURCEDIR)/platformoptions.xml $(BUILDDIR)/iOS
 	cp -af $(SOURCEDIR)/extension.xml $(BUILDDIR)/extension.xml
-	cd $(BUILDDIR); $(ADT) -package -target ane ../Adjust-$(VERSION).ane extension.xml -swc Adjust.swc -platform Android-ARM -C android . -platform iPhone-ARM -C ios . -platformoptions ios/platformoptions.xml -platform default -C default .
+	cd $(BUILDDIR); $(ADT) -package -target ane ../Adjust-$(VERSION).ane extension.xml -swc Adjust.swc -platform Android-ARM -C Android . -platform iPhone-ARM -C iOS . -platformoptions iOS/platformoptions.xml -platform default -C default .
 
 swc:
 	mkdir -p $(BUILDDIR)
@@ -37,6 +40,6 @@ emulator:
 	rm -rf $(BUILDDIR)/default/catalog.xml
 
 clean:
-	cd ext/android; make clean
-	cd ext/ios; make clean
+	cd ext/Android; make clean
+	cd ext/iOS; make clean
 	rm -rf *.ane $(BUILDDIR)

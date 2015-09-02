@@ -8,11 +8,11 @@
 
      minimumPatchLevel - The minimum patch level of the AIR runtime required to run the application. Optional. -->
 
-<application xmlns="http://ns.adobe.com/air/application/3.9">
+<application xmlns="http://ns.adobe.com/air/application/18.0">
 
     <!-- A universally unique application identifier. Must be unique across all AIR applications.
          Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-    <id>Main</id>
+    <id>com.adjust.example</id>
 
     <!-- Used as the filename for the application. Required. -->
     <filename>Adjust AIR SDK Demo</filename>
@@ -23,7 +23,7 @@
     <!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade.
          Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
          An updated version of application must have a versionNumber value higher than the previous version. Required for namespace >= 2.5. -->
-    <versionNumber>3.5.0</versionNumber>
+    <versionNumber>4.0.0</versionNumber>
 
     <!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. Optional. -->
     <!--<versionLabel></versionLabel>-->
@@ -43,6 +43,8 @@
     <!-- Identifies the ActionScript extensions used by an application. -->
     <extensions>
         <extensionID>com.adjust.sdk</extensionID>
+        <!-- Uncomment this if you want to use Google Play Services ANE provided by adjust -->
+        <!--<extensionID>com.adjust.gps</extensionID>-->
     </extensions>
 
     <!-- Settings for the application's initial window. Required. -->
@@ -175,23 +177,21 @@
     <!--</fileTypes>-->
 
     <!-- iOS specific capabilities -->
-    <!--<iPhone>-->
-    <!-- A list of plist key/value pairs to be added to the application Info.plist -->
-    <!--<InfoAdditions>-->
-    <!--<![CDATA[-->
-    <!--<key>UIDeviceFamily</key>-->
-    <!--<array>-->
-    <!-- iPhone and iPod touch devices -->
-    <!--<string>1</string>-->
-    <!-- iPad devices -->
-    <!--<string>2</string>-->
-    <!--</array>-->
-    <!--<key>UIStatusBarStyle</key>-->
-    <!--<string>UIStatusBarStyleBlackOpaque</string>-->
-    <!--<key>UIRequiresPersistentWiFi</key>-->
-    <!--<string>YES</string>-->
-    <!--]]>-->
-    <!--</InfoAdditions>-->
+    <iPhone>
+     <!--A list of plist key/value pairs to be added to the application Info.plist -->
+    <InfoAdditions><![CDATA[
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+          <key>CFBundleURLName</key>
+          <string>com.adjust.example</string>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <string>adjustExampleAIR</string>
+          </array>
+        </dict>
+    </array>
+    ]]></InfoAdditions>
 
     <!-- A list of plist key/value pairs to be added to the application Entitlements.plist -->
     <!--<Entitlements>
@@ -211,7 +211,7 @@
     <!-- File containing line separated list of external swf paths. These swfs won't be packaged inside the application
     and corresponding stripped swfs will be output in externalStrippedSwfs folder. -->
     <!--<externalSwfs></externalSwfs> -->
-    <!--</iPhone>-->
+    </iPhone>
 
     <!-- Android specific tags that get passed to AndroidManifest.xml file. -->
     <android>
@@ -222,11 +222,33 @@
                 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
                 <application android:enabled="true">
-                    <receiver android:name="com.adjust.sdk.ReferrerReceiver" android:exported="true">
+                    <!-- Uncomment this if you want to use Google Play Services -->
+                    <!--
+                    <meta-data
+                        android:name="com.google.android.gms.version"
+                        android:value="@integer/google_play_services_version"/>
+                    -->
+
+                    <receiver
+                        android:name="com.adjust.sdk.AdjustReferrerReceiver"
+                        android:exported="true">
                         <intent-filter>
                             <action android:name="com.android.vending.INSTALL_REFERRER" />
                         </intent-filter>
                     </receiver>
+
+                    <activity>
+                       <intent-filter>
+                            <action android:name="android.intent.action.MAIN" />
+                            <category android:name="android.intent.category.LAUNCHER" />
+                        </intent-filter>
+                        <intent-filter>
+                            <action android:name="android.intent.action.VIEW" />
+                            <category android:name="android.intent.category.DEFAULT" />
+                            <category android:name="android.intent.category.BROWSABLE" />
+                            <data android:scheme="adjustExampleAIR" />
+                        </intent-filter>
+                   </activity>
                 </application>
             </manifest>
             ]]>

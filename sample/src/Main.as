@@ -1,145 +1,151 @@
 package {
 
 import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.AdjustEvent;
+import com.adjust.sdk.AdjustAttribution;
 import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 
-import flash.desktop.NativeApplication;
-import flash.desktop.SystemIdleMode;
-
-import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
-import flash.display.StageAlign;
-import flash.display.StageScaleMode;
-import flash.events.Event;
-import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-import flash.events.TouchEvent;
 import flash.system.Capabilities;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 public class Main extends Sprite {
-    private static var numberButtons:int = 2;
-    private static var buttonHeight:int = 30;
     private static var IsEnabledTextField:TextField;
+
     public function Main() {
-        //addEventListener(Event.ADDED_TO_STAGE, init);
+        buildButton(-5, "Start Manually", startManuallyClick);
+        buildButton(-4, "Track Simple Event", TrackEventClick);
+        buildButton(-3, "Track Revenue Event", TrackRevenueClick);
+        buildButton(-2, "Track Callback Event", TrackCallbackClick);
+        buildButton(-1, "Track Partner Event", TrackPartnerClick);
+        buildButton(1, "Enable Offline Mode", EnableOfflineModeClick);
+        buildButton(2, "Disable Offline Mode", DisableOfflineModeClick);
+        buildButton(3, "Enable SDK", SetEnableClick);
+        buildButton(4, "Disable SDK", SetDisableClick);
 
-        buildButton(0, "Start Manually", startManuallyClick);
-        buildButton(1, "Trace Event", TrackEventClick);
-        buildButton(2, "Trace Revenue", TrackRevenueClick);
-        buildButton(3, "Set Enable", SetEnableClick);
-        buildButton(4, "Set Disable", SetDisableClick);
-        IsEnabledTextField = buildButton(5, "Is Enabled?", IsEnabledClick);
-        buildButton(6, "Set Callback", SetCallbackClick);
+        IsEnabledTextField = buildButton(5, "Is SDK Enabled?", IsEnabledClick);
     }
 
-    private static function startManuallyClick(Event:MouseEvent): void {
-        trace("startManuallyClick");
-        Adjust.appDidLaunch("qwerty123456",Environment.SANDBOX, LogLevel.VERBOSE, false);
+    private static function startManuallyClick(Event:MouseEvent):void {
+        trace ("Start button tapped!");
+
+        var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", Environment.SANDBOX);
+        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
+
+        Adjust.start(adjustConfig);
     }
 
-    private static function TrackEventClick(Event:MouseEvent): void {
-        trace("TrackEventClick");
-        Adjust.trackEvent("eve001");
+    private static function TrackEventClick(Event:MouseEvent):void {
+        trace ("Track simple event button tapped!");
 
-        var parameters: Object = new Object();
-        parameters["key"] = "value";
-        parameters["foo"] = "bar";
+        var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
 
-        Adjust.trackEvent("eve002", parameters);
+        Adjust.trackEvent(adjustEvent);
     }
 
-    private static function TrackRevenueClick(Event:MouseEvent): void {
-        trace("TrackRevenueClick");
-        Adjust.trackRevenue(3.44);
+    private static function TrackRevenueClick(Event:MouseEvent):void {
+        trace ("Track revenue event button tapped!");
 
-        Adjust.trackRevenue(3.45, "rev001");
+        var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
+        adjustEvent.setRevenue(0.01, "EUR");
 
-        var parameters: Object = new Object();
-        parameters["key"] = "value";
-        parameters["foo"] = "bar";
-        Adjust.trackRevenue(0.1, "rev002", parameters);
+        Adjust.trackEvent(adjustEvent);
     }
 
-    private static function SetEnableClick(Event:MouseEvent): void {
-        trace("SetEnableClick");
+    private static function TrackCallbackClick(Event:MouseEvent):void {
+        trace ("Track callback event button tapped!");
+
+        var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
+        adjustEvent.addCallbackParameter("foo", "bar");
+        adjustEvent.addCallbackParameter("a", "b");
+        adjustEvent.addCallbackParameter("foo", "c");
+
+        Adjust.trackEvent(adjustEvent);
+    }
+
+    private static function TrackPartnerClick(Event:MouseEvent):void {
+        trace ("Track partner event button tapped!");
+
+        var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
+        adjustEvent.addPartnerParameter("foo", "bar");
+        adjustEvent.addPartnerParameter("x", "y");
+        adjustEvent.addPartnerParameter("foo", "z");
+
+        Adjust.trackEvent(adjustEvent);
+    }
+
+    private static function EnableOfflineModeClick(Event:MouseEvent):void {
+        Adjust.setOfflineMode(true);
+    }
+
+    private static function DisableOfflineModeClick(Event:MouseEvent):void {
+        Adjust.setOfflineMode(false);
+    }
+
+    private static function SetEnableClick(Event:MouseEvent):void {
         Adjust.setEnabled(true);
     }
 
-    private static function SetDisableClick(Event:MouseEvent): void {
-        trace("SetDisableClick");
+    private static function SetDisableClick(Event:MouseEvent):void {
         Adjust.setEnabled(false);
     }
 
-    private static function IsEnabledClick(Event:MouseEvent): void {
-        trace("IsEnabledClick");
-        var isEnabled: Boolean = Adjust.isEnabled();
+    private static function IsEnabledClick(Event:MouseEvent):void {
+        var isEnabled:Boolean = Adjust.isEnabled();
+
         if (isEnabled) {
-            IsEnabledTextField.text = "Is enabled? true";
+            IsEnabledTextField.text = "Is enabled? TRUE";
         } else {
-            IsEnabledTextField.text = "Is enabled? false";
+            IsEnabledTextField.text = "Is enabled? FALSE";
         }
     }
 
-    private static function SetCallbackClick(Event:MouseEvent): void {
-        trace("SetCallbackClick");
-        Adjust.setResponseDelegate(ResponseDelegate);
+    private static function attributionCallbackDelegate(attribution:AdjustAttribution):void {
+        trace("Attribution changed!");
+        trace("Tracker token = " + attribution.getTrackerToken());
+        trace("Tracker name = " + attribution.getTrackerName());
+        trace("Campaign = " + attribution.getCampaign());
+        trace("Network = " + attribution.getNetwork());
+        trace("Creative = " + attribution.getCreative());
+        trace("Adgroup = " + attribution.getAdGroup());
+        trace("Click label = " + attribution.getClickLabel());
     }
 
-    private static function ResponseDelegate(responseData: Object): void {
-        trace("ResponseDelegate callback")
-        for (var key:String in responseData) {
-            trace(key + ": " + responseData[key]);
-        }
-    }
+    private function buildButton(number:int, text:String, clickFunction:Function):TextField {
+        var buttonHeight:int = 40;
+        var yPosition:int = Capabilities.screenResolutionY * 0.25 +
+                (number < 0 ? number * buttonHeight : (number - 1) * buttonHeight) + ((number != 1 && number != -1) ?
+                (number > 0 ? 20 * Math.abs(number) : -20 * Math.abs(number)) : number * 10);
 
-    private function buildButton(number: int, text: String, clickFunction: Function): TextField {
-        trace("buildButton number " + number);
-        var Ypos: int = (buttonHeight + 10) * number;
-
-        var textField: TextField = new TextField();
+        var textField:TextField = new TextField();
         textField.text = text;
+        textField.autoSize = TextFieldAutoSize.CENTER;
         textField.mouseEnabled = false;
-        textField.x = 0;
-        textField.y = Ypos;
+        textField.x = (Capabilities.screenResolutionX - textField.width) * 0.5;
+        textField.y = yPosition + 10;
 
-
-        var buttonSprite: Sprite = new Sprite();
-        buttonSprite.graphics.beginFill(0xFFCC00);
-        //sprite.graphics.drawRect(0
-        //        ,Capabilities.screenResolutionY * number / numberButtons
-        //        ,Capabilities.screenResolutionX
-        //        ,Capabilities.screenResolutionY / numberButtons);
-        buttonSprite.graphics.drawRect(0, Ypos, 200, buttonHeight);
+        var buttonSprite:Sprite = new Sprite();
+        buttonSprite.graphics.beginFill(0x82F0FF);
+        buttonSprite.graphics.drawRect((Capabilities.screenResolutionX - 250) * 0.5, yPosition, 250, buttonHeight);
         buttonSprite.graphics.endFill();
-
         buttonSprite.addChild(textField);
 
         var simpleButton:SimpleButton = new SimpleButton();
-        /*
-        simpleButton.enabled = true;
-        simpleButton.x = 0;
-        simpleButton.y = Ypos;
-        simpleButton.width = 200;
-        simpleButton.height = buttonHeight;
-*/
-        //buttonSprite.buttonMode = true;
-        //buttonSprite.useHandCursor = true;
-        //buttonSprite.mouseChildren = false;
-
         simpleButton.downState = buttonSprite;
         simpleButton.upState = buttonSprite;
         simpleButton.overState = buttonSprite;
         simpleButton.hitTestState = buttonSprite;
-
         simpleButton.addEventListener(MouseEvent.CLICK, clickFunction);
 
         addChild(simpleButton);
 
         return textField;
     }
-
 }
 }
