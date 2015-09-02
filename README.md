@@ -21,6 +21,16 @@ Locate the `Adjust-x.y.z.ane` you just downloaded and click `OK`.
 
 ![][idea-locate]
 
+After this, add adjust SDK extension to app descriptor file:
+
+```xml
+<extensions>
+    <!-- ... --->
+    <extensionID>com.adjust.sdk</extensionID>
+    <!-- ... --->
+</extensions>
+```
+
 ### 3. Integrate adjust into your app
 
 To start tracking with adjust, you first need to initialize the SDK. Add the following code to your main Sprite.
@@ -97,16 +107,25 @@ to uniquely identify devices. To allow the adjust SDK to use the Google Advertis
 [Google Play Services][google_play_services].
 
 In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other
-way) you can use `Google Play Services ANE`, which is provided by adjust and is built to fit needs of our SDK. You can find
-our Google Play Services ANE as part of release on our [releases page][releases].
+way) you can use `Google Play Services ANE`, which is provided by adjust and is built to fit needs of our SDK. You can find our Google Play Services ANE as part of release on our [releases page][releases].
 
 You should just import downloaded ANE to your app and Google Play Services needed by our SDK will be successfully
 added.
 
 ![][idea-new-library-gps]
 
+After this, add Google Play Services extension to app descriptor file:
+
+```xml
+<extensions>
+    <!-- ... --->
+    <extensionID>com.adjust.gps</extensionID>
+    <!-- ... --->
+</extensions>
+```
+
 After integrating Google Play Services into your app, add the following lines to your app's Android manifest file
-as part of the `<manifest` tag body:
+as part of the `<manifest>` tag body:
 
 ```xml
 <meta-data
