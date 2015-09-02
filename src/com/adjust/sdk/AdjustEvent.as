@@ -22,10 +22,6 @@ package com.adjust.sdk {
             this.callbackParameters = new Array();
 
             this.isReceiptSet = false;
-
-            // Invalid revenue settings.
-            this.revenue = -1;
-            this.currency = "";
         }
 
         public function setRevenue(revenue:Number, currency:String):void {

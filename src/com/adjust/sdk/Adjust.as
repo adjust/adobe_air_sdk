@@ -144,13 +144,13 @@ public class Adjust extends EventDispatcher {
     }
 
     private static function getAttributionFromResponse(response:String):AdjustAttribution {
-        var trackerToken:String = "";
-        var trackerName:String = "";
-        var campaign:String = "";
-        var network:String = "";
-        var creative:String = "";
-        var adgroup:String = "";
-        var clickLabel:String = "";
+        var trackerToken:String;
+        var trackerName:String;
+        var campaign:String;
+        var network:String;
+        var creative:String;
+        var adgroup:String;
+        var clickLabel:String;
 
         var attributionParts:Array = response.split(",");
 
