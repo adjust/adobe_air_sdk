@@ -10,13 +10,13 @@ package com.adjust.sdk {
 
         public function AdjustAttribution(trackerToken:String, trackerName:String, campaign:String,
                 network:String, creative:String, adgroup:String, clickLabel:String) {
-            this.trackerToken = trackerToken;// == null ? "" : trackerToken;
-            this.trackerName = trackerName;// == null ? "" : trackerName;
-            this.campaign = campaign;// == null ? "" : campaign;
-            this.network = network;// == null ? "" : network;
-            this.creative = creative;// == null ? "" : creative;
-            this.adgroup = adgroup;// == null ? "" : adgroup;
-            this.clickLabel = clickLabel;// == null ? "" : clickLabel;
+            this.trackerToken = trackerToken;
+            this.trackerName = trackerName;
+            this.campaign = campaign;
+            this.network = network;
+            this.creative = creative;
+            this.adgroup = adgroup;
+            this.clickLabel = clickLabel;
         }
 
         // Getters.
