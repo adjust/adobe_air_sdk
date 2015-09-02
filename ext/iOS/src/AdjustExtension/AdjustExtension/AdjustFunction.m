@@ -41,11 +41,11 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     if (argc == 8) {
-        NSString *appToken;
-        NSString *environment;
-        NSString *logLevel;
-        NSString *defaultTracker;
-        NSString *sdkPrefix;
+        NSString *appToken = nil;
+        NSString *environment = nil;
+        NSString *logLevel = nil;
+        NSString *defaultTracker = nil;
+        NSString *sdkPrefix = nil;
 
         BOOL eventBufferingEnabled;
         BOOL macMd5TrackingEnabled;
@@ -53,57 +53,60 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 
         adjustFREContext = ctx;
 
-        FREGetObjectAsNativeString(argv[0], &appToken);
-        FREGetObjectAsNativeString(argv[1], &environment);
-
-        if (appToken != nil && environment != nil) {
-            ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
-
-            if (argv[2] != nil) {
-                FREGetObjectAsNativeString(argv[2], &logLevel);
-
-                if (logLevel != nil) {
-                    [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:logLevel]];
-                }
-            }
-
-            if (argv[3] != nil) {
-                FREGetObjectAsNativeBool(argv[3], &eventBufferingEnabled);
-                [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
-            }
-
-            if (argv[4] != nil) {
-                FREGetObjectAsNativeBool(argv[4], &isAttributionCallbackSet);
-
-                if (isAttributionCallbackSet) {
-                    if (adjustFunctionInstance == nil) {
-                        adjustFunctionInstance = [[AdjustFunction alloc] init];
-                    }
-
-                    [adjustConfig setDelegate:(id)adjustFunctionInstance];
-                }
-            }
-
-            if (argv[5] != nil) {
-                FREGetObjectAsNativeString(argv[5], &defaultTracker);
-
-                if (defaultTracker != nil) {
-                    [adjustConfig setDefaultTracker:defaultTracker];
-                }
-            }
-
-            if (argv[6] != nil) {
-                FREGetObjectAsNativeBool(argv[6], &macMd5TrackingEnabled);
-                [adjustConfig setMacMd5TrackingEnabled:macMd5TrackingEnabled];
-            }
-
-            if (argv[7] != nil) {
-                FREGetObjectAsNativeString(argv[7], &sdkPrefix);
-                [adjustConfig setSdkPrefix:sdkPrefix];
-            }
-
-            [Adjust appDidLaunch:adjustConfig];
+        if (argv[0] != nil) {
+            FREGetObjectAsNativeString(argv[0], &appToken);
         }
+
+        if (argv[1] != nil) {
+            FREGetObjectAsNativeString(argv[1], &environment);
+        }
+
+        ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
+
+        if (argv[2] != nil) {
+            FREGetObjectAsNativeString(argv[2], &logLevel);
+
+            if (logLevel != nil) {
+                [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:logLevel]];
+            }
+        }
+
+        if (argv[3] != nil) {
+            FREGetObjectAsNativeBool(argv[3], &eventBufferingEnabled);
+            [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
+        }
+
+        if (argv[4] != nil) {
+            FREGetObjectAsNativeBool(argv[4], &isAttributionCallbackSet);
+
+            if (isAttributionCallbackSet) {
+                if (adjustFunctionInstance == nil) {
+                    adjustFunctionInstance = [[AdjustFunction alloc] init];
+                }
+
+                [adjustConfig setDelegate:(id)adjustFunctionInstance];
+            }
+        }
+
+        if (argv[5] != nil) {
+            FREGetObjectAsNativeString(argv[5], &defaultTracker);
+
+            if (defaultTracker != nil) {
+                [adjustConfig setDefaultTracker:defaultTracker];
+            }
+        }
+
+        if (argv[6] != nil) {
+            FREGetObjectAsNativeBool(argv[6], &macMd5TrackingEnabled);
+            [adjustConfig setMacMd5TrackingEnabled:macMd5TrackingEnabled];
+        }
+
+        if (argv[7] != nil) {
+            FREGetObjectAsNativeString(argv[7], &sdkPrefix);
+            [adjustConfig setSdkPrefix:sdkPrefix];
+        }
+
+        [Adjust appDidLaunch:adjustConfig];
     } else {
         NSLog(@"Adjust: Bridge onCreate method triggered with wrong number of arguments");
     }
@@ -120,46 +123,61 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
 
         BOOL isReceiptSet;
 
-        NSString *eventToken;
-        NSString *currency;
-        NSString *receipt;
-        NSString *transactionId;
+        NSString *eventToken = nil;
+        NSString *currency = nil;
+        NSString *receipt = nil;
+        NSString *transactionId = nil;
 
-        NSMutableArray *callbackParameters;
-        NSMutableArray *partnerParameters;
+        NSMutableArray *callbackParameters = nil;
+        NSMutableArray *partnerParameters = nil;
 
-        FREGetObjectAsNativeString(argv[0], &eventToken);
-        FREGetObjectAsNativeString(argv[1], &currency);
-        FREGetObjectAsDouble(argv[2], &revenue);
-        FREGetObjectAsNativeArray(argv[3], &callbackParameters);
-        FREGetObjectAsNativeArray(argv[4], &partnerParameters);
-        FREGetObjectAsNativeString(argv[5], &transactionId);
-        FREGetObjectAsNativeString(argv[6], &receipt);
-        FREGetObjectAsNativeBool(argv[7], &isReceiptSet);
+        if (argv[0] != nil) {
+            FREGetObjectAsNativeString(argv[0], &eventToken);
+        }
 
-        if (eventToken != nil) {
-            ADJEvent *adjustEvent = [ADJEvent eventWithEventToken:eventToken];
+        ADJEvent *adjustEvent = [ADJEvent eventWithEventToken:eventToken];
 
-            if (currency != nil) {
-                [adjustEvent setRevenue:revenue currency:currency];
+        if (argv[1] != nil) {
+            FREGetObjectAsNativeString(argv[1], &currency);
+
+            if (argv[2] != nil) {
+                FREGetObjectAsDouble(argv[2], &revenue);
             }
 
-            if (callbackParameters != nil) {
-                for (int i = 0; i < [callbackParameters count]; i += 2) {
-                    NSString *key = [callbackParameters objectAtIndex:i];
-                    NSString *value = [callbackParameters objectAtIndex:(i+1)];
+            [adjustEvent setRevenue:revenue currency:currency];
+        }
 
-                    [adjustEvent addCallbackParameter:key value:value];
-                }
+        if (argv[3] != nil) {
+            FREGetObjectAsNativeArray(argv[3], &callbackParameters);
+
+            for (int i = 0; i < [callbackParameters count]; i += 2) {
+                NSString *key = [callbackParameters objectAtIndex:i];
+                NSString *value = [callbackParameters objectAtIndex:(i+1)];
+
+                [adjustEvent addCallbackParameter:key value:value];
+            }
+        }
+
+        if (argv[4] != nil) {
+            FREGetObjectAsNativeArray(argv[4], &partnerParameters);
+
+            for (int i = 0; i < [partnerParameters count]; i += 2) {
+                NSString *key = [partnerParameters objectAtIndex:i];
+                NSString *value = [partnerParameters objectAtIndex:(i+1)];
+
+                [adjustEvent addPartnerParameter:key value:value];
+            }
+        }
+
+        if (argv[7] != nil) {
+            FREGetObjectAsNativeBool(argv[7], &isReceiptSet);
+
+            if (argv[6] != nil) {
+                FREGetObjectAsNativeString(argv[6], &receipt);
             }
 
-            if (partnerParameters != nil) {
-                for (int i = 0; i < [partnerParameters count]; i += 2) {
-                    NSString *key = [partnerParameters objectAtIndex:i];
-                    NSString *value = [partnerParameters objectAtIndex:(i+1)];
-
-                    [adjustEvent addPartnerParameter:key value:value];
-                }
+            if (argv[7] != nil) {
+                FREGetObjectAsNativeString(argv[5], &transactionId);
             }
 
             if (isReceiptSet) {
@@ -169,9 +187,9 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
                     [adjustEvent setTransactionId:transactionId];
                 }
             }
-
-            [Adjust trackEvent:adjustEvent];
         }
+
+        [Adjust trackEvent:adjustEvent];
     } else {
         NSLog(@"Adjust: Bridge trackEvent method triggered with wrong number of arguments");
     }
