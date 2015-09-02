@@ -423,7 +423,7 @@ mode whenever it is started, even if the app was terminated in offline mode.
 [attribution_data]: https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
 [special-partners]: https://docs.adjust.com/en/special-partners
 
-[android-permissions]: https://github.com/adjust/android_sdk#4-add-permissions
+[android-permissions]: https://github.com/adjust/android_sdk#5-add-permissions
 [brodcast-android]: https://github.com/adjust/android_sdk#6-add-broadcast-receiver
 [attribution-data]: https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
 [android-manifest]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/android_manifest.png
