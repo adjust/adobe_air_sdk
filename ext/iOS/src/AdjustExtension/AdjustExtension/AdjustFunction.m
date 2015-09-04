@@ -61,7 +61,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             FREGetObjectAsNativeString(argv[1], &environment);
         }
 
-        ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:ADJEnvironmentSandbox];
+        ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment];
 
         if (argv[2] != nil) {
             FREGetObjectAsNativeString(argv[2], &logLevel);
