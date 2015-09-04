@@ -5,7 +5,7 @@
       <configuration name="Sample" target-platform="Mobile" pure-as="true" main-class="Main" output-file="Main.swf" output-folder="$MODULE_DIR$/../gen">
         <dependencies>
           <entries>
-            <entry library-id="cca16def-b109-40ad-9f14-0ef4b1f32493">
+            <entry library-id="6ca3a749-4275-4410-9e56-a0a7fddcfdb0">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -30,9 +30,9 @@
     <orderEntry type="library" exported="" name="google-play-services" level="application" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
-        <properties id="cca16def-b109-40ad-9f14-0ef4b1f32493" />
+        <properties id="6ca3a749-4275-4410-9e56-a0a7fddcfdb0" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Adjust-4.0.0.ane!/" />
+          <root url="jar://$MODULE_DIR$/../Adjust-4.0.1.ane!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
