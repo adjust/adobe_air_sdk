@@ -7,7 +7,7 @@
 //
 
 #import "FlashRuntimeExtensions.h"
-#import <Adjust/Adjust.h>
+#import <AdjustSdk/Adjust.h>
 
 @interface AdjustFunction: NSObject<AdjustDelegate>
 
@@ -24,6 +24,7 @@ FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 // Android methods
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

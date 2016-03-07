@@ -18,7 +18,7 @@
 		96E1BBE819938730004E270B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE719938730004E270B /* UIKit.framework */; };
 		96E1BBF119938730004E270B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96E1BBEF19938730004E270B /* InfoPlist.strings */; };
 		96E1BBF319938730004E270B /* AdjustExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBF219938730004E270B /* AdjustExtensionTests.m */; };
-		9DCBBDD71B8CA7BE006DF348 /* Adjust.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */; };
+		9DCED7FA1C8D9F45007C1574 /* AdjustSdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +62,7 @@
 		96E1BBF219938730004E270B /* AdjustExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdjustExtensionTests.m; sourceTree = "<group>"; };
 		96E1BBFC1993897B004E270B /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashRuntimeExtensions.h; sourceTree = "<group>"; };
 		9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Adjust.framework; path = include/Adjust/Adjust.framework; sourceTree = "<group>"; };
+		9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdjustSdk.framework; path = include/Adjust/AdjustSdk.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DCBBDD71B8CA7BE006DF348 /* Adjust.framework in Frameworks */,
+				9DCED7FA1C8D9F45007C1574 /* AdjustSdk.framework in Frameworks */,
 				96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */,
 				96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */,
 				96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */,
@@ -111,6 +112,7 @@
 		96E1BBD51993872F004E270B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */,
 				9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */,
 				96332CC11A8B982600D38FAF /* iAd.framework */,
 				96332CBF1A8B982000D38FAF /* AdSupport.framework */,
