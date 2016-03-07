@@ -10,7 +10,7 @@ import flash.events.StatusEvent;
 import flash.external.ExtensionContext;
 
 public class Adjust extends EventDispatcher {
-    private static var sdkPrefix:String = "adobe_air4.0.1";
+    private static var sdkPrefix:String = "adobe_air4.1.0";
     private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
     private static var extensionContext:ExtensionContext;
     private static var attributionCallbackDelegate:Function;
