@@ -19,12 +19,12 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 // Android methods
+FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

@@ -8,8 +8,7 @@
 
 #import "AdjustFunction.h"
 
-void setNamedFunction(FRENamedFunction* namedFunction, const uint8_t* name, FREFunction function)
-{
+void setNamedFunction(FRENamedFunction* namedFunction, const uint8_t* name, FREFunction function) {
     namedFunction->name = name;
     namedFunction->functionData = NULL;
     namedFunction->function = function;
@@ -19,8 +18,7 @@ void AdjustFREContextInitializer(void* extData,
                                  const uint8_t* ctxType,
                                  FREContext ctx,
                                  uint32_t* numFunctionsToSet,
-                                 const FRENamedFunction** functionsToSet)
-{
+                                 const FRENamedFunction** functionsToSet) {
     uint32_t numberOfFunctions = 11;
 
     *numFunctionsToSet = numberOfFunctions;
@@ -42,21 +40,19 @@ void AdjustFREContextInitializer(void* extData,
     *functionsToSet = func;
 }
 
-void AdjustFREContextFinalizer(FREContext ctx)
-{
+void AdjustFREContextFinalizer(FREContext ctx) {
     return;
 }
+
 void AdjustFREInitializer(void** extDataToSet,
                           FREContextInitializer* ctxInitializerToSet,
-                          FREContextFinalizer* ctxFinalizerToSet)
-{
+                          FREContextFinalizer* ctxFinalizerToSet) {
     extDataToSet = NULL;
     *ctxInitializerToSet = &AdjustFREContextInitializer;
     *ctxFinalizerToSet = &AdjustFREContextFinalizer;
 }
 
-void AdjustFREFinalizer(void* extData)
-{
+void AdjustFREFinalizer(void* extData) {
     return;
 }
 

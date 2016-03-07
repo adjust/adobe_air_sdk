@@ -38,8 +38,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 
 @end
 
-FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 7) {
         NSString *appToken = nil;
         NSString *environment = nil;
@@ -111,8 +110,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
     return return_value;
 }
 
-FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 8) {
         double revenue;
 
@@ -195,8 +193,7 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
     return return_value;
 }
 
-FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 1) {
         BOOL enable;
 
@@ -213,8 +210,7 @@ FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject
     return return_value;
 }
 
-FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 0) {
         BOOL isEnabled = [Adjust isEnabled];
 
@@ -232,24 +228,21 @@ FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject 
     }
 }
 
-FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     FREObject return_value;
     FRENewObjectFromBool((uint32_t)ADJisEnabled, &return_value);
 
     return return_value;
 }
 
-FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     FREObject return_value;
     FRENewObjectFromBool((uint32_t)ADJisEnabled, &return_value);
 
     return return_value;
 }
 
-FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 1) {
         NSString *pUrl;
 
@@ -268,8 +261,7 @@ FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREOb
     return return_value;
 }
 
-FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 1) {
         BOOL isOffline;
 
@@ -286,8 +278,7 @@ FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREOb
     return return_value;
 }
 
-FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 1) {
         NSString *pDeviceToken;
 
@@ -306,8 +297,7 @@ FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREOb
     return return_value;
 }
 
-FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 0) {
         NSString *idfa = [Adjust idfa];
 
@@ -322,8 +312,7 @@ FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
     }
 }
 
-FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
-{
+FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     FREObject return_value;
     FRENewObjectFromBool(true, &return_value);
     
