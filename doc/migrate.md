@@ -18,10 +18,8 @@ import com.adjust.sdk.Adjust;
 import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 
-public class Example extends Sprite
-{
-    public function Example()
-    {
+public class Example extends Sprite {
+    public function Example() {
         var appToken = "{YourAppToken}";
         var environment = Environment.SANDBOX;
         var logLevel = LogLevel.INFO;
@@ -40,10 +38,8 @@ import com.adjust.sdk.AdjustConfig;
 import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 
-public class Example extends Sprite
-{
-    public function Example()
-    {
+public class Example extends Sprite {
+    public function Example() {
     	var appToken:String = "{YourAppToken}";
     	var environment:String = Environment.SANDBOX;
     	
@@ -102,3 +98,85 @@ var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
 adjustEvent.setRevenue(0.01, "EUR");
 Adjust.trackEvent(adjustEvent);
 ```
+
+### Get attribution information
+
+In version 3.x.x of the adjust SDK, you were accessing attribution in callback method which you have
+passed to `Adjust` instance as a parameter of the `setResponseDelegate` method. Starting from version
+4.0.0, attribution information is obtained in method which we call **attribution callback**. This
+method needs to be defined and passed as a parameter of `setAttributionCallbackDelegate` method of
+`AdjustConfig` object.
+
+##### Before
+
+```actionscript
+import com.adjust.sdk.Adjust;
+
+public class Example extends Sprite {
+    public function Example() {
+        // ...
+
+        Adjust.setResponseDelegate(ResponseDelegate);
+    }
+
+    private function ResponseDelegate(responseData: Object): void {
+        // Do stuff with attribution info.
+    }
+}
+```
+
+###### After
+
+```actionscript
+import com.adjust.sdk.Adjust;
+
+public class Example extends Sprite {
+    public function Example() {
+        var appToken:String = "{YourAppToken}";
+        var environment:String = Environment.SANDBOX;
+
+        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
+
+        Adjust.start(adjustConfig);
+    }
+
+    // ...
+
+    private static function attributionCallbackDelegate(attribution:AdjustAttribution):void {
+        // Do stuff with attribution info.
+    }
+}
+```
+
+### Broadcast receiver
+
+We have renamed adjust broadcast receiver (which you should use in case that you don't have your own)
+starting from version 4.0.0. This means that you should edit its entry in application descripter file
+and change the name of broadcast receiver class from `ReferrerReceiver` to `AdjustReferrerReceiver`.
+
+##### Before
+
+```actionscript
+<receiver
+    android:name="com.adjust.sdk.ReferrerReceiver"
+    android:exported="true" >
+    <intent-filter>
+        <action android:name="com.android.vending.INSTALL_REFERRER" />
+    </intent-filter>
+</receiver>
+```
+
+##### After
+
+```actionscript
+<receiver
+    android:name="com.adjust.sdk.AdjustReferrerReceiver"
+    android:exported="true" >
+    <intent-filter>
+        <action android:name="com.android.vending.INSTALL_REFERRER" />
+    </intent-filter>
+</receiver>
+```
+
