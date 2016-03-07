@@ -41,10 +41,8 @@ import com.adjust.sdk.AdjustConfig;
 import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 
-public class Example extends Sprite
-{
-    public function Example()
-    {
+public class Example extends Sprite {
+    public function Example() {
     	var appToken:String = "{YourAppToken}";
     	var environment:String = Environment.SANDBOX;
     	
@@ -289,10 +287,8 @@ import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 import com.adjust.sdk.AdjustAttribution;
 
-public class Example extends Sprite
-{
-    public function Example()
-    {
+public class Example extends Sprite {
+    public function Example() {
     	var appToken:String = "{YourAppToken}";
     	var environment:String = Environment.SANDBOX;
     	
