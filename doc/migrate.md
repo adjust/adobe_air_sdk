@@ -101,11 +101,11 @@ Adjust.trackEvent(adjustEvent);
 
 ### Get attribution information
 
-In version 3.x.x of the adjust SDK, you were accessing attribution in callback method which you have
-passed to `Adjust` instance as a parameter of the `setResponseDelegate` method. Starting from version
-4.0.0, attribution information is obtained in method which we call **attribution callback**. This
-method needs to be defined and passed as a parameter of `setAttributionCallbackDelegate` method of
-`AdjustConfig` object.
+In version 3.x.x of the adjust SDK, you could access attribution data in a callback method which you
+would pass to the `Adjust` instance as a parameter of the `setResponseDelegate` method. Starting from 
+version 4.0.0, attribution information is obtained in another method, which we call the **attribution 
+callback**. This method needs to be defined and passed as a parameter of the `setAttributionCallbackDelegate` 
+method of the `AdjustConfig` object.
 
 ##### Before
 
@@ -152,9 +152,9 @@ public class Example extends Sprite {
 
 ### Broadcast receiver
 
-We have renamed adjust broadcast receiver (which you should use in case that you don't have your own)
-starting from version 4.0.0. This means that you should edit its entry in application descripter file
-and change the name of broadcast receiver class from `ReferrerReceiver` to `AdjustReferrerReceiver`.
+We have renamed the adjust broadcast receiver (which you should use in case that you don't have your own)
+starting from version 4.0.0. This means that you should edit its entry in your application descripter file
+and change the name of the broadcast receiver class from `ReferrerReceiver` to `AdjustReferrerReceiver`.
 
 ##### Before
 
