@@ -1,14 +1,14 @@
 ### Version 4.1.0 (xxth March 2016)
 #### Added
-- `CHANGELOG.md` is now added to the repository.
-- `getIdfa` method for getting `IDFA` on iOS device.
-- `getGoogleAdId` method for getting `Google Play Services Ad Id` on Android device.
+- Added `CHANGELOG.md`.
+- Added `getIdfa` method for getting `IDFA` on iOS device.
+- Added `getGoogleAdId` method for getting `Google Play Services Ad Id` on Android device.
 
 #### Changed
-- `Adjust.framework` renamed to `AdjustSdk.framework`.
-- `MAC MD5` tracking feature for `iOS platform` is now completely **removed**.
-- Native iOS SDK updated to version **4.5.4**.
-- Native Android SDK updated to version **4.2.3**.
+- Renamed `Adjust.framework` to `AdjustSdk.framework`.
+- Removed `MAC MD5` tracking feature for `iOS platform` completely.
+- Updated native iOS SDK to version **4.5.4**.
+- Updated native Android SDK to version **4.2.3**.
 
 #### Native SDKs
 - [iOS@v4.5.4][ios_sdk_v4.5.4]
@@ -31,11 +31,11 @@
 
 ### Version 4.0.0 (2nd September 2015)
 #### Added
-- adjust SDK upgrade to version `4.0.0`.
+- Upgraded adjust SDK to version `4.0.0`.
 
 #### Changed
-- Native iOS SDK updated to version **4.2.8**.
-- Native Android SDK updated to version **4.1.2**.
+- Updated Native iOS SDK to version **4.2.8**.
+- Updated Native Android SDK to version **4.1.2**.
 
 #### Native SDKs
 - [iOS@v4.2.8][ios_sdk_v4.2.8]
@@ -45,7 +45,7 @@
 
 ### Version 3.4.3 (2nd April 2015)
 #### Added
-- Auxiliary classes to non-native/default target.
+- Added auxiliary classes to non-native/default target.
 
 #### Native SDKs
 - [iOS@v3.4.0][ios_sdk_v3.4.0]
@@ -55,7 +55,7 @@
 
 ### Version 3.4.2 (10th March 2015)
 #### Added
-- Support for iOS 64 bit.
+- Added support for iOS 64 bit.
 - Prefixed names to prevent namespace collisions.
 
 #### Native SDKs
@@ -66,7 +66,7 @@
 
 ### Version 3.4.1 (2nd October 2014)
 #### Fixed
-- Flash lifecycle events issue.
+- Fixed flash lifecycle events issue.
 
 #### Native SDKs
 - [iOS@v3.4.0][ios_sdk_v3.4.0]
@@ -76,12 +76,12 @@
 
 ### Version 3.4.0 (29th September 2014)
 #### Added
-- In-App Source Access.
+- Added In-App Source Access.
 - Add option to disable and enable the SDK temporarily.
 
 #### Changed
-- Native iOS SDK updated to version **3.4.0**.
-- Native Android SDK updated to version **3.5.0**.
+- Updated native iOS SDK to version **3.4.0**.
+- Updated native Android SDK to version **3.5.0**.
 
 #### Native SDKs
 - [iOS@v3.4.0][ios_sdk_v3.4.0]
@@ -91,7 +91,7 @@
 
 ### Version 2.2.2 (24th July 2014)
 #### Added
-- Sending of `Google Ad Identifier` for Android devices.
+- Added transmission of `Google Ad Identifier` for Android devices.
 
 #### Native SDKs
 - [iOS@v2.2.0][ios_sdk_v2.2.0]
@@ -101,7 +101,7 @@
 
 ### Version 2.2.1 (26th March 2014)
 #### Fixed
-- Tracking events and revenue with custom parameters.
+- Fixed tracking events and revenue with custom parameters.
 
 #### Native SDKs
 - [iOS@v2.2.0][ios_sdk_v2.2.0]
@@ -111,10 +111,10 @@
 
 ### Version 2.2.0 (5th March 2014)
 #### Changed
-- Native iOS SDK updated to version **2.2.0**.
+- Updated native iOS SDK to version **2.2.0**.
 
 #### Fixed
-- An issue with calling `trackRevenue` on iOS.
+- Fixed an issue with calling `trackRevenue` on iOS.
 
 #### Native SDKs
 - [iOS@v2.2.0][ios_sdk_v2.2.0]
@@ -124,8 +124,8 @@
 
 ### Version 2.1.3 (13th January 2014)
 #### Changed
-- Native iOS SDK updated to version **2.1.3**.
-- Native Android SDK updated to version **2.1.6**.
+- Updated native iOS SDK to version **2.1.3**.
+- Updated native Android SDK to version **2.1.6**.
 
 #### Native SDKs
 - [iOS@v2.1.3][ios_sdk_v2.1.3]
@@ -135,8 +135,8 @@
 
 ### Version 2.1.2 (10th January 2014)
 #### Changed
-- Native iOS SDK updated to version **2.1.2**.
-- Native Android SDK updated to version **2.1.5**.
+- Updated native iOS SDK to version **2.1.2**.
+- Updated native Android SDK to version **2.1.5**.
 
 #### Native SDKs
 - [iOS@v2.1.2][ios_sdk_v2.1.2]
@@ -146,10 +146,10 @@
 
 ### Version 2.1.1 (26th November 2013)
 #### Changed
-- Native Android SDK updated to version **2.1.4**.
+- Updated native Android SDK to version **2.1.4**.
 
 #### Fixed
-- Android extension build system.
+- Fixed Android extension build system.
 
 #### Native SDKs
 - [iOS@v2.1.1][ios_sdk_v2.1.1]
