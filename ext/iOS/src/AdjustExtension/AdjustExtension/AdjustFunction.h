@@ -28,3 +28,4 @@ FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

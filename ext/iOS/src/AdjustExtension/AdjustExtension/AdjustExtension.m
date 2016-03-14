@@ -19,7 +19,7 @@ void AdjustFREContextInitializer(void* extData,
                                  FREContext ctx,
                                  uint32_t* numFunctionsToSet,
                                  const FRENamedFunction** functionsToSet) {
-    uint32_t numberOfFunctions = 11;
+    uint32_t numberOfFunctions = 12;
 
     *numFunctionsToSet = numberOfFunctions;
 
@@ -36,6 +36,7 @@ void AdjustFREContextInitializer(void* extData,
     setNamedFunction(&func[9], (const uint8_t*)"getIdfa", &ADJgetIdfa);
 
     setNamedFunction(&func[10], (const uint8_t*)"setReferrer", &ADJsetReferrer);
+    setNamedFunction(&func[11], (const uint8_t*)"getGoogleAdId", &ADJgetGoogleAdId);
 
     *functionsToSet = func;
 }

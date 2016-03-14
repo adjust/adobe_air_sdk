@@ -318,3 +318,10 @@ FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObjec
     
     return return_value;
 }
+
+FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
