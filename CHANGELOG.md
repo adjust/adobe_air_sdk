@@ -1,4 +1,4 @@
-### Version 4.1.0 (xxth March 2016)
+### Version 4.1.0 (23rd March 2016)
 #### Added
 - Added `CHANGELOG.md`.
 - Added `getIdfa` method for getting `IDFA` on iOS device.
