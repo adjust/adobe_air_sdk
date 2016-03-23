@@ -95,7 +95,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
 
         if (argv[6] != nil) {
-            FREGetObjectAsNativeString(argv[7], &sdkPrefix);
+            FREGetObjectAsNativeString(argv[6], &sdkPrefix);
             [adjustConfig setSdkPrefix:sdkPrefix];
         }
 
