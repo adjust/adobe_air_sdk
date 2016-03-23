@@ -41,10 +41,8 @@ import com.adjust.sdk.AdjustConfig;
 import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 
-public class Example extends Sprite
-{
-    public function Example()
-    {
+public class Example extends Sprite {
+    public function Example() {
     	var appToken:String = "{YourAppToken}";
     	var environment:String = Environment.SANDBOX;
     	
@@ -289,10 +287,8 @@ import com.adjust.sdk.Environment;
 import com.adjust.sdk.LogLevel;
 import com.adjust.sdk.AdjustAttribution;
 
-public class Example extends Sprite
-{
-    public function Example()
-    {
+public class Example extends Sprite {
+    public function Example() {
     	var appToken:String = "{YourAppToken}";
     	var environment:String = Environment.SANDBOX;
     	
@@ -413,6 +409,40 @@ back in online mode, all saved information is sent to our servers with the corre
 Unlike disabling tracking, this setting is *not remembered* between sessions. This means that the SDK is in online
 mode whenever it is started, even if the app was terminated in offline mode.
 
+### 15. Device IDs
+
+Certain services (such as [Google Analytics][google-analytics]) require you to coordinate device IDs in order 
+to prevent duplicate reporting.
+
+You can call the following methods to retrieve the device IDs collected by the adjust SDK.
+
+#### Android
+
+If you need to obtain the Google Advertising ID, there is a restriction that only allows it to 
+be read in a background thread.  If you call the function `getGoogleAdId` by passing a function which 
+gets `String` variable as parameter to it, it will work in any situation:
+
+```as
+Adjust.getGoogleAdId(getGoogleAdIdCallback);
+
+// ...
+
+private static function getGoogleAdIdCallback(googleAdId:String):void {
+    trace("Google Ad Id = " + googleAdId);
+}
+```
+
+Inside the custom defined method `getGoogleAdIdCallback`, you will have access to the Google Advertising ID 
+as the variable `googleAdId`.
+
+#### iOS
+
+To obtain the IDFA, call the function `getIdfa`:
+
+```as
+Adjust.getIdfa()
+```
+
 [adjust.com]: http://adjust.com
 [dashboard]: http://adjust.com
 [releases]: https://github.com/adjust/adjust_air_sdk/releases
@@ -431,12 +461,13 @@ mode whenever it is started, even if the app was terminated in offline mode.
 [idea-locate]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_locate.png
 [idea-new-library]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_new_library.png
 [idea-new-library-gps]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_new_library_gps.png
+[google-analytics]: https://docs.adjust.com/en/special-partners/google-analytics
 
 ## License
 
 The adjust SDK is licensed under the MIT License.
 
-Copyright (c) 2012-2015 adjust GmbH,
+Copyright (c) 2012-2016 adjust GmbH,
 http://www.adjust.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of

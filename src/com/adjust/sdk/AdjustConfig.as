@@ -8,9 +8,6 @@ package com.adjust.sdk {
         private var eventBufferingEnabled:Boolean;
         private var defaultTracker:String;
 
-        // iOS specific
-        private var macMd5TrackingEnabled:Boolean;
-
         public function AdjustConfig(appToken:String, environment:String) {
             this.appToken = appToken;
             this.environment = environment;
@@ -30,10 +27,6 @@ package com.adjust.sdk {
 
         public function setDefaultTracker(defaultTracker:String):void {
             this.defaultTracker = defaultTracker;
-        }
-
-        public function setMacMd5TrackingEnabled(macMd5TrackingEnabled:Boolean):void {
-            this.macMd5TrackingEnabled = macMd5TrackingEnabled;
         }
 
         // Getters
@@ -59,10 +52,6 @@ package com.adjust.sdk {
 
         public function getDefaultTracker():String {
             return this.defaultTracker;
-        }
-
-        public function getMacMd5TrackingEnabled():Boolean {
-            return this.macMd5TrackingEnabled;
         }
     }
 }

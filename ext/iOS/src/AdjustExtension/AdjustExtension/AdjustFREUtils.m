@@ -9,8 +9,7 @@
 #import "AdjustFREUtils.h"
 
 
-FREResult FREGetObjectAsNativeString(FREObject obj, NSString** nativeString)
-{
+FREResult FREGetObjectAsNativeString(FREObject obj, NSString** nativeString) {
     FREResult result;
     uint32_t length;
     const uint8_t *value;
@@ -19,11 +18,11 @@ FREResult FREGetObjectAsNativeString(FREObject obj, NSString** nativeString)
     ASSERT_FRE_OK(result);
 
     *nativeString = [NSString stringWithUTF8String: (const char*)value];
+    
     return result;
 }
 
-FREResult FREGetObjectAsNativeBool(FREObject obj, BOOL* nativeBool)
-{
+FREResult FREGetObjectAsNativeBool(FREObject obj, BOOL* nativeBool) {
     FREResult result;
     uint32_t value;
 
@@ -31,11 +30,11 @@ FREResult FREGetObjectAsNativeBool(FREObject obj, BOOL* nativeBool)
     ASSERT_FRE_OK(result);
 
     *nativeBool = (BOOL) value;
+
     return result;
 }
 
-FREResult FREGetObjectAsNativeArray(FREObject obj, NSArray** nativeArray)
-{
+FREResult FREGetObjectAsNativeArray(FREObject obj, NSArray** nativeArray) {
     FREResult result;
     FREObject array = obj;
     uint32_t arrayLength;
@@ -65,8 +64,7 @@ FREResult FREGetObjectAsNativeArray(FREObject obj, NSArray** nativeArray)
     return result;
 }
 
-FREResult FREGetObjectAsNativeDictionary(FREObject obj, NSDictionary** nativeDictionary)
-{
+FREResult FREGetObjectAsNativeDictionary(FREObject obj, NSDictionary** nativeDictionary) {
     FREResult result;
     FREObject arrayKeys;
     FREObject exception;

@@ -1,22 +1,22 @@
 OUTDIR ?= .
 SOURCEDIR = ./src/AdjustExtension
-SOURCEDIRFW = ./sdk
+SOURCEDIRSDK = ./sdk
 CC = xcodebuild
 
 all:
-	cd $(SOURCEDIRFW); \
-	xcodebuild -target framework -configuration Release; \
-	mkdir -p Adjust.framework/tmp; \
-	cp Adjust.framework/Versions/A/Headers/* Adjust.framework/tmp; \
-	cp Adjust.framework/Versions/A/adjust Adjust.framework/tmp; \
-	rm -rf Adjust.framework/Adjust; rm -rf Adjust.framework/Headers; rm -rf Adjust.framework/Versions; \
-	mkdir -p Adjust.framework/Headers; \
-	mv Adjust.framework/tmp/*.h Adjust.framework/Headers; \
-	mv Adjust.framework/tmp/adjust Adjust.framework/Adjust; \
-	rm -rf Adjust.framework/tmp; cd ..; \
-	cp -R $(SOURCEDIRFW)/Adjust.framework $(SOURCEDIR)/include/Adjust/; \
-	cp -R $(SOURCEDIRFW)/Adjust.framework $(OUTDIR); \
-	rm -rf $(SOURCEDIRFW)/Adjust.framework
+	cd $(SOURCEDIRSDK); \
+        rm -rf Frameworks/Static/*; \
+	xcodebuild -target AdjustStatic -configuration Release; \
+	mkdir -p AdjustSdk.framework/tmp; \
+	cp Frameworks/Static/AdjustSdk.framework/Versions/A/Headers/* AdjustSdk.framework/tmp; \
+	cp Frameworks/Static/AdjustSdk.framework/Versions/A/AdjustSdk AdjustSdk.framework/tmp; \
+	mkdir -p AdjustSdk.framework/Headers; \
+	mv AdjustSdk.framework/tmp/*.h AdjustSdk.framework/Headers; \
+	mv AdjustSdk.framework/tmp/AdjustSdk AdjustSdk.framework/AdjustSdk; \
+	rm -rf AdjustSdk.framework/tmp; cd ..; \
+	cp -R $(SOURCEDIRSDK)/AdjustSdk.framework $(SOURCEDIR)/include/Adjust/; \
+	cp -R $(SOURCEDIRSDK)/AdjustSdk.framework $(OUTDIR); \
+	rm -rf $(SOURCEDIRSDK)/AdjustSdk.framework
 	cd $(SOURCEDIR); $(CC) CONFIGURATION_BUILD_DIR=$(OUTDIR); \
 
 

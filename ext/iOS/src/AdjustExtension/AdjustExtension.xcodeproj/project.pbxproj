@@ -13,12 +13,10 @@
 		9696C5F91993CF0D003B644E /* AdjustFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 9696C5F81993CF0D003B644E /* AdjustFunction.m */; };
 		96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
 		96E1BBDE1993872F004E270B /* AdjustExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBDD1993872F004E270B /* AdjustExtension.m */; };
-		96E1BBE51993872F004E270B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE41993872F004E270B /* XCTest.framework */; };
 		96E1BBE61993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
-		96E1BBE819938730004E270B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBE719938730004E270B /* UIKit.framework */; };
 		96E1BBF119938730004E270B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96E1BBEF19938730004E270B /* InfoPlist.strings */; };
 		96E1BBF319938730004E270B /* AdjustExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBF219938730004E270B /* AdjustExtensionTests.m */; };
-		9DCBBDD71B8CA7BE006DF348 /* Adjust.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */; };
+		9DCED7FA1C8D9F45007C1574 /* AdjustSdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,13 +53,11 @@
 		96E1BBDA1993872F004E270B /* AdjustExtension-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AdjustExtension-Prefix.pch"; sourceTree = "<group>"; };
 		96E1BBDD1993872F004E270B /* AdjustExtension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdjustExtension.m; sourceTree = "<group>"; };
 		96E1BBE31993872F004E270B /* AdjustExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdjustExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		96E1BBE41993872F004E270B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		96E1BBE719938730004E270B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		96E1BBEE19938730004E270B /* AdjustExtensionTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AdjustExtensionTests-Info.plist"; sourceTree = "<group>"; };
 		96E1BBF019938730004E270B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		96E1BBF219938730004E270B /* AdjustExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdjustExtensionTests.m; sourceTree = "<group>"; };
 		96E1BBFC1993897B004E270B /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashRuntimeExtensions.h; sourceTree = "<group>"; };
-		9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Adjust.framework; path = include/Adjust/Adjust.framework; sourceTree = "<group>"; };
+		9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdjustSdk.framework; path = include/Adjust/AdjustSdk.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DCBBDD71B8CA7BE006DF348 /* Adjust.framework in Frameworks */,
+				9DCED7FA1C8D9F45007C1574 /* AdjustSdk.framework in Frameworks */,
 				96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */,
 				96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */,
 				96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */,
@@ -80,8 +76,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96E1BBE51993872F004E270B /* XCTest.framework in Frameworks */,
-				96E1BBE819938730004E270B /* UIKit.framework in Frameworks */,
 				96E1BBE61993872F004E270B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -111,12 +105,10 @@
 		96E1BBD51993872F004E270B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9DCBBDD61B8CA7BE006DF348 /* Adjust.framework */,
+				9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */,
 				96332CC11A8B982600D38FAF /* iAd.framework */,
 				96332CBF1A8B982000D38FAF /* AdSupport.framework */,
 				96E1BBD61993872F004E270B /* Foundation.framework */,
-				96E1BBE41993872F004E270B /* XCTest.framework */,
-				96E1BBE719938730004E270B /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -205,7 +197,7 @@
 		96E1BBCB1993872F004E270B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = adjust;
 			};
 			buildConfigurationList = 96E1BBCE1993872F004E270B /* Build configuration list for PBXProject "AdjustExtension" */;
@@ -295,6 +287,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -405,6 +398,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "AdjustExtensionTests/AdjustExtensionTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "adjust.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -421,6 +415,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AdjustExtension/AdjustExtension-Prefix.pch";
 				INFOPLIST_FILE = "AdjustExtensionTests/AdjustExtensionTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "adjust.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xctest;
 			};

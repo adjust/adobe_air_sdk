@@ -47,5 +47,13 @@ public class Adjust extends EventDispatcher {
     public static function setDeviceToken(deviceToken:String):void {
         trace("adjust: setDeviceToken called");
     }
+
+    public static function getIdfa():void {
+        trace("adjust: getIdfa called");
+    }
+
+    public static function getGoogleAdId(callback:Function):void {
+        trace("adjust: getGoogleAdId called");
+    }
 }
 }

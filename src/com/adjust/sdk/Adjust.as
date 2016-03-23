@@ -10,10 +10,11 @@ import flash.events.StatusEvent;
 import flash.external.ExtensionContext;
 
 public class Adjust extends EventDispatcher {
-    private static var sdkPrefix:String = "adobe_air4.0.1";
+    private static var sdkPrefix:String = "adobe_air4.1.0";
     private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
     private static var extensionContext:ExtensionContext;
     private static var attributionCallbackDelegate:Function;
+    private static var googleAdIdCallbackDelegate:Function;
     
     public static function start(adjustConfig:AdjustConfig):void {
         if (extensionContext) {
@@ -43,7 +44,7 @@ public class Adjust extends EventDispatcher {
         extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
                 adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(),
                 adjustConfig.getAttributionCallbackDelegate() != null, adjustConfig.getDefaultTracker(),
-                adjustConfig.getMacMd5TrackingEnabled(), sdkPrefix);
+                sdkPrefix);
 
         // For now, call onResume after onCreate.
         extensionContext.call("onResume");
@@ -133,14 +134,41 @@ public class Adjust extends EventDispatcher {
         extensionContext.call("setDeviceToken", deviceToken);
     }
 
-    private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
-        if (statusEvent.code != "adjust_attributionData") {
+    public static function getIdfa():String {
+        if (!extensionContext) {
+            trace(errorMessage);
+            return null;
+        }
+
+        var idfa:String = String (extensionContext.call("getIdfa"));
+
+        return idfa;
+    }
+
+    public static function getGoogleAdId(callback:Function):void {
+        if (!extensionContext) {
+            trace(errorMessage);
             return;
         }
 
-        var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
+        googleAdIdCallbackDelegate = callback;
+        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-        attributionCallbackDelegate(attribution);
+        extensionContext.call("getGoogleAdId");
+    }
+
+    private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
+        if (statusEvent.code == "adjust_attributionData") {
+            var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
+
+            attributionCallbackDelegate(attribution);
+        }
+
+        if (statusEvent.code == "adjust_googleAdId") {
+            var googleAdId:String = statusEvent.level;
+
+            googleAdIdCallbackDelegate(googleAdId);
+        }
     }
 
     private static function getAttributionFromResponse(response:String):AdjustAttribution {
