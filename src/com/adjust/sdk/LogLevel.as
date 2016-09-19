@@ -9,5 +9,6 @@ package com.adjust.sdk {
         public static const WARN:String = "warn";
         public static const ERROR:String = "error";
         public static const ASSERT:String = "assert";
+        public static const SUPRESS:String = "supress";
     }
 }
