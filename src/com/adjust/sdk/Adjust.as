@@ -3,14 +3,11 @@
  */
 package com.adjust.sdk {
   import flash.desktop.NativeApplication;
-  import flash.events.Event;
-  import flash.events.EventDispatcher;
-  import flash.events.InvokeEvent;
-  import flash.events.StatusEvent;
+  import flash.events.*;
   import flash.external.ExtensionContext;
 
   public class Adjust extends EventDispatcher {
-    private static var sdkPrefix:String = "adobe_air4.1.0";
+    private static var sdkPrefix:String = "adobe_air4.10.0";
     private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
     private static var extensionContext:ExtensionContext;
     private static var attributionCallbackDelegate:Function;
@@ -28,16 +25,12 @@ package com.adjust.sdk {
         return;
       }
 
-      trace("EC: 1");
       extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
-      trace("EC: 2");
-
       if (!extensionContext) {
         trace("adjust error: cannot open ANE 'com.adjust.sdk' for this platform");
         return;
       }
 
-      //TODO: REMOVE COMMENT
       var app:NativeApplication = NativeApplication.nativeApplication;
       app.addEventListener(Event.ACTIVATE, onResume);
       app.addEventListener(Event.DEACTIVATE, onPause);
@@ -61,28 +54,25 @@ package com.adjust.sdk {
       deferredDeeplinkDelegate = adjustConfig.getDeferredDeeplinkDelegate();
       extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-      trace("adjust: start [1]>>>")
-        extensionContext.call("onCreate", 
-            adjustConfig.getAppToken(), 
-            adjustConfig.getEnvironment(),
-            adjustConfig.getAllowSupressLogLevel(),
-            adjustConfig.getLogLevel(), 
-            adjustConfig.getEventBufferingEnabled(),
-            adjustConfig.getAttributionCallbackDelegate() != null, 
-            adjustConfig.getEventTrackingSucceededDelegate() != null, 
-            adjustConfig.getEventTrackingFailedDelegate() != null, 
-            adjustConfig.getSessionTrackingSucceededDelegate() != null, 
-            adjustConfig.getSessionTrackingFailedDelegate() != null, 
-            adjustConfig.getDeferredDeeplinkDelegate() != null, 
-            adjustConfig.getDefaultTracker(),
-            sdkPrefix,
-            adjustConfig.getShouldLaunchDeeplink());
+      extensionContext.call("onCreate", 
+          adjustConfig.getAppToken(), 
+          adjustConfig.getEnvironment(),
+          adjustConfig.getAllowSupressLogLevel(),
+          adjustConfig.getLogLevel(), 
+          adjustConfig.getEventBufferingEnabled(),
+          adjustConfig.getAttributionCallbackDelegate() != null, 
+          adjustConfig.getEventTrackingSucceededDelegate() != null, 
+          adjustConfig.getEventTrackingFailedDelegate() != null, 
+          adjustConfig.getSessionTrackingSucceededDelegate() != null, 
+          adjustConfig.getSessionTrackingFailedDelegate() != null, 
+          adjustConfig.getDeferredDeeplinkDelegate() != null, 
+          adjustConfig.getDefaultTracker(),
+          sdkPrefix,
+          adjustConfig.getShouldLaunchDeeplink());
 
 
-      trace("adjust: start [2]>>>")
-        // For now, call onResume after onCreate.
-        extensionContext.call("onResume");
-      trace("adjust: start [3]>>>")
+      // For now, call onResume after onCreate.
+      extensionContext.call("onResume");
     }
 
     public static function trackEvent(adjustEvent:AdjustEvent):void {
@@ -459,16 +449,13 @@ package com.adjust.sdk {
     }
 
     private static function onInvoke(event:InvokeEvent):void {
-      for (var i:int = 0; i < event.arguments.length; i++) {
-        var argument:String = event.arguments[i];
-
-        trace("adjust: Trying to open deep link");
-        trace(argument);
-
-        appWillOpenUrl(argument);
-
-        break;
+      if(event.arguments.length == 0) {
+        return;
       }
+
+      var argument:String = event.arguments[0];
+      trace("adjust: Deeplink received: " + argument);
+      appWillOpenUrl(argument);
     }
   }
 }

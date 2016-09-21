@@ -107,7 +107,6 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-  NSLog(@"Adjust: ADJonCreate [1]");
   if (argc == 14) {
     NSString *appToken = nil;
     NSString *environment = nil;
@@ -121,7 +120,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 
     adjustFREContext = ctx;
 
-    NSLog(@"Adjust: ADJonCreate [2]");
     if (argv[0] != nil) {
       FREGetObjectAsNativeString(argv[0], &appToken);
     }
@@ -130,7 +128,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
       FREGetObjectAsNativeString(argv[1], &environment);
     }
 
-    NSLog(@"Adjust: ADJonCreate [3]");
     if (argv[2] != nil) {
       FREGetObjectAsNativeBool(argv[2], &allowSupressLogLevel);
     }
@@ -150,7 +147,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
       [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
     }
 
-    NSLog(@"Adjust: ADJonCreate [4]");
     if (argv[5] != nil) {
       FREGetObjectAsNativeBool(argv[5], &isCallbackSet);
 
@@ -166,7 +162,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
     //argv 6,7,8,9,10 and 11 are not needed for Obj-C since we're setting a delegate and 
     // using selectors.
 
-    NSLog(@"Adjust: ADJonCreate [5]");
     if (argv[11] != nil) {
       FREGetObjectAsNativeString(argv[11], &defaultTracker);
 
@@ -175,7 +170,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
       }
     }
 
-    NSLog(@"Adjust: ADJonCreate [6]");
     if (argv[12] != nil) {
       FREGetObjectAsNativeString(argv[12], &sdkPrefix);
       [adjustConfig setSdkPrefix:sdkPrefix];
@@ -185,7 +179,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
       FREGetObjectAsNativeBool(argv[13], &shouldLaunchDeeplink);
     }
 
-    NSLog(@"Adjust: ADJonCreate [7]");
     [Adjust appDidLaunch:adjustConfig];
   } else {
     NSLog(@"Adjust: Bridge onCreate method triggered with wrong number of arguments");
@@ -298,7 +291,6 @@ FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject
 }
 
 FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-  NSLog(@"Adjust: ADJisEnabled>>>>");
   if (argc == 0) {
     BOOL isEnabled = [Adjust isEnabled];
 
@@ -367,7 +359,6 @@ FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREOb
 }
 
 FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-  NSLog(@"Adjust: Calling ADJsetDeviceToken()");
   if (argc == 1) {
     NSString *pDeviceToken;
 
@@ -402,7 +393,6 @@ FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 }
 
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-  NSLog(@"Adjust: Calling ADJsetReferrer()");
   FREObject return_value;
   FRENewObjectFromBool(true, &return_value);
 
@@ -418,7 +408,6 @@ FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObj
 
 
 FREObject ADJaddSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-  NSLog(@"Adjust: >>> addSessionCallbackParameter");
   if (argc == 2) {
     NSString *key = nil;
     NSString *value = nil;

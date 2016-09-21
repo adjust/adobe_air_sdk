@@ -1,3 +1,14 @@
+### Version 4.10.0 (xx September 2016)
+#### Added
+- Standard Deeplinking
+
+#### Changed
+- Implement delegates and session (Callback and Partner) parameters
+
+#### Native SDKs
+- [iOS@4.10.1][ios_sdk_v4.10.1]
+- [Android@4.10.0][android_sdk_v4.10.0]
+
 ### Version 4.1.0 (23rd March 2016)
 #### Added
 - Added `CHANGELOG.md`.
