@@ -1,4 +1,4 @@
-### Version 4.10.0 (xx September 2016)
+### Version 4.10.2 (26th September 2016)
 #### Added
 - Standard Deeplinking
 
@@ -7,7 +7,7 @@
 
 #### Native SDKs
 - [iOS@4.10.1][ios_sdk_v4.10.1]
-- [Android@4.10.0][android_sdk_v4.10.0]
+- [Android@4.10.2][android_sdk_v4.10.2]
 
 ### Version 4.1.0 (23rd March 2016)
 #### Added
