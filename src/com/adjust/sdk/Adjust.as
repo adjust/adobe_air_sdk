@@ -21,7 +21,6 @@ package com.adjust.sdk {
     public static function start(adjustConfig:AdjustConfig):void {
       if (extensionContext) {
         trace("adjust warning: SDK already started");
-        //TODO: REMOVE RETURN
         return;
       }
 
@@ -57,7 +56,6 @@ package com.adjust.sdk {
       extensionContext.call("onCreate", 
           adjustConfig.getAppToken(), 
           adjustConfig.getEnvironment(),
-          adjustConfig.getAllowSupressLogLevel(),
           adjustConfig.getLogLevel(), 
           adjustConfig.getEventBufferingEnabled(),
           adjustConfig.getAttributionCallbackDelegate() != null, 

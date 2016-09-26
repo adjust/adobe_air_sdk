@@ -9,7 +9,6 @@ package com.adjust.sdk {
     private var sendInBackground:Boolean;
     private var delayStart:Number;
     private var userAgent:String;
-    private var allowSupressLogLevel:Boolean;
     private var shouldLaunchDeeplink:Boolean;
 
     private var attributionCallbackDelegate:Function;
@@ -26,10 +25,6 @@ package com.adjust.sdk {
     public function AdjustConfig(appToken:String, environment:String) {
       this.appToken = appToken;
       this.environment = environment;
-    }
-
-    public function setAllowSupressLogLevel(allowSupressLogLevel:Boolean):void {
-      this.allowSupressLogLevel = allowSupressLogLevel;
     }
 
     public function setShouldLaunchDeeplink(shouldLaunchDeeplink:Boolean):void {
@@ -127,10 +122,6 @@ package com.adjust.sdk {
 
     public function getProcessNAme():String {
       return this.processName;
-    }
-
-    public function getAllowSupressLogLevel():Boolean {
-      return this.allowSupressLogLevel;
     }
   }
 }

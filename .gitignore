@@ -1,6 +1,6 @@
 .DS_Store
-.swp
-.swo
+*.swp
+*.swo
 *~
 *.swf
 *.swcout
