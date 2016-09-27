@@ -32,7 +32,7 @@ void AdjustFREContextInitializer(void* extData,
   setNamedFunction(&func[5], (const uint8_t*)"onPause", &ADJonPause);
   setNamedFunction(&func[6], (const uint8_t*)"appWillOpenUrl", &ADJappWillOpenUrl);
   setNamedFunction(&func[7], (const uint8_t*)"setOfflineMode", &ADJsetOfflineMode);
-  setNamedFunction(&func[8], (const uint8_t*)"setPushToken", &ADJsetDeviceToken);
+  setNamedFunction(&func[8], (const uint8_t*)"setDeviceToken", &ADJsetDeviceToken);
   setNamedFunction(&func[9], (const uint8_t*)"getIdfa", &ADJgetIdfa);
   setNamedFunction(&func[10], (const uint8_t*)"setReferrer", &ADJsetReferrer);
   setNamedFunction(&func[11], (const uint8_t*)"getGoogleAdId", &ADJgetGoogleAdId);
