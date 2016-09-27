@@ -8,8 +8,13 @@ package com.adjust.sdk {
         private var adgroup:String;
         private var clickLabel:String;
 
-        public function AdjustAttribution(trackerToken:String, trackerName:String, campaign:String,
-                network:String, creative:String, adgroup:String, clickLabel:String) {
+        public function AdjustAttribution(trackerToken:String,
+            trackerName:String,
+            campaign:String,
+            network:String,
+            creative:String,
+            adgroup:String,
+            clickLabel:String) {
             this.trackerToken = trackerToken == null ? "" : trackerToken;
             this.trackerName = trackerName == null ? "" : trackerName;
             this.campaign = campaign == null ? "" : campaign;
