@@ -71,6 +71,14 @@ package com.adjust.sdk {
             this.shouldLaunchDeeplink = shouldLaunchDeeplink;
         }
 
+        public function setDelayStart(delayStart:Number):void {
+            this.delayStart = delayStart;
+        }
+
+        public function setUserAgent(userAgent:String):void {
+            this.userAgent = userAgent;
+        }
+
         // Getters
         public function getAppToken():String {
             return this.appToken;
@@ -92,7 +100,7 @@ package com.adjust.sdk {
             return this.defaultTracker;
         }
 
-        public function getProcessNAme():String {
+        public function getProcessName():String {
             return this.processName;
         }
 
@@ -122,6 +130,14 @@ package com.adjust.sdk {
 
         public function getShouldLaunchDeeplink():Boolean {
             return this.shouldLaunchDeeplink;
+        }
+
+        public function getDelayStart():Number {
+            return this.delayStart;
+        }
+
+        public function getUserAgent():String {
+            return this.userAgent;
         }
     }
 }

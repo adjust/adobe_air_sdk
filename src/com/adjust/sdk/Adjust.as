@@ -66,7 +66,10 @@ package com.adjust.sdk {
                     adjustConfig.getDeferredDeeplinkDelegate() != null, 
                     adjustConfig.getDefaultTracker(),
                     sdkPrefix,
-                    adjustConfig.getShouldLaunchDeeplink());
+                    adjustConfig.getShouldLaunchDeeplink(),
+                    adjustConfig.getProcessName(),
+                    adjustConfig.getDelayStart(),
+                    adjustConfig.getUserAgent());
 
 
             // For now, call onResume after onCreate.
@@ -239,6 +242,15 @@ package com.adjust.sdk {
             }
 
             extensionContext.call("resetSessionPartnerParameters");
+        }
+
+        public static function sendFirstPackages():void {
+            if (!extensionContext) {
+                trace(errorMessage);
+                return;
+            }
+
+            extensionContext.call("sendFirstPackages");
         }
 
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {

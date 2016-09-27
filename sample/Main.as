@@ -35,7 +35,6 @@ package {
 
       //--------Adjust Configuration-----------
       var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
-      //adjustConfig.setAllowSuppressLogLevel(true);
 
       adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
       adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
@@ -43,11 +42,29 @@ package {
       adjustConfig.setSessionTrackingSucceededDelegate(sessionTrackingSucceededDelegate);
       adjustConfig.setSessionTrackingFailedDelegate(sessionTrackingFailedDelegate);
       adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
-      adjustConfig.setProcessName("DUMMY_PROCESS");
       adjustConfig.setShouldLaunchDeeplink(false);
-      adjustConfig.setLogLevel(LogLevel.SUPPRESS);
+      adjustConfig.setLogLevel(LogLevel.VERBOSE);
+
+      Adjust.addSessionCallbackParameter("dummy_foo", "dummy_bar");
+      Adjust.addSessionCallbackParameter("dummy_foo_foo", "dummy_bar");
+
+      Adjust.addSessionPartnerParameter("dummy_foo", "dummy_bar");
+      Adjust.addSessionPartnerParameter("dummy_foo_foo", "dummy_bar");
+
+      Adjust.removeSessionCallbackParameter("dummy_foo");
+      Adjust.removeSessionPartnerParameter("dummy_foo");
+
+      //Adjust.resetSessionCallbackParameter();
+      //Adjust.resetSessionPartnerParameter();
+
+      adjustConfig.setDelayStart(3.0);
+      adjustConfig.setUserAgent("little_bunny_foo_foo");
 
       Adjust.start(adjustConfig);
+
+      Adjust.setDeviceToken("bunny_foo_foo");
+      Adjust.sendFirstPackages();
+
       //--------Adjust Configuration-----------
     }
 
