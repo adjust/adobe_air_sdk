@@ -35,7 +35,7 @@ package {
 
       //--------Adjust Configuration-----------
       var adjustConfig:AdjustConfig = new AdjustConfig("rb4g27fje5ej", Environment.SANDBOX);
-      //adjustConfig.setAllowSupressLogLevel(true);
+      //adjustConfig.setAllowSuppressLogLevel(true);
 
       adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
       adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
@@ -45,7 +45,7 @@ package {
       adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
       adjustConfig.setProcessName("DUMMY_PROCESS");
       adjustConfig.setShouldLaunchDeeplink(false);
-      adjustConfig.setLogLevel(LogLevel.SUPRESS);
+      adjustConfig.setLogLevel(LogLevel.SUPPRESS);
 
       Adjust.start(adjustConfig);
       //--------Adjust Configuration-----------

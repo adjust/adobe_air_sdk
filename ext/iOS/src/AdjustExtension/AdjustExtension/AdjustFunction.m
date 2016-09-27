@@ -116,7 +116,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 
     BOOL eventBufferingEnabled;
     BOOL isCallbackSet;
-    BOOL allowSupressLogLevel;
+    BOOL allowSuppressLogLevel;
 
     adjustFREContext = ctx;
 
@@ -129,7 +129,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
     }
 
     if (argv[2] != nil) {
-      FREGetObjectAsNativeBool(argv[2], &allowSupressLogLevel);
+      FREGetObjectAsNativeBool(argv[2], &allowSuppressLogLevel);
     }
 
     ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment];
