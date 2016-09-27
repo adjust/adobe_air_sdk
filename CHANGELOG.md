@@ -1,4 +1,4 @@
-### Version 4.10.2 (26th September 2016)
+### Version 4.10.0 (26th September 2016)
 #### Added
 - Standard Deeplinking
 
