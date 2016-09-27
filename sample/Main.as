@@ -45,7 +45,7 @@ package {
       adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
       adjustConfig.setProcessName("DUMMY_PROCESS");
       adjustConfig.setShouldLaunchDeeplink(false);
-      adjustConfig.setLogLevel(LogLevel.VERBOSE);
+      adjustConfig.setLogLevel(LogLevel.SUPRESS);
 
       Adjust.start(adjustConfig);
       //--------Adjust Configuration-----------
