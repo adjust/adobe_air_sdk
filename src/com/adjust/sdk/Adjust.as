@@ -106,6 +106,7 @@ package com.adjust.sdk {
             }
 
             var isEnabled:int = int (extensionContext.call("isEnabled"));
+
             return isEnabled;
         }
 
@@ -154,6 +155,15 @@ package com.adjust.sdk {
             extensionContext.call("setReferrer", referrer);
         }
 
+        public static function setDeviceToken(token:String):void {
+            if (!extensionContext) {
+                trace(errorMessage);
+                return;
+            }
+
+            extensionContext.call("setDeviceToken", token);
+        }
+
         public static function getIdfa():String {
             if (!extensionContext) {
                 trace(errorMessage);
@@ -178,7 +188,6 @@ package com.adjust.sdk {
         }
 
         public static function addSessionCallbackParameter(key:String, value:String):void {
-            trace("calling addSessionCallbackParameter");
             if (!extensionContext) {
                 trace(errorMessage);
                 return;
@@ -188,7 +197,6 @@ package com.adjust.sdk {
         }
 
         public static function addSessionPartnerParameter(key:String, value:String):void {
-            trace("calling addSessionPartnerParameter");
             if (!extensionContext) {
                 trace(errorMessage);
                 return;
@@ -198,7 +206,6 @@ package com.adjust.sdk {
         }
 
         public static function removeSessionCallbackParameter(key:String):void {
-            trace("calling removeSessionCallbackParameter");
             if (!extensionContext) {
                 trace(errorMessage);
                 return;
@@ -208,7 +215,6 @@ package com.adjust.sdk {
         }
 
         public static function removeSessionPartnerParameter(key:String):void {
-            trace("calling removeSessionPartnerParameter");
             if (!extensionContext) {
                 trace(errorMessage);
                 return;
@@ -218,7 +224,6 @@ package com.adjust.sdk {
         }
 
         public static function resetSessionCallbackParameters():void {
-            trace("calling resetSessionCallbackParameter");
             if (!extensionContext) {
                 trace(errorMessage);
                 return;
@@ -228,23 +233,12 @@ package com.adjust.sdk {
         }
 
         public static function resetSessionPartnerParameters():void {
-            trace("calling resetSessionPartnerParameter");
             if (!extensionContext) {
                 trace(errorMessage);
                 return;
             }
 
             extensionContext.call("resetSessionPartnerParameters");
-        }
-
-        public static function setPushToken(token:String):void {
-            trace("calling setPushToken");
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("setPushToken", token);
         }
 
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
