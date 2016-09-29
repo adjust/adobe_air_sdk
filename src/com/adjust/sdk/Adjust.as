@@ -9,7 +9,7 @@ package com.adjust.sdk {
     public class Adjust extends EventDispatcher {
         private static var sdkPrefix:String = "adobe_air4.10.0";
         private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
-        private static var extensionContext:ExtensionContext;
+        private static var extensionContext:ExtensionContext = null;
         private static var attributionCallbackDelegate:Function;
         private static var googleAdIdCallbackDelegate:Function;
         private static var eventTrackingSucceededDelegate:Function;
@@ -17,43 +17,47 @@ package com.adjust.sdk {
         private static var sessionTrackingSucceededDelegate:Function;
         private static var sessionTrackingFailedDelegate:Function;
         private static var deferredDeeplinkDelegate:Function;
+        private static var hasSdkStarted:Boolean = false;
+
+        private static function getExtensionContext():ExtensionContext {
+            if (extensionContext != null) {
+                return extensionContext;
+            }
+            
+            return extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
+        }
 
         public static function start(adjustConfig:AdjustConfig):void {
-            if (extensionContext) {
+            if (hasSdkStarted) {
                 trace("adjust warning: SDK already started");
                 return;
             }
 
-            extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
-            if (!extensionContext) {
-                trace("adjust error: cannot open ANE 'com.adjust.sdk' for this platform");
-                return;
-            }
-
+            hasSdkStarted = true;
             var app:NativeApplication = NativeApplication.nativeApplication;
             app.addEventListener(Event.ACTIVATE, onResume);
             app.addEventListener(Event.DEACTIVATE, onPause);
             app.addEventListener(InvokeEvent.INVOKE, onInvoke);
 
             attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
             eventTrackingSucceededDelegate = adjustConfig.getEventTrackingSucceededDelegate();
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
             eventTrackingFailedDelegate = adjustConfig.getEventTrackingFailedDelegate();
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
             sessionTrackingSucceededDelegate = adjustConfig.getSessionTrackingSucceededDelegate();
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
             sessionTrackingFailedDelegate = adjustConfig.getSessionTrackingFailedDelegate();
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
             deferredDeeplinkDelegate = adjustConfig.getDeferredDeeplinkDelegate();
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-            extensionContext.call("onCreate", 
+            getExtensionContext().call("onCreate", 
                     adjustConfig.getAppToken(), 
                     adjustConfig.getEnvironment(),
                     adjustConfig.getLogLevel(), 
@@ -71,18 +75,17 @@ package com.adjust.sdk {
                     adjustConfig.getDelayStart(),
                     adjustConfig.getUserAgent());
 
-
             // For now, call onResume after onCreate.
-            extensionContext.call("onResume");
+            getExtensionContext().call("onResume");
         }
 
         public static function trackEvent(adjustEvent:AdjustEvent):void {
-            if (!extensionContext) {
+            if (!getExtensionContext()) {
                 trace(errorMessage);
                 return;
             }
 
-            extensionContext.call("trackEvent", 
+            getExtensionContext().call("trackEvent", 
                     adjustEvent.getEventToken(), 
                     adjustEvent.getCurrency(),
                     adjustEvent.getRevenue(), 
@@ -94,163 +97,78 @@ package com.adjust.sdk {
         }
 
         public static function setEnabled(enabled:Boolean):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("setEnabled", enabled);
+            getExtensionContext().call("setEnabled", enabled);
         }
 
         public static function isEnabled():Boolean {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return false;
-            }
-
-            var isEnabled:int = int (extensionContext.call("isEnabled"));
+            var isEnabled:int = int (getExtensionContext().call("isEnabled"));
 
             return isEnabled;
         }
 
         public static function onResume(event:Event):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("onResume");
+            getExtensionContext().call("onResume");
         }
 
         public static function onPause(event:Event):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("onPause");
+            getExtensionContext().call("onPause");
         }
 
         public static function appWillOpenUrl(url:String):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("appWillOpenUrl", url);
+            getExtensionContext().call("appWillOpenUrl", url);
         }
 
         public static function setOfflineMode(isOffline:Boolean):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("setOfflineMode", isOffline);
+            getExtensionContext().call("setOfflineMode", isOffline);
         }
 
         public static function setReferrer(referrer:String):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("setReferrer", referrer);
+            getExtensionContext().call("setReferrer", referrer);
         }
 
         public static function setDeviceToken(token:String):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("setDeviceToken", token);
+            getExtensionContext().call("setDeviceToken", token);
         }
 
         public static function getIdfa():String {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return null;
-            }
-
-            var idfa:String = String (extensionContext.call("getIdfa"));
+            var idfa:String = String (getExtensionContext().call("getIdfa"));
 
             return idfa;
         }
 
         public static function getGoogleAdId(callback:Function):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
             googleAdIdCallbackDelegate = callback;
-            extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-            extensionContext.call("getGoogleAdId");
+            getExtensionContext().call("getGoogleAdId");
         }
 
         public static function addSessionCallbackParameter(key:String, value:String):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("addSessionCallbackParameter", key, value);
+            getExtensionContext().call("addSessionCallbackParameter", key, value);
         }
 
         public static function addSessionPartnerParameter(key:String, value:String):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("addSessionPartnerParameter", key, value);
+            getExtensionContext().call("addSessionPartnerParameter", key, value);
         }
 
         public static function removeSessionCallbackParameter(key:String):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("removeSessionCallbackParameter", key);
+            getExtensionContext().call("removeSessionCallbackParameter", key);
         }
 
         public static function removeSessionPartnerParameter(key:String):void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("removeSessionPartnerParameter", key);
+            getExtensionContext().call("removeSessionPartnerParameter", key);
         }
 
         public static function resetSessionCallbackParameters():void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("resetSessionCallbackParameters");
+            getExtensionContext().call("resetSessionCallbackParameters");
         }
 
         public static function resetSessionPartnerParameters():void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("resetSessionPartnerParameters");
+            getExtensionContext().call("resetSessionPartnerParameters");
         }
 
         public static function sendFirstPackages():void {
-            if (!extensionContext) {
-                trace(errorMessage);
-                return;
-            }
-
-            extensionContext.call("sendFirstPackages");
+            getExtensionContext().call("sendFirstPackages");
         }
 
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
@@ -263,7 +181,7 @@ package com.adjust.sdk {
                 eventTrackingSucceededDelegate(eventSuccess);
             } 
             else if (statusEvent.code == "adjust_eventTrackingFailed") {
-                var eventFail:AdjustEventFail = getEventFailFromResponse(statusEvent.level);
+                var eventFail:AdjustEventFailure = getEventFailFromResponse(statusEvent.level);
                 eventTrackingFailedDelegate(eventFail);
             }
             else if (statusEvent.code == "adjust_sessionTrackingSucceeded") {
@@ -271,7 +189,7 @@ package com.adjust.sdk {
                 sessionTrackingSucceededDelegate(sessionSuccess);
             }
             else if (statusEvent.code == "adjust_sessionTrackingFailed") {
-                var sessionFail:AdjustSessionFail = getSessionFailFromResponse(statusEvent.level);
+                var sessionFail:AdjustSessionFailure = getSessionFailFromResponse(statusEvent.level);
                 sessionTrackingFailedDelegate(sessionFail);
             }
             else if (statusEvent.code == "adjust_deferredDeeplink") {
@@ -316,7 +234,7 @@ package com.adjust.sdk {
             return new AdjustEventSuccess(message, timestamp, adid, eventToken, jsonResponse);
         }
 
-        private static function getEventFailFromResponse(response:String):AdjustEventFail {
+        private static function getEventFailFromResponse(response:String):AdjustEventFailure {
             var message:String;
             var timestamp:String;
             var adid:String;
@@ -348,7 +266,7 @@ package com.adjust.sdk {
                 }
             }
 
-            return new AdjustEventFail(message, timestamp, adid, eventToken, jsonResponse, willRetry);
+            return new AdjustEventFailure(message, timestamp, adid, eventToken, jsonResponse, willRetry);
         }
 
         private static function getSessionSuccessFromResponse(response:String):AdjustSessionSuccess {
@@ -379,7 +297,7 @@ package com.adjust.sdk {
             return new AdjustSessionSuccess(message, timestamp, adid, jsonResponse);
         }
 
-        private static function getSessionFailFromResponse(response:String):AdjustSessionFail {
+        private static function getSessionFailFromResponse(response:String):AdjustSessionFailure {
             var message:String;
             var timestamp:String;
             var adid:String;
@@ -408,7 +326,7 @@ package com.adjust.sdk {
                 }
             }
 
-            return new AdjustSessionFail(message, timestamp, adid, jsonResponse, willRetry);
+            return new AdjustSessionFailure(message, timestamp, adid, jsonResponse, willRetry);
         }
 
 

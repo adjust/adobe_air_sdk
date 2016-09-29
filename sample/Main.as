@@ -4,9 +4,9 @@ package {
   import com.adjust.sdk.AdjustConfig;
   import com.adjust.sdk.AdjustEvent;
   import com.adjust.sdk.AdjustEventSuccess;
-  import com.adjust.sdk.AdjustEventFail;
+  import com.adjust.sdk.AdjustEventFailure;
   import com.adjust.sdk.AdjustSessionSuccess;
-  import com.adjust.sdk.AdjustSessionFail;
+  import com.adjust.sdk.AdjustSessionFailure;
   import com.adjust.sdk.AdjustAttribution;
   import com.adjust.sdk.Environment;
   import com.adjust.sdk.LogLevel;
@@ -54,8 +54,8 @@ package {
       Adjust.removeSessionCallbackParameter("dummy_foo");
       Adjust.removeSessionPartnerParameter("dummy_foo");
 
-      //Adjust.resetSessionCallbackParameter();
-      //Adjust.resetSessionPartnerParameter();
+      Adjust.resetSessionCallbackParameters();
+      Adjust.resetSessionPartnerParameters();
 
       adjustConfig.setDelayStart(3.0);
       adjustConfig.setUserAgent("little_bunny_foo_foo");
@@ -153,7 +153,7 @@ package {
       trace("jsonResponse = " + eventSuccess.getJsonResponse());
     }
 
-    private static function eventTrackingFailedDelegate(eventFail:AdjustEventFail):void {
+    private static function eventTrackingFailedDelegate(eventFail:AdjustEventFailure):void {
       trace("Event tracking failed");
       trace("message = " + eventFail.getMessage());
       trace("timestamp = " + eventFail.getTimeStamp());
@@ -171,7 +171,7 @@ package {
       trace("jsonResponse = " + sessionSuccess.getJsonResponse());
     }
 
-    private static function sessionTrackingFailedDelegate(sessionFail:AdjustSessionFail):void {
+    private static function sessionTrackingFailedDelegate(sessionFail:AdjustSessionFailure):void {
       trace("Session tracking failed");
       trace("message = " + sessionFail.getMessage());
       trace("timestamp = " + sessionFail.getTimeStamp());

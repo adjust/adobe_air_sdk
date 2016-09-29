@@ -8,10 +8,10 @@ COMPC_CLASSES = $(COMPC_ADJUST) \
 				com.adjust.sdk.AdjustConfig \
 				com.adjust.sdk.AdjustAttribution \
 				com.adjust.sdk.AdjustEventSuccess \
-				com.adjust.sdk.AdjustEventFail \
+				com.adjust.sdk.AdjustEventFailure \
 				com.adjust.sdk.AdjustEvent \
 				com.adjust.sdk.AdjustSessionSuccess \
-				com.adjust.sdk.AdjustSessionFail
+				com.adjust.sdk.AdjustSessionFailure
 #COMPC_OPTS = -swf-version 27 \
 			 #-external-library-path $(AIR_SDK_PATH)/frameworks/libs/air/airglobal.swc \
              #-include-classes $(COMPC_CLASSES)

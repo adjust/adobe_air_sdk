@@ -19,7 +19,7 @@ void AdjustFREContextInitializer(void* extData,
     FREContext ctx,
     uint32_t* numFunctionsToSet,
     const FRENamedFunction** functionsToSet) {
-  uint32_t numberOfFunctions = 18;
+  uint32_t numberOfFunctions = 19;
 
   *numFunctionsToSet = numberOfFunctions;
 
@@ -42,6 +42,7 @@ void AdjustFREContextInitializer(void* extData,
   setNamedFunction(&func[15], (const uint8_t*)"addSessionPartnerParameter", &ADJaddSessionPartnerParameter);
   setNamedFunction(&func[16], (const uint8_t*)"removeSessionPartnerParameter", &ADJremoveSessionPartnerParameter);
   setNamedFunction(&func[17], (const uint8_t*)"resetSessionPartnerParameters", &ADJresetSessionPartnerParameters);
+  setNamedFunction(&func[18], (const uint8_t*)"sendFirstPackages", &ADJsendFirstPackages);
 
   *functionsToSet = func;
 }

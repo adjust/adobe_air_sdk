@@ -33,8 +33,8 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
     const char* cResponseData = [attributionString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-        (const uint8_t *)"adjust_attributionData",
-        (const uint8_t *)cResponseData);
+            (const uint8_t *)"adjust_attributionData",
+            (const uint8_t *)cResponseData);
 }
 
 - (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccess {
@@ -47,8 +47,8 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
     const char* cResponseData = [formattedString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-        (const uint8_t *)"adjust_eventTrackingSucceeded",
-        (const uint8_t *)cResponseData);
+            (const uint8_t *)"adjust_eventTrackingSucceeded",
+            (const uint8_t *)cResponseData);
 }
 
 - (void)adjustEventTrackingFailed:(ADJEventFailure *)eventFailed {
@@ -62,8 +62,8 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
     const char* cResponseData = [formattedString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-        (const uint8_t *)"adjust_eventTrackingFailed",
-        (const uint8_t *)cResponseData);
+            (const uint8_t *)"adjust_eventTrackingFailed",
+            (const uint8_t *)cResponseData);
 }
 
 - (void)adjustSessionTrackingSucceeded:(ADJSessionSuccess *)sessionSuccess {
@@ -75,8 +75,8 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
     const char* cResponseData = [formattedString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-        (const uint8_t *)"adjust_eventTrackingFailed",
-        (const uint8_t *)cResponseData);
+            (const uint8_t *)"adjust_eventTrackingFailed",
+            (const uint8_t *)cResponseData);
 }
 
 - (void)adjustSessionTrackingFailed:(ADJSessionFailure *)sessionFailed {
@@ -89,8 +89,8 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
     const char* cResponseData = [formattedString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-        (const uint8_t *)"adjust_sessionTrackingFailed",
-        (const uint8_t *)cResponseData);
+            (const uint8_t *)"adjust_sessionTrackingFailed",
+            (const uint8_t *)cResponseData);
 }
 
 - (BOOL)adjustDeeplinkResponse:(NSURL *)deeplink {
@@ -99,24 +99,25 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
     const char* cResponseData = [formattedString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-        (const uint8_t *)"adjust_deferredDeeplink",
-        (const uint8_t *)cResponseData);
+            (const uint8_t *)"adjust_deferredDeeplink",
+            (const uint8_t *)cResponseData);
     return shouldLaunchDeeplink;
 }
 
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 14) {
+    if (argc == 16) {
         NSString *appToken = nil;
         NSString *environment = nil;
-        NSString *logLevel = nil;
+        NSString *logLevelString = nil;
+        ADJLogLevel logLevel = ADJLogLevelInfo;
         NSString *defaultTracker = nil;
         NSString *sdkPrefix = nil;
 
         BOOL eventBufferingEnabled;
         BOOL isCallbackSet;
-        BOOL allowSuppressLogLevel;
+        BOOL allowSuppressLogLevel = false;
 
         adjustFREContext = ctx;
 
@@ -129,26 +130,29 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
 
         if (argv[2] != nil) {
-            FREGetObjectAsNativeBool(argv[2], &allowSuppressLogLevel);
-        }
+            FREGetObjectAsNativeString(argv[2], &logLevelString);
 
-        ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment];
+            if (logLevelString != nil) {
+                logLevel = [ADJLogger LogLevelFromString:logLevelString];
 
-        if (argv[3] != nil) {
-            FREGetObjectAsNativeString(argv[3], &logLevel);
-
-            if (logLevel != nil) {
-                [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:logLevel]];
+                if (logLevel == ADJLogLevelSuppress) {
+                    allowSuppressLogLevel = true;
+                }
             }
         }
 
-        if (argv[4] != nil) {
-            FREGetObjectAsNativeBool(argv[4], &eventBufferingEnabled);
+        ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment allowSuppressLogLevel:allowSuppressLogLevel];
+        if (logLevelString != nil) {
+            [adjustConfig setLogLevel:logLevel];
+        }
+
+        if (argv[3] != nil) {
+            FREGetObjectAsNativeBool(argv[3], &eventBufferingEnabled);
             [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
         }
 
-        if (argv[5] != nil) {
-            FREGetObjectAsNativeBool(argv[5], &isCallbackSet);
+        if (argv[4] != nil) {
+            FREGetObjectAsNativeBool(argv[4], &isCallbackSet);
 
             if (isCallbackSet) {
                 if (adjustFunctionInstance == nil) {
@@ -159,27 +163,42 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             }
         }
 
-        // argv 6,7,8,9,10 and 11 are not needed for Obj-C since we're setting a delegate and 
+        // argv 5,6,7,8,9 are not needed for Obj-C since we're setting a delegate and 
         // using selectors.
 
-        if (argv[11] != nil) {
-            FREGetObjectAsNativeString(argv[11], &defaultTracker);
+        if (argv[10] != nil) {
+            FREGetObjectAsNativeString(argv[10], &defaultTracker);
 
             if (defaultTracker != nil) {
                 [adjustConfig setDefaultTracker:defaultTracker];
             }
         }
 
-        if (argv[12] != nil) {
-            FREGetObjectAsNativeString(argv[12], &sdkPrefix);
+        if (argv[11] != nil) {
+            FREGetObjectAsNativeString(argv[11], &sdkPrefix);
             [adjustConfig setSdkPrefix:sdkPrefix];
         }
 
-        if (argv[13] != nil) {
-            FREGetObjectAsNativeBool(argv[13], &shouldLaunchDeeplink);
+        if (argv[12] != nil) {
+            FREGetObjectAsNativeBool(argv[12], &shouldLaunchDeeplink);
+        }
+
+        // arg 13 is for Android only
+
+        if (argv[14] != nil) {
+            double delayStart;
+            FREGetObjectAsDouble(argv[14], &delayStart);
+            [adjustConfig setDelayStart:delayStart];
+        }
+
+        if (argv[15] != nil) {
+            NSString *userAgent = nil;
+            FREGetObjectAsNativeString(argv[15], &userAgent);
+            [adjustConfig setUserAgent:userAgent];
         }
 
         [Adjust appDidLaunch:adjustConfig];
+        //[Adjust trackSubsessionStart];
     } else {
         NSLog(@"Adjust: Bridge onCreate method triggered with wrong number of arguments");
     }
@@ -515,6 +534,19 @@ FREObject ADJresetSessionPartnerParameters(FREContext ctx, void* funcData, uint3
         [Adjust resetSessionPartnerParameters];
     } else {
         NSLog(@"Adjust: Bridge resetSessionPartnerParameters method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        [Adjust sendFirstPackages];
+    } else {
+        NSLog(@"Adjust: Bridge sendFirstPackages method triggered with wrong number of arguments");
     }
 
     FREObject return_value;
