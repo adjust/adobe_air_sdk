@@ -73,7 +73,8 @@ package com.adjust.sdk {
                     adjustConfig.getShouldLaunchDeeplink(),
                     adjustConfig.getProcessName(),
                     adjustConfig.getDelayStart(),
-                    adjustConfig.getUserAgent());
+                    adjustConfig.getUserAgent(),
+                    adjustConfig.getSendInBackground());
 
             // For now, call onResume after onCreate.
             getExtensionContext().call("onResume");
@@ -376,7 +377,6 @@ package com.adjust.sdk {
             }
 
             var argument:String = event.arguments[0];
-            trace("adjust: Deeplink received: " + argument);
             appWillOpenUrl(argument);
         }
     }

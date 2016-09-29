@@ -75,7 +75,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
     const char* cResponseData = [formattedString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-            (const uint8_t *)"adjust_eventTrackingFailed",
+            (const uint8_t *)"adjust_sessionTrackingSucceeded",
             (const uint8_t *)cResponseData);
 }
 
@@ -107,7 +107,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 16) {
+    if (argc == 17) {
         NSString *appToken = nil;
         NSString *environment = nil;
         NSString *logLevelString = nil;
@@ -197,8 +197,14 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             [adjustConfig setUserAgent:userAgent];
         }
 
+        if (argv[16] != nil) {
+            BOOL sendInBackground = NO;
+            FREGetObjectAsNativeBool(argv[15], &sendInBackground);
+            [adjustConfig setSendInBackground:sendInBackground];
+        }
+
         [Adjust appDidLaunch:adjustConfig];
-        //[Adjust trackSubsessionStart];
+        [Adjust trackSubsessionStart];
     } else {
         NSLog(@"Adjust: Bridge onCreate method triggered with wrong number of arguments");
     }

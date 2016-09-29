@@ -71,6 +71,10 @@ package com.adjust.sdk {
             this.shouldLaunchDeeplink = shouldLaunchDeeplink;
         }
 
+        public function setSendInBackground(sendInBackground:Boolean):void {
+            this.sendInBackground = sendInBackground;
+        }
+
         // Getters
         public function getAppToken():String {
             return this.appToken;
@@ -122,6 +126,10 @@ package com.adjust.sdk {
 
         public function getShouldLaunchDeeplink():Boolean {
             return this.shouldLaunchDeeplink;
+        }
+
+        public function getSendInBackground():Boolean {
+            return this.sendInBackground;
         }
     }
 }

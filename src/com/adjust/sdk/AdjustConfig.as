@@ -79,6 +79,10 @@ package com.adjust.sdk {
             this.userAgent = userAgent;
         }
 
+        public function setSendInBackground(sendInBackground:Boolean):void {
+            this.sendInBackground = sendInBackground;
+        }
+
         // Getters
         public function getAppToken():String {
             return this.appToken;
@@ -138,6 +142,10 @@ package com.adjust.sdk {
 
         public function getUserAgent():String {
             return this.userAgent;
+        }
+
+        public function getSendInBackground():Boolean {
+            return this.sendInBackground;
         }
     }
 }
