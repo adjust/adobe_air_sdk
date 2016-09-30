@@ -128,7 +128,7 @@ Android manifest file, you need to perform following steps:
 2. Search for the `<android>` tag
 3. Edit between the `<manifest>`tag.
 
-You can find how to add needed [permissions][android-permissions] and the adjust [broadcast receiver][brodcast-receiver] in 
+You can find how to add needed the [permissions][android-permissions] and the adjust [broadcast receiver][brodcast-receiver] in 
 our Android guide. Also, in case you are using your custom broadcast receiver, please make a call to the adjust broadcast 
 receiver like described in [here][custom-broadcast-receiver].
 
@@ -141,11 +141,11 @@ identify devices. To allow the adjust SDK to use the Google Advertising ID, you 
 [Google Play Services][google-play-services].
 
 In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other way) you can 
-use `Google Play Services ANE`, which is provided by adjust and is built to fit needs of our SDK. You can find our Google Play 
+use `Google Play Services ANE`, which is provided by adjust and is built to fit the needs of our SDK. You can find our Google Play 
 Services ANE as part of release on our [releases page][releases].
 
-You should just import downloaded ANE to your app and Google Play Services needed by our SDK will be successfully added. After 
-this, add Google Play Services extension to app descriptor file:
+You just need to import the downloaded ANE to your app and the Google Play Services needed by our SDK will be successfully added. After 
+this, add the Google Play Services extension to app descriptor file:
 
 ```xml
 <extensions>
@@ -170,7 +170,7 @@ You can take advantage of the following features once the adjust SDK is integrat
 
 ### <a id="event-tracking">Event tracking
 
-You can tell adjust about every event you want. Suppose you want to track every tap on a button. Simply create a new event 
+You can tell adjust about every event you want to track. Suppose you want to track every tap on a button. Simply create a new event 
 token in your [dashboard]. Let's say that event token is `abc123`. You can add the following line in your button’s click 
 handler method to track the click:
 
@@ -208,7 +208,7 @@ adjustEvent.setTransactionId("transactionId");
 Adjust.trackEvent(adjustEvent);
 ```
 
-**Note**: Transaction ID is the iOS term, unique identifier for successfully finished Android In-App-Purchases is named 
+**Note**: Transaction ID is the iOS term, the unique identifier for successfully finished Android In-App purchases is named 
 **Order ID**.
 
 ### <a id="iap-verification">In-App Purchase verification
@@ -251,7 +251,7 @@ You can read more about using URL callbacks, including a full list of available 
 
 ### <a id="partner-parameters">Partner parameters
 
-You can also add parameters for integrations that have been activated in your adjust dashboard that are transmittable to 
+You can also add parameters for integrations that have been activated in your adjust dashboard that can be transmitted to 
 network partners.
 
 This works similarly to the callback parameters mentioned above, but can be added by calling the `addPartnerParameter` method 
@@ -283,8 +283,8 @@ the first launch of the adjust SDK to allow this behaviour.
 The same callback parameters that are registered for [events](#callback-parameters) can be also saved to be sent in every
 event or session of the adjust SDK.
 
-The session callback parameters have a similar interface of the event callback parameters. Instead of adding the key and
-it's value to an event, it's added through a call to method `addSessionCallbackParameter` of the `Adjust` instance:
+The session callback parameters have a similar interface to the event callback parameters. Instead of adding the key and
+its value to an event, it's added through a call to method `addSessionCallbackParameter` of the `Adjust` instance:
 
 ```actionscript
 Adjust.addSessionCallbackParameter("foo", "bar");
@@ -301,7 +301,7 @@ It's possible to remove a specific session callback parameter by passing the des
 Adjust.removeSessionCallbackParameter("foo");
 ```
 
-If you wish to remove all key and values from the session callback parameters, you can reset it with the method 
+If you wish to remove all keys and values from the session callback parameters, you can reset it with the method 
 `resetSessionCallbackParameters` of the `Adjust` instance.
 
 ```actionscript
@@ -595,7 +595,7 @@ You can activate offline mode by calling the method `setOfflineMode` of the `Adj
 Adjust.setOfflineMode(true);
 ```
 
-Conversely, you can deactivate offline mode by calling `setOfflineMode` with `false`. When the adjust SDK is put back in 
+Conversely, you can deactivate the offline mode by calling `setOfflineMode` with `false`. When the adjust SDK is put back in 
 online mode, all saved information is sent to our servers with the correct timstamps.
 
 Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online
@@ -672,7 +672,7 @@ var idfa:String = Adjust.getIdfa();
 
 ### <a id="push-token">Push token
 
-To send us the push notifications token, then add the following call to Adjust **whenever you get your token in the app or 
+To send us the push notification token, then add the following call to Adjust **whenever you get your token in the app or 
 when it gets updated**:
 
 ```actionscript
@@ -762,7 +762,7 @@ private static function deferredDeeplinkDelegate(uri:String):void {
 }
 ```
 
-In deferred deep linking scenario, there is one additional setting which can be set on the `AdjustConfig` object. Once the 
+In a deferred deep linking scenario, there is one additional setting which can be set on the `AdjustConfig` object. Once the 
 adjust SDK gets the deferred deep link info, we are offering you the possibility to choose whether our SDK should open this 
 URL or not. You can choose to set this option by calling the `setShouldLaunchDeeplink` method on the config object:
 
