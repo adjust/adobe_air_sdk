@@ -1,27 +1,61 @@
 ## Summary
 
-This is the AIR SDK of adjust™. You can read more about adjust™ at [adjust.com].
+This is the Adobe AIR SDK of adjust™. You can read more about adjust™ at [adjust.com].
 
-## Basic Installation
+## Table of contents
 
-### 1. Get the SDK
+* [Example app](#example-app)
+* [Basic integration](#basic-integration)
+   * [Get the SDK](#sdk-get)
+   * [Add the SDK to your project](#sdk-add)
+   * [Integrate the SDK into your app](#sdk-integrate)
+   * [Adjust logging](#adjust-logging)
+   * [Android manifest](#android-manifest)
+   * [Google Play Services](#google-play-services)
+* [Additional features](#additional-features)
+   * [Event tracking](#event-tracking)
+      * [Revenue tracking](#revenue-tracking)
+      * [Revenue deduplication](#revenue-deduplication)
+      * [In-App Purchase verification](#iap-verification)
+      * [Callback parameters](#callback-parameters)
+      * [Partner parameters](#partner-parameters)
+    * [Session parameters](#session-parameters)
+      * [Session callback parameters](#session-callback-parameters)
+      * [Session partner parameters](#session-partner-parameters)
+      * [Delay start](#delay-start)
+    * [Attribution callback](#attribution-callback)
+    * [Session and event callbacks](#session-event-callbacks)
+    * [Disable tracking](#disable-tracking)
+    * [Offline mode](#offline-mode)
+    * [Event buffering](#event-buffering)
+    * [Background tracking](#background-tracking)
+    * [Device IDs](#device-ids)
+    * [Push token](#push-token)
+    * [Pre-installed trackers](#pre-installed-trackers)
+    * [Deep linking](#deeplinking)
+        * [Standard deep linking scenario](#deeplinking-standard)
+        * [Deferred deep linking scenario](#deeplinking-deferred)
+        * [Deep linking setup for Android](#deeplinking-android)
+        * [Deep linking setup for iOS](#deeplinking-ios)
+        * [Reattribution via deep links](#deeplinking-reattribution)
+* [License](#license)
 
-Download the latest version from our [releases page][releases]. Extract the archive in a folder of your choice.
+## <a id="example-app"></a>Example app
 
-### 2. Add it to your project
+There is an example app inside the [`sample` directory][example-app]. You can use the example app to see how the adjust SDK 
+can be integrated.
 
-We assume that you are using IntelliJ IDEA as your IDE. If you are using Flash Builder, then follow the instructions [here][flash-builder].
+## <a id="basic-integration">Basic integration
 
-Pick your Module from the Project Settings in IDEA's Project Structure. Choose the Dependencies tab and click the
-plus button to add a dependency to your module. Pick the `New Library...` option.
+These are the minimal steps required to integrate the adjust SDK into your Adobe AIR project.
 
-![][idea-new-library]
+### <a id="sdk-get">Get the SDK
 
-Locate the `Adjust-x.y.z.ane` you just downloaded and click `OK`.
+Download the latest version from our [releases page][releases].
 
-![][idea-locate]
+### <a id="sdk-add">Add the SDK to your project
 
-After this, add adjust SDK extension to app descriptor file:
+Add the downloaded adjust SDK ANE file to your app. After this, add the adjust SDK extension to your app's descriptor file:
 
 ```xml
 <extensions>
@@ -31,7 +65,7 @@ After this, add adjust SDK extension to app descriptor file:
 </extensions>
 ```
 
-### 3. Integrate adjust into your app
+### <a id="sdk-integrate">Integrate the SDK into your app
 
 To start tracking with adjust, you first need to initialize the SDK. Add the following code to your main Sprite.
 
@@ -56,63 +90,62 @@ public class Example extends Sprite {
 
 Replace `{YourAppToken}` with your app token. You can find this in your [dashboard].
 
-Depending on whether you build your app for testing or for production, you must set `environment` with one of these
-values:
+Depending on whether you build your app for testing or for production, you must set `environment` with one of these values:
 
 ```actionscript
 var environment:String = Environment.SANDBOX;
 var environment:String = Environment.PRODUCTION;
 ```
 
-**Important:** This value should be set to `Environment.SANDBOX` if and only if you or someone else is testing your
-app. Make sure to set the environment to `Environment.PRODUCTION` just before you publish the app. Set it back to
-`Environment.SANDBOX` when you start developing and testing it again.
+**Important:** This value should be set to `Environment.SANDBOX` if and only if you or someone else is testing your app. Make 
+sure to set the environment to `Environment.PRODUCTION` just before you publish the app. Set it back to `Environment.SANDBOX` 
+when you start developing and testing it again.
 
-We use this environment to distinguish between real traffic and test traffic from test devices. It is very important
-that you keep this value meaningful at all times! This is especially important if you are tracking revenue.
+We use this environment to distinguish between real traffic and test traffic from test devices. It is very important that you 
+keep this value meaningful at all times! This is especially important if you are tracking revenue.
 
-#### Adjust Logging
+### <a id="sdk-logging">Adjust logging
 
-You can increase or decrease the amount of logs you see in tests by calling `setLogLevel` on your `AdjustConfig`
-instance with one of the following parameters:
+You can increase or decrease the amount of logs you see in tests by calling `setLogLevel` on your `AdjustConfig` instance with 
+one of the following parameters:
 
 ```actionscript
-adjustConfig.setLogLevel(LogLevel.VERBOSE); // enable all logging
-adjustConfig.setLogLevel(LogLevel.DEBUG);   // enable more logging
-adjustConfig.setLogLevel(LogLevel.INFO);    // the default
-adjustConfig.setLogLevel(LogLevel.WARN);    // disable info logging
-adjustConfig.setLogLevel(LogLevel.ERROR);   // disable warnings as well
-adjustConfig.setLogLevel(LogLevel.ASSERT);  // disable errors as well
+adjustConfig.setLogLevel(LogLevel.VERBOSE);     // enable all logging
+adjustConfig.setLogLevel(LogLevel.DEBUG);       // enable more logging
+adjustConfig.setLogLevel(LogLevel.INFO);        // the default
+adjustConfig.setLogLevel(LogLevel.WARN);        // disable info logging
+adjustConfig.setLogLevel(LogLevel.ERROR);       // disable warnings as well
+adjustConfig.setLogLevel(LogLevel.ASSERT);      // disable errors as well
+adjustConfig.setLogLevel(LogLevel.SUPPRESS);    // disable all log output
 ```
 
-### 4. Adjust Android manifest
+### <a id="android-manifest">Android manifest
 
-In order to use your AIR app for Android with our SDK, you must edit the Android manifest file. To edit the Android
-manifest of your AIR apps:
+In order to use your Adobe AIR app for Android with our SDK, you must edit the Android manifest file. In order to edit your 
+Android manifest file, you need to perform following steps:
 
 1. Open the application descriptor file, which is typically located at `src/{YourProjectName}-app.xml`.
 2. Search for the `<android>` tag
 3. Edit between the `<manifest>`tag.
 
-You can find the needed [permissions][android-permissions] and how to add [broadcast receiver][brodcast-android] in our Android guide.
+You can find how to add needed [permissions][android-permissions] and the adjust [broadcast receiver][brodcast-receiver] in 
+our Android guide. Also, in case you are using your custom broadcast receiver, please make a call to the adjust broadcast 
+receiver like described in [here][custom-broadcast-receiver].
 
 ![][android-manifest]
 
-### 5. Add Google Play Services
+### <a id="google-play-services">Google Play Services
 
-Since 1st August 2014, all apps in the Google Play Store must use the [Google Advertising ID][google_ad_id] 
-to uniquely identify devices. To allow the adjust SDK to use the Google Advertising ID, you must integrate the
+Since 1st August 2014, all apps in the Google Play Store must use the [Google Advertising ID][google_ad_id] to uniquely 
+identify devices. To allow the adjust SDK to use the Google Advertising ID, you must integrate the
 [Google Play Services][google_play_services].
 
-In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other
-way) you can use `Google Play Services ANE`, which is provided by adjust and is built to fit needs of our SDK. You can find our Google Play Services ANE as part of release on our [releases page][releases].
+In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other way) you can 
+use `Google Play Services ANE`, which is provided by adjust and is built to fit needs of our SDK. You can find our Google Play 
+Services ANE as part of release on our [releases page][releases].
 
-You should just import downloaded ANE to your app and Google Play Services needed by our SDK will be successfully
-added.
-
-![][idea-new-library-gps]
-
-After this, add Google Play Services extension to app descriptor file:
+You should just import downloaded ANE to your app and Google Play Services needed by our SDK will be successfully added. After 
+this, add Google Play Services extension to app descriptor file:
 
 ```xml
 <extensions>
@@ -122,8 +155,8 @@ After this, add Google Play Services extension to app descriptor file:
 </extensions>
 ```
 
-After integrating Google Play Services into your app, add the following lines to your app's Android manifest file
-as part of the `<manifest>` tag body:
+After integrating Google Play Services into your app, add the following lines to your app's Android manifest file as part of 
+the `<manifest>` tag body:
 
 ```xml
 <meta-data
@@ -131,41 +164,25 @@ as part of the `<manifest>` tag body:
     android:value="@integer/google_play_services_version"/>
 ```
 
-## Debugging on device
-
-### Android device
-
-Use ```logcat``` tool that comes with Android SDK:
-
-```
-<path-to-android-sdk>/platform-tools/adb logcat -s "Adjust"
-```
-
-### iOS device
-
-Check the Console at XCode's Device Organizer to access AdjustIo logs:
-
-![][xcode-logs]
-
-
-## Additional features
+## <a id="additional-features">Additional features
 
 You can take advantage of the following features once the adjust SDK is integrated into your project.
 
-### 6. Add tracking of custom events
+### <a id="event-tracking">Event tracking
 
-You can tell adjust about every event you want. Suppose you want to track every tap on a button. Simply
-create a new Event Token in your [dashboard]. Let's say that Event Token is `abc123`. You can add the following line in your button’s click handler method to track the click:
-
+You can tell adjust about every event you want. Suppose you want to track every tap on a button. Simply create a new event 
+token in your [dashboard]. Let's say that event token is `abc123`. You can add the following line in your button’s click 
+handler method to track the click:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### 7. Add tracking of revenue
+### <a id="revenue-tracking">Revenue tracking
 
-If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track those revenues with events. Lets say a tap is worth €0.01. You could track the revenue event like this:
+If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track those revenues 
+with events. Lets say a tap is worth €0.01. You could track the revenue event like this:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -173,16 +190,14 @@ adjustEvent.setRevenue(0.01, "EUR");
 Adjust.trackEvent(adjustEvent);
 ```
 
-#### iOS
+### <a id="revenue-deduplication"></a>Revenue deduplication
 
-##### <a id="deduplication"></a> Revenue deduplication
+You can also add an optional transaction ID to avoid tracking duplicate revenues. The last ten transaction IDs are remembered, 
+and revenue events with duplicate transaction IDs are skipped. This is especially useful for in-app purchase tracking. See an 
+example below.
 
-You can also add an optional transaction ID to avoid tracking duplicate revenues. The last ten transaction 
-IDs are remembered, and revenue events with duplicate transaction IDs are skipped. This is especially useful for 
-in-app purchase tracking. See an example below.
-
-If you want to track in-app purchases, please make sure to call `trackEvent` only if the transaction is finished
-and item is purchased. That way you can avoid tracking revenue that is not actually being generated.
+If you want to track in-app purchases, please make sure to call `trackEvent` only if the transaction is finished and item is 
+purchased. That way you can avoid tracking revenue that is not actually being generated.
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -193,30 +208,22 @@ adjustEvent.setTransactionId("transactionId");
 Adjust.trackEvent(adjustEvent);
 ```
 
-##### Receipt verification
+**Note**: Transaction ID is the iOS term, unique identifier for successfully finished Android In-App-Purchases is named 
+**Order ID**.
 
-If you track in-app purchases, you can also attach the receipt to the tracked event. Our servers 
-will verify that receipt with Apple and discard the event if verification fails. To make this work, you will
-also need to send us the transaction ID of the purchase. The transaction ID will additionally be used for SDK side 
-deduplication as explained [above](#deduplication):
+### <a id="iap-verification">In-App Purchase verification
 
-```actionscript
-var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
+In-App purchase verification can be done with Adobe AIR purchase SDK which is currently being developed and will soon be  
+publicly available. For more information, please contact support@adjust.com.
 
-adjustEvent.setRevenue(0.01, "EUR");
-adjustEvent.setReceiptForTransactionId("receipt", "transactionId");
+### <a id="callback-parameters">Callback parameters
 
-Adjust.trackEvent(adjustEvent);
-```
-
-### 8. Add callback parameters
-
-You can also register a callback URL for that event in your [dashboard] and we will send a GET request to that URL
-whenever the event gets tracked. In that case you can also put some key-value-pairs in an object and pass it to the
+You can also register a callback URL for that event in your [dashboard][dashboard] and we will send a GET request to that
+URL whenever the event gets tracked. In that case you can also put some key-value pairs in an object and pass it to the 
 `trackEvent` method. We will then append these named parameters to your callback URL.
 
-For example, suppose you have registered the URL `http://www.adjust.com/callback` for your event with Event Token
-`abc123` and execute the following lines:
+For example, suppose you have registered the URL `http://www.adjust.com/callback` for your event with event token `abc123`
+and execute the following lines:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -233,19 +240,22 @@ In this case we would track the event and send a request to:
 http://www.adjust.com/callback?key=value&foo=bar
 ```
 
-It should be mentioned that we support a variety of placeholders like `{idfa}` for iOS or `{android_id}` for Android
-that can be used as parameter values.  In the resulting callback the `{idfa}` placeholder would be replaced with the
-ID for Advertisers of the current device for iOS and the `{android_id}` would be replaced with the AndroidID of the
-current device for Android. Also note that we don't store any of your custom parameters, but only append them to
-your callbacks.  If you haven't registered a callback for an event, these parameters won't even be read.
+It should be mentioned that we support a variety of placeholders like `{idfa}` for iOS or `{gps_adid}` for Android that can be 
+used as parameter values.  In the resulting callback the `{idfa}` placeholder would be replaced with the ID for Advertisers of 
+the current device for iOS and the `{gps_adid}` would be replaced with the Google Advertising ID of the current device for 
+Android. Also note that we don't store any of your custom parameters, but only append them to your callbacks. If you haven't 
+registered a callback for an event, these parameters won't even be read.
 
-### 9. Partner parameters
+You can read more about using URL callbacks, including a full list of available values, in our 
+[callbacks guide][callbacks-guide].
 
-You can also add parameters for integrations that have been activated in
-your adjust dashboard that are transmittable to network partners.
+### <a id="partner-parameters">Partner parameters
 
-This works similarly to the callback parameters mentioned above, but can be added by calling the 
-`addPartnerParameter` method on your `AdjustEvent` instance.
+You can also add parameters for integrations that have been activated in your adjust dashboard that are transmittable to 
+network partners.
+
+This works similarly to the callback parameters mentioned above, but can be added by calling the `addPartnerParameter` method 
+on your `AdjustEvent` instance.
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -258,11 +268,100 @@ Adjust.trackEvent(adjustEvent);
 
 You can read more about special partners and these integrations in our [guide to special partners.][special-partners]
 
-### 10. Receive attribution change callback
+### <a id="session-parameters">Session parameters
 
-You can register a callback to be notified of tracker attribution changes. Due to the different sources considered
-for attribution, this information can not by provided synchronously. Follow these steps to implement the optional 
-callback in your application:
+Some parameters are saved to be sent in every event and session of the adjust SDK. Once you have added any of these 
+parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice,
+there will be no effect.
+
+These session parameters can be called before the adjust SDK is launched to make sure they are sent even on install. If you
+need to send them with an install, but can only obtain the needed values after launch, it's possible to [delay](#delay-start) 
+the first launch of the adjust SDK to allow this behaviour.
+
+### <a id="session-callback-parameters"> Session callback parameters
+
+The same callback parameters that are registered for [events](#callback-parameters) can be also saved to be sent in every
+event or session of the adjust SDK.
+
+The session callback parameters have a similar interface of the event callback parameters. Instead of adding the key and
+it's value to an event, it's added through a call to method `addSessionCallbackParameter` of the `Adjust` instance:
+
+```actionscript
+Adjust.addSessionCallbackParameter("foo", "bar");
+```
+
+The session callback parameters will be merged with the callback parameters added to an event. The callback parameters added 
+to an event have precedence over the session callback parameters. Meaning that, when adding a callback parameter to an event 
+with the same key to one added from the session, the value that prevails is the callback parameter added to the event.
+
+It's possible to remove a specific session callback parameter by passing the desiring key to the method 
+`removeSessionCallbackParameter` of the `Adjust` instance.
+
+```actionscript
+Adjust.removeSessionCallbackParameter("foo");
+```
+
+If you wish to remove all key and values from the session callback parameters, you can reset it with the method 
+`resetSessionCallbackParameters` of the `Adjust` instance.
+
+```actionscript
+Adjust.resetSessionCallbackParameters();
+```
+
+### <a id="session-partner-parameters">Session partner parameters
+
+In the same way that there is [session callback parameters](#session-callback-parameters) that are sent for every event or
+session of the adjust SDK, there is also session partner parameters.
+
+These will be transmitted to network partners, for the integrations that have been activated in your adjust [dashboard].
+
+The session partner parameters have a similar interface to the event partner parameters. Instead of adding the key and its
+value to an event, it's added through a call to method `addSessionPartnerParameter` of the `Adjust` instance:
+
+```actionscript
+Adjust.addSessionPartnerParameter("foo", "bar");
+```
+
+The session partner parameters will be merged with the partner parameters added to an event. The partner parameters added to 
+an event have precedence over the session partner parameters. Meaning that, when adding a partner parameter to an event with 
+the same key to one added from the session, the value that prevails is the partner parameter added to the event.
+
+It's possible to remove a specific session partner parameter by passing the desiring key to the method
+`removeSessionPartnerParameter` of the `Adjust` instance.
+
+```actionscript
+Adjust.removeSessionPartnerParameter("foo");
+```
+
+If you wish to remove all keys and values from the session partner parameters, you can reset it with the method 
+`resetSessionPartnerParameters` of the `Adjust` instance.
+
+```actionscript
+Adjust.resetSessionPartnerParameters();
+```
+
+### <a id="delay-start">Delay start
+
+Delaying the start of the adjust SDK allows your app some time to obtain session parameters, such as unique identifiers, to
+be sent on install.
+
+Set the initial delay time in seconds with the `setDelayStart` field of the `AdjustConfig` instance:
+
+```actionscript
+config.setDelayStart(5.5);
+```
+
+In this case this will make the adjust SDK not send the initial install session and any event created for 5.5 seconds. After 
+this time is expired or if you call the method `sendFirstPackages()` of the `Adjust` instance in the meanwhile, every session 
+parameter will be added to the delayed install session and events and the adjust SDK will resume as usual.
+
+**The maximum delay start time of the adjust SDK is 10 seconds**.
+
+### <a id="attribution-callback">Attribution callback
+
+You can register a callback to be notified of tracker attribution changes. Due to the different sources considered for 
+attribution, this information can not by provided synchronously. Follow these steps to implement the optional callback in your 
+application:
 
 1. Create void method which receives parameter of type `AdjustAttribution`.
 
@@ -313,16 +412,408 @@ public class Example extends Sprite {
 }
 ```
 
-Please make sure to consider [applicable attribution data policies.][attribution-data]
+Please make sure to consider [applicable attribution data policies][attribution-data].
 
-### 11. Set up deep link reattributions
+### <a id="session-event-callbacks">Session and event callbacks
 
-You can set up the adjust SDK to handle deep links that are used to open your app. We will only read certain, adjust-specific parameters. This is essential if you are planning to run retargeting or re-engagement campaigns with deep
-links. The only thing you need to do is to properly set your app schema name in app descriptor file, which is usually located at
-`src/{YourProjectName}-app.xml`. By using this scheme name later for deep linking, our SDK will handle deep linking
-automatically without need to set anything in your app source code.
+You can register a callback to be notified of successful and failed tracked events and/or sessions.
 
-#### iOS
+Follow the same steps to implement the following callback function for successfully tracked events:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.Environment;
+import com.adjust.sdk.LogLevel;
+import com.adjust.sdk.AdjustEventSuccess;
+
+public class Example extends Sprite {
+    public function Example() {
+    	var appToken:String = "{YourAppToken}";
+    	var environment:String = Environment.SANDBOX;
+    	
+        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
+
+        Adjust.start(adjustConfig);
+    }
+    
+    // ...
+    
+    private static function eventTrackingSucceededDelegate(eventSuccess:AdjustEventSuccess):void {
+        trace("Event tracking succeeded");
+        trace("Message = " + eventSuccess.getMessage());
+        trace("Timestamp = " + eventSuccess.getTimeStamp());
+        trace("Adid = " + eventSuccess.getAdid());
+        trace("Event Token = " + eventSuccess.getEventToken());
+        trace("Json Response = " + eventSuccess.getJsonResponse());
+    }
+}
+```
+
+The following callback function for failed tracked events:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.Environment;
+import com.adjust.sdk.LogLevel;
+import com.adjust.sdk.AdjustEventFailure;
+
+public class Example extends Sprite {
+    public function Example() {
+    	var appToken:String = "{YourAppToken}";
+    	var environment:String = Environment.SANDBOX;
+    	
+        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        adjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
+
+        Adjust.start(adjustConfig);
+    }
+    
+    // ...
+    
+    private static function eventTrackingFailedDelegate(eventFail:AdjustEventFailure):void {
+        trace("Event tracking failed");
+        trace("Message = " + eventFail.getMessage());
+        trace("Timestamp = " + eventFail.getTimeStamp());
+        trace("Adid = " + eventFail.getAdid());
+        trace("Event Token = " + eventFail.getEventToken());
+        trace("Will Retry = " + eventFail.getWillRetry());
+        trace("Json Response = " + eventFail.getJsonResponse());
+    }
+}
+```
+
+For successfully tracked sessions:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.Environment;
+import com.adjust.sdk.LogLevel;
+import com.adjust.sdk.AdjustSessionSuccess;
+
+public class Example extends Sprite {
+    public function Example() {
+    	var appToken:String = "{YourAppToken}";
+    	var environment:String = Environment.SANDBOX;
+    	
+        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        adjustConfig.setSessionTrackingSucceededDelegate(sessionTrackingSucceededDelegate);
+
+        Adjust.start(adjustConfig);
+    }
+    
+    // ...
+    
+    private static function sessionTrackingSucceededDelegate(sessionSuccess:AdjustSessionSuccess):void {
+        trace("Session tracking succeeded");
+        trace("Message = " + sessionSuccess.getMessage());
+        trace("Timestamp = " + sessionSuccess.getTimeStamp());
+        trace("Adid = " + sessionSuccess.getAdid());
+        trace("Json Response = " + sessionSuccess.getJsonResponse());
+    }
+}
+```
+
+And for failed tracked sessions:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.Environment;
+import com.adjust.sdk.LogLevel;
+import com.adjust.sdk.AdjustSessionFailure;
+
+public class Example extends Sprite {
+    public function Example() {
+    	var appToken:String = "{YourAppToken}";
+    	var environment:String = Environment.SANDBOX;
+    	
+        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+        adjustConfig.setSessionTrackingFailedDelegate(sessionTrackingFailedDelegate);
+
+        Adjust.start(adjustConfig);
+    }
+    
+    // ...
+    
+    private static function sessionTrackingFailedDelegate(sessionFail:AdjustSessionFailure):void {
+        trace("Session tracking failed");
+        trace("Message = " + sessionFail.getMessage());
+        trace("Timestamp = " + sessionFail.getTimeStamp());
+        trace("Adid = " + sessionFail.getAdid());
+        trace("Will Retry = " + sessionFail.getWillRetry());
+        trace("Json Response = " + sessionFail.getJsonResponse());
+    }
+}
+```
+
+The callback functions will be called after the SDK tries to send a package to the server. Within the callback you have
+access to a response data object specifically for the callback. Here is a quick summary of the session response data
+properties:
+
+- `var message:String` the message from the server or the error logged by the SDK.
+- `var timestamp:String` timestamp from the server.
+- `var adid:String` a unique device identifier provided by adjust.
+- `var jsonResponse:String` the JSON object with the response from the server.
+
+Both event response data objects contain:
+
+- `var eventToken:String` the event token, if the package tracked was an event.
+
+And both event and session failed objects also contain:
+
+- `var willRetry:Boolean;` indicates there will be an attempt to resend the package at a later time.
+
+### <a id="disable-tracking">Disable tracking
+
+You can disable the adjust SDK from tracking by invoking the method `setEnabled` of the `Adjust` instance with the enabled 
+parameter as `false`. This setting is **remembered between session**s, but it can only be activated after the first session.
+
+```actionscript
+Adjust.setEnabled(false);
+```
+
+You can verify if the adjust SDK is currently active with the method `isEnabled` of the `Adjust` instance. It is always 
+possible to activate the adjust SDK by invoking `setEnabled` with the `enabled` parameter set to `true`.
+
+### <a id="offline-mode">Offline mode
+
+You can put the adjust SDK in offline mode to suspend transmission to our servers, while still retaining tracked data to be 
+sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many events while in 
+offline mode.
+
+You can activate offline mode by calling the method `setOfflineMode` of the `Adjust` instance with the parameter `true`.
+
+```actionscript
+Adjust.setOfflineMode(true);
+```
+
+Conversely, you can deactivate offline mode by calling `setOfflineMode` with `false`. When the adjust SDK is put back in 
+online mode, all saved information is sent to our servers with the correct timstamps.
+
+Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online
+mode whenever it is started, even if the app was terminated in offline mode.
+
+### <a id="event-buffering">Event buffering
+
+If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in a single 
+batch every minute. You can enable event buffering by calling the method `setEventBufferingEnabled` of the `AdjustConfig` 
+instance with parameter `true`.
+
+```actionscript
+var appToken:String = "{YourAppToken}";
+var environment:String = Environment.SANDBOX;
+    	
+var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+
+adjustConfig.setEventBufferingEnabled(true);
+
+Adjust.start(adjustConfig);
+```
+
+If nothing set, event buffering is **disabled by default**.
+
+### <a id="background-tracking">Background tracking
+
+The default behaviour of the adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can 
+change this in your `AdjustConfig` instance by calling the `setSendInBackground` method:
+
+```actionscript
+var appToken:String = "{YourAppToken}";
+var environment:String = Environment.SANDBOX;
+    	
+var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+
+adjustConfig.setSendInBackground(true);
+
+Adjust.start(adjustConfig);
+```
+
+If nothing is set, sending in background is **disabled by default**.
+
+### <a id="device-ids">Device IDs
+
+Certain services (such as Google Analytics) require you to coordinate Device and Client IDs in order to prevent duplicate
+reporting. 
+
+### Android
+
+If you need to obtain the Google Advertising ID, there is a restriction that only allows it to be read in a background thread. 
+If you call the function `getGoogleAdId` by passing a function which gets `String` variable as parameter to it, it will work 
+in any situation:
+
+```actionscript
+Adjust.getGoogleAdId(getGoogleAdIdCallback);
+
+// ...
+
+private static function getGoogleAdIdCallback(googleAdId:String):void {
+    trace("Google Ad Id = " + googleAdId);
+}
+```
+
+Inside the custom defined method `getGoogleAdIdCallback`, you will have access to the Google Advertising ID as the variable 
+`googleAdId`.
+
+### iOS
+
+To obtain the IDFA, call the function `getIdfa`:
+
+```as
+var idfa:String = Adjust.getIdfa();
+```
+
+### <a id="push-token">Push token
+
+To send us the push notifications token, then add the following call to Adjust **whenever you get your token in the app or 
+when it gets updated**:
+
+```actionscript
+Adjust.setDeviceToken("YourPushNotificationToken");
+```
+
+### <a id="pre-installed-trackers">Pre-installed trackers
+
+If you want to use the adjust SDK to recognize users that found your app pre-installed on their device, follow these steps.
+
+1. Create a new tracker in your [dashboard].
+2. Open your app delegate and add set the default tracker of your `adjust_config` instance:
+
+    ```actionscript
+    var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+
+    adjustConfig.setDefaultTracker("{TrackerToken}");
+    
+    Adjust.start(adjustConfig);
+    ```
+
+  Replace `{TrackerToken}` with the tracker token you created in step 2. Please note that the dashboard displays a tracker 
+  URL (including `http://app.adjust.com/`). In your source code, you should specify only the six-character token and not the
+  entire URL.
+
+3. Build and run your app. You should see a line like the following in the app's log output:
+
+    ```
+    Default tracker: 'abc123'
+    ```
+
+### <a id="deeplinking">Deep linking
+
+If you are using the adjust tracker URL with an option to deep link into your app from the URL, there is the possibility to 
+get info about the deep link URL and its content. Hitting the URL can happen when the user has your app already installed 
+(standard deep linking scenario) or if they don't have the app on their device (deferred deep linking scenario).
+
+### <a id="deeplinking-standard">Standard deep linking scenario
+
+Standard deep linking scenario is a platform specific feature and in order to support it, you need to add some additional 
+settings to your app.
+
+In order to get info about the URL content in a standard deep linking scenario, you should subscribe to the 
+`InvokeEvent.INVOKE` event and set up a callback method which will get triggered once this event happens. Inside of that 
+callback method, you can access the URL of the deep link which opened your app:
+
+```actionscript
+var app:NativeApplication = NativeApplication.nativeApplication;
+app.addEventListener(InvokeEvent.INVOKE, onInvoke);
+
+// ...
+
+private static function onInvoke(event:InvokeEvent):void {
+    if (event.arguments.length == 0) {
+        return;
+    }
+
+    var deeplink:String = event.arguments[0];
+    
+    trace("Deeplink = " + deeplink);
+}
+```
+
+### <a id="deeplinking-deferred">Deferred deep linking scenario
+
+While deferred deep linking is not supported out of the box on Android and iOS, our adjust SDK makes it possible.
+
+In order to get info about the URL content in a deferred deep linking scenario, you should set a callback method on the 
+`AdjustConfig` object which will receive one `String` parameter where the content of the URL will be delivered. You should set 
+this method on the config object by calling the method `setDeferredDeeplinkDelegate`:
+
+```actionscript
+var appToken:String = "{YourAppToken}";
+var environment:String = Environment.SANDBOX;
+    	
+var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+
+adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
+
+Adjust.start(adjustConfig);
+
+// ...
+
+private static function deferredDeeplinkDelegate(uri:String):void {
+    trace("Received Deferred Deeplink");
+    trace("Deep link = " + uri);
+}
+```
+
+In deferred deep linking scenario, there is one additional setting which can be set on the `AdjustConfig` object. Once the 
+adjust SDK gets the deferred deep link info, we are offering you the possibility to choose whether our SDK should open this 
+URL or not. You can choose to set this option by calling the `setShouldLaunchDeeplink` method on the config object:
+
+```actionscript
+var appToken:String = "{YourAppToken}";
+var environment:String = Environment.SANDBOX;
+    	
+var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+
+adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
+adjustConfig.setShouldLaunchDeeplink(true);
+
+Adjust.start(adjustConfig);
+
+// ...
+
+private static function deferredDeeplinkDelegate(uri:String):void {
+    trace("Received Deferred Deeplink");
+    trace("Deep link = " + uri);
+}
+```
+
+If nothing is set, **the adjust SDK will always try to launch the URL by default**.
+
+To enable your app to support deep linking, you should do some additional set up for each supported platform.
+
+### <a id="deeplinking-android">Deep linking setup for Android
+
+To set a scheme name for your Android app, you should add the following `<intent-filter>` to the activity you want to
+launch after deep linking:
+
+```xml
+<!-- ... -->
+<activity>
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+    <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="schemeName" />
+    </intent-filter>
+</activity>
+<!-- ... -->
+```
+
+You should replace `schemeName` with your desired scheme name for Android app.
+
+### <a id="deeplinking-ios">Deep linking setup for iOS
 
 In order to set scheme name for your iOS app, you should add the following key-value pair into the `<InfoAdditions>` section
 of the app descriptor's `<iPhone>` section:
@@ -335,10 +826,10 @@ of the app descriptor's `<iPhone>` section:
         <array>
             <dict>
               <key>CFBundleURLName</key>
-              <string>com.adjust.example</string>
+              <string>com.your.bundle</string>
               <key>CFBundleURLSchemes</key>
               <array>
-                <string>desired-scheme-name</string>
+                <string>schemeName</string>
               </array>
             </dict>
         </array>
@@ -347,121 +838,51 @@ of the app descriptor's `<iPhone>` section:
 </iPhone>
 ```
 
-#### Android
+You should replace `com.your.bundle` with your app's bundle ID and `schemeName` with your desired scheme name for iOS app.
 
-To set a scheme name for your Android app, you should add the following `<intent-filter>` to the activity you want to
-launch after deep linking:
+**Important**: By using this approach for deep linking support in iOS, you will support deep linking handling for devices  
+which have **iOS 8 and lower**. Starting from **iOS 9**, Apple has introduced universal links for which, at this moment,  
+there's no built in support inside the Adobe AIR platform. To support this, you would need to edit the natively generated iOS 
+project in Xcode (if possible) and add support to handle universal links from there. If you are interested in finding out how 
+to do that on the native side, please consult our [native iOS universal links guide][universal-links-guide].
 
-```xml
-<!-- ... -->
-    <activity>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="desired-scheme-name" />
-        </intent-filter>
-    </activity>
-<!-- ... -->
-```
+### <a id="deeplinking-reattribution">Reattribution via deep links
 
-### 12. Event buffering
+Adjust enables you to run re-engagement campaigns by using deep links. For more information on this, please 
+check our [official docs][reattribution-with-deeplinks]. 
 
-If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in
-a single batch every minute. You can enable event buffering by calling the `adjustConfig.setEventBufferingEnabled` method
-with parameter `true`.
+The adjust SDK supports this feature out of the box and no additional setup is needed in your app's code. Like described in 
+[Standard deep linking scenario][#deeplinking-standard] part, our SDK is also listening for the `InvokeEvent.INVOKE` event and 
+is aware of the link which opens your app. Later on, we are handling all user re-attribution logic for you automatically.
 
-```actionscript
-adjustConfig.setEventBufferingEnabled(true);
-```
 
-### 13. Disable tracking
 
-You can disable the adjust SDK from tracking by invoking the method `setEnabled` with the enabled parameter as
-`false`. This setting is remembered between sessions, but it can only be activated after the first session.
+[dashboard]:    http://adjust.com
+[adjust.com]:   http://adjust.com
 
-```actionscript
-Adjust.setEnabled(false);
-```
+[releases]:             https://github.com/adjust/adjust_air_sdk/releases
+[example-app]:          sample
+[google-ad-id]:         https://developer.android.com/google/play-services/id.html
+[flash-builder]:        https://github.com/adjust/adobe_air_sdk/blob/master/doc/flash_builder.md
+[callbacks-guide]:      https://docs.adjust.com/en/callbacks
+[special-partners]:     https://docs.adjust.com/en/special-partners
+[google-analytics]:     https://docs.adjust.com/en/special-partners/google-analytics
+[attribution-data]:     https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
+[attribution_data]:     https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
+[brodcast-receiver]:    https://github.com/adjust/android_sdk#6-add-broadcast-receiver
 
-You can verify if the adjust SDK is currently active with the method `isEnabled`. It is always possible
-to activate the adjust SDK by invoking `setEnabled` with the `enabled` parameter set to `true`.
+[android-permissions]:          https://github.com/adjust/android_sdk#5-add-permissions
+[google-play-services]:         http://developer.android.com/google/play-services/setup.html
+[universal-links-guide]:        https://github.com/adjust/ios_sdk/#deeplinking-setup-new
+[custom-broadcast-receiver]:    https://github.com/adjust/android_sdk/blob/master/doc/english/referrer.md
+[reattribution-with-deeplinks]: https://docs.adjust.com/en/deeplinking/#manually-appending-attribution-data-to-a-deep-link
 
-### 14. Offline mode
-
-You can put the adjust SDK in offline mode to suspend transmission to our servers, while still retaining tracked data to
-be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many
-events while in offline mode.
-
-You can activate offline mode by calling `setOfflineMode` with the parameter `true`.
-
-```actionscript
-Adjust.setOfflineMode(true);
-```
-
-Conversely, you can deactivate offline mode by calling `setOfflineMode` with `false`. When the adjust SDK is put
-back in online mode, all saved information is sent to our servers with the correct timstamps.
-
-Unlike disabling tracking, this setting is *not remembered* between sessions. This means that the SDK is in online
-mode whenever it is started, even if the app was terminated in offline mode.
-
-### 15. Device IDs
-
-Certain services (such as [Google Analytics][google-analytics]) require you to coordinate device IDs in order 
-to prevent duplicate reporting.
-
-You can call the following methods to retrieve the device IDs collected by the adjust SDK.
-
-#### Android
-
-If you need to obtain the Google Advertising ID, there is a restriction that only allows it to 
-be read in a background thread.  If you call the function `getGoogleAdId` by passing a function which 
-gets `String` variable as parameter to it, it will work in any situation:
-
-```as
-Adjust.getGoogleAdId(getGoogleAdIdCallback);
-
-// ...
-
-private static function getGoogleAdIdCallback(googleAdId:String):void {
-    trace("Google Ad Id = " + googleAdId);
-}
-```
-
-Inside the custom defined method `getGoogleAdIdCallback`, you will have access to the Google Advertising ID 
-as the variable `googleAdId`.
-
-#### iOS
-
-To obtain the IDFA, call the function `getIdfa`:
-
-```as
-Adjust.getIdfa()
-```
-
-[adjust.com]: http://adjust.com
-[dashboard]: http://adjust.com
-[releases]: https://github.com/adjust/adjust_air_sdk/releases
-[permissions]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/permissions.png
-[xcode-logs]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/xcode_logs.png
-[google_play_services]: http://developer.android.com/google/play-services/setup.html
-[google_ad_id]: https://developer.android.com/google/play-services/id.html
-[attribution_data]: https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
-[special-partners]: https://docs.adjust.com/en/special-partners
-
-[android-permissions]: https://github.com/adjust/android_sdk#5-add-permissions
-[brodcast-android]: https://github.com/adjust/android_sdk#6-add-broadcast-receiver
-[attribution-data]: https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
-[android-manifest]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/android_manifest.png
-[flash-builder]: https://github.com/adjust/adobe_air_sdk/blob/master/doc/flash_builder.md
-[idea-locate]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_locate.png
-[idea-new-library]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_new_library.png
+[xcode-logs]:           https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/xcode_logs.png
+[permissions]:          https://raw.github.com/adjust/adjust_sdk/master/Resources/air/permissions.png
+[idea-locate]:          https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_locate.png
+[idea-new-library]:     https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_new_library.png
+[android-manifest]:     https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/android_manifest.png
 [idea-new-library-gps]: https://raw.github.com/adjust/adjust_sdk/master/Resources/air/v4/idea_new_library_gps.png
-[google-analytics]: https://docs.adjust.com/en/special-partners/google-analytics
 
 ## License
 
