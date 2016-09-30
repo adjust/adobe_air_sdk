@@ -1,15 +1,17 @@
 package com.adjust.sdk {
     public class AdjustConfig {
         // For iOS & Android
-        private var appToken:String;
-        private var environment:String;
-        private var logLevel:String;
-        private var eventBufferingEnabled:Boolean;
-        private var defaultTracker:String;
-        private var sendInBackground:Boolean;
         private var delayStart:Number;
+
+        private var appToken:String;
+        private var logLevel:String;
         private var userAgent:String;
+        private var environment:String;
+        private var defaultTracker:String;
+        
+        private var sendInBackground:Boolean;
         private var shouldLaunchDeeplink:Boolean;
+        private var eventBufferingEnabled:Boolean;
 
         private var attributionCallbackDelegate:Function;
         private var eventTrackingSucceededDelegate:Function;
@@ -27,12 +29,17 @@ package com.adjust.sdk {
             this.environment = environment;
         }
 
+        // Setters
         public function setLogLevel(logLevel:String):void {
             this.logLevel = logLevel;
         }
 
         public function setEventBufferingEnabled(eventBufferingEnabled:Boolean):void {
             this.eventBufferingEnabled = eventBufferingEnabled;
+        }
+
+        public function setSendInBackground(sendInBackground:Boolean):void {
+            this.sendInBackground = sendInBackground;
         }
 
         public function setDefaultTracker(defaultTracker:String):void {
@@ -71,10 +78,6 @@ package com.adjust.sdk {
             this.shouldLaunchDeeplink = shouldLaunchDeeplink;
         }
 
-        public function setSendInBackground(sendInBackground:Boolean):void {
-            this.sendInBackground = sendInBackground;
-        }
-
         // Getters
         public function getAppToken():String {
             return this.appToken;
@@ -90,6 +93,10 @@ package com.adjust.sdk {
 
         public function getEventBufferingEnabled():Boolean {
             return this.eventBufferingEnabled;
+        }
+
+        public function getSendInBackground():Boolean {
+            return this.sendInBackground;
         }
 
         public function getDefaultTracker():String {
@@ -126,10 +133,6 @@ package com.adjust.sdk {
 
         public function getShouldLaunchDeeplink():Boolean {
             return this.shouldLaunchDeeplink;
-        }
-
-        public function getSendInBackground():Boolean {
-            return this.sendInBackground;
         }
     }
 }

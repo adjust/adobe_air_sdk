@@ -1,14 +1,18 @@
 package com.adjust.sdk {
     public class AdjustSessionSuccess {
+        private var adid:String;
         private var message:String;
         private var timestamp:String;
-        private var adid:String;
         private var jsonResponse:String;
 
-        public function AdjustSessionSuccess(message:String, timestamp:String, adid:String, jsonResponse:String) {
+        public function AdjustSessionSuccess(
+            message:String,
+            timestamp:String,
+            adid:String,
+            jsonResponse:String) {
+            this.adid = adid;
             this.message = message;
             this.timestamp = timestamp;
-            this.adid = adid;
             this.jsonResponse = jsonResponse;
         }
 

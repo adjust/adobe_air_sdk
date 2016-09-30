@@ -1,6 +1,3 @@
-/**
- * Created by pfms on 30/07/14.
- */
 package com.adjust.sdk {
     import flash.events.Event;
     import flash.events.EventDispatcher;
@@ -75,7 +72,7 @@ package com.adjust.sdk {
             trace("adjust: removeSessionPartnerParameter called");
         }
 
-        public static function resetSessionPartnerParametes():void {
+        public static function resetSessionPartnerParameters():void {
             trace("adjust: resetSessionPartnerParameters called");
         }
     }

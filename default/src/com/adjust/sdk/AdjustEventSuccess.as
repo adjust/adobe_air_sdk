@@ -1,15 +1,20 @@
 package com.adjust.sdk {
     public class AdjustEventSuccess {
+        private var adid:String;
         private var message:String;
         private var timestamp:String;
-        private var adid:String;
         private var eventToken:String;
         private var jsonResponse:String;
 
-        public function AdjustEventSuccess(message:String, timestamp:String, adid:String, eventToken:String, jsonResponse:String) {
+        public function AdjustEventSuccess(
+            message:String,
+            timestamp:String,
+            adid:String,
+            eventToken:String,
+            jsonResponse:String) {
+            this.adid = adid;
             this.message = message;
             this.timestamp = timestamp;
-            this.adid = adid;
             this.eventToken = eventToken;
             this.jsonResponse = jsonResponse;
         }
