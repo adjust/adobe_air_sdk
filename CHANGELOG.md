@@ -28,6 +28,8 @@
 - [iOS SDK 4.10.1][ios_sdk_v4.10.1]
 - [Android SDK 4.10.2][android_sdk_v4.10.2]
 
+---
+
 ### Version 4.1.0 (23rd March 2016)
 #### Added
 - Added `CHANGELOG.md`.
