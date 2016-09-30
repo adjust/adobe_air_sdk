@@ -1,16 +1,23 @@
 package com.adjust.sdk {
     public class AdjustEventFailure {
-        private var message:String;
-        private var timestamp:String;
-        private var adid:String;
-        private var eventToken:String;
-        private var jsonResponse:String;
         private var willRetry:Boolean;
 
-        public function AdjustEventFailure(message:String, timestamp:String, adid:String, eventToken:String, jsonResponse:String, willRetry:Boolean) {
+        private var adid:String;
+        private var message:String;
+        private var timestamp:String;
+        private var eventToken:String;
+        private var jsonResponse:String;
+
+        public function AdjustEventFailure(
+            message:String,
+            timestamp:String,
+            adid:String,
+            eventToken:String,
+            jsonResponse:String,
+            willRetry:Boolean) {
+            this.adid = adid;
             this.message = message;
             this.timestamp = timestamp;
-            this.adid = adid;
             this.eventToken = eventToken;
             this.jsonResponse = jsonResponse;
             this.willRetry = willRetry;

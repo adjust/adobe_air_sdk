@@ -8,7 +8,8 @@ package com.adjust.sdk {
         private var adgroup:String;
         private var clickLabel:String;
 
-        public function AdjustAttribution(trackerToken:String,
+        public function AdjustAttribution(
+            trackerToken:String,
             trackerName:String,
             campaign:String,
             network:String,
@@ -24,7 +25,7 @@ package com.adjust.sdk {
             this.clickLabel = clickLabel;
         }
 
-        // Getters.
+        // Getters
         public function getTrackerToken():String {
             return this.trackerToken;
         }

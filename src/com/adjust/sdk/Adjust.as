@@ -1,6 +1,3 @@
-/**
- * Created by pfms on 30/07/14.
- */
 package com.adjust.sdk {
     import flash.desktop.NativeApplication;
     import flash.events.*;
@@ -9,7 +6,10 @@ package com.adjust.sdk {
     public class Adjust extends EventDispatcher {
         private static var sdkPrefix:String = "adobe_air4.10.0";
         private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
+        
+        private static var hasSdkStarted:Boolean = false;
         private static var extensionContext:ExtensionContext = null;
+        
         private static var attributionCallbackDelegate:Function;
         private static var googleAdIdCallbackDelegate:Function;
         private static var eventTrackingSucceededDelegate:Function;
@@ -17,7 +17,6 @@ package com.adjust.sdk {
         private static var sessionTrackingSucceededDelegate:Function;
         private static var sessionTrackingFailedDelegate:Function;
         private static var deferredDeeplinkDelegate:Function;
-        private static var hasSdkStarted:Boolean = false;
 
         private static function getExtensionContext():ExtensionContext {
             if (extensionContext != null) {
@@ -34,6 +33,7 @@ package com.adjust.sdk {
             }
 
             hasSdkStarted = true;
+
             var app:NativeApplication = NativeApplication.nativeApplication;
             app.addEventListener(Event.ACTIVATE, onResume);
             app.addEventListener(Event.DEACTIVATE, onPause);
@@ -103,7 +103,6 @@ package com.adjust.sdk {
 
         public static function isEnabled():Boolean {
             var isEnabled:int = int (getExtensionContext().call("isEnabled"));
-
             return isEnabled;
         }
 
@@ -133,7 +132,6 @@ package com.adjust.sdk {
 
         public static function getIdfa():String {
             var idfa:String = String (getExtensionContext().call("getIdfa"));
-
             return idfa;
         }
 
@@ -176,38 +174,31 @@ package com.adjust.sdk {
             if (statusEvent.code == "adjust_attributionData") {
                 var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
                 attributionCallbackDelegate(attribution);
-            } 
-            else if (statusEvent.code == "adjust_eventTrackingSucceeded") {
+            } else if (statusEvent.code == "adjust_eventTrackingSucceeded") {
                 var eventSuccess:AdjustEventSuccess = getEventSuccessFromResponse(statusEvent.level);
                 eventTrackingSucceededDelegate(eventSuccess);
-            } 
-            else if (statusEvent.code == "adjust_eventTrackingFailed") {
+            } else if (statusEvent.code == "adjust_eventTrackingFailed") {
                 var eventFail:AdjustEventFailure = getEventFailFromResponse(statusEvent.level);
                 eventTrackingFailedDelegate(eventFail);
-            }
-            else if (statusEvent.code == "adjust_sessionTrackingSucceeded") {
+            } else if (statusEvent.code == "adjust_sessionTrackingSucceeded") {
                 var sessionSuccess:AdjustSessionSuccess = getSessionSuccessFromResponse(statusEvent.level);
                 sessionTrackingSucceededDelegate(sessionSuccess);
-            }
-            else if (statusEvent.code == "adjust_sessionTrackingFailed") {
+            } else if (statusEvent.code == "adjust_sessionTrackingFailed") {
                 var sessionFail:AdjustSessionFailure = getSessionFailFromResponse(statusEvent.level);
                 sessionTrackingFailedDelegate(sessionFail);
-            }
-            else if (statusEvent.code == "adjust_deferredDeeplink") {
+            } else if (statusEvent.code == "adjust_deferredDeeplink") {
                 var uri:String = getDeferredDeeplinkFromResponse(statusEvent.level);
                 deferredDeeplinkDelegate(uri);
-            }
-            else if (statusEvent.code == "adjust_googleAdId") {
+            } else if (statusEvent.code == "adjust_googleAdId") {
                 var googleAdId:String = statusEvent.level;
-
                 googleAdIdCallbackDelegate(googleAdId);
             }
         }
 
         private static function getEventSuccessFromResponse(response:String):AdjustEventSuccess {
+            var adid:String;
             var message:String;
             var timestamp:String;
-            var adid:String;
             var eventToken:String;
 
             var jsonSplit:Array = response.split(",jsonResponse=");
@@ -236,9 +227,9 @@ package com.adjust.sdk {
         }
 
         private static function getEventFailFromResponse(response:String):AdjustEventFailure {
+            var adid:String;
             var message:String;
             var timestamp:String;
-            var adid:String;
             var eventToken:String;
             var willRetry:Boolean;
 
@@ -271,9 +262,9 @@ package com.adjust.sdk {
         }
 
         private static function getSessionSuccessFromResponse(response:String):AdjustSessionSuccess {
+            var adid:String;
             var message:String;
             var timestamp:String;
-            var adid:String;
 
             var jsonSplit:Array = response.split(",jsonResponse=");
             var jsonResponse:String = jsonSplit[1];
@@ -299,9 +290,9 @@ package com.adjust.sdk {
         }
 
         private static function getSessionFailFromResponse(response:String):AdjustSessionFailure {
+            var adid:String;
             var message:String;
             var timestamp:String;
-            var adid:String;
             var willRetry:Boolean;
 
             var jsonSplit:Array = response.split(",jsonResponse=");
@@ -372,7 +363,7 @@ package com.adjust.sdk {
         }
 
         private static function onInvoke(event:InvokeEvent):void {
-            if(event.arguments.length == 0) {
+            if (event.arguments.length == 0) {
                 return;
             }
 

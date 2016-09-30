@@ -4,12 +4,12 @@ package com.adjust.sdk {
         private var revenue:Number;
         private var currency:String;
         private var eventToken:String;
+        private var transactionId:String;
         private var partnerParameters:Array;
         private var callbackParameters:Array;
 
         // iOS specific
         private var receipt:String;
-        private var transactionId:String;
         private var isReceiptSet:Boolean;
 
         public function AdjustEvent(eventToken:String) {
