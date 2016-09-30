@@ -138,7 +138,7 @@ receiver like described in [here][custom-broadcast-receiver].
 
 Since 1st August 2014, all apps in the Google Play Store must use the [Google Advertising ID][google_ad_id] to uniquely 
 identify devices. To allow the adjust SDK to use the Google Advertising ID, you must integrate the
-[Google Play Services][google_play_services].
+[Google Play Services][google-play-services].
 
 In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other way) you can 
 use `Google Play Services ANE`, which is provided by adjust and is built to fit needs of our SDK. You can find our Google Play 
@@ -852,7 +852,7 @@ Adjust enables you to run re-engagement campaigns by using deep links. For more 
 check our [official docs][reattribution-with-deeplinks]. 
 
 The adjust SDK supports this feature out of the box and no additional setup is needed in your app's code. Like described in 
-[Standard deep linking scenario][#deeplinking-standard] part, our SDK is also listening for the `InvokeEvent.INVOKE` event and 
+[Standard deep linking scenario](#deeplinking-standard) part, our SDK is also listening for the `InvokeEvent.INVOKE` event and 
 is aware of the link which opens your app. Later on, we are handling all user re-attribution logic for you automatically.
 
 
