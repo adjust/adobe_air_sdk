@@ -12,6 +12,11 @@
 @interface AdjustFunction: NSObject<AdjustDelegate>
 
 - (void)adjustAttributionChanged:(ADJAttribution *)attribution;
+- (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccessResponseData;
+- (void)adjustEventTrackingFailed:(ADJEventFailure *)eventFailureResponseData;
+- (void)adjustSessionTrackingSucceeded:(ADJSessionSuccess *)sessionSuccessResponseData;
+- (void)adjustSessionTrackingFailed:(ADJSessionFailure *)sessionFailureResponseData;
+- (BOOL)adjustDeeplinkResponse:(NSURL *)deeplink;
 
 @end
 
@@ -23,9 +28,17 @@ FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREOb
 FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJaddSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJremoveSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJresetSessionCallbackParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJaddSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJremoveSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJresetSessionPartnerParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 // Android methods
 FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+

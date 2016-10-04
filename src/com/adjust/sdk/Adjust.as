@@ -1,223 +1,371 @@
-/**
- * Created by pfms on 30/07/14.
- */
 package com.adjust.sdk {
-import flash.desktop.NativeApplication;
-import flash.events.Event;
-import flash.events.EventDispatcher;
-import flash.events.InvokeEvent;
-import flash.events.StatusEvent;
-import flash.external.ExtensionContext;
+    import flash.desktop.NativeApplication;
+    import flash.events.*;
+    import flash.external.ExtensionContext;
 
-public class Adjust extends EventDispatcher {
-    private static var sdkPrefix:String = "adobe_air4.1.0";
-    private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
-    private static var extensionContext:ExtensionContext;
-    private static var attributionCallbackDelegate:Function;
-    private static var googleAdIdCallbackDelegate:Function;
-    
-    public static function start(adjustConfig:AdjustConfig):void {
-        if (extensionContext) {
-            trace("adjust warning: SDK already started");
+    public class Adjust extends EventDispatcher {
+        private static var sdkPrefix:String = "adobe_air4.10.0";
+        private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
+        
+        private static var hasSdkStarted:Boolean = false;
+        private static var extensionContext:ExtensionContext = null;
+        
+        private static var attributionCallbackDelegate:Function;
+        private static var googleAdIdCallbackDelegate:Function;
+        private static var eventTrackingSucceededDelegate:Function;
+        private static var eventTrackingFailedDelegate:Function;
+        private static var sessionTrackingSucceededDelegate:Function;
+        private static var sessionTrackingFailedDelegate:Function;
+        private static var deferredDeeplinkDelegate:Function;
+
+        private static function getExtensionContext():ExtensionContext {
+            if (extensionContext != null) {
+                return extensionContext;
+            }
+            
+            return extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
         }
 
-        try {
-            extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
-        } catch (exception) {
-            trace(exception.toString());
-            return;
+        public static function start(adjustConfig:AdjustConfig):void {
+            if (hasSdkStarted) {
+                trace("adjust warning: SDK already started");
+                return;
+            }
+
+            hasSdkStarted = true;
+
+            var app:NativeApplication = NativeApplication.nativeApplication;
+            app.addEventListener(Event.ACTIVATE, onResume);
+            app.addEventListener(Event.DEACTIVATE, onPause);
+            app.addEventListener(InvokeEvent.INVOKE, onInvoke);
+
+            attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+
+            eventTrackingSucceededDelegate = adjustConfig.getEventTrackingSucceededDelegate();
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+
+            eventTrackingFailedDelegate = adjustConfig.getEventTrackingFailedDelegate();
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+
+            sessionTrackingSucceededDelegate = adjustConfig.getSessionTrackingSucceededDelegate();
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+
+            sessionTrackingFailedDelegate = adjustConfig.getSessionTrackingFailedDelegate();
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+
+            deferredDeeplinkDelegate = adjustConfig.getDeferredDeeplinkDelegate();
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+
+            getExtensionContext().call("onCreate", 
+                    adjustConfig.getAppToken(), 
+                    adjustConfig.getEnvironment(),
+                    adjustConfig.getLogLevel(), 
+                    adjustConfig.getEventBufferingEnabled(),
+                    adjustConfig.getAttributionCallbackDelegate() != null, 
+                    adjustConfig.getEventTrackingSucceededDelegate() != null, 
+                    adjustConfig.getEventTrackingFailedDelegate() != null, 
+                    adjustConfig.getSessionTrackingSucceededDelegate() != null, 
+                    adjustConfig.getSessionTrackingFailedDelegate() != null, 
+                    adjustConfig.getDeferredDeeplinkDelegate() != null, 
+                    adjustConfig.getDefaultTracker(),
+                    sdkPrefix,
+                    adjustConfig.getShouldLaunchDeeplink(),
+                    adjustConfig.getProcessName(),
+                    adjustConfig.getDelayStart(),
+                    adjustConfig.getUserAgent(),
+                    adjustConfig.getSendInBackground());
+
+            // For now, call onResume after onCreate.
+            getExtensionContext().call("onResume");
         }
 
-        if (!extensionContext) {
-            trace("adjust error: cannot open ANE 'com.adjust.sdk' for this platform");
-            return;
+        public static function trackEvent(adjustEvent:AdjustEvent):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("trackEvent", 
+                    adjustEvent.getEventToken(), 
+                    adjustEvent.getCurrency(),
+                    adjustEvent.getRevenue(), 
+                    adjustEvent.getCallbackParameters(), 
+                    adjustEvent.getPartnerParameters(),
+                    adjustEvent.getTransactionId(), 
+                    adjustEvent.getReceipt(), 
+                    adjustEvent.getIsReceiptSet());
         }
 
-        var app:NativeApplication = NativeApplication.nativeApplication;
-        app.addEventListener(Event.ACTIVATE, onResume);
-        app.addEventListener(Event.DEACTIVATE, onPause);
-        app.addEventListener(InvokeEvent.INVOKE, onInvoke);
-
-        attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
-        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-
-        extensionContext.call("onCreate", adjustConfig.getAppToken(), adjustConfig.getEnvironment(),
-                adjustConfig.getLogLevel(), adjustConfig.getEventBufferingEnabled(),
-                adjustConfig.getAttributionCallbackDelegate() != null, adjustConfig.getDefaultTracker(),
-                sdkPrefix);
-
-        // For now, call onResume after onCreate.
-        extensionContext.call("onResume");
-    }
-
-    public static function trackEvent(adjustEvent:AdjustEvent):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function setEnabled(enabled:Boolean):void {
+            getExtensionContext().call("setEnabled", enabled);
         }
 
-        extensionContext.call("trackEvent", adjustEvent.getEventToken(), adjustEvent.getCurrency(),
-        adjustEvent.getRevenue(), adjustEvent.getCallbackParameters(), adjustEvent.getPartnerParameters(),
-        adjustEvent.getTransactionId(), adjustEvent.getReceipt(), adjustEvent.getIsReceiptSet());
-    }
-
-    public static function setEnabled(enabled:Boolean):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function isEnabled():Boolean {
+            var isEnabled:int = int (getExtensionContext().call("isEnabled"));
+            return isEnabled;
         }
 
-        extensionContext.call("setEnabled", enabled);
-    }
-
-    public static function isEnabled():Boolean {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return false;
+        public static function onResume(event:Event):void {
+            getExtensionContext().call("onResume");
         }
 
-        var isEnabled:int = int (extensionContext.call("isEnabled"));
-        return isEnabled;
-    }
-
-    public static function onResume(event:Event):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function onPause(event:Event):void {
+            getExtensionContext().call("onPause");
         }
 
-        extensionContext.call("onResume");
-    }
-
-    public static function onPause(event:Event):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function appWillOpenUrl(url:String):void {
+            getExtensionContext().call("appWillOpenUrl", url);
         }
 
-        extensionContext.call("onPause");
-    }
-
-    public static function appWillOpenUrl(url:String):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function setOfflineMode(isOffline:Boolean):void {
+            getExtensionContext().call("setOfflineMode", isOffline);
         }
 
-        extensionContext.call("appWillOpenUrl", url);
-    }
-
-    public static function setOfflineMode(isOffline:Boolean):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function setReferrer(referrer:String):void {
+            getExtensionContext().call("setReferrer", referrer);
         }
 
-        extensionContext.call("setOfflineMode", isOffline);
-    }
-
-    public static function setReferrer(referrer:String):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function setDeviceToken(token:String):void {
+            getExtensionContext().call("setDeviceToken", token);
         }
 
-        extensionContext.call("setReferrer", referrer);
-    }
-
-    public static function setDeviceToken(deviceToken:String):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function getIdfa():String {
+            var idfa:String = String (getExtensionContext().call("getIdfa"));
+            return idfa;
         }
 
-        extensionContext.call("setDeviceToken", deviceToken);
-    }
+        public static function getGoogleAdId(callback:Function):void {
+            googleAdIdCallbackDelegate = callback;
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-    public static function getIdfa():String {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return null;
+            getExtensionContext().call("getGoogleAdId");
         }
 
-        var idfa:String = String (extensionContext.call("getIdfa"));
-
-        return idfa;
-    }
-
-    public static function getGoogleAdId(callback:Function):void {
-        if (!extensionContext) {
-            trace(errorMessage);
-            return;
+        public static function addSessionCallbackParameter(key:String, value:String):void {
+            getExtensionContext().call("addSessionCallbackParameter", key, value);
         }
 
-        googleAdIdCallbackDelegate = callback;
-        extensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-
-        extensionContext.call("getGoogleAdId");
-    }
-
-    private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
-        if (statusEvent.code == "adjust_attributionData") {
-            var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
-
-            attributionCallbackDelegate(attribution);
+        public static function addSessionPartnerParameter(key:String, value:String):void {
+            getExtensionContext().call("addSessionPartnerParameter", key, value);
         }
 
-        if (statusEvent.code == "adjust_googleAdId") {
-            var googleAdId:String = statusEvent.level;
-
-            googleAdIdCallbackDelegate(googleAdId);
+        public static function removeSessionCallbackParameter(key:String):void {
+            getExtensionContext().call("removeSessionCallbackParameter", key);
         }
-    }
 
-    private static function getAttributionFromResponse(response:String):AdjustAttribution {
-        var trackerToken:String;
-        var trackerName:String;
-        var campaign:String;
-        var network:String;
-        var creative:String;
-        var adgroup:String;
-        var clickLabel:String;
+        public static function removeSessionPartnerParameter(key:String):void {
+            getExtensionContext().call("removeSessionPartnerParameter", key);
+        }
 
-        var attributionParts:Array = response.split(",");
+        public static function resetSessionCallbackParameters():void {
+            getExtensionContext().call("resetSessionCallbackParameters");
+        }
 
-        for (var i:int = 0; i < attributionParts.length; i++) {
-            var attributionField:Array = attributionParts[i].split("=");
-            var key:String = attributionField[0];
-            var value:String = attributionField[1];
+        public static function resetSessionPartnerParameters():void {
+            getExtensionContext().call("resetSessionPartnerParameters");
+        }
 
-            if (key == "trackerToken") {
-                trackerToken = value;
-            } else if (key == "trackerName") {
-                trackerName = value;
-            } else if (key == "campaign") {
-                campaign = value;
-            } else if (key == "network") {
-                network = value;
-            } else if (key == "creative") {
-                creative = value;
-            } else if (key == "adgroup") {
-                adgroup = value;
-            } else if (key == "clickLabel") {
-                clickLabel = value;
+        public static function sendFirstPackages():void {
+            getExtensionContext().call("sendFirstPackages");
+        }
+
+        private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
+            if (statusEvent.code == "adjust_attributionData") {
+                var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
+                attributionCallbackDelegate(attribution);
+            } else if (statusEvent.code == "adjust_eventTrackingSucceeded") {
+                var eventSuccess:AdjustEventSuccess = getEventSuccessFromResponse(statusEvent.level);
+                eventTrackingSucceededDelegate(eventSuccess);
+            } else if (statusEvent.code == "adjust_eventTrackingFailed") {
+                var eventFail:AdjustEventFailure = getEventFailFromResponse(statusEvent.level);
+                eventTrackingFailedDelegate(eventFail);
+            } else if (statusEvent.code == "adjust_sessionTrackingSucceeded") {
+                var sessionSuccess:AdjustSessionSuccess = getSessionSuccessFromResponse(statusEvent.level);
+                sessionTrackingSucceededDelegate(sessionSuccess);
+            } else if (statusEvent.code == "adjust_sessionTrackingFailed") {
+                var sessionFail:AdjustSessionFailure = getSessionFailFromResponse(statusEvent.level);
+                sessionTrackingFailedDelegate(sessionFail);
+            } else if (statusEvent.code == "adjust_deferredDeeplink") {
+                var uri:String = getDeferredDeeplinkFromResponse(statusEvent.level);
+                deferredDeeplinkDelegate(uri);
+            } else if (statusEvent.code == "adjust_googleAdId") {
+                var googleAdId:String = statusEvent.level;
+                googleAdIdCallbackDelegate(googleAdId);
             }
         }
 
-        return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel);
-    }
+        private static function getEventSuccessFromResponse(response:String):AdjustEventSuccess {
+            var adid:String;
+            var message:String;
+            var timestamp:String;
+            var eventToken:String;
+            var jsonResponse:String;
 
-    private static function onInvoke(event:InvokeEvent):void {
-        for (var i:int = 0; i < event.arguments.length; i++) {
-            var argument:String = event.arguments[i];
+            var parts:Array = response.split("__");
 
-            trace("adjust: Trying to open deep link");
-            trace(argument);
+            for (var i:int = 0; i < parts.length; i++) {
+                var field:Array = parts[i].split("==");
+                var key:String = field[0];
+                var value:String = field[1];
 
+                if (key == "message") {
+                    message = value;
+                } else if (key == "timeStamp") {
+                    timestamp = value;
+                } else if (key == "adid") {
+                    adid = value;
+                } else if (key == "eventToken") {
+                    eventToken = value;
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
+                }
+            }
+
+            return new AdjustEventSuccess(message, timestamp, adid, eventToken, jsonResponse);
+        }
+
+        private static function getEventFailFromResponse(response:String):AdjustEventFailure {
+            var adid:String;
+            var message:String;
+            var timestamp:String;
+            var eventToken:String;
+            var willRetry:Boolean;
+            var jsonResponse:String;
+
+            var parts:Array = response.split("__");
+
+            for (var i:int = 0; i < parts.length; i++) {
+                var field:Array = parts[i].split("==");
+                var key:String = field[0];
+                var value:String = field[1];
+
+                if (key == "message") {
+                    message = value;
+                } else if (key == "timeStamp") {
+                    timestamp = value;
+                } else if (key == "adid") {
+                    adid = value;
+                } else if (key == "eventToken") {
+                    eventToken = value;
+                } else if (key == "willRetry") {
+                    var tempVal:String = value;
+                    willRetry = tempVal == "true";
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
+                }
+            }
+
+            return new AdjustEventFailure(message, timestamp, adid, eventToken, jsonResponse, willRetry);
+        }
+
+        private static function getSessionSuccessFromResponse(response:String):AdjustSessionSuccess {
+            var adid:String;
+            var message:String;
+            var timestamp:String;
+            var jsonResponse:String;
+
+            var parts:Array = response.split("__");
+
+            for (var i:int = 0; i < parts.length; i++) {
+                var field:Array = parts[i].split("==");
+                var key:String = field[0];
+                var value:String = field[1];
+
+                if (key == "message") {
+                    message = value;
+                } else if (key == "timeStamp") {
+                    timestamp = value;
+                } else if (key == "adid") {
+                    adid = value;
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
+                }
+            }
+
+            return new AdjustSessionSuccess(message, timestamp, adid, jsonResponse);
+        }
+
+        private static function getSessionFailFromResponse(response:String):AdjustSessionFailure {
+            var adid:String;
+            var message:String;
+            var timestamp:String;
+            var willRetry:Boolean;
+            var jsonResponse:String;
+
+            var parts:Array = response.split("__");
+
+            for (var i:int = 0; i < parts.length; i++) {
+                var field:Array = parts[i].split("==");
+                var key:String = field[0];
+                var value:String = field[1];
+
+                if (key == "message") {
+                    message = value;
+                } else if (key == "timeStamp") {
+                    timestamp = value;
+                } else if (key == "adid") {
+                    adid = value;
+                } else if (key == "willRetry") {
+                    var tempVal:String = value;
+                    willRetry = tempVal == "true";
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
+                }
+
+            }
+
+            return new AdjustSessionFailure(message, timestamp, adid, jsonResponse, willRetry);
+        }
+
+
+        private static function getDeferredDeeplinkFromResponse(response:String):String {
+            return response;
+        }
+
+        private static function getAttributionFromResponse(response:String):AdjustAttribution {
+            var trackerToken:String;
+            var trackerName:String;
+            var campaign:String;
+            var network:String;
+            var creative:String;
+            var adgroup:String;
+            var clickLabel:String;
+
+            var parts:Array = response.split("__");
+
+            for (var i:int = 0; i < parts.length; i++) {
+                var field:Array = parts[i].split("==");
+                var key:String = field[0];
+                var value:String = field[1];
+
+                if (key == "trackerToken") {
+                    trackerToken = value;
+                } else if (key == "trackerName") {
+                    trackerName = value;
+                } else if (key == "campaign") {
+                    campaign = value;
+                } else if (key == "network") {
+                    network = value;
+                } else if (key == "creative") {
+                    creative = value;
+                } else if (key == "adgroup") {
+                    adgroup = value;
+                } else if (key == "clickLabel") {
+                    clickLabel = value;
+                }
+            }
+
+            return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel);
+        }
+
+        private static function onInvoke(event:InvokeEvent):void {
+            if (event.arguments.length == 0) {
+                return;
+            }
+
+            var argument:String = event.arguments[0];
             appWillOpenUrl(argument);
-
-            break;
         }
     }
-}
 }

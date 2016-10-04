@@ -1,6 +1,3 @@
-/**
- * Created by pfms on 30/07/14.
- */
 package com.adjust.sdk {
     public final class LogLevel {
         public static const VERBOSE: String = "verbose";
@@ -9,5 +6,6 @@ package com.adjust.sdk {
         public static const WARN: String = "warn";
         public static const ERROR: String = "error";
         public static const ASSERT: String = "assert";
+        public static const SUPPRESS: String = "suppress";
     }
 }

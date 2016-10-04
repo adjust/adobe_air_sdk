@@ -15,11 +15,11 @@ void setNamedFunction(FRENamedFunction* namedFunction, const uint8_t* name, FREF
 }
 
 void AdjustFREContextInitializer(void* extData,
-                                 const uint8_t* ctxType,
-                                 FREContext ctx,
-                                 uint32_t* numFunctionsToSet,
-                                 const FRENamedFunction** functionsToSet) {
-    uint32_t numberOfFunctions = 12;
+    const uint8_t* ctxType,
+    FREContext ctx,
+    uint32_t* numFunctionsToSet,
+    const FRENamedFunction** functionsToSet) {
+    uint32_t numberOfFunctions = 19;
 
     *numFunctionsToSet = numberOfFunctions;
 
@@ -34,9 +34,15 @@ void AdjustFREContextInitializer(void* extData,
     setNamedFunction(&func[7], (const uint8_t*)"setOfflineMode", &ADJsetOfflineMode);
     setNamedFunction(&func[8], (const uint8_t*)"setDeviceToken", &ADJsetDeviceToken);
     setNamedFunction(&func[9], (const uint8_t*)"getIdfa", &ADJgetIdfa);
-
     setNamedFunction(&func[10], (const uint8_t*)"setReferrer", &ADJsetReferrer);
     setNamedFunction(&func[11], (const uint8_t*)"getGoogleAdId", &ADJgetGoogleAdId);
+    setNamedFunction(&func[12], (const uint8_t*)"addSessionCallbackParameter", &ADJaddSessionCallbackParameter);
+    setNamedFunction(&func[13], (const uint8_t*)"removeSessionCallbackParameter", &ADJremoveSessionCallbackParameter);
+    setNamedFunction(&func[14], (const uint8_t*)"resetSessionCallbackParameters", &ADJresetSessionCallbackParameters);
+    setNamedFunction(&func[15], (const uint8_t*)"addSessionPartnerParameter", &ADJaddSessionPartnerParameter);
+    setNamedFunction(&func[16], (const uint8_t*)"removeSessionPartnerParameter", &ADJremoveSessionPartnerParameter);
+    setNamedFunction(&func[17], (const uint8_t*)"resetSessionPartnerParameters", &ADJresetSessionPartnerParameters);
+    setNamedFunction(&func[18], (const uint8_t*)"sendFirstPackages", &ADJsendFirstPackages);
 
     *functionsToSet = func;
 }
@@ -46,8 +52,8 @@ void AdjustFREContextFinalizer(FREContext ctx) {
 }
 
 void AdjustFREInitializer(void** extDataToSet,
-                          FREContextInitializer* ctxInitializerToSet,
-                          FREContextFinalizer* ctxFinalizerToSet) {
+    FREContextInitializer* ctxInitializerToSet,
+    FREContextFinalizer* ctxFinalizerToSet) {
     extDataToSet = NULL;
     *ctxInitializerToSet = &AdjustFREContextInitializer;
     *ctxFinalizerToSet = &AdjustFREContextFinalizer;

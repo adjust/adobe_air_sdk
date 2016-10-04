@@ -1,4 +1,8 @@
 .DS_Store
+*.swp
+*.swo
+*.apk
+*~
 *.swf
 *.swcout
 out

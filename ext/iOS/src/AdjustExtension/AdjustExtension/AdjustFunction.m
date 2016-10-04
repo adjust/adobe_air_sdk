@@ -10,44 +10,113 @@
 #import "AdjustFREUtils.h"
 
 FREContext adjustFREContext;
+BOOL shouldLaunchDeeplink;
 
 @implementation AdjustFunction
 
 static id<AdjustDelegate> adjustFunctionInstance = nil;
 
-- (id) init {
+- (id)init {
     self = [super init];
     return self;
 }
 
 - (void)adjustAttributionChanged:(ADJAttribution *)attribution {
-    NSString *attributionString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@",
-                                   @"trackerToken", attribution.trackerToken,
-                                   @"trackerName", attribution.trackerName,
-                                   @"campaign", attribution.campaign,
-                                   @"network", attribution.network,
-                                   @"creative", attribution.creative,
-                                   @"adgroup", attribution.adgroup,
-                                   @"clickLabel", attribution.clickLabel];
+    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+             @"trackerToken", attribution.trackerToken,
+             @"trackerName", attribution.trackerName,
+             @"campaign", attribution.campaign,
+             @"network", attribution.network,
+             @"creative", attribution.creative,
+             @"adgroup", attribution.adgroup,
+             @"clickLabel", attribution.clickLabel];
     const char* cResponseData = [attributionString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,
-                                (const uint8_t *)"adjust_attributionData",
-                                (const uint8_t *)cResponseData);
+            (const uint8_t *)"adjust_attributionData",
+            (const uint8_t *)cResponseData);
+}
+
+- (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccess {
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+             @"message", eventSuccess.message,
+             @"timeStamp", eventSuccess.timeStamp,
+             @"adid", eventSuccess.adid,
+             @"eventToken", eventSuccess.eventToken,
+             @"jsonResponse", eventSuccess.jsonResponse];
+    const char* cResponseData = [formattedString UTF8String];
+
+    FREDispatchStatusEventAsync(adjustFREContext,
+            (const uint8_t *)"adjust_eventTrackingSucceeded",
+            (const uint8_t *)cResponseData);
+}
+
+- (void)adjustEventTrackingFailed:(ADJEventFailure *)eventFailed {
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+             @"message", eventFailed.message,
+             @"timeStamp", eventFailed.timeStamp,
+             @"adid", eventFailed.adid,
+             @"eventToken", eventFailed.eventToken,
+             @"willRetry", eventFailed.willRetry ? @"true" : @"false",
+             @"jsonResponse", eventFailed.jsonResponse];
+    const char* cResponseData = [formattedString UTF8String];
+
+    FREDispatchStatusEventAsync(adjustFREContext,
+            (const uint8_t *)"adjust_eventTrackingFailed",
+            (const uint8_t *)cResponseData);
+}
+
+- (void)adjustSessionTrackingSucceeded:(ADJSessionSuccess *)sessionSuccess {
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@",
+             @"message", sessionSuccess.message,
+             @"timeStamp", sessionSuccess.timeStamp,
+             @"adid", sessionSuccess.adid,
+             @"jsonResponse", sessionSuccess.jsonResponse];
+    const char* cResponseData = [formattedString UTF8String];
+
+    FREDispatchStatusEventAsync(adjustFREContext,
+            (const uint8_t *)"adjust_sessionTrackingSucceeded",
+            (const uint8_t *)cResponseData);
+}
+
+- (void)adjustSessionTrackingFailed:(ADJSessionFailure *)sessionFailed {
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+             @"message", sessionFailed.message,
+             @"timeStamp", sessionFailed.timeStamp,
+             @"adid", sessionFailed.adid,
+             @"willRetry", sessionFailed.willRetry ? @"true" : @"false",
+             @"jsonResponse", sessionFailed.jsonResponse];
+    const char* cResponseData = [formattedString UTF8String];
+
+    FREDispatchStatusEventAsync(adjustFREContext,
+            (const uint8_t *)"adjust_sessionTrackingFailed",
+            (const uint8_t *)cResponseData);
+}
+
+- (BOOL)adjustDeeplinkResponse:(NSURL *)deeplink {
+    NSString *formattedString = [NSString stringWithFormat:@"%@", deeplink.absoluteString];
+    const char* cResponseData = [formattedString UTF8String];
+
+    FREDispatchStatusEventAsync(adjustFREContext,
+            (const uint8_t *)"adjust_deferredDeeplink",
+            (const uint8_t *)cResponseData);
+    return shouldLaunchDeeplink;
 }
 
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 7) {
+    if (argc == 17) {
         NSString *appToken = nil;
         NSString *environment = nil;
-        NSString *logLevel = nil;
+        NSString *logLevelString = nil;
+        ADJLogLevel logLevel = ADJLogLevelInfo;
         NSString *defaultTracker = nil;
         NSString *sdkPrefix = nil;
 
         BOOL eventBufferingEnabled;
-        BOOL isAttributionCallbackSet;
+        BOOL isCallbackSet;
+        BOOL allowSuppressLogLevel = false;
 
         adjustFREContext = ctx;
 
@@ -59,14 +128,21 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             FREGetObjectAsNativeString(argv[1], &environment);
         }
 
-        ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment];
-
         if (argv[2] != nil) {
-            FREGetObjectAsNativeString(argv[2], &logLevel);
+            FREGetObjectAsNativeString(argv[2], &logLevelString);
 
-            if (logLevel != nil) {
-                [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:logLevel]];
+            if (logLevelString != nil) {
+                logLevel = [ADJLogger LogLevelFromString:logLevelString];
+
+                if (logLevel == ADJLogLevelSuppress) {
+                    allowSuppressLogLevel = true;
+                }
             }
+        }
+
+        ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment allowSuppressLogLevel:allowSuppressLogLevel];
+        if (logLevelString != nil) {
+            [adjustConfig setLogLevel:logLevel];
         }
 
         if (argv[3] != nil) {
@@ -75,9 +151,9 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
 
         if (argv[4] != nil) {
-            FREGetObjectAsNativeBool(argv[4], &isAttributionCallbackSet);
+            FREGetObjectAsNativeBool(argv[4], &isCallbackSet);
 
-            if (isAttributionCallbackSet) {
+            if (isCallbackSet) {
                 if (adjustFunctionInstance == nil) {
                     adjustFunctionInstance = [[AdjustFunction alloc] init];
                 }
@@ -86,20 +162,48 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             }
         }
 
-        if (argv[5] != nil) {
-            FREGetObjectAsNativeString(argv[5], &defaultTracker);
+        // argv 5,6,7,8,9 are not needed for Obj-C since we're setting a delegate and 
+        // using selectors.
+
+        if (argv[10] != nil) {
+            FREGetObjectAsNativeString(argv[10], &defaultTracker);
 
             if (defaultTracker != nil) {
                 [adjustConfig setDefaultTracker:defaultTracker];
             }
         }
 
-        if (argv[6] != nil) {
-            FREGetObjectAsNativeString(argv[6], &sdkPrefix);
+        if (argv[11] != nil) {
+            FREGetObjectAsNativeString(argv[11], &sdkPrefix);
             [adjustConfig setSdkPrefix:sdkPrefix];
         }
 
+        if (argv[12] != nil) {
+            FREGetObjectAsNativeBool(argv[12], &shouldLaunchDeeplink);
+        }
+
+        // arg 13 is for Android only
+
+        if (argv[14] != nil) {
+            double delayStart;
+            FREGetObjectAsDouble(argv[14], &delayStart);
+            [adjustConfig setDelayStart:delayStart];
+        }
+
+        if (argv[15] != nil) {
+            NSString *userAgent = nil;
+            FREGetObjectAsNativeString(argv[15], &userAgent);
+            [adjustConfig setUserAgent:userAgent];
+        }
+
+        if (argv[16] != nil) {
+            BOOL sendInBackground = NO;
+            FREGetObjectAsNativeBool(argv[15], &sendInBackground);
+            [adjustConfig setSendInBackground:sendInBackground];
+        }
+
         [Adjust appDidLaunch:adjustConfig];
+        [Adjust trackSubsessionStart];
     } else {
         NSLog(@"Adjust: Bridge onCreate method triggered with wrong number of arguments");
     }
@@ -315,11 +419,141 @@ FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     FREObject return_value;
     FRENewObjectFromBool(true, &return_value);
-    
+
     return return_value;
 }
 
 FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+
+FREObject ADJaddSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 2) {
+        NSString *key = nil;
+        NSString *value = nil;
+
+        if (argv[0] != nil) {
+            FREGetObjectAsNativeString(argv[0], &key);
+        }
+
+        if (argv[1] != nil) {
+            FREGetObjectAsNativeString(argv[1], &value);
+        }
+
+
+        [Adjust addSessionCallbackParameter:key value:value];
+    } else {
+        NSLog(@"Adjust: Bridge addSessionCallbackParameter method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+FREObject ADJremoveSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 1) {
+        NSString *key = nil;
+
+        if (argv[0] != nil) {
+            FREGetObjectAsNativeString(argv[0], &key);
+        }
+
+
+        [Adjust removeSessionCallbackParameter:key];
+    } else {
+        NSLog(@"Adjust: Bridge removeSessionCallbackParameter method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+FREObject ADJresetSessionCallbackParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        [Adjust resetSessionCallbackParameters];
+    } else {
+        NSLog(@"Adjust: Bridge resetSessionCallbackParameters method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+FREObject ADJaddSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 2) {
+        NSString *key = nil;
+        NSString *value = nil;
+
+        if (argv[0] != nil) {
+            FREGetObjectAsNativeString(argv[0], &key);
+        }
+
+        if (argv[1] != nil) {
+            FREGetObjectAsNativeString(argv[1], &value);
+        }
+
+
+        [Adjust addSessionPartnerParameter:key value:value];
+    } else {
+        NSLog(@"Adjust: Bridge addSessionPartnerParameter method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+FREObject ADJremoveSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 1) {
+        NSString *key = nil;
+
+        if (argv[0] != nil) {
+            FREGetObjectAsNativeString(argv[0], &key);
+        }
+
+
+        [Adjust removeSessionPartnerParameter:key];
+    } else {
+        NSLog(@"Adjust: Bridge removeSessionPartnerParameter method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+FREObject ADJresetSessionPartnerParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        [Adjust resetSessionPartnerParameters];
+    } else {
+        NSLog(@"Adjust: Bridge resetSessionPartnerParameters method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
+
+FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        [Adjust sendFirstPackages];
+    } else {
+        NSLog(@"Adjust: Bridge sendFirstPackages method triggered with wrong number of arguments");
+    }
+
     FREObject return_value;
     FRENewObjectFromBool(true, &return_value);
 
