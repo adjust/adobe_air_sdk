@@ -200,26 +200,25 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var eventToken:String;
+            var jsonResponse:String;
 
-            var jsonSplit:Array = response.split(",jsonResponse=");
-            var jsonResponse:String = jsonSplit[1];
-            var nonJsonResponse:String = jsonSplit[0];
-
-            var parts:Array = nonJsonResponse.split(",");
+            var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
-                var field:Array = parts[i].split("=");
+                var field:Array = parts[i].split("==");
                 var key:String = field[0];
                 var value:String = field[1];
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timestamp") {
+                } else if (key == "timeStamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
                 } else if (key == "eventToken") {
                     eventToken = value;
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
                 }
             }
 
@@ -232,21 +231,18 @@ package com.adjust.sdk {
             var timestamp:String;
             var eventToken:String;
             var willRetry:Boolean;
+            var jsonResponse:String;
 
-            var jsonSplit:Array = response.split(",jsonResponse=");
-            var jsonResponse:String = jsonSplit[1];
-            var nonJsonResponse:String = jsonSplit[0];
-
-            var parts:Array = nonJsonResponse.split(",");
+            var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
-                var field:Array = parts[i].split("=");
+                var field:Array = parts[i].split("==");
                 var key:String = field[0];
                 var value:String = field[1];
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timestamp") {
+                } else if (key == "timeStamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
@@ -255,6 +251,8 @@ package com.adjust.sdk {
                 } else if (key == "willRetry") {
                     var tempVal:String = value;
                     willRetry = tempVal == "true";
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
                 }
             }
 
@@ -265,24 +263,23 @@ package com.adjust.sdk {
             var adid:String;
             var message:String;
             var timestamp:String;
+            var jsonResponse:String;
 
-            var jsonSplit:Array = response.split(",jsonResponse=");
-            var jsonResponse:String = jsonSplit[1];
-            var nonJsonResponse:String = jsonSplit[0];
-
-            var parts:Array = nonJsonResponse.split(",");
+            var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
-                var field:Array = parts[i].split("=");
+                var field:Array = parts[i].split("==");
                 var key:String = field[0];
                 var value:String = field[1];
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timestamp") {
+                } else if (key == "timeStamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
                 }
             }
 
@@ -294,28 +291,28 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var willRetry:Boolean;
+            var jsonResponse:String;
 
-            var jsonSplit:Array = response.split(",jsonResponse=");
-            var jsonResponse:String = jsonSplit[1];
-            var nonJsonResponse:String = jsonSplit[0];
-
-            var parts:Array = nonJsonResponse.split(",");
+            var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
-                var field:Array = parts[i].split("=");
+                var field:Array = parts[i].split("==");
                 var key:String = field[0];
                 var value:String = field[1];
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timestamp") {
+                } else if (key == "timeStamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
                 } else if (key == "willRetry") {
                     var tempVal:String = value;
                     willRetry = tempVal == "true";
+                } else if (key == "jsonResponse") {
+                    jsonResponse = value;
                 }
+
             }
 
             return new AdjustSessionFailure(message, timestamp, adid, jsonResponse, willRetry);
@@ -335,10 +332,10 @@ package com.adjust.sdk {
             var adgroup:String;
             var clickLabel:String;
 
-            var parts:Array = response.split(",");
+            var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
-                var field:Array = parts[i].split("=");
+                var field:Array = parts[i].split("==");
                 var key:String = field[0];
                 var value:String = field[1];
 

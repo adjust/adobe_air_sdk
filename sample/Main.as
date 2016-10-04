@@ -63,7 +63,7 @@ package {
             Adjust.start(adjustConfig);
 
             Adjust.setDeviceToken("bunny_foo_foo");
-             Adjust.sendFirstPackages();
+            Adjust.sendFirstPackages();
 
             // -------- Adjust Configuration -------- //
         }
@@ -191,7 +191,7 @@ package {
             var buttonHeight:int = 40;
             var yPosition:int = 100 + stage.stageHeight * 0.25 +
                 (number < 0 ? number * buttonHeight : (number - 1) * buttonHeight) + ((number != 1 && number != -1) ?
-                (number > 0 ? 20 * Math.abs(number) : -20 * Math.abs(number)) : number * 10);
+                        (number > 0 ? 20 * Math.abs(number) : -20 * Math.abs(number)) : number * 10);
 
             var textField:TextField = new TextField();
             textField.text = text;

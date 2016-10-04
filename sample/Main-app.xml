@@ -11,7 +11,7 @@
   <supportedProfiles>mobileDevice</supportedProfiles> 
   <extensions>
       <extensionID>com.adjust.sdk</extensionID>
-      <extensionID>com.adjust.gps</extensionID>
+      <!--<extensionID>com.adjust.gps</extensionID>-->
   </extensions>
 
   <iPhone>

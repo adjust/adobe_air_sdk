@@ -22,7 +22,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 }
 
 - (void)adjustAttributionChanged:(ADJAttribution *)attribution {
-    NSString *attributionString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@",
+    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"trackerToken", attribution.trackerToken,
              @"trackerName", attribution.trackerName,
              @"campaign", attribution.campaign,
@@ -38,7 +38,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 }
 
 - (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccess {
-    NSString *formattedString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@,%@=%@",
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", eventSuccess.message,
              @"timeStamp", eventSuccess.timeStamp,
              @"adid", eventSuccess.adid,
@@ -52,7 +52,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 }
 
 - (void)adjustEventTrackingFailed:(ADJEventFailure *)eventFailed {
-    NSString *formattedString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@,%@=%@,%@=%@",
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", eventFailed.message,
              @"timeStamp", eventFailed.timeStamp,
              @"adid", eventFailed.adid,
@@ -67,7 +67,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 }
 
 - (void)adjustSessionTrackingSucceeded:(ADJSessionSuccess *)sessionSuccess {
-    NSString *formattedString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@",
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", sessionSuccess.message,
              @"timeStamp", sessionSuccess.timeStamp,
              @"adid", sessionSuccess.adid,
@@ -80,7 +80,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 }
 
 - (void)adjustSessionTrackingFailed:(ADJSessionFailure *)sessionFailed {
-    NSString *formattedString = [NSString stringWithFormat:@"%@=%@,%@=%@,%@=%@,%@=%@,%@=%@",
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", sessionFailed.message,
              @"timeStamp", sessionFailed.timeStamp,
              @"adid", sessionFailed.adid,
@@ -94,8 +94,7 @@ static id<AdjustDelegate> adjustFunctionInstance = nil;
 }
 
 - (BOOL)adjustDeeplinkResponse:(NSURL *)deeplink {
-    NSString *formattedString = [NSString stringWithFormat:@"%@=%@",
-             @"url", deeplink.absoluteString];
+    NSString *formattedString = [NSString stringWithFormat:@"%@", deeplink.absoluteString];
     const char* cResponseData = [formattedString UTF8String];
 
     FREDispatchStatusEventAsync(adjustFREContext,

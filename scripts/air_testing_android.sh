@@ -35,19 +35,19 @@ echo -e "${GREEN}>>> ANE built successfully ${NC}"
 echo -e "${GREEN}>>> Building sample app ${NC}"
 echo -e "${GREEN}>>> Running amxmlc ${NC}"
 cd ${SAMPLE_DIR}
-amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
+/Applications/AIRSDK_Compiler/bin/amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
 
 echo -e "${GREEN}>>> Checking if keystore exists ${NC}"
 if [ ! -f "${KEYSTORE_FILE}" ]; then
     echo -e "${GREEN}>>> Keystore file does not exist; creating one with password [pass] ${NC}"
-    adt -certificate -validityPeriod 25 -cn SelfSigned 1024-RSA sampleCert.pfx pass
+    /Applications/AIRSDK_Compiler/bin/adt -certificate -validityPeriod 25 -cn SelfSigned 1024-RSA sampleCert.pfx pass
     echo -e "${GREEN}>>> Keystore file created ${NC}"
 fi
 
 echo -e "${GREEN}>>> Keystore file exists ${NC}"
 
 echo -e "${GREEN}>>> Packaging APK file. Password will enter automatically ${NC}"
-echo "pass" | adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib
+echo "pass" | /Applications/AIRSDK_Compiler/bin/adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib
 
 echo -e "${GREEN}>>> APK file created. Running ADB install ${NC}"
 adb install -r Main.apk

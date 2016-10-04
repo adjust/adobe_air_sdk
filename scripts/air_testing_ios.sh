@@ -36,7 +36,7 @@ echo -e "${GREEN}>>> ANE built successfully ${NC}"
 echo -e "${GREEN}>>> Building sample app ${NC}"
 echo -e "${GREEN}>>> Running amxmlc ${NC}"
 cd ${SAMPLE_DIR}
-amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
+/Applications/AIRSDK_Compiler/bin/amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
 
 #echo -e "${GREEN}>>> Checking if keystore exists ${NC}"
 #if [ ! -f "${KEYSTORE_FILE}" ]; then
@@ -49,6 +49,6 @@ amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${M
 
 echo -e "${GREEN}>>> Packaging IPA file${NC}"
 #echo "pass" | adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib
-echo | adt -package -target ipa-debug -provisioning-profile ${PROVISIONING_FILE} -storetype pkcs12 -keystore ${KEYSTORE_FILE} Main.ipa ${SAMPLE_APP_XML_FILE} Main.swf -extdir lib
+echo | /Applications/AIRSDK_Compiler/bin/adt -package -target ipa-debug -provisioning-profile ${PROVISIONING_FILE} -storetype pkcs12 -keystore ${KEYSTORE_FILE} Main.ipa ${SAMPLE_APP_XML_FILE} Main.swf -extdir lib
 
 echo -e "${GREEN}>>> IPA file created. ${NC}"
