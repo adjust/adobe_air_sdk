@@ -53,8 +53,8 @@ package {
             Adjust.removeSessionCallbackParameter("dummy_foo");
             Adjust.removeSessionPartnerParameter("dummy_foo");
 
-            Adjust.resetSessionCallbackParameters();
-            Adjust.resetSessionPartnerParameters();
+            //Adjust.resetSessionCallbackParameters();
+            //Adjust.resetSessionPartnerParameters();
 
             adjustConfig.setDelayStart(3.0);
             adjustConfig.setUserAgent("little_bunny_foo_foo");
@@ -63,7 +63,7 @@ package {
             Adjust.start(adjustConfig);
 
             Adjust.setDeviceToken("bunny_foo_foo");
-            // Adjust.sendFirstPackages();
+             Adjust.sendFirstPackages();
 
             // -------- Adjust Configuration -------- //
         }

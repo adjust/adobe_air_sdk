@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 SDK_DIR=~/Dev/adobe_air_sdk
 SAMPLE_DIR=~/Dev/adobe_air_sdk/sample
 MAIN_FILE=Main.as
@@ -10,9 +9,10 @@ RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
 NC='\033[0m' # No Color
 
+set -e
 
 echo -e "${GREEN}>>> Removing ANE file from sample/lib ${NC}"
-rm -rfv ${SAMPLE_DIR}/lib/Adjust*.ane
+rm -rfv ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane
 
 echo -e "${GREEN}>>> Removing ANE file from root dir ${NC}"
 rm -rfv ${SDK_DIR}/Adjust*.ane
