@@ -33,3 +33,5 @@ DerivedData
 
 # Exceptions
 !sample/*.iml
+*.dSYM
+*.a
