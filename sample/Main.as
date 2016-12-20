@@ -33,11 +33,11 @@ package {
             IsEnabledTextField = buildButton(5, "Is SDK Enabled?", IsEnabledClick);
 
             // -------- Adjust Configuration -------- //
-            var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", Environment.SANDBOX);
+            var adjustConfig:AdjustConfig = new AdjustConfig("2fm9gkqubvpc", Environment.SANDBOX);
 
-            adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
+            //adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
             adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
-            adjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
+            bdjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
             adjustConfig.setSessionTrackingSucceededDelegate(sessionTrackingSucceededDelegate);
             adjustConfig.setSessionTrackingFailedDelegate(sessionTrackingFailedDelegate);
             adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
@@ -71,7 +71,7 @@ package {
         private static function TrackEventClick(Event:MouseEvent):void {
             trace ("Track simple event button tapped!");
 
-            var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
+            var adjustEvent:AdjustEvent = new AdjustEvent("g3mfiw");
 
             Adjust.trackEvent(adjustEvent);
         }
@@ -79,7 +79,7 @@ package {
         private static function TrackRevenueClick(Event:MouseEvent):void {
             trace ("Track revenue event button tapped!");
 
-            var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
+            var adjustEvent:AdjustEvent = new AdjustEvent("a4fd35");
             adjustEvent.setRevenue(0.01, "EUR");
 
             Adjust.trackEvent(adjustEvent);
@@ -88,7 +88,7 @@ package {
         private static function TrackCallbackClick(Event:MouseEvent):void {
             trace ("Track callback event button tapped!");
 
-            var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
+            var adjustEvent:AdjustEvent = new AdjustEvent("34vgg9");
 
             adjustEvent.addCallbackParameter("foo", "bar");
             adjustEvent.addCallbackParameter("a", "b");
@@ -100,7 +100,7 @@ package {
         private static function TrackPartnerClick(Event:MouseEvent):void {
             trace ("Track partner event button tapped!");
 
-            var adjustEvent:AdjustEvent = new AdjustEvent("{YourEventToken}");
+            var adjustEvent:AdjustEvent = new AdjustEvent("w788qs");
 
             adjustEvent.addPartnerParameter("foo", "bar");
             adjustEvent.addPartnerParameter("x", "y");

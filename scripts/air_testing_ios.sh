@@ -6,7 +6,7 @@ MAIN_FILE=Main.as
 SAMPLE_APP_XML_FILE=Main-app.xml
 VERSION=`cat ${SDK_DIR}/VERSION`
 KEYSTORE_FILE=~/Desktop/Certificates.p12
-PROVISIONING_FILE=~/Downloads/adjust_Development.mobileprovision
+PROVISIONING_FILE=~/Desktop/adjust_Development.mobileprovision
 
 RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
@@ -21,7 +21,7 @@ rm -rfv ${SDK_DIR}/Adjust*.ane
 echo -e "${GREEN}>>> Building ANE for version ${VERSION} ${NC}"
 
 cd ${SDK_DIR}
-make -f Makefile
+./build.sh
 \cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
 
 echo -e "${GREEN}>>> Checking if ANE is built successfully in location: ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane ${NC}"
