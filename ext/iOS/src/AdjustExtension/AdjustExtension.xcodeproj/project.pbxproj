@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		20751CEB1E0426270076059F /* AdjustSdkDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20751CEA1E0426270076059F /* AdjustSdkDelegate.m */; };
 		96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96332CBF1A8B982000D38FAF /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96332CC11A8B982600D38FAF /* iAd.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		96471C231993B3F1000CD897 /* AdjustFREUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C221993B3F1000CD897 /* AdjustFREUtils.m */; };
@@ -42,6 +43,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		20751CE91E0426270076059F /* AdjustSdkDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdjustSdkDelegate.h; sourceTree = "<group>"; };
+		20751CEA1E0426270076059F /* AdjustSdkDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdjustSdkDelegate.m; sourceTree = "<group>"; };
 		96332CBF1A8B982000D38FAF /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		96332CC11A8B982600D38FAF /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		96471C211993B3F1000CD897 /* AdjustFREUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdjustFREUtils.h; sourceTree = "<group>"; };
@@ -122,6 +125,8 @@
 				96471C221993B3F1000CD897 /* AdjustFREUtils.m */,
 				9696C5F71993CF0D003B644E /* AdjustFunction.h */,
 				9696C5F81993CF0D003B644E /* AdjustFunction.m */,
+				20751CE91E0426270076059F /* AdjustSdkDelegate.h */,
+				20751CEA1E0426270076059F /* AdjustSdkDelegate.m */,
 			);
 			path = AdjustExtension;
 			sourceTree = "<group>";
@@ -236,6 +241,7 @@
 			files = (
 				96471C231993B3F1000CD897 /* AdjustFREUtils.m in Sources */,
 				9696C5F91993CF0D003B644E /* AdjustFunction.m in Sources */,
+				20751CEB1E0426270076059F /* AdjustSdkDelegate.m in Sources */,
 				96E1BBDE1993872F004E270B /* AdjustExtension.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
