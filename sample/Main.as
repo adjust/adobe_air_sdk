@@ -37,7 +37,7 @@ package {
 
             //adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
             adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
-            bdjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
+            adjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
             adjustConfig.setSessionTrackingSucceededDelegate(sessionTrackingSucceededDelegate);
             adjustConfig.setSessionTrackingFailedDelegate(sessionTrackingFailedDelegate);
             adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
