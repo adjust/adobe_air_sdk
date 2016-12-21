@@ -1,4 +1,4 @@
-## Migrate your adjust SDK for Adobe AIR to 4.10.0 from 3.4.3
+## Migrate your adjust SDK for Adobe AIR to 4.11.0 from 3.4.3
 
 ### SDK initialization
 

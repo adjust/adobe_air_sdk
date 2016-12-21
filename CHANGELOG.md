@@ -1,3 +1,19 @@
+### Version 4.11.0 (22nd December 2016)
+#### Added
+- Method swizzling to iOS
+- .gitignore rules for .pfx, .dSYM files
+
+#### Changed
+- makefiles in exchange for BASH build scripts
+- Separate AndroidExtension project from the native Android submodule
+- Usage of mvn to gradle in Android
+- Updated native iOS SDK to version **4.10.3**.
+- Updated native Android SDK to version **4.11.0**.
+
+#### Native SDKs
+- [iOS SDK 4.10.3][ios_sdk_v4.10.3]
+- [Android SDK 4.11.0][android_sdk_v4.11.0]
+
 ### Version 4.10.0 (30th September 2016)
 #### Added
 - Added support for iOS 10.
@@ -205,7 +221,8 @@
 [ios_sdk_v3.4.0]: https://github.com/adjust/ios_sdk/tree/v3.4.0
 [ios_sdk_v4.2.8]: https://github.com/adjust/ios_sdk/tree/v4.2.8
 [ios_sdk_v4.5.4]: https://github.com/adjust/ios_sdk/tree/v4.5.4
-[ios_sdk_v4.10.1]: https://github.com/adjust/ios_sdk/tree/v4.5.4
+[ios_sdk_v4.10.1]: https://github.com/adjust/ios_sdk/tree/v4.10.1
+[ios_sdk_v4.10.3]: https://github.com/adjust/ios_sdk/tree/v4.10.3
 
 [android_sdk_v2.1.3]: https://github.com/adjust/android_sdk/tree/v2.1.3
 [android_sdk_v2.1.4]: https://github.com/adjust/android_sdk/tree/v2.1.4
@@ -215,3 +232,4 @@
 [android_sdk_v4.1.2]: https://github.com/adjust/android_sdk/tree/v4.1.2
 [android_sdk_v4.2.3]: https://github.com/adjust/android_sdk/tree/v4.2.3
 [android_sdk_v4.10.2]: https://github.com/adjust/android_sdk/tree/v4.10.2
+[android_sdk_v4.11.0]: https://github.com/adjust/android_sdk/tree/v4.11.0
