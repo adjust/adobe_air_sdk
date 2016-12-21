@@ -31,7 +31,10 @@ DerivedData
 *.hmap
 *.ipa
 
-# Exceptions
-!sample/*.iml
+# Custom
 *.dSYM
 *.a
+*.pfx
+
+# Exceptions
+!sample/*.iml
