@@ -12,6 +12,9 @@ RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
 NC='\033[0m' # No Color
 
+echo -e "${GREEN}>>> Update submodules"
+git submodule update --init --recursive
+
 echo -e "${GREEN}>>> Removing ANE file from sample/lib ${NC}"
 rm -rfv ${SAMPLE_DIR}/lib/Adjust*.ane
 
@@ -38,17 +41,7 @@ echo -e "${GREEN}>>> Running amxmlc ${NC}"
 cd ${SAMPLE_DIR}
 /Applications/AIRSDK_Compiler/bin/amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
 
-#echo -e "${GREEN}>>> Checking if keystore exists ${NC}"
-#if [ ! -f "${KEYSTORE_FILE}" ]; then
-    #echo -e "${GREEN}>>> Keystore file does not exist; creating one with password [pass] ${NC}"
-    #adt -certificate -validityPeriod 25 -cn SelfSigned 1024-RSA sampleCert.pfx pass
-    #echo -e "${GREEN}>>> Keystore file created ${NC}"
-#fi
-
-#echo -e "${GREEN}>>> Keystore file exists ${NC}"
-
 echo -e "${GREEN}>>> Packaging IPA file${NC}"
-#echo "pass" | adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib
 echo | /Applications/AIRSDK_Compiler/bin/adt -package -target ipa-debug -provisioning-profile ${PROVISIONING_FILE} -storetype pkcs12 -keystore ${KEYSTORE_FILE} Main.ipa ${SAMPLE_APP_XML_FILE} Main.swf -extdir lib
 
 echo -e "${GREEN}>>> IPA file created. ${NC}"

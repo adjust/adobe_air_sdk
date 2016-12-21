@@ -9,7 +9,8 @@ RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
 NC='\033[0m' # No Color
 
-set -e
+echo -e "${GREEN}>>> Update submodules"
+git submodule update --init --recursive
 
 echo -e "${GREEN}>>> Removing ANE file from sample/lib ${NC}"
 rm -rfv ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane
@@ -53,9 +54,3 @@ echo -e "${GREEN}>>> APK file created. Running ADB install ${NC}"
 adb install -r Main.apk
 
 echo -e "${GREEN}>>> ADB installed ${NC}"
-
-#open -b com.apple.terminal
-#echo -e "${GREEN}>>> ADB logcat command piped to clipboard ${NC}"
-
-## Pipe adb logcat command to pbcopy for Mac (xclip for Linux)
-#echo 'adb logcat | grep `adb shell ps | grep adjust | cut -c10-15`' | pbcopy
