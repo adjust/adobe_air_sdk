@@ -20,7 +20,7 @@ rm -rfv ${SDK_DIR}/Adjust*.ane
 echo -e "${GREEN}>>> Building ANE for version ${VERSION} ${NC}"
 
 cd ${SDK_DIR}
-make -f Makefile
+./build.sh
 \cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
 
 echo -e "${GREEN}>>> Checking if ANE is built successfully in location: ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane ${NC}"
@@ -54,8 +54,8 @@ adb install -r Main.apk
 
 echo -e "${GREEN}>>> ADB installed ${NC}"
 
-open -b com.apple.terminal
-echo -e "${GREEN}>>> ADB logcat command piped to clipboard ${NC}"
+#open -b com.apple.terminal
+#echo -e "${GREEN}>>> ADB logcat command piped to clipboard ${NC}"
 
-# Pipe adb logcat command to pbcopy for Mac (xclip for Linux)
-echo 'adb logcat | grep `adb shell ps | grep adjust | cut -c10-15`' | pbcopy
+## Pipe adb logcat command to pbcopy for Mac (xclip for Linux)
+#echo 'adb logcat | grep `adb shell ps | grep adjust | cut -c10-15`' | pbcopy
