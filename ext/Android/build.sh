@@ -17,7 +17,7 @@ cd ${OUT_DIR}
 
 cd ${EXTENSION_DIR}
 mv AdjustActivity.java AdjustExtension.java AdjustFunction.java AdjustContext.java ..
-trash *
+rm -r *
 mv ../Adjust*.java .
 
 # Copy all files from ext/android/sdk towards ext/android/src/AdjustExtension/extension/src/main/java/com/adjust/sdk/
