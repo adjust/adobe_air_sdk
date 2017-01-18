@@ -103,6 +103,14 @@ public class AdjustFunction implements FREFunction,
             return SendFirstPackages(freContext, freObjects);
         }
 
+        if (functionName == AdjustContext.GetAdid) {
+            return GetAdid(freContext, freObjects);
+        }
+
+        if (functionName == AdjustContext.GetAttribution) {
+            return GetAttribution(freContext, freObjects);
+        }
+
         return null;
     }
 
@@ -421,6 +429,43 @@ public class AdjustFunction implements FREFunction,
         return null;
     }
 
+    private FREObject GetAdid(final FREContext freContext, FREObject[] freObjects) {
+        try {
+            String adid = Adjust.getAdid();
+
+            return FREObject.newObject(adid);
+        } catch (Exception e) {
+            Log.e(AdjustExtension.LogTag, e.getMessage());
+        }
+
+        return null;
+    }
+
+    private FREObject GetAttribution(final FREContext freContext, FREObject[] freObjects) {
+        try {
+            AdjustAttribution attribution = Adjust.getAttribution();
+
+            if (attribution == null) {
+                return null;
+            }
+
+            String response = "trackerToken==" + attribution.trackerToken + "__"
+                + "trackerName==" + attribution.trackerName + "__"
+                + "campaign==" + attribution.campaign + "__"
+                + "network==" + attribution.network + "__"
+                + "creative==" + attribution.creative + "__"
+                + "adgroup==" + attribution.adgroup + "__"
+                + "clickLabel==" + attribution.clickLabel + "__"
+                + "adid==" + attribution.adid;
+
+            return FREObject.newObject(response);
+        } catch (Exception e) {
+            Log.e(AdjustExtension.LogTag, e.getMessage());
+        }
+
+        return null;
+    }
+
     private FREObject GetIdfa(FREContext freContext, FREObject[] freObjects) { return null; }
 
     private FREObject AddSessionCallbackParameter(FREContext freContext, FREObject[] freObjects) {
@@ -505,7 +550,8 @@ public class AdjustFunction implements FREFunction,
             + "network==" + attribution.network + "__"
             + "creative==" + attribution.creative + "__"
             + "adgroup==" + attribution.adgroup + "__"
-            + "clickLabel==" + attribution.clickLabel;
+            + "clickLabel==" + attribution.clickLabel + "__"
+            + "adid==" + attribution.adid;
 
         AdjustExtension.context.dispatchStatusEventAsync("adjust_attributionData", response);
     }

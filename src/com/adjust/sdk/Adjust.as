@@ -132,7 +132,21 @@ package com.adjust.sdk {
 
         public static function getIdfa():String {
             var idfa:String = String (getExtensionContext().call("getIdfa"));
+
             return idfa;
+        }
+
+        public static function getAdid():String {
+            var adid:String = String (getExtensionContext().call("getAdid"));
+
+            return adid;
+        }
+
+        public static function getAttribution():AdjustAttribution {
+            var attributionString:String = String (getExtensionContext().call("getAttribution"));
+            var attribution:AdjustAttribution = getAttributionFromResponse(attributionString);
+            
+            return attribution;
         }
 
         public static function getGoogleAdId(callback:Function):void {
@@ -331,6 +345,7 @@ package com.adjust.sdk {
             var creative:String;
             var adgroup:String;
             var clickLabel:String;
+            var adid:String;
 
             var parts:Array = response.split("__");
 
@@ -353,10 +368,12 @@ package com.adjust.sdk {
                     adgroup = value;
                 } else if (key == "clickLabel") {
                     clickLabel = value;
+                } else if (key == "adid") {
+                    adid = value;
                 }
             }
 
-            return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel);
+            return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel, adid);
         }
 
         private static function onInvoke(event:InvokeEvent):void {

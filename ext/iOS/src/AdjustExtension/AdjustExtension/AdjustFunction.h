@@ -28,6 +28,8 @@ FREObject ADJaddSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t
 FREObject ADJremoveSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJresetSessionPartnerParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetAdid(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetAttribution(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 // Android methods
 FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

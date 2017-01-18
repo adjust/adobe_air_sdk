@@ -51,7 +51,7 @@ ${COMPC} -source-path src -swf-version 27 -external-library-path ${AIR_SDK_PATH}
 echo -e "${GREEN}>>> AA build script: Running ADT and finalizing the ANE file ${NC}"
 unzip -d ${BUILD_DIR}/Android -qq -o ${BUILD_DIR}/Adjust.swc -x catalog.xml
 unzip -d ${BUILD_DIR}/iOS -qq -o ${BUILD_DIR}/Adjust.swc -x catalog.xml
-cp -af ${SOURCE_DIR}/platformoptions.xml ${BUILD_DIR}/iOS
+cp -af ${SOURCE_DIR}/platformoptions.xml ${BUILD_DIR}/iOS/
 cp -af ${SOURCE_DIR}/extension.xml ${BUILD_DIR}/extension.xml
 cd ${BUILD_DIR}; ${ADT} -package -target ane ../Adjust-${VERSION}.ane extension.xml -swc Adjust.swc -platform Android-ARM -C Android . -platform iPhone-ARM -C iOS . -platformoptions iOS/platformoptions.xml -platform default -C default .
 

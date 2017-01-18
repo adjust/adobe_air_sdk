@@ -35,7 +35,7 @@ package {
             // -------- Adjust Configuration -------- //
             var adjustConfig:AdjustConfig = new AdjustConfig("2fm9gkqubvpc", Environment.SANDBOX);
 
-            //adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
+            adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
             adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
             adjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
             adjustConfig.setSessionTrackingSucceededDelegate(sessionTrackingSucceededDelegate);
@@ -60,6 +60,8 @@ package {
             adjustConfig.setUserAgent("little_bunny_foo_foo");
             adjustConfig.setSendInBackground(true);
 
+            Adjust.setDeviceToken("dummy_token_1");
+
             Adjust.start(adjustConfig);
 
             Adjust.setDeviceToken("bunny_foo_foo");
@@ -74,6 +76,19 @@ package {
             var adjustEvent:AdjustEvent = new AdjustEvent("g3mfiw");
 
             Adjust.trackEvent(adjustEvent);
+
+            trace("Adid = " + Adjust.getAdid());
+
+            var attribution:AdjustAttribution = Adjust.getAttribution();
+
+            trace("Tracker token = " + attribution.getTrackerToken());
+            trace("Tracker name = " + attribution.getTrackerName());
+            trace("Campaign = " + attribution.getCampaign());
+            trace("Network = " + attribution.getNetwork());
+            trace("Creative = " + attribution.getCreative());
+            trace("Adgroup = " + attribution.getAdGroup());
+            trace("Click label = " + attribution.getClickLabel());
+            trace("Adid = " + attribution.getAdid());
         }
 
         private static function TrackRevenueClick(Event:MouseEvent):void {
@@ -81,6 +96,7 @@ package {
 
             var adjustEvent:AdjustEvent = new AdjustEvent("a4fd35");
             adjustEvent.setRevenue(0.01, "EUR");
+            adjustEvent.setTransactionId("dummy_id");
 
             Adjust.trackEvent(adjustEvent);
         }
@@ -144,47 +160,48 @@ package {
             trace("Creative = " + attribution.getCreative());
             trace("Adgroup = " + attribution.getAdGroup());
             trace("Click label = " + attribution.getClickLabel());
+            trace("Adid = " + attribution.getAdid());
         }
 
         private static function eventTrackingSucceededDelegate(eventSuccess:AdjustEventSuccess):void {
             trace("Event tracking succeeded");
-            trace("message = " + eventSuccess.getMessage());
-            trace("timestamp = " + eventSuccess.getTimeStamp());
-            trace("adid = " + eventSuccess.getAdid());
-            trace("eventToken = " + eventSuccess.getEventToken());
-            trace("jsonResponse = " + eventSuccess.getJsonResponse());
+            trace("Message = " + eventSuccess.getMessage());
+            trace("Timestamp = " + eventSuccess.getTimeStamp());
+            trace("Adid = " + eventSuccess.getAdid());
+            trace("Event token = " + eventSuccess.getEventToken());
+            trace("JSON Response = " + eventSuccess.getJsonResponse());
         }
 
         private static function eventTrackingFailedDelegate(eventFail:AdjustEventFailure):void {
             trace("Event tracking failed");
-            trace("message = " + eventFail.getMessage());
-            trace("timestamp = " + eventFail.getTimeStamp());
-            trace("adid = " + eventFail.getAdid());
-            trace("eventToken = " + eventFail.getEventToken());
-            trace("willRetry = " + eventFail.getWillRetry());
-            trace("jsonResponse = " + eventFail.getJsonResponse());
+            trace("Message = " + eventFail.getMessage());
+            trace("Timestamp = " + eventFail.getTimeStamp());
+            trace("Adid = " + eventFail.getAdid());
+            trace("Event token = " + eventFail.getEventToken());
+            trace("Will retry = " + eventFail.getWillRetry());
+            trace("JSON response = " + eventFail.getJsonResponse());
         }
 
         private static function sessionTrackingSucceededDelegate(sessionSuccess:AdjustSessionSuccess):void {
             trace("Session tracking succeeded");
-            trace("message = " + sessionSuccess.getMessage());
-            trace("timestamp = " + sessionSuccess.getTimeStamp());
-            trace("adid = " + sessionSuccess.getAdid());
-            trace("jsonResponse = " + sessionSuccess.getJsonResponse());
+            trace("Message = " + sessionSuccess.getMessage());
+            trace("Timestamp = " + sessionSuccess.getTimeStamp());
+            trace("Adid = " + sessionSuccess.getAdid());
+            trace("JSON response = " + sessionSuccess.getJsonResponse());
         }
 
         private static function sessionTrackingFailedDelegate(sessionFail:AdjustSessionFailure):void {
             trace("Session tracking failed");
-            trace("message = " + sessionFail.getMessage());
-            trace("timestamp = " + sessionFail.getTimeStamp());
-            trace("adid = " + sessionFail.getAdid());
-            trace("willRetry = " + sessionFail.getWillRetry());
-            trace("jsonResponse = " + sessionFail.getJsonResponse());
+            trace("Message = " + sessionFail.getMessage());
+            trace("Timestamp = " + sessionFail.getTimeStamp());
+            trace("Adid = " + sessionFail.getAdid());
+            trace("Will retry = " + sessionFail.getWillRetry());
+            trace("JSON response = " + sessionFail.getJsonResponse());
         }
 
         private static function deferredDeeplinkDelegate(uri:String):void {
             trace("Received Deferred Deeplink");
-            trace("uri = " + uri);
+            trace("URI = " + uri);
         }
 
         private function buildButton(number:int, text:String, clickFunction:Function):TextField {

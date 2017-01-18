@@ -353,7 +353,55 @@ FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 
         return return_value;
     } else {
-        NSLog(@"Adjust: Bridge isEnabled method triggered with wrong number of arguments");
+        NSLog(@"Adjust: Bridge getIdfa method triggered with wrong number of arguments");
+
+        return NULL;
+    }
+}
+
+FREObject ADJgetAdid(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        NSString *adid = [Adjust adid];
+
+        if (adid == nil) {
+            return NULL;
+        }
+
+        FREObject return_value;
+        FRENewObjectFromUTF8((uint32_t)[adid length], (const uint8_t *)[adid UTF8String], &return_value);
+
+        return return_value;
+    } else {
+        NSLog(@"Adjust: Bridge getAdid method triggered with wrong number of arguments");
+
+        return NULL;
+    }
+}
+
+FREObject ADJgetAttribution(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        ADJAttribution *attribution = [Adjust attribution];
+
+        if (attribution == nil) {
+            return NULL;
+        }
+
+        NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+                @"trackerToken", attribution.trackerToken,
+                @"trackerName", attribution.trackerName,
+                @"campaign", attribution.campaign,
+                @"network", attribution.network,
+                @"creative", attribution.creative,
+                @"adgroup", attribution.adgroup,
+                @"clickLabel", attribution.clickLabel,
+                @"adid", attribution.adid];
+
+        FREObject return_value;
+        FRENewObjectFromUTF8((uint32_t)[attributionString length], (const uint8_t *)[attributionString UTF8String], &return_value);
+
+        return return_value;
+    } else {
+        NSLog(@"Adjust: Bridge getAdid method triggered with wrong number of arguments");
 
         return NULL;
     }

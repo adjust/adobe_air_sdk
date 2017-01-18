@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-SDK_DIR=~/Dev/adobe_air_sdk
-SAMPLE_DIR=~/Dev/adobe_air_sdk/sample
+SDK_DIR=~/GitHub/adobe_air_sdk
+SAMPLE_DIR=~/GitHub/adobe_air_sdk/sample
 MAIN_FILE=Main.as
 SAMPLE_APP_XML_FILE=Main-app.xml
 VERSION=`cat ${SDK_DIR}/VERSION`
@@ -22,6 +22,7 @@ echo -e "${GREEN}>>> Building ANE for version ${VERSION} ${NC}"
 
 cd ${SDK_DIR}
 ./build.sh
+mkdir -p ${SAMPLE_DIR}/lib
 \cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
 
 echo -e "${GREEN}>>> Checking if ANE is built successfully in location: ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane ${NC}"
@@ -36,19 +37,19 @@ echo -e "${GREEN}>>> ANE built successfully ${NC}"
 echo -e "${GREEN}>>> Building sample app ${NC}"
 echo -e "${GREEN}>>> Running amxmlc ${NC}"
 cd ${SAMPLE_DIR}
-/Applications/AIRSDK_Compiler/bin/amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
+amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
 
 echo -e "${GREEN}>>> Checking if keystore exists ${NC}"
 if [ ! -f "${KEYSTORE_FILE}" ]; then
     echo -e "${GREEN}>>> Keystore file does not exist; creating one with password [pass] ${NC}"
-    /Applications/AIRSDK_Compiler/bin/adt -certificate -validityPeriod 25 -cn SelfSigned 1024-RSA sampleCert.pfx pass
+    adt -certificate -validityPeriod 25 -cn SelfSigned 1024-RSA sampleCert.pfx pass
     echo -e "${GREEN}>>> Keystore file created ${NC}"
 fi
 
 echo -e "${GREEN}>>> Keystore file exists ${NC}"
 
 echo -e "${GREEN}>>> Packaging APK file. Password will enter automatically ${NC}"
-echo "pass" | /Applications/AIRSDK_Compiler/bin/adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib
+echo "pass" | adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib
 
 echo -e "${GREEN}>>> APK file created. Running ADB install ${NC}"
 adb install -r Main.apk

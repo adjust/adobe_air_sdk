@@ -5,7 +5,7 @@ import com.adobe.fre.FREExtension;
 /**
  * Created by pfms on 31/07/14.
  */
-public class AdjustExtension implements FREExtension{
+public class AdjustExtension implements FREExtension {
     public static AdjustContext context;
     public static String LogTag = "Adjust.air";
   

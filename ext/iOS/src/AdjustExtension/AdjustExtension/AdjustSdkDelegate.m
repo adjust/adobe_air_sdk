@@ -80,14 +80,15 @@
         return;
     }
     
-    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"trackerToken", attribution.trackerToken,
              @"trackerName", attribution.trackerName,
              @"campaign", attribution.campaign,
              @"network", attribution.network,
              @"creative", attribution.creative,
              @"adgroup", attribution.adgroup,
-             @"clickLabel", attribution.clickLabel];
+             @"clickLabel", attribution.clickLabel,
+             @"adid", attribution.adid];
     const char* cResponseData = [attributionString UTF8String];
 
     FREDispatchStatusEventAsync(*_adjustFREContext,
