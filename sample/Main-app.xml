@@ -11,7 +11,7 @@
   <supportedProfiles>mobileDevice</supportedProfiles> 
   <extensions>
       <extensionID>com.adjust.sdk</extensionID>
-      <!--<extensionID>com.adjust.gps</extensionID>-->
+      <extensionID>com.adjust.gps</extensionID>
   </extensions>
 
   <iPhone>
@@ -20,6 +20,8 @@
       <key>CFBundleURLTypes</key>
       <array>
         <dict>
+          <key>CFBundleURLName</key>
+          <string>com.adjust.examples</string>
           <key>CFBundleURLSchemes</key>
           <array>
             <string>adjustExample</string>
@@ -50,12 +52,10 @@
             </intent-filter>
           </activity>
 
-          <!-- Uncomment this if you want to use Google Play Services -->
-          <!--
+          <!-- Comment this if you don't want to use Google Play Services -->
           <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
-          -->
 
           <receiver
             android:name="com.adjust.sdk.AdjustReferrerReceiver"
