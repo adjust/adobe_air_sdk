@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-ADOBE_AIR_SDK_DIR=~/GitHub/adobe_air_sdk
 SAMPLE_DIR=${ADOBE_AIR_SDK_DIR}/sample
 MAIN_FILE=Main.as
 SAMPLE_APP_XML_FILE=Main-app.xml
