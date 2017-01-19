@@ -14,7 +14,7 @@ echo -e "${GREEN}>>> Update submodules"
 git submodule update --init --recursive
 
 echo -e "${GREEN}>>> Removing ANE file from sample/lib ${NC}"
-rm -rfv ${SAMPLE_DIR}/lib/Adjust*.ane
+rm -rfv ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane
 
 echo -e "${GREEN}>>> Removing ANE file from root dir ${NC}"
 rm -rfv ${ADOBE_AIR_SDK_DIR}/Adjust*.ane
