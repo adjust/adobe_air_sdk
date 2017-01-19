@@ -9,14 +9,7 @@
 #import "FlashRuntimeExtensions.h"
 #import <AdjustSdk/Adjust.h>
 
-@interface AdjustFunction: NSObject<AdjustDelegate>
-
-- (void)adjustAttributionChanged:(ADJAttribution *)attribution;
-- (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccessResponseData;
-- (void)adjustEventTrackingFailed:(ADJEventFailure *)eventFailureResponseData;
-- (void)adjustSessionTrackingSucceeded:(ADJSessionSuccess *)sessionSuccessResponseData;
-- (void)adjustSessionTrackingFailed:(ADJSessionFailure *)sessionFailureResponseData;
-- (BOOL)adjustDeeplinkResponse:(NSURL *)deeplink;
+@interface AdjustFunction: NSObject
 
 @end
 
@@ -35,6 +28,8 @@ FREObject ADJaddSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t
 FREObject ADJremoveSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJresetSessionPartnerParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetAdid(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetAttribution(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
 // Android methods
 FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

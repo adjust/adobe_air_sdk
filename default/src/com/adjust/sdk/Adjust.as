@@ -48,6 +48,14 @@ package com.adjust.sdk {
             trace("adjust: getIdfa called");
         }
 
+        public static function getAdid():void {
+            trace("adjust: getAdid called");
+        }
+
+        public static function getAttribution():void {
+            trace("adjust: getAttribution called");
+        }
+
         public static function getGoogleAdId(callback:Function):void {
             trace("adjust: getGoogleAdId called");
         }

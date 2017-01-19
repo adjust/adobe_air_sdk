@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<application xmlns="http://ns.adobe.com/air/application/22.0"> 
-  <id>com.adjust.example</id> 
-  <versionNumber>4.10.0</versionNumber> 
+<application xmlns="http://ns.adobe.com/air/application/24.0"> 
+  <id>com.adjust.examples</id> 
+  <versionNumber>4.11.0</versionNumber> 
   <filename>Adjust AIR SDK Demo</filename> 
 
   <initialWindow>
@@ -11,7 +11,7 @@
   <supportedProfiles>mobileDevice</supportedProfiles> 
   <extensions>
       <extensionID>com.adjust.sdk</extensionID>
-      <!--<extensionID>com.adjust.gps</extensionID>-->
+      <extensionID>com.adjust.gps</extensionID>
   </extensions>
 
   <iPhone>
@@ -20,6 +20,8 @@
       <key>CFBundleURLTypes</key>
       <array>
         <dict>
+          <key>CFBundleURLName</key>
+          <string>com.adjust.examples</string>
           <key>CFBundleURLSchemes</key>
           <array>
             <string>adjustExample</string>
@@ -50,12 +52,10 @@
             </intent-filter>
           </activity>
 
-          <!-- Uncomment this if you want to use Google Play Services -->
-          <!--
+          <!-- Comment this if you don't want to use Google Play Services -->
           <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
-          -->
 
           <receiver
             android:name="com.adjust.sdk.AdjustReferrerReceiver"

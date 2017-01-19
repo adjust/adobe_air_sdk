@@ -8,100 +8,12 @@
 
 #import "AdjustFunction.h"
 #import "AdjustFREUtils.h"
+#import "AdjustSdkDelegate.h"
 
 FREContext adjustFREContext;
-BOOL shouldLaunchDeeplink;
+BOOL shouldLaunchDeferredDeeplink;
 
 @implementation AdjustFunction
-
-static id<AdjustDelegate> adjustFunctionInstance = nil;
-
-- (id)init {
-    self = [super init];
-    return self;
-}
-
-- (void)adjustAttributionChanged:(ADJAttribution *)attribution {
-    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"trackerToken", attribution.trackerToken,
-             @"trackerName", attribution.trackerName,
-             @"campaign", attribution.campaign,
-             @"network", attribution.network,
-             @"creative", attribution.creative,
-             @"adgroup", attribution.adgroup,
-             @"clickLabel", attribution.clickLabel];
-    const char* cResponseData = [attributionString UTF8String];
-
-    FREDispatchStatusEventAsync(adjustFREContext,
-            (const uint8_t *)"adjust_attributionData",
-            (const uint8_t *)cResponseData);
-}
-
-- (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccess {
-    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", eventSuccess.message,
-             @"timeStamp", eventSuccess.timeStamp,
-             @"adid", eventSuccess.adid,
-             @"eventToken", eventSuccess.eventToken,
-             @"jsonResponse", eventSuccess.jsonResponse];
-    const char* cResponseData = [formattedString UTF8String];
-
-    FREDispatchStatusEventAsync(adjustFREContext,
-            (const uint8_t *)"adjust_eventTrackingSucceeded",
-            (const uint8_t *)cResponseData);
-}
-
-- (void)adjustEventTrackingFailed:(ADJEventFailure *)eventFailed {
-    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", eventFailed.message,
-             @"timeStamp", eventFailed.timeStamp,
-             @"adid", eventFailed.adid,
-             @"eventToken", eventFailed.eventToken,
-             @"willRetry", eventFailed.willRetry ? @"true" : @"false",
-             @"jsonResponse", eventFailed.jsonResponse];
-    const char* cResponseData = [formattedString UTF8String];
-
-    FREDispatchStatusEventAsync(adjustFREContext,
-            (const uint8_t *)"adjust_eventTrackingFailed",
-            (const uint8_t *)cResponseData);
-}
-
-- (void)adjustSessionTrackingSucceeded:(ADJSessionSuccess *)sessionSuccess {
-    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", sessionSuccess.message,
-             @"timeStamp", sessionSuccess.timeStamp,
-             @"adid", sessionSuccess.adid,
-             @"jsonResponse", sessionSuccess.jsonResponse];
-    const char* cResponseData = [formattedString UTF8String];
-
-    FREDispatchStatusEventAsync(adjustFREContext,
-            (const uint8_t *)"adjust_sessionTrackingSucceeded",
-            (const uint8_t *)cResponseData);
-}
-
-- (void)adjustSessionTrackingFailed:(ADJSessionFailure *)sessionFailed {
-    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", sessionFailed.message,
-             @"timeStamp", sessionFailed.timeStamp,
-             @"adid", sessionFailed.adid,
-             @"willRetry", sessionFailed.willRetry ? @"true" : @"false",
-             @"jsonResponse", sessionFailed.jsonResponse];
-    const char* cResponseData = [formattedString UTF8String];
-
-    FREDispatchStatusEventAsync(adjustFREContext,
-            (const uint8_t *)"adjust_sessionTrackingFailed",
-            (const uint8_t *)cResponseData);
-}
-
-- (BOOL)adjustDeeplinkResponse:(NSURL *)deeplink {
-    NSString *formattedString = [NSString stringWithFormat:@"%@", deeplink.absoluteString];
-    const char* cResponseData = [formattedString UTF8String];
-
-    FREDispatchStatusEventAsync(adjustFREContext,
-            (const uint8_t *)"adjust_deferredDeeplink",
-            (const uint8_t *)cResponseData);
-    return shouldLaunchDeeplink;
-}
 
 @end
 
@@ -114,8 +26,13 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         NSString *defaultTracker = nil;
         NSString *sdkPrefix = nil;
 
-        BOOL eventBufferingEnabled;
-        BOOL isCallbackSet;
+        BOOL eventBufferingEnabled = NO;
+        BOOL isAttributionCallbackImplemented = NO;
+        BOOL isEventTrackingSucceededCallbackImplemented = NO;
+        BOOL isEventTrackingFailedCallbackImplemented = NO;
+        BOOL isSessionTrackingSucceededCallbackImplemented = NO;
+        BOOL isSessionTrackingFailedCallbackImplemented = NO;
+        BOOL isDeferredDeeplinkCallbackImplemented = NO;
         BOOL allowSuppressLogLevel = false;
 
         adjustFREContext = ctx;
@@ -151,19 +68,28 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
 
         if (argv[4] != nil) {
-            FREGetObjectAsNativeBool(argv[4], &isCallbackSet);
-
-            if (isCallbackSet) {
-                if (adjustFunctionInstance == nil) {
-                    adjustFunctionInstance = [[AdjustFunction alloc] init];
-                }
-
-                [adjustConfig setDelegate:(id)adjustFunctionInstance];
-            }
+            FREGetObjectAsNativeBool(argv[4], &isAttributionCallbackImplemented);
         }
 
-        // argv 5,6,7,8,9 are not needed for Obj-C since we're setting a delegate and 
-        // using selectors.
+        if (argv[5] != nil) {
+            FREGetObjectAsNativeBool(argv[5], &isEventTrackingSucceededCallbackImplemented);
+        }
+
+        if (argv[6] != nil) {
+            FREGetObjectAsNativeBool(argv[6], &isEventTrackingFailedCallbackImplemented);
+        }
+
+        if (argv[7] != nil) {
+            FREGetObjectAsNativeBool(argv[7], &isSessionTrackingSucceededCallbackImplemented);
+        }
+
+        if (argv[8] != nil) {
+            FREGetObjectAsNativeBool(argv[8], &isSessionTrackingFailedCallbackImplemented);
+        }
+
+        if (argv[9] != nil) {
+            FREGetObjectAsNativeBool(argv[9], &isDeferredDeeplinkCallbackImplemented);
+        }
 
         if (argv[10] != nil) {
             FREGetObjectAsNativeString(argv[10], &defaultTracker);
@@ -179,7 +105,24 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
 
         if (argv[12] != nil) {
-            FREGetObjectAsNativeBool(argv[12], &shouldLaunchDeeplink);
+            FREGetObjectAsNativeBool(argv[12], &shouldLaunchDeferredDeeplink);
+        }
+
+        if (isAttributionCallbackImplemented ||
+            isEventTrackingSucceededCallbackImplemented ||
+            isEventTrackingFailedCallbackImplemented ||
+            isSessionTrackingSucceededCallbackImplemented ||
+            isSessionTrackingFailedCallbackImplemented ||
+            isDeferredDeeplinkCallbackImplemented) {
+            [adjustConfig setDelegate:
+             [AdjustSdkDelegate getInstanceWithSwizzleOfAttributionCallback:isAttributionCallbackImplemented
+                                                     eventSucceededCallback:isEventTrackingSucceededCallbackImplemented
+                                                        eventFailedCallback:isEventTrackingFailedCallbackImplemented
+                                                   sessionSucceededCallback:isSessionTrackingSucceededCallbackImplemented
+                                                      sessionFailedCallback:isSessionTrackingFailedCallbackImplemented
+                                                   deferredDeeplinkCallback:isDeferredDeeplinkCallbackImplemented
+                                               shouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink
+                                                                 withFREContext:&adjustFREContext]];
         }
 
         // arg 13 is for Android only
@@ -410,7 +353,55 @@ FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
 
         return return_value;
     } else {
-        NSLog(@"Adjust: Bridge isEnabled method triggered with wrong number of arguments");
+        NSLog(@"Adjust: Bridge getIdfa method triggered with wrong number of arguments");
+
+        return NULL;
+    }
+}
+
+FREObject ADJgetAdid(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        NSString *adid = [Adjust adid];
+
+        if (adid == nil) {
+            return NULL;
+        }
+
+        FREObject return_value;
+        FRENewObjectFromUTF8((uint32_t)[adid length], (const uint8_t *)[adid UTF8String], &return_value);
+
+        return return_value;
+    } else {
+        NSLog(@"Adjust: Bridge getAdid method triggered with wrong number of arguments");
+
+        return NULL;
+    }
+}
+
+FREObject ADJgetAttribution(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        ADJAttribution *attribution = [Adjust attribution];
+
+        if (attribution == nil) {
+            return NULL;
+        }
+
+        NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+                @"trackerToken", attribution.trackerToken,
+                @"trackerName", attribution.trackerName,
+                @"campaign", attribution.campaign,
+                @"network", attribution.network,
+                @"creative", attribution.creative,
+                @"adgroup", attribution.adgroup,
+                @"clickLabel", attribution.clickLabel,
+                @"adid", attribution.adid];
+
+        FREObject return_value;
+        FRENewObjectFromUTF8((uint32_t)[attributionString length], (const uint8_t *)[attributionString UTF8String], &return_value);
+
+        return return_value;
+    } else {
+        NSLog(@"Adjust: Bridge getAdid method triggered with wrong number of arguments");
 
         return NULL;
     }
