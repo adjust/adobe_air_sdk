@@ -8,6 +8,7 @@
 out
 build
 *.ane
+!AdjustGPS-*.*.*.ane
 gen
 .idea
 *.iml
