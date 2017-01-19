@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-SDK_DIR=~/GitHub/adobe_air_sdk
-SAMPLE_DIR=~/GitHub/adobe_air_sdk/sample
+
+ADOBE_AIR_SDK_DIR=~/GitHub/adobe_air_sdk
+SAMPLE_DIR=${ADOBE_AIR_SDK_DIR}/sample
 MAIN_FILE=Main.as
 SAMPLE_APP_XML_FILE=Main-app.xml
-VERSION=`cat ${SDK_DIR}/VERSION`
+VERSION=`cat ${ADOBE_AIR_SDK_DIR}/VERSION`
 KEYSTORE_FILE=`cd ${SAMPLE_DIR}; find . -name "*.pfx" -print` # Get any keystore file with extension .pfx
+
 RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
 NC='\033[0m' # No Color
@@ -16,11 +18,11 @@ echo -e "${GREEN}>>> Removing ANE file from sample/lib ${NC}"
 rm -rfv ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane
 
 echo -e "${GREEN}>>> Removing ANE file from root dir ${NC}"
-rm -rfv ${SDK_DIR}/Adjust*.ane
+rm -rfv ${ADOBE_AIR_SDK_DIR}/Adjust*.ane
 
 echo -e "${GREEN}>>> Building ANE for version ${VERSION} ${NC}"
 
-cd ${SDK_DIR}
+cd ${ADOBE_AIR_SDK_DIR}
 ./build.sh
 mkdir -p ${SAMPLE_DIR}/lib
 \cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/

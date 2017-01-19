@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
-SDK_DIR=~/GitHub/adobe_air_sdk
-SAMPLE_DIR=~/GitHub/adobe_air_sdk/sample
+ADOBE_AIR_SDK_DIR=~/GitHub/adobe_air_sdk
+SAMPLE_DIR=${ADOBE_AIR_SDK_DIR}/sample
 MAIN_FILE=Main.as
 SAMPLE_APP_XML_FILE=Main-app.xml
-VERSION=`cat ${SDK_DIR}/VERSION`
-KEYSTORE_FILE=~/Development/Keys/iOS/Certificates.p12
-PROVISIONING_FILE=~/Development/Keys/iOS/adjust_dev.mobileprovision
+VERSION=`cat ${ADOBE_AIR_SDK_DIR}/VERSION`
 
 RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
@@ -19,11 +17,11 @@ echo -e "${GREEN}>>> Removing ANE file from sample/lib ${NC}"
 rm -rfv ${SAMPLE_DIR}/lib/Adjust*.ane
 
 echo -e "${GREEN}>>> Removing ANE file from root dir ${NC}"
-rm -rfv ${SDK_DIR}/Adjust*.ane
+rm -rfv ${ADOBE_AIR_SDK_DIR}/Adjust*.ane
 
 echo -e "${GREEN}>>> Building ANE for version ${VERSION} ${NC}"
 
-cd ${SDK_DIR}
+cd ${ADOBE_AIR_SDK_DIR}
 ./build.sh
 \cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
 
@@ -42,6 +40,6 @@ cd ${SAMPLE_DIR}
 amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}
 
 echo -e "${GREEN}>>> Packaging IPA file${NC}"
-echo | adt -package -target ipa-debug -provisioning-profile ${PROVISIONING_FILE} -storetype pkcs12 -keystore ${KEYSTORE_FILE} Main.ipa ${SAMPLE_APP_XML_FILE} Main.swf -extdir lib
+echo | adt -package -target ipa-debug -provisioning-profile ${DEV_PROVISIONING_PROFILE_PATH} -storetype pkcs12 -keystore ${KEYSTORE_FILE_PATH} Main.ipa ${SAMPLE_APP_XML_FILE} Main.swf -extdir lib
 
 echo -e "${GREEN}>>> IPA file created. ${NC}"
