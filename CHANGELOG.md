@@ -10,7 +10,7 @@
 #### Fixed
 - Now reading push token value from activity state file when sending package.
 - Fixed memory leak by closing network session for iOS platform.
-- Fixed `TARGET_OS_TV` pre processer check for iOS platform.
+- Fixed `TARGET_OS_TV` pre processor check for iOS platform.
 
 #### Changed
 - Firing attribution request as soon as install has been tracked, regardless of presence of attribution callback implementation in user's app.
@@ -20,7 +20,7 @@
 - Changed Maven with Gradle.
 - Updated docs.
 - Updated native iOS SDK to version **4.11.0**.
-- Updated native iOS SDK to version **4.11.0**.
+- Updated native Android SDK to version **4.11.0**.
 - Native SDKs stability updates and improvements.
 
 #### Native SDKs
