@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <application xmlns="http://ns.adobe.com/air/application/24.0"> 
   <id>com.adjust.examples</id> 
-  <versionNumber>4.11.0</versionNumber> 
+  <versionNumber>4.11.1</versionNumber> 
   <filename>Adjust AIR SDK Demo</filename> 
 
   <initialWindow>
