@@ -46,7 +46,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
 
 ## <a id="example-app"></a>Example app
 
-There is an example app inside the [`sample` directory][example-app]. You can use the example app to see how the Adjust SDK can be integrated.
+There is an example app inside the [`example` directory][example-app]. You can use the example app to see how the Adjust SDK can be integrated.
 
 ## <a id="basic-integration">Basic integration
 
@@ -798,7 +798,7 @@ The Adjust SDK supports this feature out of the box and no additional setup is n
 [adjust.com]:   http://adjust.com
 
 [releases]:             https://github.com/adjust/adjust_air_sdk/releases
-[example-app]:          sample
+[example-app]:          example
 [google-ad-id]:         https://developer.android.com/google/play-services/id.html
 [flash-builder]:        https://github.com/adjust/adobe_air_sdk/blob/master/doc/flash_builder.md
 [callbacks-guide]:      https://docs.adjust.com/en/callbacks
