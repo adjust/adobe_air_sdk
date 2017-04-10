@@ -21,8 +21,6 @@ public class AttributionHandler implements IAttributionHandler {
 
     private boolean paused;
 
-    public URL lastUrlUsed;
-
     @Override
     public void teardown() {
         logger.verbose("AttributionHandler teardown");
@@ -50,10 +48,10 @@ public class AttributionHandler implements IAttributionHandler {
         scheduledExecutor = new CustomScheduledExecutor("AttributionHandler", false);
         logger = AdjustFactory.getLogger();
 
-        timer = new TimerOnce(scheduledExecutor, new Runnable() {
+        timer = new TimerOnce(new Runnable() {
             @Override
             public void run() {
-                sendAttributionRequestI();
+                sendAttributionRequest();
             }
         }, ATTRIBUTION_TIMER_NAME);
 
@@ -115,6 +113,15 @@ public class AttributionHandler implements IAttributionHandler {
     @Override
     public void resumeSending() {
         paused = false;
+    }
+
+    public void sendAttributionRequest() {
+        scheduledExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                sendAttributionRequestI();
+            }
+        });
     }
 
     private void getAttributionI(long delayInMilliseconds) {
@@ -195,12 +202,7 @@ public class AttributionHandler implements IAttributionHandler {
         logger.verbose("%s", attributionPackage.getExtendedString());
 
         try {
-            AdjustFactory.URLGetConnection urlGetConnection = Util.createGETHttpsURLConnection(
-                    buildUriI(attributionPackage.getPath(), attributionPackage.getParameters()).toString(),
-                    attributionPackage.getClientSdk());
-
-            ResponseData responseData = Util.readHttpResponse(urlGetConnection.httpsURLConnection, attributionPackage);
-            lastUrlUsed = urlGetConnection.url;
+            ResponseData responseData = UtilNetworking.createGETHttpsURLConnection(attributionPackage);
 
             if (!(responseData instanceof AttributionResponseData)) {
                 return;
@@ -211,24 +213,5 @@ public class AttributionHandler implements IAttributionHandler {
             logger.error("Failed to get attribution (%s)", e.getMessage());
             return;
         }
-    }
-
-    private Uri buildUriI(String path, Map<String, String> parameters) {
-        Uri.Builder uriBuilder = new Uri.Builder();
-
-        uriBuilder.scheme(Constants.SCHEME);
-        uriBuilder.authority(Constants.AUTHORITY);
-        uriBuilder.appendPath(path);
-
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
-        }
-
-        long now = System.currentTimeMillis();
-        String dateString = Util.dateFormatter.format(now);
-
-        uriBuilder.appendQueryParameter("sent_at", dateString);
-
-        return uriBuilder.build();
     }
 }

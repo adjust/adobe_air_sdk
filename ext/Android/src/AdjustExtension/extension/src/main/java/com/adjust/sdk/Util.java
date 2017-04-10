@@ -17,27 +17,16 @@ import android.os.AsyncTask;
 import android.os.Looper;
 import android.provider.Settings.Secure;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -48,8 +37,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import static com.adjust.sdk.Constants.ENCODING;
 import static com.adjust.sdk.Constants.MD5;
@@ -64,7 +51,6 @@ public class Util {
     public static final DecimalFormat SecondsDisplayFormat = new DecimalFormat("0.0");
     public static final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 
-    private static String userAgent;
 
     private static ILogger getLogger() {
         return AdjustFactory.getLogger();
@@ -204,179 +190,6 @@ public class Util {
             }
         } catch (Exception e) {
             getLogger().error("Failed to close %s file for writing (%s)", objectName, e);
-        }
-    }
-
-    public static ResponseData readHttpResponse(HttpsURLConnection connection, ActivityPackage activityPackage) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        ILogger logger = getLogger();
-        Integer responseCode = null;
-        try {
-            connection.connect();
-
-            responseCode = connection.getResponseCode();
-            InputStream inputStream;
-
-            if (responseCode >= 400) {
-                inputStream = connection.getErrorStream();
-            } else {
-                inputStream = connection.getInputStream();
-            }
-
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (Exception e) {
-            logger.error("Failed to read response. (%s)", e.getMessage());
-            throw e;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
-
-        ResponseData responseData = ResponseData.buildResponseData(activityPackage);
-
-        String stringResponse = sb.toString();
-        logger.verbose("Response: %s", stringResponse);
-
-        if (stringResponse == null || stringResponse.length() == 0) {
-            return responseData;
-        }
-
-        JSONObject jsonResponse = null;
-        try {
-            jsonResponse = new JSONObject(stringResponse);
-        } catch (JSONException e) {
-            String message = String.format("Failed to parse json response. (%s)", e.getMessage());
-            logger.error(message);
-            responseData.message = message;
-        }
-
-        if (jsonResponse == null) {
-            return responseData;
-        }
-
-        responseData.jsonResponse = jsonResponse;
-
-        String message = jsonResponse.optString("message", null);
-
-        responseData.message = message;
-        responseData.timestamp = jsonResponse.optString("timestamp", null);
-        responseData.adid = jsonResponse.optString("adid", null);
-
-        if (message == null) {
-            message = "No message found";
-        }
-
-        if (responseCode != null &&
-                responseCode == HttpsURLConnection.HTTP_OK) {
-            logger.info("%s", message);
-            responseData.success = true;
-        } else {
-            logger.error("%s", message);
-        }
-
-        return responseData;
-    }
-
-    public static AdjustFactory.URLGetConnection createGETHttpsURLConnection(String urlString, String clientSdk)
-            throws IOException
-    {
-        HttpsURLConnection connection = null;
-        try {
-            URL url = new URL(urlString);
-            AdjustFactory.URLGetConnection urlGetConnection = AdjustFactory.getHttpsURLGetConnection(url);
-
-            connection = urlGetConnection.httpsURLConnection;
-            setDefaultHttpsUrlConnectionProperties(connection, clientSdk);
-
-            connection.setRequestMethod("GET");
-
-            return urlGetConnection;
-        } catch (IOException e) {
-            throw e;
-        }
-    }
-
-    public static HttpsURLConnection createPOSTHttpsURLConnection(String urlString, String clientSdk,
-                                                                  Map<String, String> parameters,
-                                                                  int queueSize)
-            throws IOException
-    {
-        DataOutputStream wr = null;
-        HttpsURLConnection connection = null;
-        try {
-            URL url = new URL(urlString);
-            connection = AdjustFactory.getHttpsURLConnection(url);
-
-            setDefaultHttpsUrlConnectionProperties(connection, clientSdk);
-            connection.setRequestMethod("POST");
-
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-            wr = new DataOutputStream(connection.getOutputStream());
-            wr.writeBytes(getPostDataString(parameters, queueSize));
-
-            return connection;
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            try {
-                if (wr != null) {
-                    wr.flush();
-                    wr.close();
-                }
-            }catch (Exception e) { }
-        }
-    }
-
-    private static String getPostDataString(Map<String, String> body, int queueSize) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-
-        for(Map.Entry<String, String> entry : body.entrySet()) {
-            String encodedName = URLEncoder.encode(entry.getKey(), Constants.ENCODING);
-            String value = entry.getValue();
-            String encodedValue = value != null ? URLEncoder.encode(value, Constants.ENCODING) : "";
-            if (result.length() > 0) {
-                result.append("&");
-            }
-
-            result.append(encodedName);
-            result.append("=");
-            result.append(encodedValue);
-        }
-
-        long now = System.currentTimeMillis();
-        String dateString = Util.dateFormatter.format(now);
-
-        result.append("&");
-        result.append(URLEncoder.encode("sent_at", Constants.ENCODING));
-        result.append("=");
-        result.append(URLEncoder.encode(dateString, Constants.ENCODING));
-
-        if (queueSize > 0) {
-            result.append("&");
-            result.append(URLEncoder.encode("queue_size", Constants.ENCODING));
-            result.append("=");
-            result.append(URLEncoder.encode("" + queueSize, Constants.ENCODING));
-        }
-
-        return result.toString();
-    }
-
-    public static void setDefaultHttpsUrlConnectionProperties(HttpsURLConnection connection, String clientSdk) {
-        connection.setRequestProperty("Client-SDK", clientSdk);
-        connection.setConnectTimeout(Constants.ONE_MINUTE);
-        connection.setReadTimeout(Constants.ONE_MINUTE);
-        if (userAgent != null) {
-            connection.setRequestProperty("User-Agent", userAgent);
         }
     }
 
@@ -597,10 +410,6 @@ public class Util {
             }
         }
         return mergedParameters;
-    }
-
-    public static void setUserAgent(String userAgent) {
-        Util.userAgent = userAgent;
     }
 
     public static String getVmInstructionSet() {
