@@ -182,9 +182,9 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
 
             if (argv[2] != nil) {
                 FREGetObjectAsDouble(argv[2], &revenue);
+                
+                [adjustEvent setRevenue:revenue currency:currency];
             }
-
-            [adjustEvent setRevenue:revenue currency:currency];
         }
 
         if (argv[3] != nil) {
