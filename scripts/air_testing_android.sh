@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SAMPLE_DIR=${ADOBE_AIR_SDK_DIR}/sample
+SAMPLE_DIR=${ADOBE_AIR_SDK_DIR}/example
 MAIN_FILE=Main.as
 SAMPLE_APP_XML_FILE=Main-app.xml
 VERSION=`cat ${ADOBE_AIR_SDK_DIR}/VERSION`
@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}>>> Update submodules"
 git submodule update --init --recursive
 
-echo -e "${GREEN}>>> Removing ANE file from sample/lib ${NC}"
+echo -e "${GREEN}>>> Removing ANE file from example/lib ${NC}"
 rm -rfv ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane
 
 echo -e "${GREEN}>>> Removing ANE file from root dir ${NC}"
@@ -35,7 +35,7 @@ fi
 
 echo -e "${GREEN}>>> ANE built successfully ${NC}"
 
-echo -e "${GREEN}>>> Building sample app ${NC}"
+echo -e "${GREEN}>>> Building example app ${NC}"
 echo -e "${GREEN}>>> Running amxmlc ${NC}"
 cd ${SAMPLE_DIR}
 amxmlc -external-library-path+=lib/Adjust-${VERSION}.ane -output=Main.swf -- ${MAIN_FILE}

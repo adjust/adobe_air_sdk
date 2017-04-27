@@ -40,7 +40,7 @@ public class SdkClickHandler implements ISdkClickHandler {
     public SdkClickHandler(boolean startsSending) {
         init(startsSending);
         this.logger = AdjustFactory.getLogger();
-        this.scheduledExecutor = new CustomScheduledExecutor("SdkClickHandler");
+        this.scheduledExecutor = new CustomScheduledExecutor("SdkClickHandler", false);
         this.backoffStrategy = AdjustFactory.getSdkClickBackoffStrategy();
     }
 
@@ -122,13 +122,7 @@ public class SdkClickHandler implements ISdkClickHandler {
         String targetURL = Constants.BASE_URL + sdkClickPackage.getPath();
 
         try {
-            HttpsURLConnection connection = Util.createPOSTHttpsURLConnection(
-                    targetURL,
-                    sdkClickPackage.getClientSdk(),
-                    sdkClickPackage.getParameters(),
-                    packageQueue.size() - 1);
-
-            ResponseData responseData = Util.readHttpResponse(connection, sdkClickPackage);
+            ResponseData responseData = UtilNetworking.createPOSTHttpsURLConnection(targetURL, sdkClickPackage, packageQueue.size() - 1);
 
             if (responseData.jsonResponse == null) {
                 retrySendingI(sdkClickPackage);

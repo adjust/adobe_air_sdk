@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<application xmlns="http://ns.adobe.com/air/application/25.0"> 
+  <id>com.adjust.examples</id> 
+  <versionNumber>4.11.1</versionNumber> 
+  <filename>Adjust AIR SDK Demo</filename> 
+
+  <initialWindow>
+    <content>Main.swf</content> 
+  </initialWindow>
+
+  <supportedProfiles>mobileDevice</supportedProfiles> 
+  <extensions>
+      <extensionID>com.adjust.sdk</extensionID>
+      <extensionID>com.adjust.gps</extensionID>
+  </extensions>
+
+  <iPhone>
+    <InfoAdditions>
+      <![CDATA[
+      <key>CFBundleURLTypes</key>
+      <array>
+        <dict>
+          <key>CFBundleURLName</key>
+          <string>com.adjust.examples</string>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <string>adjustExample</string>
+          </array>
+        </dict>
+      </array>
+      ]]>
+    </InfoAdditions>
+  </iPhone>
+
+  <android> 
+    <manifestAdditions> 
+      <![CDATA[ 
+      <manifest android:installLocation="auto">
+        <uses-permission android:name="android.permission.INTERNET"/>
+        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+        <application>
+          <activity>
+            <intent-filter>
+              <action android:name="android.intent.action.MAIN"/>
+              <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+              <data android:scheme="adjustExample" />
+              <action android:name="android.intent.action.VIEW" />
+              <category android:name="android.intent.category.DEFAULT" />
+              <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+          </activity>
+
+          <!-- Comment this if you don't want to use Google Play Services -->
+          <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
+          <receiver
+            android:name="com.adjust.sdk.AdjustReferrerReceiver"
+            android:exported="true">
+            <intent-filter>
+              <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+          </receiver>
+        </application>
+      </manifest>
+      ]]> 
+    </manifestAdditions> 
+  </android>
+</application>
