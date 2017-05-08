@@ -1,3 +1,24 @@
+### Version 4.11.2 (9th May 2017)
+#### Added
+- **[iOS][AND]** Added check if `sdk_click` package response contains attribution information.
+- **[iOS][AND]**  Added sending of attributable parameters with every `sdk_click` package.
+
+#### Fixed
+- **[iOS]** Fixed suppress log level for iOS platform.
+
+#### Changed
+- **[iOS][AND]** Replaced `assert` level logs from SDK with `warn` log level.
+- **[AND]** Updated `gradle` version of the `AdjustExtension` project.
+- **[iOS]** Updated native iOS SDK to version **4.11.4**.
+- **[AND]** Updated native Android SDK to version **4.11.4**.
+- **[REPO]** Updated example apps build scripts.
+
+#### Native SDKs
+- **[iOS]** [iOS@v4.11.4][ios_sdk_v4.11.4]
+- **[AND]** [Android@v4.11.4][android_sdk_v4.11.4]
+
+---
+
 ### Version 4.11.1 (27th April 2017)
 #### Added
 - **[iOS]** Added nullability annotations to public headers for Swift 3.0 compatibility.
@@ -264,6 +285,7 @@
 [ios_sdk_v4.10.3]: https://github.com/adjust/ios_sdk/tree/v4.10.3
 [ios_sdk_v4.11.0]: https://github.com/adjust/ios_sdk/tree/v4.11.0
 [ios_sdk_v4.11.3]: https://github.com/adjust/ios_sdk/tree/v4.11.3
+[ios_sdk_v4.11.4]: https://github.com/adjust/ios_sdk/tree/v4.11.4
 
 [android_sdk_v2.1.3]: https://github.com/adjust/android_sdk/tree/v2.1.3
 [android_sdk_v2.1.4]: https://github.com/adjust/android_sdk/tree/v2.1.4
@@ -276,3 +298,4 @@
 [android_sdk_v4.11.0]: https://github.com/adjust/android_sdk/tree/v4.11.0
 [android_sdk_v4.11.1]: https://github.com/adjust/android_sdk/tree/v4.11.1
 [android_sdk_v4.11.3]: https://github.com/adjust/android_sdk/tree/v4.11.3
+[android_sdk_v4.11.4]: https://github.com/adjust/android_sdk/tree/v4.11.4
