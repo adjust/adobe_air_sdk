@@ -22,7 +22,7 @@ echo -e "${GREEN}>>> Building ANE for version ${VERSION} ${NC}"
 
 cd ${ADOBE_AIR_SDK_DIR}
 ./build.sh
-\cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
+cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
 
 echo -e "${GREEN}>>> Checking if ANE is built successfully in location: ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane ${NC}"
 

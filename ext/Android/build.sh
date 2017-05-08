@@ -35,7 +35,7 @@ cp ${JAR_IN_DIR}/adjust-android.jar ${OUT_DIR}
 # rm ${OUT_DIR}/*-javadoc.jar;
 # rm ${OUT_DIR}/*-sources.jar;
 
-echo -e "${GREEN}>>> Android build script: Rename to Adjust.jar ${NC}"
-mv ${OUT_DIR}/adjust-android.jar ${OUT_DIR}/Adjust.jar
+# echo -e "${GREEN}>>> Android build script: Rename to Adjust.jar ${NC}"
+# mv ${OUT_DIR}/adjust-android.jar ${OUT_DIR}/Adjust.jar
 
 echo -e "${GREEN}>>> Android build script: Complete ${NC}"

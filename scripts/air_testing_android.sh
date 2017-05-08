@@ -14,7 +14,7 @@ echo -e "${GREEN}>>> Update submodules"
 git submodule update --init --recursive
 
 echo -e "${GREEN}>>> Removing ANE file from example/lib ${NC}"
-rm -rfv ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane
+rm -rfv ${SAMPLE_DIR}/lib/Adjust-*.*.*.ane
 
 echo -e "${GREEN}>>> Removing ANE file from root dir ${NC}"
 rm -rfv ${ADOBE_AIR_SDK_DIR}/Adjust*.ane
@@ -24,7 +24,7 @@ echo -e "${GREEN}>>> Building ANE for version ${VERSION} ${NC}"
 cd ${ADOBE_AIR_SDK_DIR}
 ./build.sh
 mkdir -p ${SAMPLE_DIR}/lib
-\cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
+cp -v Adjust-${VERSION}.ane ${SAMPLE_DIR}/lib/
 
 echo -e "${GREEN}>>> Checking if ANE is built successfully in location: ${SAMPLE_DIR}/lib/Adjust-${VERSION}.ane ${NC}"
 
