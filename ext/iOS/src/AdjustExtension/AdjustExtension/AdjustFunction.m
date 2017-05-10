@@ -19,10 +19,11 @@ BOOL shouldLaunchDeferredDeeplink;
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 17) {
+        ADJLogLevel logLevel;
+
         NSString *appToken = nil;
         NSString *environment = nil;
         NSString *logLevelString = nil;
-        ADJLogLevel logLevel = ADJLogLevelInfo;
         NSString *defaultTracker = nil;
         NSString *sdkPrefix = nil;
 
@@ -33,7 +34,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         BOOL isSessionTrackingSucceededCallbackImplemented = NO;
         BOOL isSessionTrackingFailedCallbackImplemented = NO;
         BOOL isDeferredDeeplinkCallbackImplemented = NO;
-        BOOL allowSuppressLogLevel = false;
+        BOOL allowSuppressLogLevel = NO;
 
         adjustFREContext = ctx;
 
@@ -49,15 +50,17 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             FREGetObjectAsNativeString(argv[2], &logLevelString);
 
             if (logLevelString != nil) {
-                logLevel = [ADJLogger LogLevelFromString:logLevelString];
-
-                if (logLevel == ADJLogLevelSuppress) {
-                    allowSuppressLogLevel = true;
+                if ([logLevelString isEqualToString:@"suppress"]) {
+                    allowSuppressLogLevel = YES;
+                    logLevel = ADJLogLevelSuppress;
+                } else {
+                    logLevel = [ADJLogger LogLevelFromString:logLevelString];
                 }
             }
         }
 
         ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment allowSuppressLogLevel:allowSuppressLogLevel];
+
         if (logLevelString != nil) {
             [adjustConfig setLogLevel:logLevel];
         }

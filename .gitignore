@@ -36,6 +36,3 @@ DerivedData
 *.dSYM
 *.a
 *.pfx
-
-# Exceptions
-!sample/*.iml

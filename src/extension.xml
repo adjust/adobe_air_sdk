@@ -1,10 +1,10 @@
 <extension xmlns="http://ns.adobe.com/air/extension/16.0">
     <id>com.adjust.sdk</id>
-    <versionNumber>4.11.1</versionNumber>
+    <versionNumber>4.11.2</versionNumber>
     <platforms>
         <platform name="Android-ARM">
             <applicationDeployment>
-                <nativeLibrary>Adjust.jar</nativeLibrary>
+                <nativeLibrary>adjust-android.jar</nativeLibrary>
                 <initializer>com.adjust.sdk.AdjustExtension</initializer>
             </applicationDeployment>
         </platform>
