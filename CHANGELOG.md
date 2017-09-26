@@ -1,3 +1,18 @@
+### Version 4.11.3 (xxth September 2017)
+#### Added
+- **[iOS]** Improved iOS 11 support.
+
+#### Changed
+- **[iOS]** Re-added support for Xcode 7 supported iOS SDK versions.
+- **[iOS]** Removed iOS connection validity checks.
+- **[iOS]** Updated native iOS SDK to version **4.11.5**.
+
+#### Native SDKs
+- **[iOS]** [iOS@v4.11.5][ios_sdk_v4.11.5]
+- **[AND]** [Android@v4.11.4][android_sdk_v4.11.4]
+
+---
+
 ### Version 4.11.2 (10th May 2017)
 #### Added
 - **[iOS][AND]** Added check if `sdk_click` package response contains attribution information.
@@ -286,6 +301,7 @@
 [ios_sdk_v4.11.0]: https://github.com/adjust/ios_sdk/tree/v4.11.0
 [ios_sdk_v4.11.3]: https://github.com/adjust/ios_sdk/tree/v4.11.3
 [ios_sdk_v4.11.4]: https://github.com/adjust/ios_sdk/tree/v4.11.4
+[ios_sdk_v4.11.5]: https://github.com/adjust/ios_sdk/tree/v4.11.5
 
 [android_sdk_v2.1.3]: https://github.com/adjust/android_sdk/tree/v2.1.3
 [android_sdk_v2.1.4]: https://github.com/adjust/android_sdk/tree/v2.1.4
