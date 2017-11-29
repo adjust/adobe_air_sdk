@@ -321,13 +321,13 @@ You can register a callback to be notified of tracker attribution changes. Due t
 
 The callback function will get called when the SDK receives final attribution data. Within the callback function you have access to the `attribution` parameter. Here is a quick summary of its properties:
 
-- `var trackerToken:String` the tracker token of the current install.
-- `var trackerName:String` the tracker name of the current install.
-- `var network:String` the network grouping level of the current install.
-- `var campaign:String` the campaign grouping level of the current install.
-- `var adgroup:String` the ad group grouping level of the current install.
-- `var creative:String` the creative grouping level of the current install.
-- `var clickLabel:String` the click label of the current install.
+- `var trackerToken:String` the tracker token of the current attribution.
+- `var trackerName:String` the tracker name of the current attribution.
+- `var network:String` the network grouping level of the current attribution.
+- `var campaign:String` the campaign grouping level of the current attribution.
+- `var adgroup:String` the ad group grouping level of the current attribution.
+- `var creative:String` the creative grouping level of the current attribution.
+- `var clickLabel:String` the click label of the current attribution.
 - `var adid:Stirng` the Adjust device identifier.
 
 ```actionscript
