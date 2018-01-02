@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<application xmlns="http://ns.adobe.com/air/application/25.0"> 
+<application xmlns="http://ns.adobe.com/air/application/28.0"> 
   <id>com.adjust.examples</id> 
-  <versionNumber>4.11.3</versionNumber> 
+  <versionNumber>4.12.0</versionNumber> 
   <filename>Adjust AIR SDK Demo</filename> 
 
   <initialWindow>
@@ -24,7 +24,7 @@
           <string>com.adjust.examples</string>
           <key>CFBundleURLSchemes</key>
           <array>
-            <string>adjustExample</string>
+            <string>adjust-example</string>
           </array>
         </dict>
       </array>
