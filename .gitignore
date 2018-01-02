@@ -36,3 +36,5 @@ DerivedData
 *.dSYM
 *.a
 *.pfx
+ext/iOS/AdjustSdk.framework
+ext/Android/adjust-android.jar
