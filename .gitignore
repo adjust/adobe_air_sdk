@@ -37,4 +37,6 @@ DerivedData
 *.a
 *.pfx
 ext/iOS/AdjustSdk.framework
+ext/iOS/src/AdjustExtension/include/Adjust/AdjustSdk.framework
 ext/Android/adjust-android.jar
+
