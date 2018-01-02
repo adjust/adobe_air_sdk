@@ -54,7 +54,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
                     allowSuppressLogLevel = YES;
                     logLevel = ADJLogLevelSuppress;
                 } else {
-                    logLevel = [ADJLogger LogLevelFromString:logLevelString];
+                    logLevel = [ADJLogger logLevelFromString:logLevelString];
                 }
             }
         }
