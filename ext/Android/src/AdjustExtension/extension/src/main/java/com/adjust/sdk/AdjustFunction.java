@@ -394,7 +394,7 @@ public class AdjustFunction implements FREFunction,
         try {
             String referrer = freObjects[0].getAsString();
 
-            Adjust.setReferrer(referrer);
+            Adjust.setReferrer(referrer, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
