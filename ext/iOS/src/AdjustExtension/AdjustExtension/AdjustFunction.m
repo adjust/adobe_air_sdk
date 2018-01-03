@@ -57,17 +57,21 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             if (logLevelString != nil) {
                 if ([logLevelString isEqualToString:@"suppress"]) {
                     allowSuppressLogLevel = YES;
-                    logLevel = ADJLogLevelSuppress;
-                } else {
-                    logLevel = [ADJLogger logLevelFromString:logLevelString];
                 }
             }
         }
 
         ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment allowSuppressLogLevel:allowSuppressLogLevel];
+        
+        if(![adjustConfig isValid]) {
+            FREObject return_value;
+            FRENewObjectFromBool(true, &return_value);
+            
+            return return_value;
+        }
 
         if (logLevelString != nil) {
-            [adjustConfig setLogLevel:logLevel];
+            [adjustConfig setLogLevel:[ADJLogger logLevelFromString:[logLevelString lowercaseString]]];
         }
 
         if (argv[3] != nil) {
