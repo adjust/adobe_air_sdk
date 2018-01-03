@@ -148,6 +148,23 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             [adjustConfig setSendInBackground:sendInBackground];
         }
 
+        if (secretId != nil
+                && info1 != nil
+                && info2 != nil
+                && info3 != nil
+                && info4 != nil) {
+            NSLog(@"DEBUG: secretID: %@", secretId);
+            NSLog(@"DEBUG: info1: %@", info1);
+            NSLog(@"DEBUG: info2: %@", info2);
+            NSLog(@"DEBUG: info3: %@", info3);
+            NSLog(@"DEBUG: info4: %@", info4);
+            [adjustConfig setAppSecret:[[NSNumber numberWithLongLong:[secretId longLongValue]] unsignedIntegerValue]
+                             info1:[[NSNumber numberWithLongLong:[info1 longLongValue]] unsignedIntegerValue]
+                             info2:[[NSNumber numberWithLongLong:[info2 longLongValue]] unsignedIntegerValue]
+                             info3:[[NSNumber numberWithLongLong:[info3 longLongValue]] unsignedIntegerValue]
+                             info4:[[NSNumber numberWithLongLong:[info4 longLongValue]] unsignedIntegerValue]];
+        }
+
         [Adjust appDidLaunch:adjustConfig];
         [Adjust trackSubsessionStart];
     } else {

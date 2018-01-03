@@ -125,6 +125,12 @@ public class AdjustFunction implements FREFunction,
             String logLevel = null;
             boolean allowSuppressLogLevel = false;
 
+            String secretId = null;
+            String info1 = null;
+            String info2 = null;
+            String info3 = null;
+            String info4 = null;
+
             if (freObjects[0] != null) {
                 appToken = freObjects[0].getAsString();
             }
@@ -257,6 +263,54 @@ public class AdjustFunction implements FREFunction,
             if (freObjects[16] != null) {
                 boolean sendInBackground = freObjects[16].getAsBool();
                 adjustConfig.setSendInBackground(sendInBackground);
+            }
+
+            if (freObjects[17] != null) {
+                secretId = freObjects[17].getAsString();
+            }
+
+            if (freObjects[18] != null) {
+                info1 = freObjects[18].getAsString();
+            }
+
+            if (freObjects[19] != null) {
+                info2 = freObjects[19].getAsString();
+            }
+
+            if (freObjects[20] != null) {
+                info3 = freObjects[20].getAsString();
+            }
+
+            if (freObjects[21] != null) {
+                info4 = freObjects[21].getAsString();
+            }
+
+            if (freObjects[22] != null) {
+                boolean isDeviceKnown = freObjects[22].getAsBool();
+                adjustConfig.setDeviceKnown(isDeviceKnown);
+            }
+
+            if (freObjects[23] != null) {
+                boolean readMobileEquipmentIdentity = freObjects[23].getAsBool();
+                adjustConfig.setReadMobileEquipmentIdentity(readMobileEquipmentIdentity);
+            }
+
+            if (secretId != null
+                    && info1 != null
+                    && info2 != null
+                    && info3 != null
+                    && info4 != null
+                    ) {
+                try {
+                    long lSecretId = Long.parseLong(secretId, 10);
+                    long lInfo1 = Long.parseLong(info1, 10);
+                    long lInfo2 = Long.parseLong(info2, 10);
+                    long lInfo3 = Long.parseLong(info3, 10);
+                    long lInfo4 = Long.parseLong(info4, 10);
+
+                    adjustConfig.setAppSecret(lSecretId, lInfo1, lInfo2, lInfo3, lInfo4);
+                } catch (NumberFormatException ignored) {
+                }
             }
 
             Adjust.onCreate(adjustConfig);

@@ -74,7 +74,11 @@ package com.adjust.sdk {
                     adjustConfig.getProcessName(),
                     adjustConfig.getDelayStart(),
                     adjustConfig.getUserAgent(),
-                    adjustConfig.getSendInBackground());
+                    adjustConfig.getSecretId(),
+                    adjustConfig.getInfo1(),
+                    adjustConfig.getInfo2(),
+                    adjustConfig.getInfo3(),
+                    adjustConfig.getInfo4(),
 
             // For now, call onResume after onCreate.
             getExtensionContext().call("onResume");

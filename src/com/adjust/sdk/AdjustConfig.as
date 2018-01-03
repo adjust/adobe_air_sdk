@@ -20,8 +20,13 @@ package com.adjust.sdk {
         private var sessionTrackingFailedDelegate:Function;
         private var deferredDeeplinkDelegate:Function;
 
+        private var secretId:String;
+        private var info1:String;
+        private var info2:String;
+        private var info3:String;
+        private var info4:String;
+
         // For Android only
-        private var referrer:String;
         private var processName:String;
 
         public function AdjustConfig(appToken:String, environment:String) {
@@ -85,6 +90,27 @@ package com.adjust.sdk {
             this.shouldLaunchDeeplink = shouldLaunchDeeplink;
         }
 
+        public function setAppSecret(secretId:Number, info1:Number, info2:Number, info3:Number, info4:Number):void {
+            if (!isNaN(secretId)) {
+                this.secretId = secretId.toString();
+            }
+
+            if (!isNaN(info1)) {
+                this.info1 = info1.toString();
+            }
+
+            if (!isNaN(info2)) {
+                this.info2 = info2.toString();
+            }
+
+            if (!isNaN(info3)) {
+                this.info3 = info3.toString();
+            }
+
+            if (!isNaN(info4)) {
+                this.info4 = info4.toString();
+            }
+        }
         // Getters
         public function getAppToken():String {
             return this.appToken;
@@ -148,6 +174,26 @@ package com.adjust.sdk {
 
         public function getShouldLaunchDeeplink():Boolean {
             return this.shouldLaunchDeeplink;
+        }
+
+        public function getSecretId():String {
+            return this.secretId;
+        }
+
+        public function getInfo1():String {
+            return this.info1;
+        }
+
+        public function getInfo2():String {
+            return this.info2;
+        }
+
+        public function getInfo3():String {
+            return this.info3;
+        }
+
+        public function getInfo4():String {
+            return this.info4;
         }
     }
 }
