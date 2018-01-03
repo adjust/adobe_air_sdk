@@ -176,6 +176,16 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         if (argv[21] != nil) {
             FREGetObjectAsNativeString(argv[21], &info4);
         }
+
+        if (argv[22] != nil) {
+            BOOL isDeviceKnown = NO;
+            FREGetObjectAsNativeBool(argv[15], &isDeviceKnown);
+            NSLog(@"DEBUG: isDeviceKnown: %@", secretId);
+            [adjustConfig setIsDeviceKnown:isDeviceKnown];
+        }
+
+        // arg 23 is for Android only: ReadMobileEquipmentIdentity
+
         if (secretId != nil
                 && info1 != nil
                 && info2 != nil

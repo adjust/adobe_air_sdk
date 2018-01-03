@@ -12,6 +12,7 @@ package com.adjust.sdk {
         private var sendInBackground:Boolean;
         private var shouldLaunchDeeplink:Boolean;
         private var eventBufferingEnabled:Boolean;
+        private var isDeviceKnown:Boolean;
 
         private var attributionCallbackDelegate:Function;
         private var eventTrackingSucceededDelegate:Function;
@@ -111,6 +112,11 @@ package com.adjust.sdk {
                 this.info4 = info4.toString();
             }
         }
+
+        public function setDeviceKnown(isDeviceKnown:Boolean):void {
+            this.isDeviceKnown = isDeviceKnown;
+        }
+
         // Getters
         public function getAppToken():String {
             return this.appToken;
@@ -194,6 +200,10 @@ package com.adjust.sdk {
 
         public function getInfo4():String {
             return this.info4;
+        }
+
+        public function getIsDeviceKnown():Boolean {
+            return this.isDeviceKnown;
         }
     }
 }
