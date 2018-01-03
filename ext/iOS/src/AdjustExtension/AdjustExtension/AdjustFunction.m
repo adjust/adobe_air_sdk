@@ -31,6 +31,11 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         BOOL isAttributionCallbackImplemented = NO;
         BOOL isEventTrackingSucceededCallbackImplemented = NO;
         BOOL isEventTrackingFailedCallbackImplemented = NO;
+        NSString *secretId       = nil;
+        NSString *info1          = nil;
+        NSString *info2          = nil;
+        NSString *info3          = nil;
+        NSString *info4          = nil;
         BOOL isSessionTrackingSucceededCallbackImplemented = NO;
         BOOL isSessionTrackingFailedCallbackImplemented = NO;
         BOOL isDeferredDeeplinkCallbackImplemented = NO;
@@ -148,6 +153,25 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             [adjustConfig setSendInBackground:sendInBackground];
         }
 
+        if (argv[17] != nil) {
+            FREGetObjectAsNativeString(argv[17], &secretId);
+        }
+
+        if (argv[18] != nil) {
+            FREGetObjectAsNativeString(argv[18], &info1);
+        }
+
+        if (argv[19] != nil) {
+            FREGetObjectAsNativeString(argv[19], &info2);
+        }
+
+        if (argv[20] != nil) {
+            FREGetObjectAsNativeString(argv[20], &info3);
+        }
+
+        if (argv[21] != nil) {
+            FREGetObjectAsNativeString(argv[21], &info4);
+        }
         if (secretId != nil
                 && info1 != nil
                 && info2 != nil
