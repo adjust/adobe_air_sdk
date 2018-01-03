@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Get the current directory (/scripts/ directory)
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Traverse up to get to the root directory
@@ -48,9 +50,9 @@ echo -e "${GREEN}>>> Packaging APK file. Password will be entered automatically 
 echo "pass" | adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib
 
 echo -e "${GREEN}>>> Running adb uninstall ${NC}"
-adb uninstall com.adjust.examples
+adb uninstall air.com.adjust.examples || true
 
-#echo -e "${GREEN}>>> APK file created. Running ADB install ${NC}"
-#adb install -r Main.apk
+echo -e "${GREEN}>>> APK file created. Running ADB install ${NC}"
+adb install -r Main.apk
 
 echo -e "${GREEN}>>> ADB installed ${NC}"

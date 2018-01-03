@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Get the current directory (ext/ios/)
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Traverse up to get to the root directory

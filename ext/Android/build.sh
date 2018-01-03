@@ -4,7 +4,7 @@
 # - Copy the JAR file to the root dir
 
 # End script if one of the lines fails
-# set -e
+ set -e
 
 if [ $# -ne 1 ]; then
     echo $0: "usage: ./build.sh [debug || release]"
@@ -42,11 +42,11 @@ cp -rv * ${ROOT_DIR}/${EXT_DIR}/${EXTENSION_SOURCE_DIR}
 cd ${ROOT_DIR}/${EXT_DIR}/${BUILD_DIR}
 if [ "$BUILD_TYPE" == "debug" ]; then
     echo -e "${GREEN}>>> Running Gradle tasks: makeDebugJar${NC}"
-    ./gradlew makeDebugJar
+    ./gradlew clean makeDebugJar
 
 elif [ "$BUILD_TYPE" == "release" ]; then
     echo -e "${GREEN}>>> Running Gradle tasks: makeReleaseJar${NC}"
-    ./gradlew makeReleaseJar
+    ./gradlew clean makeReleaseJar
 fi
 
 echo -e "${GREEN}>>> Moving the jar from ${JAR_IN_DIR} to ${EXT_DIR} ${NC}"
