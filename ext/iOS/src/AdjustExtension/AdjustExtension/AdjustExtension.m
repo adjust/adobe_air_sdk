@@ -36,6 +36,7 @@ void AdjustFREContextInitializer(void* extData,
     setNamedFunction(&func[9], (const uint8_t*)"getIdfa", &ADJgetIdfa);
     setNamedFunction(&func[10], (const uint8_t*)"setReferrer", &ADJsetReferrer);
     setNamedFunction(&func[11], (const uint8_t*)"getGoogleAdId", &ADJgetGoogleAdId);
+    setNamedFunction(&func[11], (const uint8_t*)"getAmazonAdId", &ADJgetAmazonAdId);
     setNamedFunction(&func[12], (const uint8_t*)"addSessionCallbackParameter", &ADJaddSessionCallbackParameter);
     setNamedFunction(&func[13], (const uint8_t*)"removeSessionCallbackParameter", &ADJremoveSessionCallbackParameter);
     setNamedFunction(&func[14], (const uint8_t*)"resetSessionCallbackParameters", &ADJresetSessionCallbackParameters);

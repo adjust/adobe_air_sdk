@@ -424,6 +424,12 @@ FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObj
     return return_value;
 }
 
+FREObject ADJgetAmazonAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
 
 FREObject ADJaddSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 2) {

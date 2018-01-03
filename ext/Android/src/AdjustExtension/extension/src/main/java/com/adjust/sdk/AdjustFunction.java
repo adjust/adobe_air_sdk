@@ -67,6 +67,10 @@ public class AdjustFunction implements FREFunction,
             return GetGoogleAdId(freContext, freObjects);
         }
 
+        if (functionName == AdjustContext.GetAmazonAdId) {
+            return GetAmazonAdId(freContext, freObjects);
+        }
+
         if (functionName == AdjustContext.GetIdfa) {
             return GetIdfa(freContext, freObjects);
         }
@@ -425,6 +429,18 @@ public class AdjustFunction implements FREFunction,
                 }
             }
         });
+
+        return null;
+    }
+
+    private FREObject GetAmazonAdId(final FREContext freContext, FREObject[] freObjects) {
+        String amazonAdId = Adjust.getAmazonAdId(freContext.getActivity().getApplicationContext());
+
+        if (amazonAdId != null) {
+            freContext.dispatchStatusEventAsync("adjust_amazonAdId", amazonAdId);
+        } else {
+            freContext.dispatchStatusEventAsync("adjust_amazonAdId", "");
+        }
 
         return null;
     }

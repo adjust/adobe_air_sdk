@@ -156,6 +156,12 @@ package com.adjust.sdk {
             getExtensionContext().call("getGoogleAdId");
         }
 
+        public static function getAmazonAdId():String {
+            var adid:String = String (getExtensionContext().call("getAmazonAdId"));
+
+            return adid;
+        }
+
         public static function addSessionCallbackParameter(key:String, value:String):void {
             getExtensionContext().call("addSessionCallbackParameter", key, value);
         }

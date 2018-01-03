@@ -22,6 +22,7 @@ public class AdjustContext extends FREContext {
     public static String SetOfflineMode = "setOfflineMode";
     public static String SetReferrer = "setReferrer";
     public static String GetGoogleAdId = "getGoogleAdId";
+    public static String GetAmazonAdId = "getAmazonAdId";
     public static String AddSessionCallbackParameter = "addSessionCallbackParameter";
     public static String RemoveSessionCallbackParameter = "removeSessionCallbackParameter";
     public static String ResetSessionCallbackParameters = "resetSessionCallbackParameters";
@@ -50,6 +51,7 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.SetOfflineMode, new AdjustFunction(AdjustContext.SetOfflineMode));
         functions.put(AdjustContext.SetReferrer, new AdjustFunction(AdjustContext.SetReferrer));
         functions.put(AdjustContext.GetGoogleAdId, new AdjustFunction(AdjustContext.GetGoogleAdId));
+        functions.put(AdjustContext.GetAmazonAdId, new AdjustFunction(AdjustContext.GetAmazonAdId));
         functions.put(AdjustContext.GetIdfa, new AdjustFunction(AdjustContext.GetIdfa));
         functions.put(AdjustContext.AddSessionCallbackParameter, new AdjustFunction(AdjustContext.AddSessionCallbackParameter));
         functions.put(AdjustContext.RemoveSessionCallbackParameter, new AdjustFunction(AdjustContext.RemoveSessionCallbackParameter));
