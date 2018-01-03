@@ -9,9 +9,9 @@ import com.adobe.fre.*;
 /**
  * Created by pfms on 31/07/14.
  */
-public class AdjustFunction implements FREFunction, 
+public class AdjustFunction implements FREFunction,
        OnAttributionChangedListener,
-       OnEventTrackingSucceededListener, 
+       OnEventTrackingSucceededListener,
        OnEventTrackingFailedListener,
        OnSessionTrackingSucceededListener,
        OnSessionTrackingFailedListener,
@@ -102,7 +102,7 @@ public class AdjustFunction implements FREFunction,
         if (functionName == AdjustContext.SetDeviceToken) {
             return SetDeviceToken(freContext, freObjects);
         }
-        
+
         if (functionName == AdjustContext.SendFirstPackages) {
             return SendFirstPackages(freContext, freObjects);
         }
@@ -138,12 +138,11 @@ public class AdjustFunction implements FREFunction,
             if (freObjects[1] != null) {
                 environment = freObjects[1].getAsString();
             }
-            
+
             if (freObjects[2] != null) {
                 logLevel = freObjects[2].getAsString();
             }
 
-           
             if (logLevel != null && logLevel.equals("suppress")) {
                 allowSuppressLogLevel = true;
             }
@@ -707,7 +706,7 @@ public class AdjustFunction implements FREFunction,
         String response = deeplink.toString();
 
         AdjustExtension.context.dispatchStatusEventAsync("adjust_deferredDeeplink", response);
-        
+
         return shouldLaunchDeeplink;
     }
 }

@@ -74,6 +74,7 @@ package com.adjust.sdk {
                     adjustConfig.getProcessName(),
                     adjustConfig.getDelayStart(),
                     adjustConfig.getUserAgent(),
+                    adjustConfig.getSendInBackground(),
                     adjustConfig.getSecretId(),
                     adjustConfig.getInfo1(),
                     adjustConfig.getInfo2(),

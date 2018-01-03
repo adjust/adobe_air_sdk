@@ -18,28 +18,27 @@ BOOL shouldLaunchDeferredDeeplink;
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 17) {
-        ADJLogLevel logLevel;
-
-        NSString *appToken = nil;
-        NSString *environment = nil;
+    if (argc == 24) {
+        NSString *appToken       = nil;
+        NSString *environment    = nil;
         NSString *logLevelString = nil;
         NSString *defaultTracker = nil;
-        NSString *sdkPrefix = nil;
+        NSString *sdkPrefix      = nil;
 
-        BOOL eventBufferingEnabled = NO;
-        BOOL isAttributionCallbackImplemented = NO;
-        BOOL isEventTrackingSucceededCallbackImplemented = NO;
-        BOOL isEventTrackingFailedCallbackImplemented = NO;
         NSString *secretId       = nil;
         NSString *info1          = nil;
         NSString *info2          = nil;
         NSString *info3          = nil;
         NSString *info4          = nil;
+
+        BOOL eventBufferingEnabled                         = NO;
+        BOOL isAttributionCallbackImplemented              = NO;
+        BOOL isEventTrackingSucceededCallbackImplemented   = NO;
+        BOOL isEventTrackingFailedCallbackImplemented      = NO;
         BOOL isSessionTrackingSucceededCallbackImplemented = NO;
-        BOOL isSessionTrackingFailedCallbackImplemented = NO;
-        BOOL isDeferredDeeplinkCallbackImplemented = NO;
-        BOOL allowSuppressLogLevel = NO;
+        BOOL isSessionTrackingFailedCallbackImplemented    = NO;
+        BOOL isDeferredDeeplinkCallbackImplemented         = NO;
+        BOOL allowSuppressLogLevel                         = NO;
 
         adjustFREContext = ctx;
 
@@ -137,7 +136,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
                                                                  withFREContext:&adjustFREContext]];
         }
 
-        // arg 13 is for Android only
+        // arg 13 is for Android only: processName
 
         if (argv[14] != nil) {
             double delayStart;
