@@ -80,6 +80,7 @@ package com.adjust.sdk {
                     adjustConfig.getInfo3(),
                     adjustConfig.getInfo4(),
                     adjustConfig.getIsDeviceKnown(),
+                    adjustConfig.getReadMobileEquipmentIdentity());
 
             // For now, call onResume after onCreate.
             getExtensionContext().call("onResume");

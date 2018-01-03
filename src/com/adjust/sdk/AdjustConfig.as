@@ -29,6 +29,7 @@ package com.adjust.sdk {
 
         // For Android only
         private var processName:String;
+        private var readMobileEquipmentIdentity:Boolean;
 
         public function AdjustConfig(appToken:String, environment:String) {
             this.appToken = appToken;
@@ -115,6 +116,10 @@ package com.adjust.sdk {
 
         public function setDeviceKnown(isDeviceKnown:Boolean):void {
             this.isDeviceKnown = isDeviceKnown;
+        }
+
+        public function setReadMobileEquipmentIdentity(readMobileEquipmentIdentity:Boolean):void {
+            this.readMobileEquipmentIdentity = readMobileEquipmentIdentity;
         }
 
         // Getters
@@ -204,6 +209,10 @@ package com.adjust.sdk {
 
         public function getIsDeviceKnown():Boolean {
             return this.isDeviceKnown;
+        }
+
+        public function getReadMobileEquipmentIdentity():Boolean {
+            return this.readMobileEquipmentIdentity;
         }
     }
 }
