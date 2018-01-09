@@ -9,7 +9,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
    * [Get the SDK](#sdk-get)
    * [Add the SDK to your project](#sdk-add)
    * [Integrate the SDK into your app](#sdk-integrate)
-   * [Adjust logging](#adjust-logging)
+   * [Adjust logging](#sdk-logging)
    * [Android manifest](#android-manifest)
    * [Google Play Services](#google-play-services)
 * [Additional features](#additional-features)
@@ -27,14 +27,17 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
     * [Session and event callbacks](#session-event-callbacks)
     * [Disable tracking](#disable-tracking)
     * [Offline mode](#offline-mode)
+    * [SDK signature](#sdk-signature)
     * [Event buffering](#event-buffering)
     * [Background tracking](#background-tracking)
     * [Device IDs](#device-ids)
       * [iOS advertising identifier](#di-idfa)
       * [Google Play Services advertising identifier](#di-gps-adid)
+      * [Amazon advertising identifier](#di-fire-adid)
       * [Adjust device identifier](#di-adid)
     * [User attribution](#user-attribution)
     * [Push token](#push-token)
+    * [Track additional device identifiers](#track-additional-ids)
     * [Pre-installed trackers](#pre-installed-trackers)
     * [Deep linking](#deeplinking)
         * [Standard deep linking scenario](#deeplinking-standard)
@@ -177,6 +180,8 @@ var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
 adjustEvent.setRevenue(0.01, "EUR");
 Adjust.trackEvent(adjustEvent);
 ```
+
+When you set a currency token, Adjust will automatically convert the incoming revenue into a reporting revenue of your choice. Read more about [currency conversion here][currency-conversion].
 
 ### <a id="revenue-deduplication"></a>Revenue deduplication
 
@@ -545,6 +550,22 @@ Conversely, you can deactivate the offline mode by calling `setOfflineMode` with
 
 Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
 
+### <a id="sdk-signature"></a>SDK signature
+ 
+An account manager must activate the Adjust SDK signature. Contact Adjust support (support@adjust.com) if you are interested in using this feature.
+ 
+If the SDK signature has already been enabled on your account and you have access to App Secrets in your Adjust Dashboard, please use the method below to integrate the SDK signature into your app.
+
+An App Secret is set by passing all secret parameters (`secretId`, `info1`, `info2`, `info3`, `info4`) to `setAppSecret` method of `AdjustConfig` instance:
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+
+adjustConfig.setAppSecret(secretId, info1, info2, info3, info4);
+
+Adjust.create(adjustConfig);
+```
+
 ### <a id="event-buffering">Event buffering
 
 If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in a single batch every minute. You can enable event buffering by calling the method `setEventBufferingEnabled` of the `AdjustConfig` instance with parameter `true`.
@@ -605,6 +626,14 @@ private static function getGoogleAdIdCallback(googleAdId:String):void {
 }
 ```
 
+### <a id="di-fire-adid"></a>Amazon advertising identifier
+
+If you need to obtain the Amazon advertising ID, you can call the `getAmazonAdId` method on `Adjust` instance:
+
+```actionscript
+var adid:String = Adjust.getAmazonAdId();
+```
+
 Inside the custom defined method `getGoogleAdIdCallback`, you will have access to the Google Advertising ID as the variable `googleAdId`.
 
 ### <a id="di-adid"></a>Adjust device identifier
@@ -634,6 +663,27 @@ To send us the push notification token, add the following call to Adjust **whene
 ```actionscript
 Adjust.setDeviceToken("YourPushNotificationToken");
 ```
+
+
+### <a id="track-additional-ids"></a>Track additional device identifiers
+
+If you are distributing your Android app **outside of the Google Play Store** and would like to track additional device identifiers (IMEI and MEID), you need to explicitly instruct the Adjust SDK to do so. You can do that by calling the `setReadMobileEquipmentIdentity` method of the `AdjustConfig` instance. **The Adjust SDK does not collect these identifiers by default**.
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
+
+adjustConfig.setReadMobileEquipmentIdentity(true);
+
+Adjust.create(adjustConfig);
+```
+
+You will also need to add the `READ_PHONE_STATE` permission to your `AndroidManifest.xml` file:
+
+```xml
+<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+```
+
+In order to use this feature, additional steps are required within your Adjust Dashboard. For more information, please contact your dedicated account manager or write an email to support@adjust.com.
 
 ### <a id="pre-installed-trackers">Pre-installed trackers
 
@@ -800,13 +850,14 @@ The Adjust SDK supports this feature out of the box and no additional setup is n
 [releases]:             https://github.com/adjust/adjust_air_sdk/releases
 [example-app]:          example
 [google-ad-id]:         https://developer.android.com/google/play-services/id.html
+[currency-conversion]:  https://docs.adjust.com/en/event-tracking/#tracking-purchases-in-different-currencies
 [flash-builder]:        https://github.com/adjust/adobe_air_sdk/blob/master/doc/flash_builder.md
 [callbacks-guide]:      https://docs.adjust.com/en/callbacks
 [special-partners]:     https://docs.adjust.com/en/special-partners
 [google-analytics]:     https://docs.adjust.com/en/special-partners/google-analytics
 [attribution-data]:     https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
 [attribution_data]:     https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
-[brodcast-receiver]:    https://github.com/adjust/android_sdk#6-add-broadcast-receiver
+[brodcast-receiver]:    https://github.com/adjust/android_sdk#gps-intent
 
 [android-permissions]:          https://github.com/adjust/android_sdk#5-add-permissions
 [google-play-services]:         http://developer.android.com/google/play-services/setup.html
@@ -825,7 +876,7 @@ The Adjust SDK supports this feature out of the box and no additional setup is n
 
 The Adjust SDK is licensed under the MIT License.
 
-Copyright (c) 2012-2017 Adjust GmbH,
+Copyright (c) 2012-2018 Adjust GmbH,
 http://www.adjust.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
