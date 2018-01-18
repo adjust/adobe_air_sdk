@@ -30,6 +30,9 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
     * [SDK signature](#sdk-signature)
     * [Event buffering](#event-buffering)
     * [Background tracking](#background-tracking)
+    * [Install referrer](#android-referrer)
+      * [Google Install Referrer API](#android-referrer-gpr-api)
+      * [Google Play Store intent](#android-referrer-gps-intent)
     * [Device IDs](#device-ids)
       * [iOS advertising identifier](#di-idfa)
       * [Google Play Services advertising identifier](#di-gps-adid)
@@ -599,6 +602,64 @@ Adjust.start(adjustConfig);
 ```
 
 If nothing is set, sending in background is **disabled by default**.
+
+### <a id="android-referrer"></a>Install referrer
+
+In order to correctly attribute an install of your Android app to its source, Adjust needs information about the **install referrer**. This can be obtained by using the **Google Install Referrer API** or by catching the **Google Play Store intent** with a broadcast receiver.
+
+**Important**: The Google Install Referrer API is newly introduced by Google with the express purpose of providing a more reliable and secure way of obtaining install referrer information and to aid attribution providers in the fight against click injection. It is **strongly advised** that you support this in your application. The Google Play Store intent is a less secure way of obtaining install referrer information. It will continue to exist in parallel with the new Google Install Referrer API temporarily, but it is set to be deprecated in future.
+
+#### <a id="android-referrer-gpr-api"></a>Google Install Referrer API
+
+Adjust provides an Install Referrer ANE which is built to fit the needs of our SDK. You can find our Google Install Referrer API as part of the release on our [releases page][releases].
+
+You will need to import the downloaded ANE into your app. After that, add the ANE extension to your app's XML descriptor file:
+
+```xml
+<extensions>
+    <!-- ... --->
+    <extensionID>com.adjust.installref</extensionID>
+    <!-- ... --->
+</extensions>
+```
+
+You'll also have to add an Android permission to allow the install referrer ANE to contact Google servers to fetch install data:
+
+```xml
+<android> 
+  <manifestAdditions> 
+    <![CDATA[ 
+    <manifest>
+      <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+      <application>
+      …
+      </application>
+    </manifest>
+    ]]> 
+  </manifestAdditions> 
+</android>
+```
+
+#### <a id="android-referrer-gps-intent"></a>Google Play Store intent
+
+The Google Play Store `INSTALL_REFERRER` intent should be captured with a broadcast receiver. The Adjust install referrer broadcast receiver is added to your app by default. For more information, you can check our native [Android SDK README][broadcast-receiver]. You should add the lines below in your app's XML descriptor file:
+
+```xml
+<android>
+  <manifestAdditions>
+    <![CDATA[ 
+        …
+        <receiver android:name="com.adjust.sdk.AdjustReferrerReceiver" 
+                  android:exported="true" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        … 
+    ]]> 
+  </manifestAdditions> 
+</android>
+```
 
 ### <a id="device-ids">Device IDs
 
