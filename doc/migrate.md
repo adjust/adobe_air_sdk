@@ -173,6 +173,7 @@ and change the name of the broadcast receiver class from `ReferrerReceiver` to `
 ```actionscript
 <receiver
     android:name="com.adjust.sdk.AdjustReferrerReceiver"
+    android:permission="android.permission.INSTALL_PACKAGES"
     android:exported="true" >
     <intent-filter>
         <action android:name="com.android.vending.INSTALL_REFERRER" />
