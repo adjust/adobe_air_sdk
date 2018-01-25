@@ -5,10 +5,10 @@
 - **[AND]** https://github.com/adjust/android_sdk/blob/master/CHANGELOG.md#version-4120-13th-december-2017
 
 #### Added
+- **[AND]** Added support for new Google referrer API (https://developer.android.com/google/play/installreferrer/library.html).
 - **[AND]** Added `getAmazonAdId` method to `Adjust` interface.
+- **[AND]** Added `setReadMobileEquipmentIdentity` method to `AdjustConfig` interface.
 - **[iOS][AND]** Added `setAppSecret` method to `AdjustConfig` interface.
-- **[iOS][AND]** Added `setReadMobileEquipmentIdentity` method to `AdjustConfig` interface.
-- **[iOS][AND]** Added support for install referrer.
 
 #### Native SDKs
 - **[iOS]** [iOS@v4.12.1][ios_sdk_v4.12.1]
