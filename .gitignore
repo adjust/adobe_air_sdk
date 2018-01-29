@@ -8,12 +8,11 @@
 *.swcout
 out
 build
-*.ane
-!AdjustGPS-*.*.*.ane
 gen
 .idea
 *.iml
 bin/
+!Adjust-*.*.*.ane
 
 ### Xcode ###
 build/
