@@ -4,6 +4,7 @@
         <option>-ios_version_min 6.0</option>
         <option>-framework AdSupport</option>
         <option>-framework iAd</option>
+        <option>-framework CoreTelephony</option>
         <option>-liconv</option>
     </linkerOptions>
 
