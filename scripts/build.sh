@@ -39,8 +39,10 @@ ${EXT_DIR}/ios/build.sh
 echo -e "${GREEN}>>> AA build script: copying generated files to ${BUILD_DIR} ${NC}"
 cd ${ROOT_DIR}
 mkdir -p ${BUILD_DIR}/Android
-cp -vr ${EXT_DIR}/Android/*.jar ${BUILD_DIR}/Android
-cp -vr ${EXT_DIR}/ios/*.a ${EXT_DIR}/ios/*.framework ${BUILD_DIR}/iOS
+mkdir -p ${BUILD_DIR}/iOS
+cp -vR ${EXT_DIR}/Android/*.jar ${BUILD_DIR}/Android
+cp -vR ${EXT_DIR}/iOS/*.a ${BUILD_DIR}/iOS
+cp -vR ${EXT_DIR}/iOS/*.framework ${BUILD_DIR}/iOS
 
 #------------ 
 echo -e "${GREEN}>>> AA build script:  Making swc file${NC}"

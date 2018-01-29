@@ -10,7 +10,7 @@ VERSION=`cat ${ROOT_DIR}/VERSION`
 
 MAIN_FILE=Main.as
 EXAMPLE_APP_XML_FILE=Main-app.xml
-KEYSTORE_FILE=`cd ${EXAMPLE_DIR}; find . -name "*.pfx" -print` # Get any keystore file with extension .pfx
+KEYSTORE_FILE=`cd ${ROOT_DIR}/${EXAMPLE_DIR}; find . -name "*.pfx" -print` # Get any keystore file with extension .pfx
 
 RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
