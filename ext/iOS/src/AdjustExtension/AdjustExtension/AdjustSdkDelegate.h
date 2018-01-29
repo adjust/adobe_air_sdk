@@ -21,5 +21,5 @@
 						    sessionFailedCallback:(BOOL)swizzleSessionFailedCallback
 					     deferredDeeplinkCallback:(BOOL)swizzleDeferredDeeplinkCallback
                      shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                         withFREContext:(FREContext *)freContext;
+                         		   withFREContext:(FREContext *)freContext;
 @end

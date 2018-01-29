@@ -20,7 +20,7 @@
                             sessionFailedCallback:(BOOL)swizzleSessionFailedCallback
                          deferredDeeplinkCallback:(BOOL)swizzleDeferredDeeplinkCallback
                      shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                            withFREContext:(FREContext *)freContext {
+                                   withFREContext:(FREContext *)freContext {
     static dispatch_once_t onceToken;
     static AdjustSdkDelegate *defaultInstance = nil;
     

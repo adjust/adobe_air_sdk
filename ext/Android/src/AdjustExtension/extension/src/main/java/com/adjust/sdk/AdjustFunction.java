@@ -298,8 +298,7 @@ public class AdjustFunction implements FREFunction,
                     && info1 != null
                     && info2 != null
                     && info3 != null
-                    && info4 != null
-                    ) {
+                    && info4 != null) {
                 try {
                     long lSecretId = Long.parseLong(secretId, 10);
                     long lInfo1 = Long.parseLong(info1, 10);
