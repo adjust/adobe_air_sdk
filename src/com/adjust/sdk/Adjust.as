@@ -5,7 +5,7 @@ package com.adjust.sdk {
 
     public class Adjust extends EventDispatcher {
         private static var sdkPrefix:String = "adobe_air4.12.0";
-        private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
+        private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
         
         private static var hasSdkStarted:Boolean = false;
         private static var extensionContext:ExtensionContext = null;
@@ -28,7 +28,7 @@ package com.adjust.sdk {
 
         public static function start(adjustConfig:AdjustConfig):void {
             if (hasSdkStarted) {
-                trace("adjust warning: SDK already started");
+                trace("Adjust warning: SDK already started");
                 return;
             }
 
