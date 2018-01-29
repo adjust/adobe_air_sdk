@@ -12,9 +12,9 @@ package com.adjust.sdk {
             adid:String,
             eventToken:String,
             jsonResponse:String) {
-            this.adid = adid;
             this.message = message;
             this.timestamp = timestamp;
+            this.adid = adid;
             this.eventToken = eventToken;
             this.jsonResponse = jsonResponse;
         }

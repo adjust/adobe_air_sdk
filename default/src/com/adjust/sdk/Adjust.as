@@ -4,84 +4,88 @@ package com.adjust.sdk {
 
     public class Adjust extends EventDispatcher {
         public static function start(adjustConfig:AdjustConfig):void {
-            trace("adjust: start called");
+            trace("Adjust: start called");
         }
 
         public static function trackEvent(adjustEvent:AdjustEvent):void {
-            trace("adjust: trackEvent called");
+            trace("Adjust: trackEvent called");
         }
 
         public static function setEnabled(enabled:Boolean):void {
-            trace("adjust: setEnabled called");
+            trace("Adjust: setEnabled called");
         }
 
         public static function isEnabled():Boolean {
-            trace("adjust: isEnabled called");
+            trace("Adjust: isEnabled called");
             return false;
         }
 
         public static function onResume(event:Event):void {
-            trace("adjust: onResume called");
+            trace("Adjust: onResume called");
         }
 
         public static function onPause(event:Event):void {
-            trace("adjust: onPause called");
+            trace("Adjust: onPause called");
         }
 
         public static function appWillOpenUrl(url:String):void {
-            trace("adjust: appWillOpenUrl called");
+            trace("Adjust: appWillOpenUrl called");
         }
 
         public static function setOfflineMode(isOffline:Boolean):void {
-            trace("adjust: setOfflineMode called");
+            trace("Adjust: setOfflineMode called");
         }
 
         public static function setReferrer(referrer:String):void {
-            trace("adjust: setReferrer called");
+            trace("Adjust: setReferrer called");
         }
 
         public static function setDeviceToken(deviceToken:String):void {
-            trace("adjust: setDeviceToken called");
+            trace("Adjust: setDeviceToken called");
         }
 
         public static function getIdfa():void {
-            trace("adjust: getIdfa called");
+            trace("Adjust: getIdfa called");
         }
 
         public static function getAdid():void {
-            trace("adjust: getAdid called");
+            trace("Adjust: getAdid called");
         }
 
         public static function getAttribution():void {
-            trace("adjust: getAttribution called");
+            trace("Adjust: getAttribution called");
         }
 
         public static function getGoogleAdId(callback:Function):void {
-            trace("adjust: getGoogleAdId called");
+            trace("Adjust: getGoogleAdId called");
+        }
+
+        public static function getAmazonAdId():void {
+            trace("Adjust: getAmazonAdId called");
         }
 
         public static function addSessionCallbackParameter(key:String, value:String):void {
-            trace("adjust: addSessionCallbackParameter called");
+            trace("Adjust: addSessionCallbackParameter called");
         }
 
         public static function removeSessionCallbackParameter(key:String):void {
-            trace("adjust: removeSessionCallbackParameter called");
+            trace("Adjust: removeSessionCallbackParameter called");
         }
 
         public static function resetSessionCallbackParameters():void {
-            trace("adjust: resetSessionCallbackParameters called");
+            trace("Adjust: resetSessionCallbackParameters called");
         }
 
         public static function addSessionPartnerParameter(key:String, value:String):void {
-            trace("adjust: addSessionPartnerParameter called");
+            trace("Adjust: addSessionPartnerParameter called");
         }
 
         public static function removeSessionPartnerParameter(key:String):void {
-            trace("adjust: removeSessionPartnerParameter called");
+            trace("Adjust: removeSessionPartnerParameter called");
         }
 
         public static function resetSessionPartnerParameters():void {
-            trace("adjust: resetSessionPartnerParameters called");
+            trace("Adjust: resetSessionPartnerParameters called");
         }
     }
 }
