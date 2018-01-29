@@ -294,11 +294,7 @@ public class AdjustFunction implements FREFunction,
                 adjustConfig.setReadMobileEquipmentIdentity(readMobileEquipmentIdentity);
             }
 
-            if (secretId != null
-                    && info1 != null
-                    && info2 != null
-                    && info3 != null
-                    && info4 != null) {
+            if (secretId != null && info1 != null && info2 != null && info3 != null && info4 != null) {
                 try {
                     long lSecretId = Long.parseLong(secretId, 10);
                     long lInfo1 = Long.parseLong(info1, 10);
@@ -306,7 +302,9 @@ public class AdjustFunction implements FREFunction,
                     long lInfo3 = Long.parseLong(info3, 10);
                     long lInfo4 = Long.parseLong(info4, 10);
 
-                    adjustConfig.setAppSecret(lSecretId, lInfo1, lInfo2, lInfo3, lInfo4);
+                    if (lSecretId > 0 && lInfo1 > 0 && lInfo2 > 0 && lInfo3 > 0 && lInfo4 > 0) {
+                        adjustConfig.setAppSecret(lSecretId, lInfo1, lInfo2, lInfo3, lInfo4);
+                    }
                 } catch (NumberFormatException ignored) {
                 }
             }
