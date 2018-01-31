@@ -13,6 +13,7 @@ gen
 *.iml
 bin/
 Adjust-*.*.*.ane
+!example/lib/Adjust-*.*.*.ane
 
 ### Xcode ###
 build/
