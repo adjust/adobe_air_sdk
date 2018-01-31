@@ -12,7 +12,7 @@ gen
 .idea
 *.iml
 bin/
-!Adjust-*.*.*.ane
+Adjust-*.*.*.ane
 
 ### Xcode ###
 build/
