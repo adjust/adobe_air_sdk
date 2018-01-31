@@ -177,16 +177,16 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 
         // arg 23 is for Android only: ReadMobileEquipmentIdentity
 
-        if (secretId != nil
-                && info1 != nil
-                && info2 != nil
-                && info3 != nil
-                && info4 != nil) {
-            [adjustConfig setAppSecret:[[NSNumber numberWithLongLong:[secretId longLongValue]] unsignedIntegerValue]
-                             info1:[[NSNumber numberWithLongLong:[info1 longLongValue]] unsignedIntegerValue]
-                             info2:[[NSNumber numberWithLongLong:[info2 longLongValue]] unsignedIntegerValue]
-                             info3:[[NSNumber numberWithLongLong:[info3 longLongValue]] unsignedIntegerValue]
-                             info4:[[NSNumber numberWithLongLong:[info4 longLongValue]] unsignedIntegerValue]];
+        if (secretId != nil && info1 != nil && info2 != nil && info3 != nil && info4 != nil) {
+            NSUInteger uiSecretId = [[NSNumber numberWithLongLong:[secretId longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo1 = [[NSNumber numberWithLongLong:[info1 longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo2 = [[NSNumber numberWithLongLong:[info2 longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo3 = [[NSNumber numberWithLongLong:[info3 longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo4 = [[NSNumber numberWithLongLong:[info4 longLongValue]] unsignedIntegerValue];
+
+            if (uiSecretId > 0 && uiInfo1 > 0 && uiInfo2 > 0 && uiInfo3 > 0 && uiInfo4 > 0) {
+                [adjustConfig setAppSecret:uiSecretId info1:uiInfo1 info2:uiInfo2 info3:uiInfo3 info4:uiInfo4];
+            }
         }
 
         [Adjust appDidLaunch:adjustConfig];
