@@ -18,23 +18,27 @@ BOOL shouldLaunchDeferredDeeplink;
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 17) {
-        ADJLogLevel logLevel;
-
-        NSString *appToken = nil;
-        NSString *environment = nil;
+    if (argc == 24) {
+        NSString *appToken       = nil;
+        NSString *environment    = nil;
         NSString *logLevelString = nil;
         NSString *defaultTracker = nil;
-        NSString *sdkPrefix = nil;
+        NSString *sdkPrefix      = nil;
 
-        BOOL eventBufferingEnabled = NO;
-        BOOL isAttributionCallbackImplemented = NO;
-        BOOL isEventTrackingSucceededCallbackImplemented = NO;
-        BOOL isEventTrackingFailedCallbackImplemented = NO;
+        NSString *secretId       = nil;
+        NSString *info1          = nil;
+        NSString *info2          = nil;
+        NSString *info3          = nil;
+        NSString *info4          = nil;
+
+        BOOL eventBufferingEnabled                         = NO;
+        BOOL isAttributionCallbackImplemented              = NO;
+        BOOL isEventTrackingSucceededCallbackImplemented   = NO;
+        BOOL isEventTrackingFailedCallbackImplemented      = NO;
         BOOL isSessionTrackingSucceededCallbackImplemented = NO;
-        BOOL isSessionTrackingFailedCallbackImplemented = NO;
-        BOOL isDeferredDeeplinkCallbackImplemented = NO;
-        BOOL allowSuppressLogLevel = NO;
+        BOOL isSessionTrackingFailedCallbackImplemented    = NO;
+        BOOL isDeferredDeeplinkCallbackImplemented         = NO;
+        BOOL allowSuppressLogLevel                         = NO;
 
         adjustFREContext = ctx;
 
@@ -52,9 +56,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             if (logLevelString != nil) {
                 if ([logLevelString isEqualToString:@"suppress"]) {
                     allowSuppressLogLevel = YES;
-                    logLevel = ADJLogLevelSuppress;
-                } else {
-                    logLevel = [ADJLogger LogLevelFromString:logLevelString];
                 }
             }
         }
@@ -62,7 +63,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken environment:environment allowSuppressLogLevel:allowSuppressLogLevel];
 
         if (logLevelString != nil) {
-            [adjustConfig setLogLevel:logLevel];
+            [adjustConfig setLogLevel:[ADJLogger logLevelFromString:[logLevelString lowercaseString]]];
         }
 
         if (argv[3] != nil) {
@@ -128,7 +129,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
                                                                  withFREContext:&adjustFREContext]];
         }
 
-        // arg 13 is for Android only
+        // arg 13 is for Android only: processName
 
         if (argv[14] != nil) {
             double delayStart;
@@ -146,6 +147,46 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             BOOL sendInBackground = NO;
             FREGetObjectAsNativeBool(argv[15], &sendInBackground);
             [adjustConfig setSendInBackground:sendInBackground];
+        }
+
+        if (argv[17] != nil) {
+            FREGetObjectAsNativeString(argv[17], &secretId);
+        }
+
+        if (argv[18] != nil) {
+            FREGetObjectAsNativeString(argv[18], &info1);
+        }
+
+        if (argv[19] != nil) {
+            FREGetObjectAsNativeString(argv[19], &info2);
+        }
+
+        if (argv[20] != nil) {
+            FREGetObjectAsNativeString(argv[20], &info3);
+        }
+
+        if (argv[21] != nil) {
+            FREGetObjectAsNativeString(argv[21], &info4);
+        }
+
+        if (argv[22] != nil) {
+            BOOL isDeviceKnown = NO;
+            FREGetObjectAsNativeBool(argv[22], &isDeviceKnown);
+            [adjustConfig setIsDeviceKnown:isDeviceKnown];
+        }
+
+        // arg 23 is for Android only: ReadMobileEquipmentIdentity
+
+        if (secretId != nil && info1 != nil && info2 != nil && info3 != nil && info4 != nil) {
+            NSUInteger uiSecretId = [[NSNumber numberWithLongLong:[secretId longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo1 = [[NSNumber numberWithLongLong:[info1 longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo2 = [[NSNumber numberWithLongLong:[info2 longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo3 = [[NSNumber numberWithLongLong:[info3 longLongValue]] unsignedIntegerValue];
+            NSUInteger uiInfo4 = [[NSNumber numberWithLongLong:[info4 longLongValue]] unsignedIntegerValue];
+
+            if (uiSecretId > 0 && uiInfo1 > 0 && uiInfo2 > 0 && uiInfo3 > 0 && uiInfo4 > 0) {
+                [adjustConfig setAppSecret:uiSecretId info1:uiInfo1 info2:uiInfo2 info3:uiInfo3 info4:uiInfo4];
+            }
         }
 
         [Adjust appDidLaunch:adjustConfig];
@@ -424,6 +465,12 @@ FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObj
     return return_value;
 }
 
+FREObject ADJgetAmazonAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}
 
 FREObject ADJaddSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 2) {

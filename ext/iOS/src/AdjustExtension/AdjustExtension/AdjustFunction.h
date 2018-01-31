@@ -36,4 +36,5 @@ FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetAmazonAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 

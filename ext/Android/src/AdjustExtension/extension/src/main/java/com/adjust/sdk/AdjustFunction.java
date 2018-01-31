@@ -9,9 +9,9 @@ import com.adobe.fre.*;
 /**
  * Created by pfms on 31/07/14.
  */
-public class AdjustFunction implements FREFunction, 
+public class AdjustFunction implements FREFunction,
        OnAttributionChangedListener,
-       OnEventTrackingSucceededListener, 
+       OnEventTrackingSucceededListener,
        OnEventTrackingFailedListener,
        OnSessionTrackingSucceededListener,
        OnSessionTrackingFailedListener,
@@ -67,6 +67,10 @@ public class AdjustFunction implements FREFunction,
             return GetGoogleAdId(freContext, freObjects);
         }
 
+        if (functionName == AdjustContext.GetAmazonAdId) {
+            return GetAmazonAdId(freContext, freObjects);
+        }
+
         if (functionName == AdjustContext.GetIdfa) {
             return GetIdfa(freContext, freObjects);
         }
@@ -98,7 +102,7 @@ public class AdjustFunction implements FREFunction,
         if (functionName == AdjustContext.SetDeviceToken) {
             return SetDeviceToken(freContext, freObjects);
         }
-        
+
         if (functionName == AdjustContext.SendFirstPackages) {
             return SendFirstPackages(freContext, freObjects);
         }
@@ -121,6 +125,12 @@ public class AdjustFunction implements FREFunction,
             String logLevel = null;
             boolean allowSuppressLogLevel = false;
 
+            String secretId = null;
+            String info1 = null;
+            String info2 = null;
+            String info3 = null;
+            String info4 = null;
+
             if (freObjects[0] != null) {
                 appToken = freObjects[0].getAsString();
             }
@@ -128,12 +138,11 @@ public class AdjustFunction implements FREFunction,
             if (freObjects[1] != null) {
                 environment = freObjects[1].getAsString();
             }
-            
+
             if (freObjects[2] != null) {
                 logLevel = freObjects[2].getAsString();
             }
 
-           
             if (logLevel != null && logLevel.equals("suppress")) {
                 allowSuppressLogLevel = true;
             }
@@ -253,6 +262,51 @@ public class AdjustFunction implements FREFunction,
             if (freObjects[16] != null) {
                 boolean sendInBackground = freObjects[16].getAsBool();
                 adjustConfig.setSendInBackground(sendInBackground);
+            }
+
+            if (freObjects[17] != null) {
+                secretId = freObjects[17].getAsString();
+            }
+
+            if (freObjects[18] != null) {
+                info1 = freObjects[18].getAsString();
+            }
+
+            if (freObjects[19] != null) {
+                info2 = freObjects[19].getAsString();
+            }
+
+            if (freObjects[20] != null) {
+                info3 = freObjects[20].getAsString();
+            }
+
+            if (freObjects[21] != null) {
+                info4 = freObjects[21].getAsString();
+            }
+
+            if (freObjects[22] != null) {
+                boolean isDeviceKnown = freObjects[22].getAsBool();
+                adjustConfig.setDeviceKnown(isDeviceKnown);
+            }
+
+            if (freObjects[23] != null) {
+                boolean readMobileEquipmentIdentity = freObjects[23].getAsBool();
+                adjustConfig.setReadMobileEquipmentIdentity(readMobileEquipmentIdentity);
+            }
+
+            if (secretId != null && info1 != null && info2 != null && info3 != null && info4 != null) {
+                try {
+                    long lSecretId = Long.parseLong(secretId, 10);
+                    long lInfo1 = Long.parseLong(info1, 10);
+                    long lInfo2 = Long.parseLong(info2, 10);
+                    long lInfo3 = Long.parseLong(info3, 10);
+                    long lInfo4 = Long.parseLong(info4, 10);
+
+                    if (lSecretId > 0 && lInfo1 > 0 && lInfo2 > 0 && lInfo3 > 0 && lInfo4 > 0) {
+                        adjustConfig.setAppSecret(lSecretId, lInfo1, lInfo2, lInfo3, lInfo4);
+                    }
+                } catch (NumberFormatException ignored) {
+                }
             }
 
             Adjust.onCreate(adjustConfig);
@@ -394,7 +448,7 @@ public class AdjustFunction implements FREFunction,
         try {
             String referrer = freObjects[0].getAsString();
 
-            Adjust.setReferrer(referrer);
+            Adjust.setReferrer(referrer, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
@@ -425,6 +479,18 @@ public class AdjustFunction implements FREFunction,
                 }
             }
         });
+
+        return null;
+    }
+
+    private FREObject GetAmazonAdId(final FREContext freContext, FREObject[] freObjects) {
+        String amazonAdId = Adjust.getAmazonAdId(freContext.getActivity().getApplicationContext());
+
+        if (amazonAdId != null) {
+            freContext.dispatchStatusEventAsync("adjust_amazonAdId", amazonAdId);
+        } else {
+            freContext.dispatchStatusEventAsync("adjust_amazonAdId", "");
+        }
 
         return null;
     }
@@ -637,7 +703,7 @@ public class AdjustFunction implements FREFunction,
         String response = deeplink.toString();
 
         AdjustExtension.context.dispatchStatusEventAsync("adjust_deferredDeeplink", response);
-        
+
         return shouldLaunchDeeplink;
     }
 }

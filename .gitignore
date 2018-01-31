@@ -1,3 +1,4 @@
+### Misc ###
 .DS_Store
 *.swp
 *.swo
@@ -7,14 +8,13 @@
 *.swcout
 out
 build
-*.ane
-!AdjustGPS-*.*.*.ane
 gen
 .idea
 *.iml
 bin/
+!Adjust-*.*.*.ane
 
-# Xcode
+### Xcode ###
 build/
 *.pbxuser
 !default.pbxuser
@@ -32,7 +32,14 @@ DerivedData
 *.hmap
 *.ipa
 
-# Custom
+### Custom ###
 *.dSYM
 *.a
 *.pfx
+ext/iOS/AdjustSdk.framework
+ext/iOS/src/AdjustExtension/include/Adjust/AdjustSdk.framework
+ext/Android/adjust-android.jar
+
+### Android Studio ###
+local.properties
+/*/local.properties

@@ -29,11 +29,18 @@ package {
             buildButton(2, "Disable Offline Mode", DisableOfflineModeClick);
             buildButton(3, "Enable SDK", SetEnableClick);
             buildButton(4, "Disable SDK", SetDisableClick);
-
             IsEnabledTextField = buildButton(5, "Is SDK Enabled?", IsEnabledClick);
+            buildButton(6, "Get IDs", GetIDs);
 
             // -------- Adjust Configuration -------- //
             var adjustConfig:AdjustConfig = new AdjustConfig("2fm9gkqubvpc", Environment.SANDBOX);
+
+            //adjustConfig.setDelayStart(3.0);
+            adjustConfig.setLogLevel(LogLevel.VERBOSE);
+            adjustConfig.setUserAgent("Custom Adjust User Agent");
+            adjustConfig.setSendInBackground(true);
+            adjustConfig.setDeviceKnown(true);
+            adjustConfig.setReadMobileEquipmentIdentity(true);
 
             adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
             adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
@@ -42,30 +49,22 @@ package {
             adjustConfig.setSessionTrackingFailedDelegate(sessionTrackingFailedDelegate);
             adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
             adjustConfig.setShouldLaunchDeeplink(true);
-            adjustConfig.setLogLevel(LogLevel.VERBOSE);
 
-            Adjust.addSessionCallbackParameter("dummy_foo", "dummy_bar");
-            Adjust.addSessionCallbackParameter("dummy_foo_foo", "dummy_bar");
+            Adjust.addSessionCallbackParameter("scpk1", "scpv1");
+            Adjust.addSessionCallbackParameter("scpk2", "scpv2");
 
-            Adjust.addSessionPartnerParameter("dummy_foo", "dummy_bar");
-            Adjust.addSessionPartnerParameter("dummy_foo_foo", "dummy_bar");
+            Adjust.addSessionPartnerParameter("sppk1", "sppv1");
+            Adjust.addSessionPartnerParameter("sppk2", "sppv2");
 
-            Adjust.removeSessionCallbackParameter("dummy_foo");
-            Adjust.removeSessionPartnerParameter("dummy_foo");
+            Adjust.removeSessionCallbackParameter("scpk1");
+            Adjust.removeSessionPartnerParameter("sppk2");
 
-            //Adjust.resetSessionCallbackParameters();
-            //Adjust.resetSessionPartnerParameters();
-
-            adjustConfig.setDelayStart(3.0);
-            adjustConfig.setUserAgent("little_bunny_foo_foo");
-            adjustConfig.setSendInBackground(true);
-
-            Adjust.setDeviceToken("dummy_token_1");
+            // Adjust.resetSessionCallbackParameters();
+            // Adjust.resetSessionPartnerParameters();
 
             Adjust.start(adjustConfig);
 
-            Adjust.setDeviceToken("bunny_foo_foo");
-            Adjust.sendFirstPackages();
+            // Adjust.sendFirstPackages();
 
             // -------- Adjust Configuration -------- //
         }
@@ -76,19 +75,6 @@ package {
             var adjustEvent:AdjustEvent = new AdjustEvent("g3mfiw");
 
             Adjust.trackEvent(adjustEvent);
-
-            trace("Adid = " + Adjust.getAdid());
-
-            var attribution:AdjustAttribution = Adjust.getAttribution();
-
-            trace("Tracker token = " + attribution.getTrackerToken());
-            trace("Tracker name = " + attribution.getTrackerName());
-            trace("Campaign = " + attribution.getCampaign());
-            trace("Network = " + attribution.getNetwork());
-            trace("Creative = " + attribution.getCreative());
-            trace("Adgroup = " + attribution.getAdGroup());
-            trace("Click label = " + attribution.getClickLabel());
-            trace("Adid = " + attribution.getAdid());
         }
 
         private static function TrackRevenueClick(Event:MouseEvent):void {
@@ -123,6 +109,30 @@ package {
             adjustEvent.addPartnerParameter("foo", "z");
 
             Adjust.trackEvent(adjustEvent);
+        }
+
+        private static function GetIDs(Event:MouseEvent):void {
+            trace ("Get IDs button tapped");
+
+            trace("Adid = " + Adjust.getAdid());
+            trace("IDFA = " + Adjust.getIdfa());
+            trace("Amazon Ad id = " + Adjust.getAmazonAdId());
+            Adjust.getGoogleAdId(googleAdIdDelegate);
+
+            var attribution:AdjustAttribution = Adjust.getAttribution();
+
+            trace("Tracker token = " + attribution.getTrackerToken());
+            trace("Tracker name = " + attribution.getTrackerName());
+            trace("Campaign = " + attribution.getCampaign());
+            trace("Network = " + attribution.getNetwork());
+            trace("Creative = " + attribution.getCreative());
+            trace("Adgroup = " + attribution.getAdGroup());
+            trace("Click label = " + attribution.getClickLabel());
+            trace("Adid = " + attribution.getAdid());
+        }
+
+        private static function googleAdIdDelegate(adid:String):void {
+            trace("Google Ad id = " + adid);
         }
 
         private static function EnableOfflineModeClick(Event:MouseEvent):void {

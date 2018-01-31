@@ -4,8 +4,8 @@ package com.adjust.sdk {
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
-        private static var sdkPrefix:String = "adobe_air4.11.3";
-        private static var errorMessage:String = "adjust: SDK not started. Start it manually using the 'start' method";
+        private static var sdkPrefix:String = "adobe_air4.12.0";
+        private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
         
         private static var hasSdkStarted:Boolean = false;
         private static var extensionContext:ExtensionContext = null;
@@ -28,7 +28,7 @@ package com.adjust.sdk {
 
         public static function start(adjustConfig:AdjustConfig):void {
             if (hasSdkStarted) {
-                trace("adjust warning: SDK already started");
+                trace("Adjust warning: SDK already started");
                 return;
             }
 
@@ -74,7 +74,14 @@ package com.adjust.sdk {
                     adjustConfig.getProcessName(),
                     adjustConfig.getDelayStart(),
                     adjustConfig.getUserAgent(),
-                    adjustConfig.getSendInBackground());
+                    adjustConfig.getSendInBackground(),
+                    adjustConfig.getSecretId(),
+                    adjustConfig.getInfo1(),
+                    adjustConfig.getInfo2(),
+                    adjustConfig.getInfo3(),
+                    adjustConfig.getInfo4(),
+                    adjustConfig.getIsDeviceKnown(),
+                    adjustConfig.getReadMobileEquipmentIdentity());
 
             // For now, call onResume after onCreate.
             getExtensionContext().call("onResume");
@@ -154,6 +161,12 @@ package com.adjust.sdk {
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
             getExtensionContext().call("getGoogleAdId");
+        }
+
+        public static function getAmazonAdId():String {
+            var adid:String = String (getExtensionContext().call("getAmazonAdId"));
+
+            return adid;
         }
 
         public static function addSessionCallbackParameter(key:String, value:String):void {

@@ -1,4 +1,4 @@
-## Migrate your adjust SDK for Adobe AIR to 4.11.3 from 3.4.3
+## Migrate your adjust SDK for Adobe AIR to 4.12.0 from 3.4.3
 
 ### SDK initialization
 
@@ -173,6 +173,7 @@ and change the name of the broadcast receiver class from `ReferrerReceiver` to `
 ```actionscript
 <receiver
     android:name="com.adjust.sdk.AdjustReferrerReceiver"
+    android:permission="android.permission.INSTALL_PACKAGES"
     android:exported="true" >
     <intent-filter>
         <action android:name="com.android.vending.INSTALL_REFERRER" />
