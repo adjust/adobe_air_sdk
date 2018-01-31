@@ -35,6 +35,13 @@ package {
             // -------- Adjust Configuration -------- //
             var adjustConfig:AdjustConfig = new AdjustConfig("2fm9gkqubvpc", Environment.SANDBOX);
 
+            //adjustConfig.setDelayStart(3.0);
+            adjustConfig.setLogLevel(LogLevel.VERBOSE);
+            adjustConfig.setUserAgent("Custom Adjust User Agent");
+            adjustConfig.setSendInBackground(true);
+            adjustConfig.setDeviceKnown(true);
+            adjustConfig.setReadMobileEquipmentIdentity(true);
+
             adjustConfig.setAttributionCallbackDelegate(attributionCallbackDelegate);
             adjustConfig.setEventTrackingSucceededDelegate(eventTrackingSucceededDelegate);
             adjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
@@ -42,7 +49,6 @@ package {
             adjustConfig.setSessionTrackingFailedDelegate(sessionTrackingFailedDelegate);
             adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
             adjustConfig.setShouldLaunchDeeplink(true);
-            adjustConfig.setLogLevel(LogLevel.VERBOSE);
 
             Adjust.addSessionCallbackParameter("scpk1", "scpv1");
             Adjust.addSessionCallbackParameter("scpk2", "scpv2");
@@ -56,19 +62,9 @@ package {
             // Adjust.resetSessionCallbackParameters();
             // Adjust.resetSessionPartnerParameters();
 
-            //adjustConfig.setDelayStart(3.0);
-            adjustConfig.setUserAgent("Custom Adjust User Agent");
-            adjustConfig.setSendInBackground(true);
-
-            Adjust.setDeviceToken("dummy_token_1");
-
-            adjustConfig.setAppSecret(1, 552143313, 465657129, 437714723, 1932667013);
-            adjustConfig.setDeviceKnown(true);
-            adjustConfig.setReadMobileEquipmentIdentity(true);
-
             Adjust.start(adjustConfig);
 
-            Adjust.sendFirstPackages();
+            // Adjust.sendFirstPackages();
 
             // -------- Adjust Configuration -------- //
         }
@@ -79,19 +75,6 @@ package {
             var adjustEvent:AdjustEvent = new AdjustEvent("g3mfiw");
 
             Adjust.trackEvent(adjustEvent);
-
-            trace("Adid = " + Adjust.getAdid());
-
-            var attribution:AdjustAttribution = Adjust.getAttribution();
-
-            trace("Tracker token = " + attribution.getTrackerToken());
-            trace("Tracker name = " + attribution.getTrackerName());
-            trace("Campaign = " + attribution.getCampaign());
-            trace("Network = " + attribution.getNetwork());
-            trace("Creative = " + attribution.getCreative());
-            trace("Adgroup = " + attribution.getAdGroup());
-            trace("Click label = " + attribution.getClickLabel());
-            trace("Adid = " + attribution.getAdid());
         }
 
         private static function TrackRevenueClick(Event:MouseEvent):void {
