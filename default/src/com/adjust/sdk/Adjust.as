@@ -87,5 +87,9 @@ package com.adjust.sdk {
         public static function resetSessionPartnerParameters():void {
             trace("Adjust: resetSessionPartnerParameters called");
         }
+
+        public static function gdprForgetMe():void {
+            trace("Adjust: gdprForgetMe called");
+        }
     }
 }

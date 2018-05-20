@@ -600,3 +600,16 @@ FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FR
 
     return return_value;
 }
+
+FREObject ADJgdprForgetMe(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        [Adjust gdprForgetMe];
+    } else {
+        NSLog(@"Adjust: Bridge gdprForgetMe method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+
+    return return_value;
+}

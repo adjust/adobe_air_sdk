@@ -197,6 +197,10 @@ package com.adjust.sdk {
             getExtensionContext().call("sendFirstPackages");
         }
 
+        public static function gdprForgetMe():void {
+            getExtensionContext().call("gdprForgetMe");
+        }
+
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
             if (statusEvent.code == "adjust_attributionData") {
                 var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
