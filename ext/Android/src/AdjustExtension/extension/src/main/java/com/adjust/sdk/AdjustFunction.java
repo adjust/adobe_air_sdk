@@ -464,7 +464,7 @@ public class AdjustFunction implements FREFunction,
         try {
             String token = freObjects[0].getAsString();
 
-            Adjust.setPushToken(token);
+            Adjust.setPushToken(token, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
