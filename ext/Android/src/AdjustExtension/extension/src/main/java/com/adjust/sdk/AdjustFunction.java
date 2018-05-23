@@ -115,6 +115,10 @@ public class AdjustFunction implements FREFunction,
             return GetAttribution(freContext, freObjects);
         }
 
+        if (functionName == AdjustContext.GdprForgetMe) {
+            return GdprForgetMe(freContext, freObjects);
+        }
+
         return null;
     }
 
@@ -460,7 +464,7 @@ public class AdjustFunction implements FREFunction,
         try {
             String token = freObjects[0].getAsString();
 
-            Adjust.setPushToken(token);
+            Adjust.setPushToken(token, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
@@ -597,6 +601,16 @@ public class AdjustFunction implements FREFunction,
     private FREObject ResetSessionPartnerParameters(FREContext freContext, FREObject[] freObjects) {
         try {
             Adjust.resetSessionPartnerParameters();
+        } catch (Exception e) {
+            Log.e(AdjustExtension.LogTag, e.getMessage());
+        }
+
+        return null;
+    }
+
+    private FREObject GdprForgetMe(FREContext freContext, FREObject[] freObjects) {
+        try {
+            Adjust.gdprForgetMe(freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
