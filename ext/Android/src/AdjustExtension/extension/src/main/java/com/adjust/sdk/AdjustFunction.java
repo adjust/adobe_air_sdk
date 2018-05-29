@@ -30,93 +30,79 @@ public class AdjustFunction implements FREFunction,
         if (functionName == AdjustContext.OnCreate) {
             return OnCreate(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.TrackEvent) {
             return TrackEvent(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.SetEnabled) {
             return SetEnabled(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.IsEnabled) {
             return IsEnabled(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.OnResume) {
             return OnResume(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.OnPause) {
             return OnPause(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.AppWillOpenUrl) {
             return AppWillOpenUrl(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.SetOfflineMode) {
             return SetOfflineMode(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.SetReferrer) {
             return SetReferrer(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.GetGoogleAdId) {
             return GetGoogleAdId(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.GetAmazonAdId) {
             return GetAmazonAdId(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.AddSessionCallbackParameter) {
+            return AddSessionCallbackParameter(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.RemoveSessionCallbackParameter) {
+            return RemoveSessionCallbackParameter(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.ResetSessionCallbackParameters) {
+            return ResetSessionCallbackParameters(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.AddSessionPartnerParameter) {
+            return AddSessionPartnerParameter(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.RemoveSessionPartnerParameter) {
+            return RemoveSessionPartnerParameter(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.ResetSessionPartnerParameters) {
+            return ResetSessionPartnerParameters(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.SetDeviceToken) {
+            return SetDeviceToken(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.SendFirstPackages) {
+            return SendFirstPackages(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.GetAdid) {
+            return GetAdid(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.GetAttribution) {
+            return GetAttribution(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.GdprForgetMe) {
+            return GdprForgetMe(freContext, freObjects);
         }
 
         if (functionName == AdjustContext.GetIdfa) {
             return GetIdfa(freContext, freObjects);
         }
 
-        if (functionName == AdjustContext.AddSessionCallbackParameter) {
-            return AddSessionCallbackParameter(freContext, freObjects);
+        if (functionName == AdjustContext.SetTestOptions) {
+            return SetTestOptions(freContext, freObjects);
         }
-
-        if (functionName == AdjustContext.RemoveSessionCallbackParameter) {
-            return RemoveSessionCallbackParameter(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.ResetSessionCallbackParameters) {
-            return ResetSessionCallbackParameters(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.AddSessionPartnerParameter) {
-            return AddSessionPartnerParameter(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.RemoveSessionPartnerParameter) {
-            return RemoveSessionPartnerParameter(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.ResetSessionPartnerParameters) {
-            return ResetSessionPartnerParameters(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.SetDeviceToken) {
-            return SetDeviceToken(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.SendFirstPackages) {
-            return SendFirstPackages(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.GetAdid) {
-            return GetAdid(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.GetAttribution) {
-            return GetAttribution(freContext, freObjects);
-        }
-
-        if (functionName == AdjustContext.GdprForgetMe) {
-            return GdprForgetMe(freContext, freObjects);
+        if (functionName == AdjustContext.Teardown) {
+            return Teardown(freContext, freObjects);
         }
 
         return null;
@@ -536,8 +522,6 @@ public class AdjustFunction implements FREFunction,
         return null;
     }
 
-    private FREObject GetIdfa(FREContext freContext, FREObject[] freObjects) { return null; }
-
     private FREObject AddSessionCallbackParameter(FREContext freContext, FREObject[] freObjects) {
         try {
             String key = freObjects[0].getAsString();
@@ -615,6 +599,71 @@ public class AdjustFunction implements FREFunction,
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
 
+        return null;
+    }
+
+    private FREObject GetIdfa(FREContext freContext, FREObject[] freObjects) { return null; }
+
+    private FREObject SetTestOptions(FREContext freContext, FREObject[] freObjects) {
+        try {
+            final AdjustTestOptions testOptions = new AdjustTestOptions();
+
+            if (freObjects[0] != null) {
+                boolean value = freObjects[0].getAsBool();
+                if (value) {
+                    testOptions.context = freContext.getActivity();
+                }
+            }
+
+            if (freObjects[1] != null) {
+                String value = freObjects[1].getAsString();
+                testOptions.baseUrl = value;
+            }
+            if (freObjects[2] != null) {
+                String value = freObjects[2].getAsString();
+                testOptions.basePath = value;
+            }
+            if (freObjects[3] != null) {
+                boolean value = freObjects[3].getAsBool();
+                testOptions.useTestConnectionOptions = value;
+            }
+            if (freObjects[4] != null) {
+                String str = freObjects[4].getAsString();
+                long value = Long.parseLong(str);
+                testOptions.timerIntervalInMilliseconds = value;
+            }
+            if (freObjects[5] != null) {
+                String str = freObjects[5].getAsString();
+                long value = Long.parseLong(str);
+                testOptions.timerStartInMilliseconds = value;
+            }
+            if (freObjects[6] != null) {
+                String str = freObjects[6].getAsString();
+                long value = Long.parseLong(str);
+                testOptions.sessionIntervalInMilliseconds = value;
+            }
+            if (freObjects[7] != null) {
+                String str = freObjects[7].getAsString();
+                long value = Long.parseLong(str);
+                testOptions.subsessionIntervalInMilliseconds = value;
+            }
+            if (freObjects[8] != null) {
+                boolean value = freObjects[8].getAsBool();
+                testOptions.teardown = value;
+            }
+            if (freObjects[9] != null) {
+                boolean value = freObjects[9].getAsBool();
+                testOptions.tryInstallReferrer = value;
+            }
+            Adjust.setTestOptions(testOptions);
+        } catch (Exception e) {
+            Log.e(AdjustExtension.LogTag, e.getMessage());
+        }
+
+       return null;
+    }
+
+    private FREObject Teardown(FREContext freContext, FREObject[] freObjects) {
         return null;
     }
 

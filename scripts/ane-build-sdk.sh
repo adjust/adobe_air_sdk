@@ -13,7 +13,7 @@ EXT_DIR=ext
 #------------ Commands and misc
 ADT=${AIR_SDK_PATH}/bin/adt
 COMPC=${AIR_SDK_PATH}/bin/compc
-COMPC_CLASSES="com.adjust.sdk.Adjust com.adjust.sdk.LogLevel com.adjust.sdk.Environment com.adjust.sdk.AdjustConfig com.adjust.sdk.AdjustAttribution com.adjust.sdk.AdjustEventSuccess com.adjust.sdk.AdjustEventFailure com.adjust.sdk.AdjustEvent com.adjust.sdk.AdjustSessionSuccess com.adjust.sdk.AdjustSessionFailure"
+COMPC_CLASSES="com.adjust.sdk.Adjust com.adjust.sdk.LogLevel com.adjust.sdk.Environment com.adjust.sdk.AdjustConfig com.adjust.sdk.AdjustAttribution com.adjust.sdk.AdjustEventSuccess com.adjust.sdk.AdjustEventFailure com.adjust.sdk.AdjustEvent com.adjust.sdk.AdjustSessionSuccess com.adjust.sdk.AdjustSessionFailure com.adjust.sdk.AdjustTestOptions"
 VERSION=`cat ${ROOT_DIR}/VERSION`
 
 #----------- echo colors
@@ -40,9 +40,14 @@ echo -e "${GREEN}>>> AA build script: copying generated files to ${BUILD_DIR} ${
 cd ${ROOT_DIR}
 mkdir -p ${BUILD_DIR}/Android
 mkdir -p ${BUILD_DIR}/iOS
+mkdir -p ${BUILD_DIR}/Android-x86
+mkdir -p ${BUILD_DIR}/iOS-x86
 cp -vR ${EXT_DIR}/Android/*.jar ${BUILD_DIR}/Android
 cp -vR ${EXT_DIR}/iOS/*.a ${BUILD_DIR}/iOS
 cp -vR ${EXT_DIR}/iOS/*.framework ${BUILD_DIR}/iOS
+cp -vR ${EXT_DIR}/Android/*.jar ${BUILD_DIR}/Android-x86
+cp -vR ${EXT_DIR}/iOS/*.a ${BUILD_DIR}/iOS-x86
+cp -vR ${EXT_DIR}/iOS/*.framework ${BUILD_DIR}/iOS-x86
 
 #------------ 
 echo -e "${GREEN}>>> AA build script:  Making swc file${NC}"
@@ -53,8 +58,11 @@ ${COMPC} -source-path src -swf-version 27 -external-library-path ${AIR_SDK_PATH}
 echo -e "${GREEN}>>> AA build script: Running ADT and finalizing the ANE file ${NC}"
 unzip -d ${BUILD_DIR}/Android -qq -o ${BUILD_DIR}/Adjust.swc -x catalog.xml
 unzip -d ${BUILD_DIR}/iOS -qq -o ${BUILD_DIR}/Adjust.swc -x catalog.xml
+unzip -d ${BUILD_DIR}/Android-x86 -qq -o ${BUILD_DIR}/Adjust.swc -x catalog.xml
+unzip -d ${BUILD_DIR}/iOS-x86 -qq -o ${BUILD_DIR}/Adjust.swc -x catalog.xml
 cp -af ${SOURCE_DIR}/platformoptions.xml ${BUILD_DIR}/iOS/
+cp -af ${SOURCE_DIR}/platformoptions.xml ${BUILD_DIR}/iOS-x86/
 cp -af ${SOURCE_DIR}/extension.xml ${BUILD_DIR}/extension.xml
-cd ${BUILD_DIR}; ${ADT} -package -target ane ../Adjust-${VERSION}.ane extension.xml -swc Adjust.swc -platform Android-ARM -C Android . -platform iPhone-ARM -C iOS . -platformoptions iOS/platformoptions.xml -platform default -C default .
+cd ${BUILD_DIR}; ${ADT} -package -target ane ../Adjust-${VERSION}.ane extension.xml -swc Adjust.swc -platform Android-ARM -C Android . -platform Android-x86 -C Android-x86 . -platform iPhone-ARM -C iOS . -platformoptions iOS/platformoptions.xml -platform iPhone-x86 -C iOS-x86 . -platform default -C default .
 
 echo -e "${GREEN}>>> AA build script: END ${NC}"

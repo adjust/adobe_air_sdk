@@ -201,6 +201,24 @@ package com.adjust.sdk {
             getExtensionContext().call("gdprForgetMe");
         }
 
+        public static function setTestOptions(testOptions:AdjustTestOptions):void {
+            getExtensionContext().call("setTestOptions", 
+                    testOptions.hasContext,
+                    testOptions.baseUrl,
+                    testOptions.basePath,
+                    testOptions.useTestConnectionOptions,
+                    testOptions.timerIntervalInMilliseconds,
+                    testOptions.timerStartInMilliseconds,
+                    testOptions.sessionIntervalInMilliseconds,
+                    testOptions.subsessionIntervalInMilliseconds,
+                    testOptions.teardown,
+                    testOptions.tryInstallReferrer);
+        }
+
+        public static function teardown():void {
+            getExtensionContext().call("teardown");
+        }
+
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
             if (statusEvent.code == "adjust_attributionData") {
                 var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
