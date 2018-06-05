@@ -20,11 +20,11 @@ public class CommandListener implements ICommandRawJsonListener {
             JSONObject jsonObj = new JSONObject(jsonStr);
 
             // Order of packages sent through PluginResult is not reliable, this is solved
-            //  through a scheduling mechanism in command_executor.js#scheduleCommand() side.
+            // through a scheduling mechanism in command_executor.js#scheduleCommand() side.
             // The 'order' entry is used to schedule commands
             jsonObj.put("order", orderCounter.getAndIncrement());
 
-            AdjustExtension.context.dispatchStatusEventAsync("adjusttesting_command", jsonObj.toString());
+            AdjustTestExtension.context.dispatchStatusEventAsync("adjust_test_command", jsonObj.toString());
         } catch(JSONException ex) {
             ex.printStackTrace();
         }

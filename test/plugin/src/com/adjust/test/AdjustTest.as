@@ -11,14 +11,12 @@ package com.adjust.test {
             if (mExtensionContext != null) {
                 return mExtensionContext;
             }
-
             return mExtensionContext = ExtensionContext.createExtensionContext("com.adjust.test", null);
         }
 
         public static function startTestSession(baseUrl:String, testingCommandCallbackDelegate:Function):void {
             mTestingCommandCallbackDelegate = testingCommandCallbackDelegate;
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-
             getExtensionContext().call("startTestSession", baseUrl);
         }
 
@@ -46,8 +44,7 @@ package com.adjust.test {
             trace("Receiving event: ");
             trace(statusEvent)
             trace(statusEvent.level)
-
-            if (statusEvent.code == "adjusttesting_command") {
+            if (statusEvent.code == "adjust_test_command") {
                 mTestingCommandCallbackDelegate(statusEvent.level);
             }
         }

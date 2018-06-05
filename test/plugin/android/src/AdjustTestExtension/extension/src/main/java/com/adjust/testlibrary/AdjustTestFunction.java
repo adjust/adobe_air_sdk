@@ -11,62 +11,49 @@ import com.adobe.fre.FREInvalidObjectException;
 import com.adobe.fre.FRETypeMismatchException; 
 import com.adobe.fre.FREWrongThreadException; 
 
-/**
- * Created by pfms on 31/07/14.
- */
-public class AdjustFunction implements FREFunction {
-    private static final String TAG = "AdjustFunction";
-    private String functionName;
+public class AdjustTestFunction implements FREFunction {
+    private static final String TAG = "AdjustTestFunction";
     private static TestLibrary testLibrary;
     private static List<String> selectedTests = new ArrayList<String>();
     private static List<String> selectedTestDirs = new ArrayList<String>();
 
-    public AdjustFunction(String functionName) {
+    private String functionName;
+
+    public AdjustTestFunction(String functionName) {
         this.functionName = functionName;
     }
 
     @Override
     public FREObject call(FREContext freContext, FREObject[] freObjects) {
-        AdjustExtension.context = (AdjustContext) freContext;
-
-        if (functionName == AdjustContext.StartTestSession) {
+        AdjustTestExtension.context = (AdjustTestContext) freContext;
+        if (functionName == AdjustTestContext.StartTestSession) {
             return StartTestSession(freContext, freObjects);
         }
-
-        if (functionName == AdjustContext.AddInfoToSend) {
+        if (functionName == AdjustTestContext.AddInfoToSend) {
             return AddInfoToSend(freContext, freObjects);
         }
-
-        if (functionName == AdjustContext.SendInfoToServer) {
+        if (functionName == AdjustTestContext.SendInfoToServer) {
             return SendInfoToServer(freContext, freObjects);
         }
-
-        if (functionName == AdjustContext.AddTest) {
+        if (functionName == AdjustTestContext.AddTest) {
             return AddTest(freContext, freObjects);
         }
-
-        if (functionName == AdjustContext.AddTestDirectory) {
+        if (functionName == AdjustTestContext.AddTestDirectory) {
             return AddTestDirectory(freContext, freObjects);
         }
-
         return null;
     }
 
     private FREObject StartTestSession(FREContext freContext, FREObject[] freObjects) {
         try {
             String baseUrl = freObjects[0].getAsString();
-            Log.d(TAG, "startTestSession() with baseUrl[" + baseUrl + "]");
-
             testLibrary = new TestLibrary(baseUrl, new CommandListener());
-
-            for(int i = 0; i < selectedTests.size(); i++) {
+            for (int i = 0; i < selectedTests.size(); i++) {
                 testLibrary.addTest(selectedTests.get(i));
             }
-
-            for(int i = 0; i < selectedTestDirs.size(); i++) {
+            for (int i = 0; i < selectedTestDirs.size(); i++) {
                 testLibrary.addTestDirectory(selectedTestDirs.get(i));
             }
-
             testLibrary.startTestSession("adobe_air4.13.0@android4.13.0");
         } catch (FRETypeMismatchException e) {
             Log.e(TAG, e.getMessage()); 
@@ -81,7 +68,6 @@ public class AdjustFunction implements FREFunction {
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace(); 
         } 
-
         return null;
     }
 
@@ -89,8 +75,6 @@ public class AdjustFunction implements FREFunction {
         try {
             String key = freObjects[0].getAsString();
             String value = freObjects[1].getAsString();
-            Log.d(TAG, "AddInfoToSend() with key[" + key + "] and value[" + value + "]");
-
             if (null != testLibrary) {
                 testLibrary.addInfoToSend(key, value);
             }
@@ -107,15 +91,12 @@ public class AdjustFunction implements FREFunction {
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace(); 
         } 
-
         return null;
     }
 
     private FREObject SendInfoToServer(FREContext freContext, FREObject[] freObjects) {
         try {
             String basePath = freObjects[0].getAsString();
-            Log.d(TAG, "sendInfoToServer(): " + basePath);
-
             if (null != testLibrary) {
                 testLibrary.sendInfoToServer(basePath);
             }
@@ -132,7 +113,6 @@ public class AdjustFunction implements FREFunction {
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace(); 
         } 
-
         return null;
     }
 
@@ -152,7 +132,6 @@ public class AdjustFunction implements FREFunction {
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace(); 
         } 
-
         return null;
     }
 
@@ -172,7 +151,6 @@ public class AdjustFunction implements FREFunction {
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace(); 
         } 
-
         return null;
     }
 }

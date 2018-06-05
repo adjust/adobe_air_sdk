@@ -5,13 +5,13 @@
         <platform name="Android-ARM">
             <applicationDeployment>
                 <nativeLibrary>adjust-android-test.jar</nativeLibrary>
-                <initializer>com.adjust.testlibrary.AdjustExtension</initializer>
+                <initializer>com.adjust.testlibrary.AdjustTestExtension</initializer>
             </applicationDeployment>
         </platform>
         <platform name="Android-x86">
             <applicationDeployment>
                 <nativeLibrary>adjust-android-test.jar</nativeLibrary>
-                <initializer>com.adjust.testlibrary.AdjustExtension</initializer>
+                <initializer>com.adjust.testlibrary.AdjustTestExtension</initializer>
             </applicationDeployment>
         </platform>
 

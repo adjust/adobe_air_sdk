@@ -614,7 +614,6 @@ public class AdjustFunction implements FREFunction,
                     testOptions.context = freContext.getActivity();
                 }
             }
-
             if (freObjects[1] != null) {
                 String value = freObjects[1].getAsString();
                 testOptions.baseUrl = value;
@@ -624,35 +623,43 @@ public class AdjustFunction implements FREFunction,
                 testOptions.basePath = value;
             }
             if (freObjects[3] != null) {
-                boolean value = freObjects[3].getAsBool();
-                testOptions.useTestConnectionOptions = value;
+                String value = freObjects[3].getAsString();
+                testOptions.gdprUrl = value;
             }
             if (freObjects[4] != null) {
-                String str = freObjects[4].getAsString();
-                long value = Long.parseLong(str);
-                testOptions.timerIntervalInMilliseconds = value;
+                String value = freObjects[4].getAsString();
+                testOptions.gdprPath = value;
             }
             if (freObjects[5] != null) {
-                String str = freObjects[5].getAsString();
-                long value = Long.parseLong(str);
-                testOptions.timerStartInMilliseconds = value;
+                boolean value = freObjects[5].getAsBool();
+                testOptions.useTestConnectionOptions = value;
             }
             if (freObjects[6] != null) {
                 String str = freObjects[6].getAsString();
                 long value = Long.parseLong(str);
-                testOptions.sessionIntervalInMilliseconds = value;
+                testOptions.timerIntervalInMilliseconds = value;
             }
             if (freObjects[7] != null) {
                 String str = freObjects[7].getAsString();
                 long value = Long.parseLong(str);
-                testOptions.subsessionIntervalInMilliseconds = value;
+                testOptions.timerStartInMilliseconds = value;
             }
             if (freObjects[8] != null) {
-                boolean value = freObjects[8].getAsBool();
-                testOptions.teardown = value;
+                String str = freObjects[8].getAsString();
+                long value = Long.parseLong(str);
+                testOptions.sessionIntervalInMilliseconds = value;
             }
             if (freObjects[9] != null) {
-                boolean value = freObjects[9].getAsBool();
+                String str = freObjects[9].getAsString();
+                long value = Long.parseLong(str);
+                testOptions.subsessionIntervalInMilliseconds = value;
+            }
+            if (freObjects[10] != null) {
+                boolean value = freObjects[10].getAsBool();
+                testOptions.teardown = value;
+            }
+            if (freObjects[11] != null) {
+                boolean value = freObjects[11].getAsBool();
                 testOptions.tryInstallReferrer = value;
             }
             Adjust.setTestOptions(testOptions);

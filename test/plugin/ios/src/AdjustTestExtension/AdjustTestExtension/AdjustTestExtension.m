@@ -1,6 +1,6 @@
 //
-//  AdjustExtension.m
-//  AdjustExtension
+//  AdjustTestExtension.m
+//  AdjustTestExtension
 //
 //  Created by Pedro Filipe on 07/08/14.
 //  Copyright (c) 2014 adjust. All rights reserved.

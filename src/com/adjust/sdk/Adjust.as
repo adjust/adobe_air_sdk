@@ -206,6 +206,8 @@ package com.adjust.sdk {
                     testOptions.hasContext,
                     testOptions.baseUrl,
                     testOptions.basePath,
+                    testOptions.gdprUrl,
+                    testOptions.gdprPath,
                     testOptions.useTestConnectionOptions,
                     testOptions.timerIntervalInMilliseconds,
                     testOptions.timerStartInMilliseconds,
@@ -216,7 +218,8 @@ package com.adjust.sdk {
         }
 
         public static function teardown():void {
-            getExtensionContext().call("teardown");
+            hasSdkStarted = false;
+            // getExtensionContext().call("teardown");
         }
 
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {

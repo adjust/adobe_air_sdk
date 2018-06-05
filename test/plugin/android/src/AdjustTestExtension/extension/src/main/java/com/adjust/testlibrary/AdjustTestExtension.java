@@ -2,19 +2,17 @@ package com.adjust.testlibrary;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
-/**
- * Created by pfms on 31/07/14.
- */
-public class AdjustExtension implements FREExtension {
-    public static AdjustContext context;
-    public static String LogTag = "AdjustTesting.air";
+
+public class AdjustTestExtension implements FREExtension {
+    public static AdjustTestContext context;
+    public static String LogTag = "AdjustTest.air";
   
     @Override
     public void initialize() {}
 
     @Override
     public FREContext createContext(String s) {
-        return context = new AdjustContext();
+        return context = new AdjustTestContext();
     }
 
     @Override

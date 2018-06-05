@@ -2,6 +2,8 @@
 
 set -e
 
+# ======================================== #
+
 # Colors for output
 NC='\033[0m'
 RED='\033[0;31m'
@@ -40,21 +42,27 @@ done
 
 set -- "${POSITIONAL[@]}" # Restore positional parameters
 
+# ======================================== #
+
 # Check for invalid arguments
 if [[ -n $1 ]]; then
     echo -e "${RED}[ADJUST][ANE-BUILD-TEST]:${GREEN} Invalid argument! Aborting ... ${NC}"
     exit 0
 fi
 
+# ======================================== #
+
 # Help dialog
 if [ "${DISPLAY_HELP}" == YES ]; then
-    echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} ane-build-test.sh script is used to build Adjust SDK ANE used for integration tests. ${NC}"
+    echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} build-test-ane.sh script is used to build Adjust SDK ANE used for integration tests. ${NC}"
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Arguments: ${NC}"
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN}     --skip-android: Skips building native Android test library ${NC}"
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN}     --skip-ios: Skips building native iOS test library ${NC}"
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN}     --help: Displays help instructions"
     exit 1
 fi
+
+# ======================================== #
 
 # Set directories of interest for the script
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -70,12 +78,16 @@ COMPC=${AIR_SDK_PATH}/bin/compc
 COMPC_CLASSES="com.adjust.test.AdjustTest"
 VERSION=`cat ${ROOT_DIR}/VERSION`
 
+# ======================================== #
+
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Running emulator tasks ... ${NC}"
 cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}
 mkdir -p ${BUILD_DIR}/default
 ${COMPC} -source-path default/src -swf-version 27 -external-library-path ${AIR_SDK_PATH}/frameworks/libs/air/airglobal.swc -include-classes ${COMPC_CLASSES} -directory=true -output ${BUILD_DIR}/default
 rm -rf ${BUILD_DIR}/default/catalog.xml
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
+
+# ======================================== #
 
 if [ "$BUILD_ANDROID" = YES ]; then
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Cleaning up Android binary files from previous build ... ${NC}"
@@ -86,10 +98,14 @@ if [ "$BUILD_ANDROID" = YES ]; then
     rm -rfv build/Android-x86/gson*.jar
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
 
+    # ======================================== #
+
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Running Android test library build script ... ${NC}"
     cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}
     android/build.sh
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
+
+    # ======================================== #
 
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Copying generated libraries to their destination (${ROOT_DIR}/${TEST_PLUGIN_DIR}/${BUILD_DIR}/Android) ... ${NC}"
     cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}
@@ -110,11 +126,15 @@ if [ "$BUILD_IOS" = YES ]; then
     rm -rfv build/iOS-x86/Adjust*.framework
     rm -rfv build/iOS-x86/libAdjust*.a
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
+
+    # ======================================== #
     
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Running iOS test library build script ... ${NC}"
     cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}
     ios/build.sh
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
+
+    # ======================================== #
 
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Copying generated libraries to destination (${ROOT_DIR}/${TEST_PLUGIN_DIR}/${BUILD_DIR}/iOS) ... ${NC}"
     cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}
@@ -127,10 +147,14 @@ if [ "$BUILD_IOS" = YES ]; then
     echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
 fi
 
+# ======================================== #
+
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Making SWC file ... ${NC}"
 cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}
 ${COMPC} -source-path src -swf-version 27 -external-library-path ${AIR_SDK_PATH}/frameworks/libs/air/airglobal.swc -include-classes ${COMPC_CLASSES} -output ${BUILD_DIR}/adjust-test.swc
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
+
+# ======================================== #
 
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Copying files to ${BUILD_DIR} directory ... ${NC}"
 cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}
@@ -143,10 +167,15 @@ cp -afv ${SOURCE_DIR}/platformoptions_ios.xml ${BUILD_DIR}/iOS/platformoptions_i
 cp -afv ${SOURCE_DIR}/extension.xml ${BUILD_DIR}/extension.xml
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
 
-echo -e "${GREEN}>>> Running ADT ${NC}"
+# ======================================== #
+
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Running ADT ... ${NC}"
 cd ${ROOT_DIR}/${TEST_PLUGIN_DIR}/${BUILD_DIR}
 ${ADT} -package -target ane ${ROOT_DIR}/AdjustTest-${VERSION}.ane extension.xml -swc adjust-test.swc -platform Android-ARM -C Android . -platformoptions Android/platformoptions_android.xml -platform Android-x86 -C Android-x86 . -platform iPhone-ARM -C iOS . -platformoptions iOS/platformoptions_ios.xml -platform iPhone-x86 -C iOS-x86 . -platform default -C default .
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Done! ${NC}"
 
+# ======================================== #
+
 echo -e "${CYAN}[ADJUST][ANE-BUILD-TEST]:${GREEN} Script completed! ${NC}"
+
+# ======================================== #
