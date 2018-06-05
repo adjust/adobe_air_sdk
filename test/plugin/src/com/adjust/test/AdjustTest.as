@@ -41,7 +41,7 @@ package com.adjust.test {
         }
 
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
-            trace("Receiving event: ");
+            trace("[AdjustTest] Receiving event: ");
             trace(statusEvent)
             trace(statusEvent.level)
             if (statusEvent.code == "adjust_test_command") {

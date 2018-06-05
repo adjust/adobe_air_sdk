@@ -11,6 +11,9 @@
 #import "AdjustSdkDelegate.h"
 #import "AdjustFREUtils.h"
 
+static dispatch_once_t onceToken;
+static AdjustSdkDelegate *defaultInstance = nil;
+
 @implementation AdjustSdkDelegate
 
 + (id)getInstanceWithSwizzleOfAttributionCallback:(BOOL)swizzleAttributionCallback
@@ -21,9 +24,6 @@
                          deferredDeeplinkCallback:(BOOL)swizzleDeferredDeeplinkCallback
                      shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                    withFREContext:(FREContext *)freContext {
-    static dispatch_once_t onceToken;
-    static AdjustSdkDelegate *defaultInstance = nil;
-    
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
         
@@ -63,6 +63,11 @@
     });
     
     return defaultInstance;
+}
+
++ (void)teardown {
+    onceToken = 0;
+    defaultInstance = nil;
 }
 
 - (id)init {

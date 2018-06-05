@@ -219,7 +219,7 @@ package com.adjust.sdk {
 
         public static function teardown():void {
             hasSdkStarted = false;
-            // getExtensionContext().call("teardown");
+            getExtensionContext().call("teardown");
         }
 
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {

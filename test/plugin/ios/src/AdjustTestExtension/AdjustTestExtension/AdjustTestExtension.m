@@ -2,8 +2,8 @@
 //  AdjustTestExtension.m
 //  AdjustTestExtension
 //
-//  Created by Pedro Filipe on 07/08/14.
-//  Copyright (c) 2014 adjust. All rights reserved.
+//  Created by Abdullah Obaied (@obaied) on 20th February 2018.
+//  Copyright © 2012-2018 Adjust GmbH. All rights reserved.
 //
 
 #import "AdjustTestFunction.h"
@@ -15,12 +15,11 @@ void setNamedFunction(FRENamedFunction* namedFunction, const uint8_t* name, FREF
 }
 
 void AdjustTestFREContextInitializer(void* extData,
-    const uint8_t* ctxType,
-    FREContext ctx,
-    uint32_t* numFunctionsToSet,
-    const FRENamedFunction** functionsToSet) {
+                                     const uint8_t* ctxType,
+                                     FREContext ctx,
+                                     uint32_t* numFunctionsToSet,
+                                     const FRENamedFunction** functionsToSet) {
     uint32_t numberOfFunctions = 5;
-
     *numFunctionsToSet = numberOfFunctions;
 
     FRENamedFunction* func = (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * numberOfFunctions);
@@ -38,8 +37,8 @@ void AdjustTestFREContextFinalizer(FREContext ctx) {
 }
 
 void AdjustTestFREInitializer(void** extDataToSet,
-    FREContextInitializer* ctxInitializerToSet,
-    FREContextFinalizer* ctxFinalizerToSet) {
+                              FREContextInitializer* ctxInitializerToSet,
+                              FREContextFinalizer* ctxFinalizerToSet) {
     extDataToSet = NULL;
     *ctxInitializerToSet = &AdjustTestFREContextInitializer;
     *ctxFinalizerToSet = &AdjustTestFREContextFinalizer;

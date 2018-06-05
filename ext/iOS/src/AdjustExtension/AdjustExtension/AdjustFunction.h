@@ -39,3 +39,9 @@ FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObjec
 FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJgetAmazonAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 
+// Test methods
+FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJteardown(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+
+// Util methods
+NSNumber *convertMilliStringToNumber(NSString *milliS);

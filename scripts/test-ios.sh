@@ -100,7 +100,7 @@ if [ "$BUILD_SDK_PLUGIN" = YES ]; then
 
     echo -e "${CYAN}[ADJUST][TEST-IOS]:${GREEN} Building Adjust SDK ANE for iOS platform ... ${NC}"
     cd ${ROOT_DIR}
-    ${SCRIPTS_DIR}/build-adjust-ane.sh --skip-android
+    ${SCRIPTS_DIR}/build-sdk-ane.sh --skip-android
     echo -e "${CYAN}[ADJUST][TEST-IOS]:${GREEN} Done! ${NC}"
 
     # ======================================== #
@@ -144,7 +144,7 @@ echo -e "${CYAN}[ADJUST][TEST-IOS]:${GREEN} Done! ${NC}"
 
 echo -e "${CYAN}[ADJUST][TEST-IOS]:${GREEN} Packaging IPA file ... ${NC}"
 cd ${ROOT_DIR}/${TEST_APP_DIR}
-echo | adt -package -target ipa-debug -provisioning-profile ${DEV_CI_PROVISIONING_PROFILE_PATH} -storetype pkcs12 -keystore ${KEYSTORE_FILE_PATH} Main.ipa ${EXAMPLE_APP_XML_FILE} Main.swf -extdir lib
+echo | adt -package -target ipa-debug -provisioning-profile ${DEV_ADOBE_PROVISIONING_PROFILE_PATH} -storetype pkcs12 -keystore ${KEYSTORE_FILE_PATH} Main.ipa ${EXAMPLE_APP_XML_FILE} Main.swf -extdir lib
 echo -e "${CYAN}[ADJUST][TEST-IOS]:${GREEN} Done! ${NC}"
 
 # ======================================== #

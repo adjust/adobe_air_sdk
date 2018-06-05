@@ -2,8 +2,8 @@
 //  AdjustTestFunction.h
 //  AdjustTestExtension
 //
-//  Created by Pedro Filipe on 07/08/14.
-//  Copyright (c) 2014 adjust. All rights reserved.
+//  Created by Abdullah Obaied (@obaied) on 20th February 2018.
+//  Copyright © 2012-2018 Adjust GmbH. All rights reserved.
 //
 
 #import "FlashRuntimeExtensions.h"
