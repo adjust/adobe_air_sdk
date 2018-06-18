@@ -660,6 +660,10 @@ public class AdjustFunction implements FREFunction,
                 boolean value = freObjects[11].getAsBool();
                 testOptions.tryInstallReferrer = value;
             }
+            if (freObjects[12] != null) {
+                boolean value = freObjects[12].getAsBool();
+                testOptions.noBackoffWait = value;
+            }
             Adjust.setTestOptions(testOptions);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
