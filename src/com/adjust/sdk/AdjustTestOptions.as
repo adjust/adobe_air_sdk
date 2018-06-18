@@ -2,6 +2,7 @@ package com.adjust.sdk {
     public class AdjustTestOptions {
         public var teardown:Boolean = false;
         public var hasContext:Boolean = false;
+        public var noBackoffWait:Boolean = false;
         public var tryInstallReferrer:Boolean = false;
         public var useTestConnectionOptions:Boolean = false;
 

@@ -214,7 +214,8 @@ package com.adjust.sdk {
                     testOptions.sessionIntervalInMilliseconds,
                     testOptions.subsessionIntervalInMilliseconds,
                     testOptions.teardown,
-                    testOptions.tryInstallReferrer);
+                    testOptions.tryInstallReferrer,
+                    testOptions.noBackoffWait);
         }
 
         public static function teardown():void {

@@ -144,6 +144,9 @@ package {
             if (params['tryInstallReferrer'] != null) {
                 testOptions.tryInstallReferrer = getFirstParameterValue(params, 'tryInstallReferrer') == "true";
             }
+            if (params['noBackoffWait'] != null) {
+                testOptions.noBackoffWait = getFirstParameterValue(params, 'noBackoffWait') == "true";
+            }
             if (params['teardown'] != null) {
                 var teardownOptions:Array = getValueFromKey(params, 'teardown');
                 for (var i:int = 0; i < teardownOptions.length; i++) {
