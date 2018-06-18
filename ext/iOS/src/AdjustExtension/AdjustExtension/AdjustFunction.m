@@ -523,7 +523,7 @@ FREObject ADJgdprForgetMe(FREContext ctx, void* funcData, uint32_t argc, FREObje
 }
 
 FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 12) {
+    if (argc == 13) {
         AdjustTestOptions * testOptions = [[AdjustTestOptions alloc] init];
 
         // Treating Android's `hasContext` as `deleteState`
@@ -582,6 +582,12 @@ FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREOb
         }
 
         // Skipping 12th argument
+
+        if (argv[12] != nil) {
+            BOOL value;
+            FREGetObjectAsNativeBool(argv[10], &value);
+            testOptions.noBackoffWait = value;
+        }
 
         [Adjust setTestOptions:testOptions];
     } else {
