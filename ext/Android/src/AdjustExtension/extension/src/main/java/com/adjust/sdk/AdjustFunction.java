@@ -93,11 +93,9 @@ public class AdjustFunction implements FREFunction,
         if (functionName == AdjustContext.GdprForgetMe) {
             return GdprForgetMe(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.GetIdfa) {
             return GetIdfa(freContext, freObjects);
         }
-
         if (functionName == AdjustContext.SetTestOptions) {
             return SetTestOptions(freContext, freObjects);
         }
@@ -404,7 +402,7 @@ public class AdjustFunction implements FREFunction,
             String url = freObjects[0].getAsString();
             Uri uri = Uri.parse(url);
 
-            Adjust.appWillOpenUrl(uri);
+            Adjust.appWillOpenUrl(uri, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
