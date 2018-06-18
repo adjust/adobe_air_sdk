@@ -22,11 +22,11 @@ do
 
     case $key in
         --skip-android)
-            BUILD_ANDROID=NO
+            BUILD_ANDROID=YES
             shift # Past argument
             ;;
         --skip-ios)
-            BUILD_IOS=NO
+            BUILD_IOS=YES
             shift # Past argument
             ;;
         --help)
