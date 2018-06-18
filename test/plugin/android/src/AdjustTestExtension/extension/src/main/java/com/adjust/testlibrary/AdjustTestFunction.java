@@ -54,7 +54,7 @@ public class AdjustTestFunction implements FREFunction {
             for (int i = 0; i < selectedTestDirs.size(); i++) {
                 testLibrary.addTestDirectory(selectedTestDirs.get(i));
             }
-            testLibrary.startTestSession("adobe_air4.13.0@android4.13.0");
+            testLibrary.startTestSession("adobe_air4.14.0@android4.14.0");
         } catch (FRETypeMismatchException e) {
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace();

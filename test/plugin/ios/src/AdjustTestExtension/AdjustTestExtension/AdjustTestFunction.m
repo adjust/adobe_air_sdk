@@ -39,7 +39,7 @@ FREObject ADJstartTestSession(FREContext ctx, void* funcData, uint32_t argc, FRE
         for (id object in selectedTestDirs) {
             [testLibrary addTestDirectory:object];
         }
-        [testLibrary startTestSession:@"adobe_air4.13.0@ios4.13.0"];
+        [testLibrary startTestSession:@"adobe_air4.14.0@ios4.14.1"];
     } else {
         NSLog(@"AdjustTestExtension: Bridge startTestSession method triggered with wrong number of arguments");
     }
