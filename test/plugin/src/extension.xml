@@ -1,0 +1,35 @@
+<extension xmlns="http://ns.adobe.com/air/extension/16.0">
+    <id>com.adjust.test</id>
+    <versionNumber>4.14.0</versionNumber>
+    <platforms>
+        <platform name="Android-ARM">
+            <applicationDeployment>
+                <nativeLibrary>adjust-android-test.jar</nativeLibrary>
+                <initializer>com.adjust.testlibrary.AdjustTestExtension</initializer>
+            </applicationDeployment>
+        </platform>
+        <platform name="Android-x86">
+            <applicationDeployment>
+                <nativeLibrary>adjust-android-test.jar</nativeLibrary>
+                <initializer>com.adjust.testlibrary.AdjustTestExtension</initializer>
+            </applicationDeployment>
+        </platform>
+
+        <platform name="iPhone-ARM">
+            <applicationDeployment>
+                <nativeLibrary>libAdjustTestExtension.a</nativeLibrary>
+                <initializer>AdjustTestFREInitializer</initializer>
+            </applicationDeployment>
+        </platform>
+        <platform name="iPhone-x86">
+            <applicationDeployment>
+                <nativeLibrary>libAdjustTestExtension.a</nativeLibrary>
+                <initializer>AdjustTestFREInitializer</initializer>
+            </applicationDeployment>
+        </platform>
+
+        <platform name="default">
+            <applicationDeployment/>
+        </platform>
+    </platforms>
+</extension>

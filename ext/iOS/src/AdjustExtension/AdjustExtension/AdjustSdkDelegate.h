@@ -22,4 +22,7 @@
 					     deferredDeeplinkCallback:(BOOL)swizzleDeferredDeeplinkCallback
                      shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                          		   withFREContext:(FREContext *)freContext;
+
++ (void)teardown;
+
 @end

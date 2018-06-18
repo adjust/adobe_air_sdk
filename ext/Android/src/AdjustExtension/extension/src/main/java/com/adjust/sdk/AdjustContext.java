@@ -38,6 +38,10 @@ public class AdjustContext extends FREContext {
     // iOS methods
     public static String GetIdfa = "getIdfa";
 
+    // Test methods
+    public static String SetTestOptions = "setTestOptions";
+    public static String Teardown = "teardown";
+
     @Override
     public Map<String, FREFunction> getFunctions() {
         Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
@@ -53,7 +57,6 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.SetReferrer, new AdjustFunction(AdjustContext.SetReferrer));
         functions.put(AdjustContext.GetGoogleAdId, new AdjustFunction(AdjustContext.GetGoogleAdId));
         functions.put(AdjustContext.GetAmazonAdId, new AdjustFunction(AdjustContext.GetAmazonAdId));
-        functions.put(AdjustContext.GetIdfa, new AdjustFunction(AdjustContext.GetIdfa));
         functions.put(AdjustContext.AddSessionCallbackParameter, new AdjustFunction(AdjustContext.AddSessionCallbackParameter));
         functions.put(AdjustContext.RemoveSessionCallbackParameter, new AdjustFunction(AdjustContext.RemoveSessionCallbackParameter));
         functions.put(AdjustContext.ResetSessionCallbackParameters, new AdjustFunction(AdjustContext.ResetSessionCallbackParameters));
@@ -65,6 +68,11 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.GetAdid, new AdjustFunction(AdjustContext.GetAdid));
         functions.put(AdjustContext.GetAttribution, new AdjustFunction(AdjustContext.GetAttribution));
         functions.put(AdjustContext.GdprForgetMe, new AdjustFunction(AdjustContext.GdprForgetMe));
+
+        functions.put(AdjustContext.GetIdfa, new AdjustFunction(AdjustContext.GetIdfa));
+
+        functions.put(AdjustContext.SetTestOptions, new AdjustFunction(AdjustContext.SetTestOptions));
+        functions.put(AdjustContext.Teardown, new AdjustFunction(AdjustContext.Teardown));
 
         return functions;
     }

@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+task clearJar(type: Delete) {
+    delete "build/outputs/adjust-android-test.jar"
+}
+
+task makeJar(type: Copy) {
+    from('build/intermediates/bundles/default/')
+    into('build/outputs/')
+    include('classes.jar')
+    rename('classes.jar', "adjust-android-test.jar")
+}
+
+makeJar.dependsOn(clearJar, build)
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile files('libs/FlashRuntimeExtensions.jar')
+    compile files('libs/gson-2.8.0.jar')
+}

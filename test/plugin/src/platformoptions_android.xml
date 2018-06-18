@@ -1,0 +1,5 @@
+<platform xmlns="http://ns.adobe.com/air/extension/16.0">
+    <packagedDependencies>
+        <packagedDependency>gson-2.8.0.jar</packagedDependency>
+    </packagedDependencies>
+</platform>

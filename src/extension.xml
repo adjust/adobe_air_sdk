@@ -1,6 +1,6 @@
 <extension xmlns="http://ns.adobe.com/air/extension/16.0">
     <id>com.adjust.sdk</id>
-    <versionNumber>4.13.0</versionNumber>
+    <versionNumber>4.14.0</versionNumber>
     <platforms>
         <platform name="Android-ARM">
             <applicationDeployment>
@@ -8,8 +8,21 @@
                 <initializer>com.adjust.sdk.AdjustExtension</initializer>
             </applicationDeployment>
         </platform>
+        <platform name="Android-x86">
+            <applicationDeployment>
+                <nativeLibrary>adjust-android.jar</nativeLibrary>
+                <initializer>com.adjust.sdk.AdjustExtension</initializer>
+            </applicationDeployment>
+        </platform>
 
         <platform name="iPhone-ARM">
+            <applicationDeployment>
+                <nativeLibrary>libAdjustExtension.a</nativeLibrary>
+                <initializer>AdjustFREInitializer</initializer>
+                <finalizer>AdjustFREFinalizer</finalizer>
+            </applicationDeployment>
+        </platform>
+        <platform name="iPhone-x86">
             <applicationDeployment>
                 <nativeLibrary>libAdjustExtension.a</nativeLibrary>
                 <initializer>AdjustFREInitializer</initializer>

@@ -91,5 +91,13 @@ package com.adjust.sdk {
         public static function gdprForgetMe():void {
             trace("Adjust: gdprForgetMe called");
         }
+
+        public static function setTestOptions(testOptions:AdjustTestOptions):void {
+            trace("Adjust: setTestOptions called");
+        }
+
+        public static function teardown():void {
+            trace("Adjust: teardown called");
+        }
     }
 }
