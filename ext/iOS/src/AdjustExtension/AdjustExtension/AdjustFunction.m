@@ -321,8 +321,7 @@ FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREOb
     if (argc == 1) {
         NSString *pDeviceToken;
         FREGetObjectAsNativeString(argv[0], &pDeviceToken);
-        NSData *deviceToken = [pDeviceToken dataUsingEncoding:NSUTF8StringEncoding];
-        [Adjust setDeviceToken:deviceToken];
+        [Adjust setPushToken:pDeviceToken];
     } else {
         NSLog(@"AdjustFunction: Bridge setDeviceToken method triggered with wrong number of arguments");
     }
