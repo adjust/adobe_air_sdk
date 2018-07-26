@@ -27,7 +27,7 @@ echo -e "${GREEN}>>> Removing ANE file from root dir ${NC}"
 rm -rfv Adjust*.ane
 
 echo -e "${GREEN}>>> Building ANE ${NC}"
-${SCRIPTS_DIR}/build.sh
+${SCRIPTS_DIR}/build-sdk-ane.sh
 
 echo -e "${GREEN}>>> Copying ANE to example app ${NC}"
 mkdir -p ${EXAMPLE_DIR}/lib
