@@ -93,6 +93,10 @@ def rename_file(fileNamePattern, newFileName, sourceDir):
         debug('rename: {0} -> {1}'.format(file, newFileName))
         os.rename(file, sourceDir + '/' + newFileName)
 
+def move_file(file_name, source_dir, dest_dir):
+    debug('move file [{0}]: {1} -> {2}'.format(file_name, source_dir, dest_dir))
+    shutil.move('{0}/{1}'.format(source_dir, file_name), '{0}/{1}'.format(dest_dir, file_name))
+
 def remove_dir_if_exists(path):
     if os.path.exists(path):
         debug('deleting dir: ' + path)
@@ -188,6 +192,9 @@ def get_env_variable(var_name):
 def xcode_build(target, configuration='Release'):
     execute_command(['xcodebuild', '-target', target, '-configuration', configuration])
 
+def xcode_clean_build(target, configuration='Release'):
+    execute_command(['xcodebuild', '-target', target, '-configuration', configuration, 'clean', 'build'])
+
 def xcode_build_custom(ext_dir):
     execute_command(['xcodebuild', 'CONFIGURATION_BUILD_DIR={0}'.format(ext_dir)])
 
@@ -210,7 +217,10 @@ def gradle_make_debug_jar(do_clean=False):
     if (do_clean):
         execute_command(['./gradlew', 'clean', 'makeDebugJar'])
     else:
-        execute_command(['./gradlew', 'makeDebugJar'])    
+        execute_command(['./gradlew', 'makeDebugJar'])
+
+def gradle_clean_make_jar():
+    execute_command(['./gradlew', 'clean', 'makeJar'])
 
 def gradle_run(options):
     cmd_params = ['./gradlew']
@@ -246,6 +256,16 @@ def adobe_air_compc(root_dir, build_dir):
         'com.adjust.sdk.AdjustEventFailure', 'com.adjust.sdk.AdjustEvent', 'com.adjust.sdk.AdjustSessionSuccess',
         'com.adjust.sdk.AdjustSessionFailure', 'com.adjust.sdk.AdjustTestOptions', '-directory=true', '-output', output_dir])
 
+def adobe_air_compc_test_lib(root_dir, build_dir):
+    air_sdk_path      = get_env_variable('AIR_SDK_PATH');
+    compc             = '{0}/bin/compc'.format(air_sdk_path)
+    default_src_dir   = '{0}/default/src'.format(root_dir)
+    external_lib_path = '{0}/frameworks/libs/air/airglobal.swc'.format(air_sdk_path)
+    output_dir        = '{0}/default'.format(build_dir)
+
+    execute_command([compc, '-source-path', default_src_dir, '-swf-version', '27', '-external-library-path',
+        external_lib_path, '-include-classes', 'com.adjust.test.AdjustTest', '-directory=true', '-output', output_dir])
+
 def adobe_air_compc_build_swc(root_dir, build_dir):
     air_sdk_path      = get_env_variable('AIR_SDK_PATH');
     compc             = '{0}/bin/compc'.format(air_sdk_path)
@@ -256,7 +276,16 @@ def adobe_air_compc_build_swc(root_dir, build_dir):
         external_lib_path, '-include-classes', 'com.adjust.sdk.Adjust', 'com.adjust.sdk.LogLevel', 'com.adjust.sdk.Environment',
         'com.adjust.sdk.AdjustConfig', 'com.adjust.sdk.AdjustAttribution', 'com.adjust.sdk.AdjustEventSuccess',
         'com.adjust.sdk.AdjustEventFailure', 'com.adjust.sdk.AdjustEvent', 'com.adjust.sdk.AdjustSessionSuccess',
-        'com.adjust.sdk.AdjustSessionFailure', 'com.adjust.sdk.AdjustTestOptions', '-output', '{0}/Adjust.swc'.format(build_dir)])    
+        'com.adjust.sdk.AdjustSessionFailure', 'com.adjust.sdk.AdjustTestOptions', '-output', '{0}/Adjust.swc'.format(build_dir)])
+
+def adobe_air_compc_build_swc_test_lib(root_dir, build_dir):
+    air_sdk_path      = get_env_variable('AIR_SDK_PATH');
+    compc             = '{0}/bin/compc'.format(air_sdk_path)
+    src_dir           = '{0}/src'.format(root_dir)
+    external_lib_path = '{0}/frameworks/libs/air/airglobal.swc'.format(air_sdk_path)
+
+    execute_command([compc, '-source-path', src_dir, '-swf-version', '27', '-external-library-path',
+        external_lib_path, '-include-classes', 'com.adjust.test.AdjustTest', '-output', '{0}/adjust-test.swc'.format(build_dir)])
 
 def adobe_air_unzip(dir_path, adjust_swc_path):
     execute_command(['unzip', '-d', dir_path, '-qq', '-o', adjust_swc_path, '-x', 'catalog.xml'])
@@ -264,9 +293,20 @@ def adobe_air_unzip(dir_path, adjust_swc_path):
 def adobe_air_adt(version):
     air_sdk_path  = get_env_variable('AIR_SDK_PATH');
     adt           = '{0}/bin/adt'.format(air_sdk_path)
+    
     execute_command([adt, '-package', '-target', 'ane', '../Adjust-{0}.ane'.format(version), 'extension.xml', '-swc', 'Adjust.swc', 
         '-platform', 'Android-ARM', '-C', 'Android', '.', '-platform', 'Android-x86', '-C', 'Android-x86', '.',
         '-platform', 'iPhone-ARM', '-C', 'iOS', '.', '-platformoptions', 'iOS/platformoptions.xml',
+        '-platform', 'iPhone-x86', '-C', 'iOS-x86', '.', '-platform', 'default', '-C', 'default', '.'])
+
+def adobe_air_adt_test_lib(root_dir, build_dir, version):
+    air_sdk_path  = get_env_variable('AIR_SDK_PATH');
+    adt           = '{0}/bin/adt'.format(air_sdk_path)
+
+    execute_command([adt, '-package', '-target', 'ane', '{0}/AdjustTest-{1}.ane'.format(root_dir, version), 'extension.xml', 
+        '-swc', 'adjust-test.swc', '-platform', 'Android-ARM', '-C', 'Android', '.', '-platformoptions', 
+        '{0}/Android/platformoptions_android.xml'.format(build_dir), '-platform', 'Android-x86', '-C', 'Android-x86', '.',
+        '-platform', 'iPhone-ARM', '-C', 'iOS', '.', '-platformoptions', '{0}/iOS/platformoptions_ios.xml'.format(build_dir),
         '-platform', 'iPhone-x86', '-C', 'iOS-x86', '.', '-platform', 'default', '-C', 'default', '.'])
 
 ############################################################
