@@ -204,7 +204,7 @@ def adb_uninstall(package):
 def adb_install_apk(path):
     execute_command(['adb', 'install', '-r', path])
 
-def adb_shell(app_package):
+def adb_shell_monkey(app_package):
     execute_command(['adb', 'shell', 'monkey', '-p', app_package, '1'])
 
 def gradle_make_release_jar(do_clean=False):
@@ -308,6 +308,23 @@ def adobe_air_adt_test_lib(root_dir, build_dir, version):
         '{0}/Android/platformoptions_android.xml'.format(build_dir), '-platform', 'Android-x86', '-C', 'Android-x86', '.',
         '-platform', 'iPhone-ARM', '-C', 'iOS', '.', '-platformoptions', '{0}/iOS/platformoptions_ios.xml'.format(build_dir),
         '-platform', 'iPhone-x86', '-C', 'iOS-x86', '.', '-platform', 'default', '-C', 'default', '.'])
+
+def keystore_file_exists_at(dir_path):
+    return len(glob.glob('{0}/*.pfx'.format(dir_path))) > 0
+
+def adobe_amxmlc(version):
+    execute_command(['amxmlc', '-external-library-path+=lib/Adjust-{0}.ane'.format(version), '-output=Main.swf', '--', 'Main.as'])
+
+def adobe_amxmlc_test_app(version):
+    execute_command(['amxmlc', '-external-library-path+=lib/Adjust-{0}.ane'.format(version),
+        '-external-library-path+=lib/AdjustTest-{0}.ane'.format(version), '-output=Main.swf', '--', 'Main.as'])
+
+def make_sample_cert():
+    execute_command(['adt', '-certificate', '-validityPeriod', '25', '-cn', 'SelfSigned', '2048-RSA', 'sampleCert.pfx', 'pass'])
+
+def package_apk_file():
+    execute_command(['adt', '-package', '-target', 'apk-debug', '-storetype', 'pkcs12', '-keystore', 'sampleCert.pfx', 'Main.apk',
+        'Main-app.xml', 'Main.swf', '-extdir', 'lib'])
 
 ############################################################
 ### nonsense, eyecandy and such

@@ -12,7 +12,7 @@ if __name__ != "__main__":
 
 # ------------------------------------------------------------------
 # set arguments
-parser = argparse.ArgumentParser(description="Script used to build SDK ANE or Adobe Air")
+parser = argparse.ArgumentParser(description="Script used to build SDK ANE for Adobe Air")
 parser.add_argument('-tl', '--withtestlib', help='build test library ANE as well', action='store_true')
 args = parser.parse_args()
 
