@@ -17,7 +17,6 @@ def build(root_dir):
     debug_green('Running Xcode release build and symlink removal ...')
     change_dir(sdk_dir)
     xcode_build('AdjustStatic')
-    # recreate_dir('{0}/AdjustSdk.framework/tmp'.format(root_dir))
 
     copy_dir_contents('{0}/Frameworks/Static/AdjustSdk.framework'.format(sdk_dir), '{0}/include/Adjust/AdjustSdk.framework'.format(src_dir))
     copy_dir_contents('{0}/Frameworks/Static/AdjustSdk.framework'.format(sdk_dir), '{0}/AdjustSdk.framework'.format(ext_dir))

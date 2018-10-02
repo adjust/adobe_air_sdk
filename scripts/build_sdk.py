@@ -29,6 +29,7 @@ try:
     # Running compc
     debug_green('Running compc ...')
     change_dir(root_dir)
+    create_dir_if_not_exist(build_dir)
     recreate_dir('{0}/default'.format(build_dir))
     adobe_air_compc(root_dir, build_dir)
     remove_file_if_exists('{0}/default/catalog.xml'.format(build_dir))
@@ -49,12 +50,12 @@ try:
     recreate_dir('{0}/iOS'.format(build_dir))
     recreate_dir('{0}/Android-x86'.format(build_dir))
     recreate_dir('{0}/iOS-x86'.format(build_dir))
+    copy_files('*.jar', android_submodule_dir, '{0}/Android'.format(build_dir))
+    copy_files('*.a', ios_submodule_dir, '{0}/iOS'.format(build_dir))
+    copy_dir_contents('{0}/AdjustSdk.framework'.format(ios_submodule_dir), '{0}/iOS/AdjustSdk.framework'.format(build_dir))
     copy_files('*.jar', android_submodule_dir, '{0}/Android-x86'.format(build_dir))
     copy_files('*.a', ios_submodule_dir, '{0}/iOS-x86'.format(build_dir))
-    copy_files('*.framework', ios_submodule_dir, '{0}/iOS-x86'.format(build_dir))
-    copy_files('*.jar', android_submodule_dir, '{0}/Android-x86'.format(build_dir))
-    copy_files('*.a', ios_submodule_dir, '{0}/iOS-x86'.format(build_dir))
-    copy_files('*.framework', ios_submodule_dir, '{0}/iOS-x86'.format(build_dir))
+    copy_dir_contents('{0}/AdjustSdk.framework'.format(ios_submodule_dir), '{0}/iOS-x86/AdjustSdk.framework'.format(build_dir))
 
     # ------------------------------------------------------------------
     # Making SWC file
