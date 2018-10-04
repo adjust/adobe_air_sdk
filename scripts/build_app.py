@@ -18,23 +18,57 @@ args = parser.parse_args()
 
 # ------------------------------------------------------------------
 # common paths
-script_dir = os.path.dirname(os.path.realpath(__file__))
-root_dir   = os.path.dirname(os.path.normpath(script_dir))
-version    = open(root_dir + '/VERSION').read()
-version    = version[:-1] # remove end character
+script_dir   = os.path.dirname(os.path.realpath(__file__))
+root_dir     = os.path.dirname(os.path.normpath(script_dir))
+example_dir  = '{0}/example'.format(root_dir)
+test_app_dir = '{0}/test/app'.format(root_dir)
+version      = open(root_dir + '/VERSION').read()
+version      = version[:-1] # remove end character
+
+# iOS specific
+prov_profile_path  = '/Users/2beens/Documents/development/adjust_dev.mobileprovision'
+keystore_file_path = '/Users/2beens/Documents/development/Certificate.p12'
 
 def is_example_app():
     return args.apptype == 'example'
 def is_test_app():
     return args.apptype == 'test'
 
-def run_android(root_dir, apptype):
-    # ------------------------------------------------------------------
-    # paths
-    ext_dir         = '{0}/ext/android'.format(root_dir)
-    example_dir     = '{0}/example'.format(root_dir)
-    test_app_dir    = '{0}/test/app'.format(root_dir)
+def run_android():
+    # adb uninstall
+    adb_uninstall('air.com.adjust.examples')
 
+    # ------------------------------------------------------------------
+    # Packaging APK file. Password will be entered automatically
+    debug_green('Packaging APK file. Password will be entered automatically ...')
+    package_apk_file()
+
+    # ------------------------------------------------------------------
+    # APK file created. Running ADB install
+    debug_green('APK file created. Running ADB install ...')
+    adb_install_apk('Main.apk')
+
+    # ------------------------------------------------------------------
+    # App installed. Running the app
+    if is_test_app():
+        debug_green('App installed. Running the app ...')
+        adb_shell_monkey('air.com.adjust.examples')
+
+def run_ios():
+    # ------------------------------------------------------------------
+    # Paths
+    app_xml_file = ''
+    if is_example_app():
+        app_xml_file = '{0}/Main-app.xml'.format(example_dir)
+    else:
+        app_xml_file = '{0}/Main-app.xml'.format(test_app_dir)
+
+    # ------------------------------------------------------------------
+    # Packaging IPA file
+    debug_green('Packaging IPA file ...')
+    package_ipa_file(prov_profile_path, keystore_file_path, app_xml_file)
+
+try:
     # ------------------------------------------------------------------
     # Removing ANE file from app
     debug_green('Removing ANE file from app ...')
@@ -43,9 +77,6 @@ def run_android(root_dir, apptype):
     else:
         remove_files('Adjust-*.*.*.ane', '{0}/lib'.format(test_app_dir))
         remove_files('AdjustTest-*.*.*.ane', '{0}/lib'.format(test_app_dir))
-
-    # adb uninstall
-    adb_uninstall('air.com.adjust.examples')
 
     # ------------------------------------------------------------------
     # Copying ANE to app
@@ -76,29 +107,11 @@ def run_android(root_dir, apptype):
         debug_green('Keystore file exists')
 
     # ------------------------------------------------------------------
-    # Packaging APK file. Password will be entered automatically
-    debug_green('Packaging APK file. Password will be entered automatically ...')
-    package_apk_file()
-
-    # ------------------------------------------------------------------
-    # APK file created. Running ADB install
-    debug_green('APK file created. Running ADB install ...')
-    adb_install_apk('Main.apk')
-
-    # ------------------------------------------------------------------
-    # App installed. Running the app
-    if is_test_app():
-        debug_green('App installed. Running the app ...')
-        adb_shell_monkey('air.com.adjust.examples')
-
-def run_ios(root_dir):
-    exit()
-
-try:
+    # platform specific run code
     if args.platform == 'android':
-        run_android(root_dir, args.apptype)
+        run_android()
     else:
-        run_ios(root_dir, args.apptype)
+        run_ios()
 finally:
     # remove autocreated python compiled files
     remove_files('*.pyc', script_dir, log=False)

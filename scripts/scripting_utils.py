@@ -187,7 +187,7 @@ def change_dir(dir):
     os.chdir(dir)
 
 def get_env_variable(var_name):
-    return os.environ[var_name];
+    return os.environ.get(var_name);
 
 def xcode_build(target, configuration='Release'):
     execute_command(['xcodebuild', '-target', target, '-configuration', configuration])
@@ -323,10 +323,18 @@ def make_sample_cert():
     execute_command(['adt', '-certificate', '-validityPeriod', '25', '-cn', 'SelfSigned', '2048-RSA', 'sampleCert.pfx', 'pass'])
 
 def package_apk_file():
-    debug_blue('Packaging apk file, please wait ...')
+    debug_blue('Packaging APK file, please wait ...')
     command = 'adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib'
+    debug_blue('Executing: [{0}]'.format(command))
     os.system('echo pass|{0}'.format(command))
-    debug_blue('Packaging apk file done')
+    debug_blue('Packaging APK file done')
+
+def package_ipa_file(prov_profile_path, keystore_file_path, example_app_xml_file):
+    debug_blue('Packaging IPA file, please wait ...')
+    command = """adt -package -target ipa-debug -provisioning-profile {0} -storetype pkcs12 -keystore {1} Main.ipa {2} Main.swf -extdir lib""".format(prov_profile_path, keystore_file_path, example_app_xml_file)
+    debug_blue('Executing: [{0}]'.format(command))
+    os.system('echo|{0}'.format(command))
+    debug_blue('Packaging IPA file done')
 
 ############################################################
 ### nonsense, eyecandy and such
