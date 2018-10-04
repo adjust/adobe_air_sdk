@@ -323,8 +323,10 @@ def make_sample_cert():
     execute_command(['adt', '-certificate', '-validityPeriod', '25', '-cn', 'SelfSigned', '2048-RSA', 'sampleCert.pfx', 'pass'])
 
 def package_apk_file():
-    execute_command(['adt', '-package', '-target', 'apk-debug', '-storetype', 'pkcs12', '-keystore', 'sampleCert.pfx', 'Main.apk',
-        'Main-app.xml', 'Main.swf', '-extdir', 'lib'])
+    debug_blue('Packaging apk file, please wait ...')
+    command = 'adt -package -target apk-debug -storetype pkcs12 -keystore sampleCert.pfx Main.apk Main-app.xml Main.swf -extdir lib'
+    os.system('echo pass|{0}'.format(command))
+    debug_blue('Packaging apk file done')
 
 ############################################################
 ### nonsense, eyecandy and such
