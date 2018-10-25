@@ -1,15 +1,14 @@
 package com.adjust.sdk {
-    import flash.desktop.NativeApplication;
     import flash.events.*;
+    import flash.desktop.NativeApplication;
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
         private static var sdkPrefix:String = "adobe_air4.14.0";
         private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
-        
+
         private static var hasSdkStarted:Boolean = false;
         private static var extensionContext:ExtensionContext = null;
-        
         private static var attributionCallbackDelegate:Function;
         private static var googleAdIdCallbackDelegate:Function;
         private static var eventTrackingSucceededDelegate:Function;
@@ -22,7 +21,6 @@ package com.adjust.sdk {
             if (extensionContext != null) {
                 return extensionContext;
             }
-            
             return extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
         }
 
@@ -139,33 +137,28 @@ package com.adjust.sdk {
 
         public static function getIdfa():String {
             var idfa:String = String (getExtensionContext().call("getIdfa"));
-
             return idfa;
         }
 
         public static function getAdid():String {
             var adid:String = String (getExtensionContext().call("getAdid"));
-
             return adid;
         }
 
         public static function getAttribution():AdjustAttribution {
             var attributionString:String = String (getExtensionContext().call("getAttribution"));
             var attribution:AdjustAttribution = getAttributionFromResponse(attributionString);
-            
             return attribution;
         }
 
         public static function getGoogleAdId(callback:Function):void {
             googleAdIdCallbackDelegate = callback;
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-
             getExtensionContext().call("getGoogleAdId");
         }
 
         public static function getAmazonAdId():String {
             var adid:String = String (getExtensionContext().call("getAmazonAdId"));
-
             return adid;
         }
 
@@ -254,7 +247,6 @@ package com.adjust.sdk {
             var timestamp:String;
             var eventToken:String;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -285,7 +277,6 @@ package com.adjust.sdk {
             var eventToken:String;
             var willRetry:Boolean;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -317,7 +308,6 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -345,7 +335,6 @@ package com.adjust.sdk {
             var timestamp:String;
             var willRetry:Boolean;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -385,7 +374,6 @@ package com.adjust.sdk {
             var adgroup:String;
             var clickLabel:String;
             var adid:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {

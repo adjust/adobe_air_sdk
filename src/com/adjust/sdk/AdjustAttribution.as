@@ -28,7 +28,7 @@ package com.adjust.sdk {
             this.adid = adid;
         }
 
-        // Getters
+        // Getters.
         public function getTrackerToken():String {
             return this.trackerToken;
         }

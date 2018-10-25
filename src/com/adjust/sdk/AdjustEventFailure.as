@@ -1,11 +1,10 @@
 package com.adjust.sdk {
     public class AdjustEventFailure {
-        private var willRetry:Boolean;
-
         private var adid:String;
         private var message:String;
         private var timestamp:String;
         private var eventToken:String;
+        private var willRetry:Boolean;
         private var jsonResponse:String;
 
         public function AdjustEventFailure(
@@ -23,7 +22,7 @@ package com.adjust.sdk {
             this.willRetry = willRetry;
         }
 
-        // Getters
+        // Getters.
         public function getMessage():String {
             return this.message;
         }

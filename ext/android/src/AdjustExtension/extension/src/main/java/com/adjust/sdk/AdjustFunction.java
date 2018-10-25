@@ -1,14 +1,18 @@
+//
+//  AdjustFunction.java
+//  Adjust SDK
+//
+//  Created by Pedro Silva (@nonelse) on 31st July 2014.
+//  Copyright (c) 2014-2018 Adjust GmbH. All rights reserved.
+//
+
 package com.adjust.sdk;
 
+import java.lang.*;
+import com.adobe.fre.*;
 import android.net.Uri;
 import android.util.Log;
-import java.lang.*;
 
-import com.adobe.fre.*;
-
-/**
- * Created by pfms on 31/07/14.
- */
 public class AdjustFunction implements FREFunction,
        OnAttributionChangedListener,
        OnEventTrackingSucceededListener,
@@ -111,32 +115,39 @@ public class AdjustFunction implements FREFunction,
             String appToken = null;
             String environment = null;
             String logLevel = null;
-            boolean allowSuppressLogLevel = false;
-
             String secretId = null;
             String info1 = null;
             String info2 = null;
             String info3 = null;
             String info4 = null;
+            boolean allowSuppressLogLevel = false;
 
+            // App token.
             if (freObjects[0] != null) {
                 appToken = freObjects[0].getAsString();
             }
 
+            // Environment.
             if (freObjects[1] != null) {
                 environment = freObjects[1].getAsString();
             }
 
+            // Log level.
             if (freObjects[2] != null) {
                 logLevel = freObjects[2].getAsString();
             }
 
+            // Check if suppress log level is selected.
             if (logLevel != null && logLevel.equals("suppress")) {
                 allowSuppressLogLevel = true;
             }
 
             AdjustConfig adjustConfig = new AdjustConfig(freContext.getActivity(), appToken, environment, allowSuppressLogLevel);
+            if (!adjustConfig.isValid()) {
+                return null;
+            }
 
+            // Log level.
             if (logLevel != null) {
                 if (logLevel.equals("verbose")) {
                     adjustConfig.setLogLevel(LogLevel.VERBOSE);
@@ -159,99 +170,106 @@ public class AdjustFunction implements FREFunction,
                 }
             }
 
+            // Event buffering.
             if (freObjects[3] != null) {
                 Boolean eventBuffering = freObjects[3].getAsBool();
                 adjustConfig.setEventBufferingEnabled(eventBuffering);
             }
 
+            // Attribution callback.
             if (freObjects[4] != null) {
                 Boolean isAttributionCallbackSet = freObjects[4].getAsBool();
-
                 if (isAttributionCallbackSet) {
                     adjustConfig.setOnAttributionChangedListener(this);
                 }
             }
 
+            // Event tracking success callback.
             if (freObjects[5] != null) {
                 Boolean isCallbackSet = freObjects[5].getAsBool();
-
                 if (isCallbackSet) {
                     adjustConfig.setOnEventTrackingSucceededListener(this);
                 }
             }
 
+            // Event tracking failure callback.
             if (freObjects[6] != null) {
                 Boolean isCallbackSet = freObjects[6].getAsBool();
-
                 if (isCallbackSet) {
                     adjustConfig.setOnEventTrackingFailedListener(this);
                 }
             }
 
+            // Session tracking success callback.
             if (freObjects[7] != null) {
                 Boolean isCallbackSet = freObjects[7].getAsBool();
-
                 if (isCallbackSet) {
                     adjustConfig.setOnSessionTrackingSucceededListener(this);
                 }
             }
 
+            // Session tracking failure callback.
             if (freObjects[8] != null) {
                 Boolean isCallbackSet = freObjects[8].getAsBool();
-
                 if (isCallbackSet) {
                     adjustConfig.setOnSessionTrackingFailedListener(this);
                 }
             }
 
+            // Deferred deep link callback.
             if (freObjects[9] != null) {
                 Boolean isCallbackSet = freObjects[9].getAsBool();
-
                 if (isCallbackSet) {
                     adjustConfig.setOnDeeplinkResponseListener(this);
                 }
             }
 
+            // Default tracker.
             if (freObjects[10] != null) {
                 String defaultTracker = freObjects[10].getAsString();
-
                 if (defaultTracker != null) {
                     adjustConfig.setDefaultTracker(defaultTracker);
                 }
             }
 
+            // SDK prefix.
             if (freObjects[11] != null) {
                 String sdkPrefix = freObjects[11].getAsString();
-
                 if (sdkPrefix != null) {
                     adjustConfig.setSdkPrefix(sdkPrefix);
                 }
             }
 
+            // Should deferred deep link be launched.
             if (freObjects[12] != null) {
                 shouldLaunchDeeplink = freObjects[12].getAsBool();
             }
 
+            // Process name.
             if (freObjects[13] != null) {
                 String processName = freObjects[13].getAsString();
                 adjustConfig.setProcessName(processName);
             }
 
+            // Delay start.
             if (freObjects[14] != null) {
                 double delayStart = freObjects[14].getAsDouble();
                 adjustConfig.setDelayStart(delayStart);
             }
 
+            // User agent.
             if (freObjects[15] != null) {
                 String userAgent = freObjects[15].getAsString();
                 adjustConfig.setUserAgent(userAgent);
             }
 
+            // Send in background.
             if (freObjects[16] != null) {
                 boolean sendInBackground = freObjects[16].getAsBool();
                 adjustConfig.setSendInBackground(sendInBackground);
             }
 
+            // App secret.
             if (freObjects[17] != null) {
                 secretId = freObjects[17].getAsString();
             }
@@ -272,16 +290,6 @@ public class AdjustFunction implements FREFunction,
                 info4 = freObjects[21].getAsString();
             }
 
-            if (freObjects[22] != null) {
-                boolean isDeviceKnown = freObjects[22].getAsBool();
-                adjustConfig.setDeviceKnown(isDeviceKnown);
-            }
-
-            if (freObjects[23] != null) {
-                boolean readMobileEquipmentIdentity = freObjects[23].getAsBool();
-                adjustConfig.setReadMobileEquipmentIdentity(readMobileEquipmentIdentity);
-            }
-
             if (secretId != null && info1 != null && info2 != null && info3 != null && info4 != null) {
                 try {
                     long lSecretId = Long.parseLong(secretId, 10);
@@ -289,12 +297,22 @@ public class AdjustFunction implements FREFunction,
                     long lInfo2 = Long.parseLong(info2, 10);
                     long lInfo3 = Long.parseLong(info3, 10);
                     long lInfo4 = Long.parseLong(info4, 10);
-
                     if (lSecretId > 0 && lInfo1 > 0 && lInfo2 > 0 && lInfo3 > 0 && lInfo4 > 0) {
                         adjustConfig.setAppSecret(lSecretId, lInfo1, lInfo2, lInfo3, lInfo4);
                     }
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
+            }
+
+            // Is device known.
+            if (freObjects[22] != null) {
+                boolean isDeviceKnown = freObjects[22].getAsBool();
+                adjustConfig.setDeviceKnown(isDeviceKnown);
+            }
+
+            // Read IMEI.
+            if (freObjects[23] != null) {
+                boolean readMobileEquipmentIdentity = freObjects[23].getAsBool();
+                adjustConfig.setReadMobileEquipmentIdentity(readMobileEquipmentIdentity);
             }
 
             Adjust.onCreate(adjustConfig);
@@ -312,22 +330,23 @@ public class AdjustFunction implements FREFunction,
             String orderId = null;
             double revenue = 0;
 
+            // Event token.
             if (freObjects[0] != null) {
                 eventToken = freObjects[0].getAsString();
             }
 
             AdjustEvent adjustEvent = new AdjustEvent(eventToken);
 
+            // Revenue and currency.
             if (freObjects[1] != null) {
                 currency = freObjects[1].getAsString();
-
                 if (freObjects[2] != null) {
                     revenue = freObjects[2].getAsDouble();
                 }
-
                 adjustEvent.setRevenue(revenue, currency);
             }
 
+            // Callback parameters.
             if (freObjects[3] != null) {
                 for (int i = 0; i < ((FREArray) freObjects[3]).getLength(); i += 2) {
                     adjustEvent.addCallbackParameter(((FREArray) freObjects[3]).getObjectAt(i).getAsString(),
@@ -335,6 +354,7 @@ public class AdjustFunction implements FREFunction,
                 }
             }
 
+            // Partner parameters.
             if (freObjects[4] != null) {
                 for (int i = 0; i < ((FREArray) freObjects[4]).getLength(); i += 2) {
                     adjustEvent.addPartnerParameter(((FREArray) freObjects[4]).getObjectAt(i).getAsString(),
@@ -342,6 +362,7 @@ public class AdjustFunction implements FREFunction,
                 }
             }
 
+            // Order ID.
             if (freObjects[5] != null) {
                 orderId = freObjects[5].getAsString();
                 adjustEvent.setOrderId(orderId);
@@ -358,7 +379,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject SetEnabled(FREContext freContext, FREObject[] freObjects) {
         try {
             Boolean enabled = freObjects[0].getAsBool();
-
             Adjust.setEnabled(enabled);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -401,7 +421,6 @@ public class AdjustFunction implements FREFunction,
         try {
             String url = freObjects[0].getAsString();
             Uri uri = Uri.parse(url);
-
             Adjust.appWillOpenUrl(uri, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -423,7 +442,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject SetOfflineMode(FREContext freContext, FREObject[] freObjects) {
         try {
             Boolean isOffline = freObjects[0].getAsBool();
-
             Adjust.setOfflineMode(isOffline);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -435,7 +453,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject SetReferrer(FREContext freContext, FREObject[] freObjects) {
         try {
             String referrer = freObjects[0].getAsString();
-
             Adjust.setReferrer(referrer, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -447,7 +464,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject SetDeviceToken(FREContext freContext, FREObject[] freObjects) {
         try {
             String token = freObjects[0].getAsString();
-
             Adjust.setPushToken(token, freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -486,7 +502,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject GetAdid(final FREContext freContext, FREObject[] freObjects) {
         try {
             String adid = Adjust.getAdid();
-
             return FREObject.newObject(adid);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -498,7 +513,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject GetAttribution(final FREContext freContext, FREObject[] freObjects) {
         try {
             AdjustAttribution attribution = Adjust.getAttribution();
-
             if (attribution == null) {
                 return null;
             }
@@ -524,7 +538,6 @@ public class AdjustFunction implements FREFunction,
         try {
             String key = freObjects[0].getAsString();
             String value = freObjects[1].getAsString();
-
             Adjust.addSessionCallbackParameter(key, value);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -536,7 +549,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject RemoveSessionCallbackParameter(FREContext freContext, FREObject[] freObjects) {
         try {
             String key = freObjects[0].getAsString();
-
             Adjust.removeSessionCallbackParameter(key);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -559,7 +571,6 @@ public class AdjustFunction implements FREFunction,
         try {
             String key = freObjects[0].getAsString();
             String value = freObjects[1].getAsString();
-
             Adjust.addSessionPartnerParameter(key, value);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -571,7 +582,6 @@ public class AdjustFunction implements FREFunction,
     private FREObject RemoveSessionPartnerParameter(FREContext freContext, FREObject[] freObjects) {
         try {
             String key = freObjects[0].getAsString();
-
             Adjust.removeSessionPartnerParameter(key);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -690,7 +700,6 @@ public class AdjustFunction implements FREFunction,
             + "adgroup==" + attribution.adgroup + "__"
             + "clickLabel==" + attribution.clickLabel + "__"
             + "adid==" + attribution.adid;
-
         AdjustExtension.context.dispatchStatusEventAsync("adjust_attributionData", response);
     }
 
@@ -705,11 +714,9 @@ public class AdjustFunction implements FREFunction,
                 + "timeStamp==" + event.timestamp + "__"
                 + "adid==" + event.adid + "__"
                 + "eventToken==" + event.eventToken + "__");
-
         if (event.jsonResponse != null) {
             response.append("jsonResponse==" + event.jsonResponse.toString());
         }
-
         AdjustExtension.context.dispatchStatusEventAsync("adjust_eventTrackingSucceeded", response.toString());
     }
 
@@ -725,11 +732,9 @@ public class AdjustFunction implements FREFunction,
                 + "adid==" + event.adid + "__"
                 + "eventToken==" + event.eventToken + "__"
                 + "willRetry==" + event.willRetry + "__");
-
         if (event.jsonResponse != null) {
             response.append("jsonResponse==" + event.jsonResponse.toString());
         }
-
         AdjustExtension.context.dispatchStatusEventAsync("adjust_eventTrackingFailed", response.toString());
     }
 
@@ -743,11 +748,9 @@ public class AdjustFunction implements FREFunction,
         response.append("message==" + event.message + "__"
                 + "timeStamp==" + event.timestamp + "__"
                 + "adid==" + event.adid + "__");
-
         if (event.jsonResponse != null) {
             response.append("jsonResponse==" + event.jsonResponse.toString());
         }
-
         AdjustExtension.context.dispatchStatusEventAsync("adjust_sessionTrackingSucceeded", response.toString());
     }
 
@@ -762,20 +765,16 @@ public class AdjustFunction implements FREFunction,
                 + "timeStamp==" + event.timestamp + "__"
                 + "adid==" + event.adid + "__"
                 + "willRetry==" + event.willRetry + "__");
-
         if (event.jsonResponse != null) {
             response.append("jsonResponse==" + event.jsonResponse.toString());
         }
-
         AdjustExtension.context.dispatchStatusEventAsync("adjust_sessionTrackingFailed", response.toString());
     }
 
     @Override
     public boolean launchReceivedDeeplink(Uri deeplink) {
         String response = deeplink.toString();
-
         AdjustExtension.context.dispatchStatusEventAsync("adjust_deferredDeeplink", response);
-
         return shouldLaunchDeeplink;
     }
 }

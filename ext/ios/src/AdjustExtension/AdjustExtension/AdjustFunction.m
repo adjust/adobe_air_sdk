@@ -1,9 +1,9 @@
 //
 //  AdjustFunction.m
-//  AdjustExtension
+//  Adjust SDK
 //
-//  Created by Pedro Filipe on 07/08/14.
-//  Copyright (c) 2014 adjust. All rights reserved.
+//  Created by Pedro Silva (@nonelse) on 7th August 2014.
+//  Copyright (c) 2014-2018 Adjust GmbH. All rights reserved.
 //
 
 #import "AdjustFunction.h"
@@ -24,13 +24,11 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         NSString *logLevelString = nil;
         NSString *defaultTracker = nil;
         NSString *sdkPrefix = nil;
-
         NSString *secretId = nil;
         NSString *info1 = nil;
         NSString *info2 = nil;
         NSString *info3 = nil;
-        NSString *info4= nil;
-
+        NSString *info4 = nil;
         BOOL eventBufferingEnabled = NO;
         BOOL isAttributionCallbackImplemented = NO;
         BOOL isEventTrackingSucceededCallbackImplemented = NO;
@@ -50,7 +48,6 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
         if (argv[2] != nil) {
             FREGetObjectAsNativeString(argv[2], &logLevelString);
-
             if (logLevelString != nil) {
                 if ([logLevelString isEqualToString:@"suppress"]) {
                     allowSuppressLogLevel = YES;

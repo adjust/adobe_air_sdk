@@ -1,14 +1,12 @@
 package com.adjust.sdk {
     public class AdjustEvent {
-        // For iOS & Android
         private var revenue:Number;
         private var currency:String;
         private var eventToken:String;
         private var transactionId:String;
         private var partnerParameters:Array;
         private var callbackParameters:Array;
-
-        // iOS specific
+        // iOS only.
         private var receipt:String;
         private var isReceiptSet:Boolean;
 
@@ -44,7 +42,7 @@ package com.adjust.sdk {
             this.isReceiptSet = true;
         }
 
-        // Getters
+        // Getters.
         public function getEventToken():String {
             return this.eventToken;
         }

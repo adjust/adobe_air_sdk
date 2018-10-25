@@ -5,7 +5,6 @@ package com.adjust.sdk {
         public var noBackoffWait:Boolean = false;
         public var tryInstallReferrer:Boolean = false;
         public var useTestConnectionOptions:Boolean = false;
-
         public var baseUrl:String = null;
         public var gdprUrl:String = null;
         public var basePath:String = null;

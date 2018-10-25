@@ -1,16 +1,19 @@
+//
+//  AdjustContext.java
+//  Adjust SDK
+//
+//  Created by Pedro Silva (@nonelse) on 31st July 2014.
+//  Copyright (c) 2014-2018 Adjust GmbH. All rights reserved.
+//
+
 package com.adjust.sdk;
 
+import java.util.Map;
+import java.util.HashMap;
+import android.content.Intent;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 
-import android.content.Intent;
-
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * Created by pfms on 31/07/14.
- */
 public class AdjustContext extends FREContext {
     public static String OnCreate = "onCreate";
     public static String TrackEvent = "trackEvent";
@@ -34,18 +37,15 @@ public class AdjustContext extends FREContext {
     public static String GetAdid = "getAdid";
     public static String GetAttribution = "getAttribution";
     public static String GdprForgetMe = "gdprForgetMe";
-
-    // iOS methods
+    // iOS methods.
     public static String GetIdfa = "getIdfa";
-
-    // Test methods
+    // Test methods.
     public static String SetTestOptions = "setTestOptions";
     public static String Teardown = "teardown";
 
     @Override
     public Map<String, FREFunction> getFunctions() {
         Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
-
         functions.put(AdjustContext.OnCreate, new AdjustFunction(AdjustContext.OnCreate));
         functions.put(AdjustContext.TrackEvent, new AdjustFunction(AdjustContext.TrackEvent));
         functions.put(AdjustContext.SetEnabled, new AdjustFunction(AdjustContext.SetEnabled));
@@ -68,9 +68,9 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.GetAdid, new AdjustFunction(AdjustContext.GetAdid));
         functions.put(AdjustContext.GetAttribution, new AdjustFunction(AdjustContext.GetAttribution));
         functions.put(AdjustContext.GdprForgetMe, new AdjustFunction(AdjustContext.GdprForgetMe));
-
+        // iOS methods.
         functions.put(AdjustContext.GetIdfa, new AdjustFunction(AdjustContext.GetIdfa));
-
+        // Test methods.
         functions.put(AdjustContext.SetTestOptions, new AdjustFunction(AdjustContext.SetTestOptions));
         functions.put(AdjustContext.Teardown, new AdjustFunction(AdjustContext.Teardown));
 

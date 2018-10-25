@@ -1,9 +1,9 @@
 //
 //  AdjustSdkDelegate.m
-//  Adjust
+//  Adjust SDK
 //
-//  Created by Abdullah Obaied on 2016-12-15.
-//  Copyright (c) 2012-2016 adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied (@obaied) on 15th December 2016.
+//  Copyright (c) 2016-2018 Adjust GmbH. All rights reserved.
 //
 
 #import <objc/runtime.h>
@@ -32,32 +32,27 @@ static AdjustSdkDelegate *defaultInstance = nil;
             [defaultInstance swizzleCallbackMethod:@selector(adjustAttributionChanged:)
                                   swizzledSelector:@selector(adjustAttributionChangedWannabe:)];
         }
-        
         if (swizzleEventSucceededCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustEventTrackingSucceeded:)
                                   swizzledSelector:@selector(adjustEventTrackingSucceededWannabe:)];
         }
-        
         if (swizzleEventFailedCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustEventTrackingFailed:)
                                   swizzledSelector:@selector(adjustEventTrackingFailedWannabe:)];
         }
-        
         if (swizzleSessionSucceededCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustSessionTrackingSucceeded:)
                                   swizzledSelector:@selector(adjustSessionTrackingSucceededWannabe:)];
         }
-        
         if (swizzleSessionFailedCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustSessionTrackingFailed:)
                                   swizzledSelector:@selector(adjustSessionTrackingFailedWananbe:)];
         }
-        
         if (swizzleDeferredDeeplinkCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustDeeplinkResponse:)
                                   swizzledSelector:@selector(adjustDeeplinkResponseWannabe:)];
         }
-        
+
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setAdjustFREContext:freContext];
     });
@@ -72,11 +67,9 @@ static AdjustSdkDelegate *defaultInstance = nil;
 
 - (id)init {
     self = [super init];
-    
     if (nil == self) {
         return nil;
     }
-    
     return self;
 }
 
@@ -84,7 +77,7 @@ static AdjustSdkDelegate *defaultInstance = nil;
     if (attribution == nil) {
         return;
     }
-    
+
     NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"trackerToken", attribution.trackerToken,
              @"trackerName", attribution.trackerName,
@@ -95,7 +88,6 @@ static AdjustSdkDelegate *defaultInstance = nil;
              @"clickLabel", attribution.clickLabel,
              @"adid", attribution.adid];
     const char* cResponseData = [attributionString UTF8String];
-
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_attributionData",
             (const uint8_t *)cResponseData);
@@ -113,7 +105,6 @@ static AdjustSdkDelegate *defaultInstance = nil;
              @"eventToken", eventSuccess.eventToken,
              @"jsonResponse", eventSuccess.jsonResponse];
     const char* cResponseData = [formattedString UTF8String];
-
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_eventTrackingSucceeded",
             (const uint8_t *)cResponseData);
@@ -132,7 +123,6 @@ static AdjustSdkDelegate *defaultInstance = nil;
              @"willRetry", eventFailed.willRetry ? @"true" : @"false",
              @"jsonResponse", eventFailed.jsonResponse];
     const char* cResponseData = [formattedString UTF8String];
-
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_eventTrackingFailed",
             (const uint8_t *)cResponseData);
@@ -150,7 +140,6 @@ static AdjustSdkDelegate *defaultInstance = nil;
              @"adid", sessionSuccess.adid,
              @"jsonResponse", sessionSuccess.jsonResponse];
     const char* cResponseData = [formattedString UTF8String];
-
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_sessionTrackingSucceeded",
             (const uint8_t *)cResponseData);
@@ -168,7 +157,6 @@ static AdjustSdkDelegate *defaultInstance = nil;
              @"willRetry", sessionFailed.willRetry ? @"true" : @"false",
              @"jsonResponse", sessionFailed.jsonResponse];
     const char* cResponseData = [formattedString UTF8String];
-
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_sessionTrackingFailed",
             (const uint8_t *)cResponseData);
@@ -177,26 +165,21 @@ static AdjustSdkDelegate *defaultInstance = nil;
 - (BOOL)adjustDeeplinkResponseWannabe:(NSURL *)deeplink {
     NSString *formattedString = [NSString stringWithFormat:@"%@", deeplink.absoluteString];
     const char* cResponseData = [formattedString UTF8String];
-
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_deferredDeeplink",
             (const uint8_t *)cResponseData);
-
     return _shouldLaunchDeferredDeeplink;
 }
 
 - (void)swizzleCallbackMethod:(SEL)originalSelector
              swizzledSelector:(SEL)swizzledSelector {
     Class class = [self class];
-    
     Method originalMethod = class_getInstanceMethod(class, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
-    
     BOOL didAddMethod = class_addMethod(class,
                                         originalSelector,
                                         method_getImplementation(swizzledMethod),
                                         method_getTypeEncoding(swizzledMethod));
-    
     if (didAddMethod) {
         class_replaceMethod(class,
                             swizzledSelector,

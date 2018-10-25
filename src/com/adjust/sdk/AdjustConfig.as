@@ -1,33 +1,27 @@
 package com.adjust.sdk {
     public class AdjustConfig {
-        // For iOS & Android
         private var delayStart:Number;
-
         private var appToken:String;
         private var logLevel:String;
         private var userAgent:String;
         private var environment:String;
         private var defaultTracker:String;
-
         private var sendInBackground:Boolean;
         private var shouldLaunchDeeplink:Boolean;
         private var eventBufferingEnabled:Boolean;
         private var isDeviceKnown:Boolean;
-
         private var attributionCallbackDelegate:Function;
         private var eventTrackingSucceededDelegate:Function;
         private var eventTrackingFailedDelegate:Function;
         private var sessionTrackingSucceededDelegate:Function;
         private var sessionTrackingFailedDelegate:Function;
         private var deferredDeeplinkDelegate:Function;
-
         private var secretId:String;
         private var info1:String;
         private var info2:String;
         private var info3:String;
         private var info4:String;
-
-        // For Android only
+        // Android only.
         private var processName:String;
         private var readMobileEquipmentIdentity:Boolean;
 
@@ -96,19 +90,15 @@ package com.adjust.sdk {
             if (!isNaN(secretId)) {
                 this.secretId = secretId.toString();
             }
-
             if (!isNaN(info1)) {
                 this.info1 = info1.toString();
             }
-
             if (!isNaN(info2)) {
                 this.info2 = info2.toString();
             }
-
             if (!isNaN(info3)) {
                 this.info3 = info3.toString();
             }
-
             if (!isNaN(info4)) {
                 this.info4 = info4.toString();
             }
@@ -122,7 +112,7 @@ package com.adjust.sdk {
             this.readMobileEquipmentIdentity = readMobileEquipmentIdentity;
         }
 
-        // Getters
+        // Getters.
         public function getAppToken():String {
             return this.appToken;
         }

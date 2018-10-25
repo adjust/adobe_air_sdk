@@ -16,7 +16,6 @@ public class AdjustTestFunction implements FREFunction {
     private static TestLibrary testLibrary;
     private static List<String> selectedTests = new ArrayList<String>();
     private static List<String> selectedTestDirs = new ArrayList<String>();
-
     private String functionName;
 
     public AdjustTestFunction(String functionName) {

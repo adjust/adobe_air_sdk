@@ -19,7 +19,7 @@ package com.adjust.sdk {
             this.jsonResponse = jsonResponse;
         }
 
-        // Getters
+        // Getters.
         public function getMessage():String {
             return this.message;
         }

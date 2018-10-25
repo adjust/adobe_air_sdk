@@ -1,10 +1,11 @@
 //
 //  AdjustFREUtils.h
-//  AdjustExtension
+//  Adjust SDK
 //
-//  Created by Pedro Filipe on 07/08/14.
-//  Copyright (c) 2014 adjust. All rights reserved.
+//  Created by Pedro Silva (@nonelse) on 7th August 2014.
+//  Copyright (c) 2014-2018 Adjust GmbH. All rights reserved.
 //
+
 #import "FlashRuntimeExtensions.h"
 
 #define ASSERT_FRE_OK(x) if (x != FRE_OK) { return x; }
