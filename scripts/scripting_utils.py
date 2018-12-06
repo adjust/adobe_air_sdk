@@ -190,13 +190,13 @@ def get_env_variable(var_name):
     return os.environ.get(var_name);
 
 def xcode_build(target, configuration='Release'):
-    execute_command(['xcodebuild', '-target', target, '-configuration', configuration])
+    execute_command(['xcodebuild', '-target', target, '-configuration', configuration, '-UseModernBuildSystem=NO'])
 
 def xcode_clean_build(target, configuration='Release'):
-    execute_command(['xcodebuild', '-target', target, '-configuration', configuration, 'clean', 'build'])
+    execute_command(['xcodebuild', '-target', target, '-configuration', configuration, 'clean', 'build', '-UseModernBuildSystem=NO'])
 
 def xcode_build_custom(ext_dir):
-    execute_command(['xcodebuild', 'CONFIGURATION_BUILD_DIR={0}'.format(ext_dir)])
+    execute_command(['xcodebuild', 'CONFIGURATION_BUILD_DIR={0}'.format(ext_dir), '-UseModernBuildSystem=NO'])
 
 def adb_uninstall(package):
     execute_command(['adb', 'uninstall', package])

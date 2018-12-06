@@ -9,13 +9,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.adjust.sdk.Constants.HIGH;
 import static com.adjust.sdk.Constants.LARGE;
@@ -31,8 +28,9 @@ import static com.adjust.sdk.Constants.XLARGE;
  */
 class DeviceInfo {
     String playAdId;
+    String playAdIdSource;
     Boolean isTrackingEnabled;
-    private boolean nonGoogleIdsRead = false;
+    private boolean nonGoogleIdsReadOnce = false;
     String macSha1;
     String macShortMd5;
     String androidId;
@@ -56,10 +54,8 @@ class DeviceInfo {
     String hardwareName;
     String abi;
     String buildName;
-    String vmInstructionSet;
     String appInstallTime;
     String appUpdateTime;
-    Map<String, String> pluginKeys;
 
     DeviceInfo(Context context, String sdkPrefix) {
         Resources resources = context.getResources();
@@ -68,8 +64,6 @@ class DeviceInfo {
         Locale locale = Util.getLocale(configuration);
         int screenLayout = configuration.screenLayout;
         ContentResolver contentResolver = context.getContentResolver();
-
-        reloadDeviceIds(context);
 
         packageName = getPackageName(context);
         appVersion = getAppVersion(context);
@@ -88,31 +82,57 @@ class DeviceInfo {
         displayHeight = getDisplayHeight(displayMetrics);
         clientSdk = getClientSdk(sdkPrefix);
         fbAttributionId = getFacebookAttributionId(context);
-        pluginKeys = Util.getPluginKeys(context);
         hardwareName = getHardwareName();
         abi = getABI();
         buildName = getBuildName();
-        vmInstructionSet = getVmInstructionSet();
         appInstallTime = getAppInstallTime(context);
         appUpdateTime = getAppUpdateTime(context);
     }
 
-    void reloadDeviceIds(Context context) {
-        isTrackingEnabled = Util.isPlayTrackingEnabled(context);
-        playAdId = Util.getPlayAdId(context);
-
-        if (playAdId == null && !nonGoogleIdsRead) {
-            if (!Util.checkPermission(context, android.Manifest.permission.ACCESS_WIFI_STATE)) {
-                AdjustFactory.getLogger().warn("Missing permission: ACCESS_WIFI_STATE");
+    void reloadPlayIds(Context context) {
+        playAdIdSource = null;
+        for (int i = 0; i < 3; i += 1) {
+            try {
+                GooglePlayServicesClient.GooglePlayServicesInfo gpsInfo = GooglePlayServicesClient.getGooglePlayServicesInfo(context);
+                playAdId = gpsInfo.getGpsAdid();
+                if (playAdId != null) {
+                    playAdIdSource = "service";
+                    break;
+                }
+            } catch (Exception e) {}
+            playAdId = Util.getPlayAdId(context);
+            if (playAdId != null) {
+                playAdIdSource = "library";
+                break;
             }
-            String macAddress = Util.getMacAddress(context);
-            macSha1 = getMacSha1(macAddress);
-            macShortMd5 = getMacShortMd5(macAddress);
-
-            androidId = Util.getAndroidId(context);
-
-            nonGoogleIdsRead = true;
         }
+        for (int i = 0; i < 3; i += 1) {
+            try {
+                GooglePlayServicesClient.GooglePlayServicesInfo gpsInfo = GooglePlayServicesClient.getGooglePlayServicesInfo(context);
+                isTrackingEnabled = gpsInfo.isTrackingEnabled();
+                if (isTrackingEnabled != null) {
+                    break;
+                }
+            } catch (Exception e) {}
+            isTrackingEnabled = Util.isPlayTrackingEnabled(context);
+            if (isTrackingEnabled != null) {
+                break;
+            }
+        }
+    }
+
+    void reloadNonPlayIds(Context context) {
+        if (nonGoogleIdsReadOnce) {
+            return;
+        }
+        if (!Util.checkPermission(context, android.Manifest.permission.ACCESS_WIFI_STATE)) {
+            AdjustFactory.getLogger().warn("Missing permission: ACCESS_WIFI_STATE");
+        }
+        String macAddress = Util.getMacAddress(context);
+        macSha1 = getMacSha1(macAddress);
+        macShortMd5 = getMacShortMd5(macAddress);
+        androidId = Util.getAndroidId(context);
+        nonGoogleIdsReadOnce = true;
     }
 
     private String getMacAddress(Context context, boolean isGooglePlayServicesAvailable) {
@@ -306,11 +326,6 @@ class DeviceInfo {
         }
 
         return SupportedABIS[0];
-    }
-
-    private String getVmInstructionSet() {
-        String instructionSet = Util.getVmInstructionSet();
-        return instructionSet;
     }
 
     private String getAppInstallTime(Context context) {

@@ -18,12 +18,13 @@ def build(root_dir, is_release = True):
         '{0}/AdjustFunction.java'.format(extension_source_dir), 
         '{0}/AdjustContext.java'.format(extension_source_dir)]
     remove_dir_if_exists('{0}/plugin'.format(extension_source_dir))
+    remove_dir_if_exists('{0}/scheduler'.format(extension_source_dir))
     remove_files('*', extension_source_dir, excluded_files)
 
     # ------------------------------------------------------------------
     # Copying files from ${SDK_SOURCE_DIR} to ${EXTENSION_SOURCE_DIR}
     debug_green('Copying files from {0} to {1} ...'.format(sdk_source_dir, extension_source_dir))
-    copy_dir_contents('{0}/plugin'.format(sdk_source_dir), '{0}/plugin'.format(extension_source_dir))
+    copy_dir_contents('{0}/scheduler'.format(sdk_source_dir), '{0}/scheduler'.format(extension_source_dir))
     copy_files('*', sdk_source_dir, extension_source_dir)
 
     # ------------------------------------------------------------------
