@@ -7,7 +7,7 @@ def build(root_dir, is_release = True):
     build_dir            = '{0}/src/AdjustExtension'.format(ext_dir)
     extension_source_dir = '{0}/src/AdjustExtension/extension/src/main/java/com/adjust/sdk'.format(ext_dir)
     jar_in_dir           = '{0}/src/AdjustExtension/extension/build/outputs'.format(ext_dir)
-    sdk_source_dir       = '{0}/sdk/Adjust/adjust/src/main/java/com/adjust/sdk'.format(ext_dir)
+    sdk_source_dir       = '{0}/sdk/Adjust/sdk-core/src/main/java/com/adjust/sdk'.format(ext_dir)
 
     # ------------------------------------------------------------------
     # Removing all files not related to Adjust extension
