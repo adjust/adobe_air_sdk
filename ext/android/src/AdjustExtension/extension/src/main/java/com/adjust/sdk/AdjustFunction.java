@@ -331,6 +331,7 @@ public class AdjustFunction implements FREFunction,
             String eventToken = null;
             String currency = null;
             String orderId = null;
+            String callbackId = null;
             double revenue = 0;
 
             // Event token.
@@ -365,9 +366,15 @@ public class AdjustFunction implements FREFunction,
                 }
             }
 
-            // Order ID.
+            // Callback ID.
             if (freObjects[5] != null) {
-                orderId = freObjects[5].getAsString();
+                callbackId = freObjects[5].getAsString();
+                adjustEvent.setCallbackId(callbackId);
+            }
+
+            // Transaction ID.
+            if (freObjects[6] != null) {
+                orderId = freObjects[6].getAsString();
                 adjustEvent.setOrderId(orderId);
             }
 

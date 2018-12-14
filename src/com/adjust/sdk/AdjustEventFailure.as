@@ -4,6 +4,7 @@ package com.adjust.sdk {
         private var message:String;
         private var timestamp:String;
         private var eventToken:String;
+        private var callbackId:String;
         private var willRetry:Boolean;
         private var jsonResponse:String;
 
@@ -12,12 +13,14 @@ package com.adjust.sdk {
             timestamp:String,
             adid:String,
             eventToken:String,
+            callbackId:String,
             jsonResponse:String,
             willRetry:Boolean) {
             this.adid = adid;
             this.message = message;
             this.timestamp = timestamp;
             this.eventToken = eventToken;
+            this.callbackId = callbackId;
             this.jsonResponse = jsonResponse;
             this.willRetry = willRetry;
         }
@@ -37,6 +40,10 @@ package com.adjust.sdk {
 
         public function getEventToken():String {
             return this.eventToken;
+        }
+
+        public function getCallbackId():String {
+            return this.callbackId;
         }
 
         public function getJsonResponse():String {

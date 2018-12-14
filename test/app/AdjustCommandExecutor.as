@@ -315,6 +315,10 @@ package {
                 var orderId:String = getFirstParameterValue(params, 'orderId');
                 adjustEvent.setTransactionId(orderId);
             }
+            if (params['callbackId'] != null) {
+                var callbackId:String = getFirstParameterValue(params, 'callbackId');
+                adjustEvent.setCallbackId(callbackId);
+            }
         }
 
         private function trackEvent(params:Object):void {
@@ -436,6 +440,7 @@ package {
             AdjustTest.addInfoToSend("timestamp", eventSuccess.getTimeStamp());
             AdjustTest.addInfoToSend("adid", eventSuccess.getAdid());
             AdjustTest.addInfoToSend("eventToken", eventSuccess.getEventToken());
+            AdjustTest.addInfoToSend("callbackId", eventSuccess.getCallbackId());
             AdjustTest.addInfoToSend("jsonResponse", eventSuccess.getJsonResponse());
             AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
         }
@@ -445,6 +450,7 @@ package {
             AdjustTest.addInfoToSend("timestamp", eventFail.getTimeStamp());
             AdjustTest.addInfoToSend("adid", eventFail.getAdid());
             AdjustTest.addInfoToSend("eventToken", eventFail.getEventToken());
+            AdjustTest.addInfoToSend("callbackId", eventFail.getCallbackId());
             AdjustTest.addInfoToSend("willRetry", eventFail.getWillRetry().toString());
             AdjustTest.addInfoToSend("jsonResponse", eventFail.getJsonResponse());
             AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);

@@ -1,14 +1,13 @@
 package com.adjust.sdk {
     public class AdjustEvent {
-        // For iOS & Android
         private var revenue:Number;
         private var currency:String;
         private var eventToken:String;
+        private var callbackId:String;
         private var transactionId:String;
         private var partnerParameters:Array;
         private var callbackParameters:Array;
-
-        // iOS specific
+        // iOS only.
         private var receipt:String;
         private var isReceiptSet:Boolean;
 
@@ -34,6 +33,10 @@ package com.adjust.sdk {
             this.partnerParameters.push(value);
         }
 
+        public function setCallbackId(callbackId:String):void {
+            this.callbackId = callbackId;
+        }
+
         public function setTransactionId(transactionId:String):void {
             this.transactionId = transactionId;
         }
@@ -44,7 +47,7 @@ package com.adjust.sdk {
             this.isReceiptSet = true;
         }
 
-        // Getters
+        // Getters.
         public function getEventToken():String {
             return this.eventToken;
         }
@@ -63,6 +66,10 @@ package com.adjust.sdk {
 
         public function getPartnerParameters():Array {
             return this.partnerParameters;
+        }
+
+        public function getCallbackId():String {
+            return this.callbackId;
         }
 
         public function getTransactionId():String {

@@ -182,6 +182,7 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
         NSString *eventToken = nil;
         NSString *currency = nil;
         NSString *receipt = nil;
+        NSString *callbackId = nil;
         NSString *transactionId = nil;
         NSMutableArray *callbackParameters = nil;
         NSMutableArray *partnerParameters = nil;
@@ -215,14 +216,20 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
                 [adjustEvent addPartnerParameter:key value:value];
             }
         }
-
-        if (argv[7] != nil) {
-            FREGetObjectAsNativeBool(argv[7], &isReceiptSet);
-            if (argv[6] != nil) {
-                FREGetObjectAsNativeString(argv[6], &receipt);
+        if (argv[5] != nil) {
+            FREGetObjectAsNativeString(argv[5], &callbackId);
+            if (callbackId != nil) {
+                [adjustEvent setCallbackId:callbackId];
             }
+        }
+        // TODO: Handle transaction ID like callback ID.
+        if (argv[8] != nil) {
+            FREGetObjectAsNativeBool(argv[8], &isReceiptSet);
             if (argv[7] != nil) {
-                FREGetObjectAsNativeString(argv[5], &transactionId);
+                FREGetObjectAsNativeString(argv[7], &receipt);
+            }
+            if (argv[6] != nil) {
+                FREGetObjectAsNativeString(argv[6], &transactionId);
             }
             if (isReceiptSet) {
                 [adjustEvent setReceipt:[receipt dataUsingEncoding:NSUTF8StringEncoding] transactionId:transactionId];

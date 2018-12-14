@@ -92,13 +92,14 @@ package com.adjust.sdk {
             }
 
             getExtensionContext().call("trackEvent", 
-                    adjustEvent.getEventToken(), 
+                    adjustEvent.getEventToken(),
                     adjustEvent.getCurrency(),
-                    adjustEvent.getRevenue(), 
-                    adjustEvent.getCallbackParameters(), 
+                    adjustEvent.getRevenue(),
+                    adjustEvent.getCallbackParameters(),
                     adjustEvent.getPartnerParameters(),
-                    adjustEvent.getTransactionId(), 
-                    adjustEvent.getReceipt(), 
+                    adjustEvent.getCallbackId(),
+                    adjustEvent.getTransactionId(),
+                    adjustEvent.getReceipt(),
                     adjustEvent.getIsReceiptSet());
         }
 
@@ -163,7 +164,7 @@ package com.adjust.sdk {
         }
 
         public static function getSdkVersion():String {
-            var sdkVersion = sdkPrefix + "@" + String (getExtensionContext().call("getSdkVersion"));
+            var sdkVersion:String = sdkPrefix + "@" + String (getExtensionContext().call("getSdkVersion"));
             return sdkVersion;
         }
 
@@ -251,6 +252,7 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var eventToken:String;
+            var callbackId:String;
             var jsonResponse:String;
             var parts:Array = response.split("__");
 
@@ -267,12 +269,14 @@ package com.adjust.sdk {
                     adid = value;
                 } else if (key == "eventToken") {
                     eventToken = value;
+                } else if (key == "callbackId") {
+                    callbackId = value;
                 } else if (key == "jsonResponse") {
                     jsonResponse = value;
                 }
             }
 
-            return new AdjustEventSuccess(message, timestamp, adid, eventToken, jsonResponse);
+            return new AdjustEventSuccess(message, timestamp, adid, eventToken, callbackId, jsonResponse);
         }
 
         private static function getEventFailFromResponse(response:String):AdjustEventFailure {
@@ -280,6 +284,7 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var eventToken:String;
+            var callbackId:String;
             var willRetry:Boolean;
             var jsonResponse:String;
             var parts:Array = response.split("__");
@@ -297,6 +302,8 @@ package com.adjust.sdk {
                     adid = value;
                 } else if (key == "eventToken") {
                     eventToken = value;
+                } else if (key == "callbackId") {
+                    callbackId = value;
                 } else if (key == "willRetry") {
                     var tempVal:String = value;
                     willRetry = tempVal == "true";
@@ -305,7 +312,7 @@ package com.adjust.sdk {
                 }
             }
 
-            return new AdjustEventFailure(message, timestamp, adid, eventToken, jsonResponse, willRetry);
+            return new AdjustEventFailure(message, timestamp, adid, eventToken, callbackId, jsonResponse, willRetry);
         }
 
         private static function getSessionSuccessFromResponse(response:String):AdjustSessionSuccess {

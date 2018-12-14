@@ -3,6 +3,7 @@ package com.adjust.sdk {
         private var revenue:Number;
         private var currency:String;
         private var eventToken:String;
+        private var callbackId:String;
         private var transactionId:String;
         private var partnerParameters:Array;
         private var callbackParameters:Array;
@@ -30,6 +31,10 @@ package com.adjust.sdk {
         public function addPartnerParameter(key:String, value:String):void {
             this.partnerParameters.push(key);
             this.partnerParameters.push(value);
+        }
+
+        public function setCallbackId(callbackId:String):void {
+            this.callbackId = callbackId;
         }
 
         public function setTransactionId(transactionId:String):void {
@@ -61,6 +66,10 @@ package com.adjust.sdk {
 
         public function getPartnerParameters():Array {
             return this.partnerParameters;
+        }
+
+        public function getCallbackId():String {
+            return this.callbackId;
         }
 
         public function getTransactionId():String {
