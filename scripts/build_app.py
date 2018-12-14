@@ -26,8 +26,8 @@ version      = open(root_dir + '/VERSION').read()
 version      = version[:-1] # remove end character
 
 # iOS specific
-prov_profile_path  = '/Users/2beens/Documents/development/adjust_dev.mobileprovision'
-keystore_file_path = '/Users/2beens/Documents/development/Certificate.p12'
+prov_profile_path  = os.environ['DEV_ADOBE_PROVISIONING_PROFILE_PATH']
+keystore_file_path = os.environ['KEYSTORE_FILE_PATH']
 
 def is_example_app():
     return args.apptype == 'example'

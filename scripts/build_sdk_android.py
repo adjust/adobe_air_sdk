@@ -17,7 +17,6 @@ def build(root_dir, is_release = True):
         '{0}/AdjustExtension.java'.format(extension_source_dir), 
         '{0}/AdjustFunction.java'.format(extension_source_dir), 
         '{0}/AdjustContext.java'.format(extension_source_dir)]
-    remove_dir_if_exists('{0}/plugin'.format(extension_source_dir))
     remove_dir_if_exists('{0}/scheduler'.format(extension_source_dir))
     remove_files('*', extension_source_dir, excluded_files)
 
@@ -49,8 +48,8 @@ def build_test_lib(root_dir):
     test_plugin_dir    = '{0}/test/plugin/android'.format(root_dir)
     build_dir          = '{0}/src/AdjustTestExtension'.format(test_plugin_dir)
     jar_in_dir         = '{0}/extension/build/outputs'.format(build_dir)
-    test_lib_dir       = '{0}/ext/android/sdk/Adjust/testlibrary/src/main/java/com/adjust/testlibrary'.format(root_dir)
-    test_extension_dir = '{0}/extension/src/main/java/com/adjust/testlibrary'.format(build_dir)
+    test_lib_dir       = '{0}/ext/android/sdk/Adjust/test-library/src/main/java/com/adjust/test'.format(root_dir)
+    test_extension_dir = '{0}/extension/src/main/java/com/adjust/test'.format(build_dir)
 
     # ------------------------------------------------------------------
     # Removing all test plugin native source files except Adobe AIR .java files
