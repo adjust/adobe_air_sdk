@@ -162,6 +162,11 @@ package com.adjust.sdk {
             return adid;
         }
 
+        public static function getSdkVersion():String {
+            var sdkVersion = sdkPrefix + "@" + String (getExtensionContext().call("getSdkVersion"));
+            return sdkVersion;
+        }
+
         public static function addSessionCallbackParameter(key:String, value:String):void {
             getExtensionContext().call("addSessionCallbackParameter", key, value);
         }

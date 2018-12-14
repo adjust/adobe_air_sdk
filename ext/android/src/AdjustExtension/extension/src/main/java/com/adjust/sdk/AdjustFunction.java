@@ -94,6 +94,9 @@ public class AdjustFunction implements FREFunction,
         if (functionName == AdjustContext.GetAttribution) {
             return GetAttribution(freContext, freObjects);
         }
+        if (functionName == AdjustContext.GetSdkVersion) {
+            return GetSdkVersion(freContext, freObjects);
+        }
         if (functionName == AdjustContext.GdprForgetMe) {
             return GdprForgetMe(freContext, freObjects);
         }
@@ -527,6 +530,17 @@ public class AdjustFunction implements FREFunction,
                 + "adid==" + attribution.adid;
 
             return FREObject.newObject(response);
+        } catch (Exception e) {
+            Log.e(AdjustExtension.LogTag, e.getMessage());
+        }
+
+        return null;
+    }
+
+    private FREObject GetSdkVersion(final FREContext freContext, FREObject[] freObjects) {
+        try {
+            String sdkVersion = Adjust.getSdkVersion();
+            return FREObject.newObject(sdkVersion);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }

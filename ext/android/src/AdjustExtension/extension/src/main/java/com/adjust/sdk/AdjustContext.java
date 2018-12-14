@@ -36,6 +36,7 @@ public class AdjustContext extends FREContext {
     public static String SendFirstPackages = "sendFirstPackages";
     public static String GetAdid = "getAdid";
     public static String GetAttribution = "getAttribution";
+    public static String GetSdkVersion = "getAttribution";
     public static String GdprForgetMe = "gdprForgetMe";
     // iOS methods.
     public static String GetIdfa = "getIdfa";
@@ -67,6 +68,7 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.SendFirstPackages, new AdjustFunction(AdjustContext.SendFirstPackages));
         functions.put(AdjustContext.GetAdid, new AdjustFunction(AdjustContext.GetAdid));
         functions.put(AdjustContext.GetAttribution, new AdjustFunction(AdjustContext.GetAttribution));
+        functions.put(AdjustContext.GetSdkVersion, new AdjustFunction(AdjustContext.GetSdkVersion));
         functions.put(AdjustContext.GdprForgetMe, new AdjustFunction(AdjustContext.GdprForgetMe));
         // iOS methods.
         functions.put(AdjustContext.GetIdfa, new AdjustFunction(AdjustContext.GetIdfa));

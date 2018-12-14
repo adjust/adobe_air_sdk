@@ -376,7 +376,22 @@ FREObject ADJgetAttribution(FREContext ctx, void* funcData, uint32_t argc, FREOb
         FRENewObjectFromUTF8((uint32_t)[attributionString length], (const uint8_t *)[attributionString UTF8String], &return_value);
         return return_value;
     } else {
-        NSLog(@"AdjustFunction: Bridge getAdid method triggered with wrong number of arguments");
+        NSLog(@"AdjustFunction: Bridge getAttribution method triggered with wrong number of arguments");
+        return NULL;
+    }
+}
+
+FREObject ADJgetSdkVersion(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        NSString *sdkVersion = [Adjust sdkVersion];
+        if (sdkVersion == nil) {
+            return NULL;
+        }
+        FREObject return_value;
+        FRENewObjectFromUTF8((uint32_t)[sdkVersion length], (const uint8_t *)[sdkVersion UTF8String], &return_value);
+        return return_value;
+    } else {
+        NSLog(@"AdjustFunction: Bridge getSdkVersion method triggered with wrong number of arguments");
         return NULL;
     }
 }

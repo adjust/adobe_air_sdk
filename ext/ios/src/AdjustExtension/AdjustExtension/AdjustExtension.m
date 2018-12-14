@@ -14,12 +14,13 @@ void setNamedFunction(FRENamedFunction* namedFunction, const uint8_t* name, FREF
     namedFunction->function = function;
 }
 
-void AdjustFREContextInitializer(void* extData,
+void AdjustFREContextInitializer(
+    void* extData,
     const uint8_t* ctxType,
     FREContext ctx,
     uint32_t* numFunctionsToSet,
     const FRENamedFunction** functionsToSet) {
-    uint32_t numberOfFunctions = 24;
+    uint32_t numberOfFunctions = 25;
 
     *numFunctionsToSet = numberOfFunctions;
 
@@ -46,9 +47,10 @@ void AdjustFREContextInitializer(void* extData,
     setNamedFunction(&func[18], (const uint8_t*)"sendFirstPackages", &ADJsendFirstPackages);
     setNamedFunction(&func[19], (const uint8_t*)"getAdid", &ADJgetAdid);
     setNamedFunction(&func[20], (const uint8_t*)"getAttribution", &ADJgetAttribution);
-    setNamedFunction(&func[21], (const uint8_t*)"gdprForgetMe", &ADJgdprForgetMe);
-    setNamedFunction(&func[22], (const uint8_t*)"setTestOptions", &ADJsetTestOptions);
-    setNamedFunction(&func[23], (const uint8_t*)"teardown", &ADJteardown);
+    setNamedFunction(&func[21], (const uint8_t*)"getSdkVersion", &ADJgetSdkVersion);
+    setNamedFunction(&func[22], (const uint8_t*)"gdprForgetMe", &ADJgdprForgetMe);
+    setNamedFunction(&func[23], (const uint8_t*)"setTestOptions", &ADJsetTestOptions);
+    setNamedFunction(&func[24], (const uint8_t*)"teardown", &ADJteardown);
 
     *functionsToSet = func;
 }
@@ -57,7 +59,8 @@ void AdjustFREContextFinalizer(FREContext ctx) {
     return;
 }
 
-void AdjustFREInitializer(void** extDataToSet,
+void AdjustFREInitializer(
+    void** extDataToSet,
     FREContextInitializer* ctxInitializerToSet,
     FREContextFinalizer* ctxFinalizerToSet) {
     extDataToSet = NULL;
