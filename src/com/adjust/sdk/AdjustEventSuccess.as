@@ -18,6 +18,7 @@ package com.adjust.sdk {
             this.timestamp = timestamp;
             this.adid = adid;
             this.eventToken = eventToken;
+            this.callbackId = callbackId;
             this.jsonResponse = jsonResponse;
         }
 
