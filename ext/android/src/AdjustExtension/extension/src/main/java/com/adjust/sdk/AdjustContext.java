@@ -36,7 +36,7 @@ public class AdjustContext extends FREContext {
     public static String SendFirstPackages = "sendFirstPackages";
     public static String GetAdid = "getAdid";
     public static String GetAttribution = "getAttribution";
-    public static String GetSdkVersion = "getAttribution";
+    public static String GetSdkVersion = "getSdkVersion";
     public static String GdprForgetMe = "gdprForgetMe";
     // iOS methods.
     public static String GetIdfa = "getIdfa";
