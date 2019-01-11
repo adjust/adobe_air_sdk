@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,22 +21,22 @@ android {
     }
 }
 
-task makeReleaseJar(type: Copy) {
-    dependsOn 'build'
-
-    from('build/intermediates/bundles/release/')
-    into('build/outputs/')
-    include('classes.jar')
-    rename ('classes.jar', "adjust-android.jar")
-}
-
 task makeDebugJar(type: Copy) {
     dependsOn 'build'
 
-    from('build/intermediates/bundles/debug/')
-    into('build/outputs/')
+    from('build/intermediates/intermediate-jars/debug/')
+    into('build/libs/debug/')
     include('classes.jar')
-    rename ('classes.jar', "adjust-android.jar")
+    rename('classes.jar', "adjust-android.jar")
+}
+
+task makeReleaseJar(type: Copy) {
+    dependsOn 'build'
+
+    from('build/intermediates/intermediate-jars/release/')
+    into('build/libs/release/')
+    include('classes.jar')
+    rename('classes.jar', "adjust-android.jar")
 }
 
 dependencies {

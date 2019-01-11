@@ -98,12 +98,21 @@ static AdjustSdkDelegate *defaultInstance = nil;
         return;
     }
 
-    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+    NSString *stringJsonResponse = nil;
+    if (eventSuccess.jsonResponse != nil) {
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:eventSuccess.jsonResponse options:0 error:nil];
+        stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
+                                                      length:[dataJsonResponse length]
+                                                    encoding:NSUTF8StringEncoding];
+    }
+
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", eventSuccess.message,
              @"timeStamp", eventSuccess.timeStamp,
              @"adid", eventSuccess.adid,
              @"eventToken", eventSuccess.eventToken,
-             @"jsonResponse", eventSuccess.jsonResponse];
+             @"callbackId", eventSuccess.callbackId,
+             @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_eventTrackingSucceeded",
@@ -115,13 +124,22 @@ static AdjustSdkDelegate *defaultInstance = nil;
         return;
     }
 
-    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+    NSString *stringJsonResponse = nil;
+    if (eventFailed.jsonResponse != nil) {
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:eventFailed.jsonResponse options:0 error:nil];
+        stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
+                                                      length:[dataJsonResponse length]
+                                                    encoding:NSUTF8StringEncoding];
+    }
+
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", eventFailed.message,
              @"timeStamp", eventFailed.timeStamp,
              @"adid", eventFailed.adid,
              @"eventToken", eventFailed.eventToken,
+             @"callbackId", eventFailed.callbackId,
              @"willRetry", eventFailed.willRetry ? @"true" : @"false",
-             @"jsonResponse", eventFailed.jsonResponse];
+             @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_eventTrackingFailed",
@@ -134,11 +152,19 @@ static AdjustSdkDelegate *defaultInstance = nil;
         return;
     }
 
+    NSString *stringJsonResponse = nil;
+    if (sessionSuccess.jsonResponse != nil) {
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:sessionSuccess.jsonResponse options:0 error:nil];
+        stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
+                                                      length:[dataJsonResponse length]
+                                                    encoding:NSUTF8StringEncoding];
+    }
+
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", sessionSuccess.message,
              @"timeStamp", sessionSuccess.timeStamp,
              @"adid", sessionSuccess.adid,
-             @"jsonResponse", sessionSuccess.jsonResponse];
+             @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_sessionTrackingSucceeded",
@@ -150,12 +176,20 @@ static AdjustSdkDelegate *defaultInstance = nil;
         return;
     }
 
+    NSString *stringJsonResponse = nil;
+    if (sessionFailed.jsonResponse != nil) {
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:sessionFailed.jsonResponse options:0 error:nil];
+        stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
+                                                      length:[dataJsonResponse length]
+                                                    encoding:NSUTF8StringEncoding];
+    }
+
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
              @"message", sessionFailed.message,
              @"timeStamp", sessionFailed.timeStamp,
              @"adid", sessionFailed.adid,
              @"willRetry", sessionFailed.willRetry ? @"true" : @"false",
-             @"jsonResponse", sessionFailed.jsonResponse];
+             @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_sessionTrackingFailed",

@@ -258,6 +258,12 @@ package {
             if (params['eventCallbackSendFailure'] != null) {
                 adjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
             }
+            if (params['deferredDeeplinkCallback'] != null) {
+                var shouldLaunchDeeplinkS:String = getFirstParameterValue(params, 'deferredDeeplinkCallback');
+                var shouldLaunchDeeplink:Boolean = (shouldLaunchDeeplinkS === 'true');
+                adjustConfig.setShouldLaunchDeeplink(shouldLaunchDeeplink);
+                adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
+            }
         }
 
         private function start(params:Object):void {
@@ -470,6 +476,11 @@ package {
             AdjustTest.addInfoToSend("adid", sessionFail.getAdid());
             AdjustTest.addInfoToSend("willRetry", sessionFail.getWillRetry().toString());
             AdjustTest.addInfoToSend("jsonResponse", sessionFail.getJsonResponse());
+            AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
+        }
+
+        private function deferredDeeplinkDelegate(deeplink:String):void {
+            AdjustTest.addInfoToSend("deeplink", deeplink);
             AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
         }
 

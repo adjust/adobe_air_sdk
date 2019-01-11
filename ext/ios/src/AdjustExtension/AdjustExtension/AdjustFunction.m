@@ -176,7 +176,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
 }
 
 FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 8) {
+    if (argc == 9) {
         double revenue;
         BOOL isReceiptSet;
         NSString *eventToken = nil;
@@ -222,23 +222,30 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
                 [adjustEvent setCallbackId:callbackId];
             }
         }
-        // TODO: Handle transaction ID like callback ID.
-        if (argv[8] != nil) {
-            FREGetObjectAsNativeBool(argv[8], &isReceiptSet);
-            if (argv[7] != nil) {
-                FREGetObjectAsNativeString(argv[7], &receipt);
-            }
-            if (argv[6] != nil) {
-                FREGetObjectAsNativeString(argv[6], &transactionId);
-            }
-            if (isReceiptSet) {
-                [adjustEvent setReceipt:[receipt dataUsingEncoding:NSUTF8StringEncoding] transactionId:transactionId];
-            } else {
-                if (transactionId != nil) {
-                    [adjustEvent setTransactionId:transactionId];
-                }
+        if (argv[6] != nil) {
+            FREGetObjectAsNativeString(argv[6], &transactionId);
+            if (transactionId != nil) {
+                [adjustEvent setTransactionId:transactionId];
             }
         }
+        
+        // Deprecated.
+        // if (argv[8] != nil) {
+        //     FREGetObjectAsNativeBool(argv[8], &isReceiptSet);
+        //     if (argv[7] != nil) {
+        //         FREGetObjectAsNativeString(argv[7], &receipt);
+        //     }
+        //     if (argv[6] != nil) {
+        //         FREGetObjectAsNativeString(argv[6], &transactionId);
+        //     }
+        //     if (isReceiptSet) {
+        //         [adjustEvent setReceipt:[receipt dataUsingEncoding:NSUTF8StringEncoding] transactionId:transactionId];
+        //     } else {
+        //         if (transactionId != nil) {
+        //             [adjustEvent setTransactionId:transactionId];
+        //         }
+        //     }
+        // }
 
         [Adjust trackEvent:adjustEvent];
     } else {

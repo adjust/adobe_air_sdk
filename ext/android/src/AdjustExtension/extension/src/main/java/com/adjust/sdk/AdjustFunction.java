@@ -734,7 +734,8 @@ public class AdjustFunction implements FREFunction,
         response.append("message==" + event.message + "__"
                 + "timeStamp==" + event.timestamp + "__"
                 + "adid==" + event.adid + "__"
-                + "eventToken==" + event.eventToken + "__");
+                + "eventToken==" + event.eventToken + "__"
+                + "callbackId==" + event.callbackId + "__");
         if (event.jsonResponse != null) {
             response.append("jsonResponse==" + event.jsonResponse.toString());
         }
@@ -752,6 +753,7 @@ public class AdjustFunction implements FREFunction,
                 + "timeStamp==" + event.timestamp + "__"
                 + "adid==" + event.adid + "__"
                 + "eventToken==" + event.eventToken + "__"
+                + "callbackId==" + event.callbackId + "__"
                 + "willRetry==" + event.willRetry + "__");
         if (event.jsonResponse != null) {
             response.append("jsonResponse==" + event.jsonResponse.toString());
@@ -796,6 +798,11 @@ public class AdjustFunction implements FREFunction,
     public boolean launchReceivedDeeplink(Uri deeplink) {
         String response = deeplink.toString();
         AdjustExtension.context.dispatchStatusEventAsync("adjust_deferredDeeplink", response);
+        if (shouldLaunchDeeplink) {
+            Log.e("RANDOM-TAG", "Launcing ovo sranje!");
+        } else {
+            Log.e("RANDOM-TAG", "NE Launcing ovo sranje!");
+        }
         return shouldLaunchDeeplink;
     }
 }

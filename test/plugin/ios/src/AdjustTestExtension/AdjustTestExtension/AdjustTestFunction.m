@@ -21,12 +21,16 @@ AdjustTestCommandListener *adjustCommandListener;
 @end
 
 FREObject ADJstartTestSession(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 1) {
+    if (argc == 2) {
         NSString *baseUrl = nil;
+        NSString *clientSdk = nil;
         adjustTestFREContext = ctx;
 
         if (argv[0] != nil) {
             FREGetObjectAsNativeString(argv[0], &baseUrl);
+        }
+        if (argv[1] != nil) {
+            FREGetObjectAsNativeString(argv[1], &clientSdk);
         }
 
         adjustCommandListener = [[AdjustTestCommandListener alloc] initWithContext:&adjustTestFREContext];
@@ -39,7 +43,7 @@ FREObject ADJstartTestSession(FREContext ctx, void* funcData, uint32_t argc, FRE
         for (id object in selectedTestDirs) {
             [testLibrary addTestDirectory:object];
         }
-        [testLibrary startTestSession:@"adobe_air4.17.0@ios4.17.0"];
+        [testLibrary startTestSession:clientSdk];
     } else {
         NSLog(@"AdjustTestExtension: Bridge startTestSession method triggered with wrong number of arguments");
     }
