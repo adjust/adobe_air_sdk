@@ -386,6 +386,7 @@
 [ios_sdk_v4.12.3]: https://github.com/adjust/ios_sdk/tree/v4.12.3
 [ios_sdk_v4.13.0]: https://github.com/adjust/ios_sdk/tree/v4.13.0
 [ios_sdk_v4.14.1]: https://github.com/adjust/ios_sdk/tree/v4.14.1
+[ios_sdk_v4.17.1]: https://github.com/adjust/ios_sdk/tree/v4.17.1
 
 [android_sdk_v2.1.3]: https://github.com/adjust/android_sdk/tree/v2.1.3
 [android_sdk_v2.1.4]: https://github.com/adjust/android_sdk/tree/v2.1.4
@@ -404,3 +405,4 @@
 [android_sdk_v4.12.4]: https://github.com/adjust/android_sdk/tree/v4.12.4
 [android_sdk_v4.13.0]: https://github.com/adjust/android_sdk/tree/v4.13.0
 [android_sdk_v4.14.0]: https://github.com/adjust/android_sdk/tree/v4.14.0
+[android_sdk_v4.17.0]: https://github.com/adjust/android_sdk/tree/v4.17.0
