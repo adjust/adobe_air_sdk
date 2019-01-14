@@ -14,10 +14,10 @@ package com.adjust.test {
             return mExtensionContext = ExtensionContext.createExtensionContext("com.adjust.test", null);
         }
 
-        public static function startTestSession(baseUrl:String, testingCommandCallbackDelegate:Function):void {
+        public static function startTestSession(baseUrl:String, clientSdk:String, testingCommandCallbackDelegate:Function):void {
             mTestingCommandCallbackDelegate = testingCommandCallbackDelegate;
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-            getExtensionContext().call("startTestSession", baseUrl);
+            getExtensionContext().call("startTestSession", baseUrl, clientSdk);
         }
 
         public static function addInfoToSend(key:String, value:String):void {

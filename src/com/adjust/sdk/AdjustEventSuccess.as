@@ -4,6 +4,7 @@ package com.adjust.sdk {
         private var message:String;
         private var timestamp:String;
         private var eventToken:String;
+        private var callbackId:String;
         private var jsonResponse:String;
 
         public function AdjustEventSuccess(
@@ -11,15 +12,17 @@ package com.adjust.sdk {
             timestamp:String,
             adid:String,
             eventToken:String,
+            callbackId:String,
             jsonResponse:String) {
             this.message = message;
             this.timestamp = timestamp;
             this.adid = adid;
             this.eventToken = eventToken;
+            this.callbackId = callbackId;
             this.jsonResponse = jsonResponse;
         }
 
-        // Getters
+        // Getters.
         public function getMessage():String {
             return this.message;
         }
@@ -34,6 +37,10 @@ package com.adjust.sdk {
 
         public function getEventToken():String {
             return this.eventToken;
+        }
+
+        public function getCallbackId():String {
+            return this.callbackId;
         }
 
         public function getJsonResponse():String {

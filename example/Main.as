@@ -179,6 +179,7 @@ package {
             trace("Timestamp = " + eventSuccess.getTimeStamp());
             trace("Adid = " + eventSuccess.getAdid());
             trace("Event token = " + eventSuccess.getEventToken());
+            trace("Callback ID = " + eventSuccess.getCallbackId());
             trace("JSON Response = " + eventSuccess.getJsonResponse());
         }
 
@@ -188,6 +189,7 @@ package {
             trace("Timestamp = " + eventFail.getTimeStamp());
             trace("Adid = " + eventFail.getAdid());
             trace("Event token = " + eventFail.getEventToken());
+            trace("Callback ID = " + eventFail.getCallbackId());
             trace("Will retry = " + eventFail.getWillRetry());
             trace("JSON response = " + eventFail.getJsonResponse());
         }

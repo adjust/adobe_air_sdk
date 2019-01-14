@@ -1,15 +1,14 @@
 package com.adjust.sdk {
-    import flash.desktop.NativeApplication;
     import flash.events.*;
+    import flash.desktop.NativeApplication;
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
-        private static var sdkPrefix:String = "adobe_air4.14.0";
+        private static var sdkPrefix:String = "adobe_air4.17.0";
         private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
-        
+
         private static var hasSdkStarted:Boolean = false;
         private static var extensionContext:ExtensionContext = null;
-        
         private static var attributionCallbackDelegate:Function;
         private static var googleAdIdCallbackDelegate:Function;
         private static var eventTrackingSucceededDelegate:Function;
@@ -22,7 +21,6 @@ package com.adjust.sdk {
             if (extensionContext != null) {
                 return extensionContext;
             }
-            
             return extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
         }
 
@@ -94,13 +92,14 @@ package com.adjust.sdk {
             }
 
             getExtensionContext().call("trackEvent", 
-                    adjustEvent.getEventToken(), 
+                    adjustEvent.getEventToken(),
                     adjustEvent.getCurrency(),
-                    adjustEvent.getRevenue(), 
-                    adjustEvent.getCallbackParameters(), 
+                    adjustEvent.getRevenue(),
+                    adjustEvent.getCallbackParameters(),
                     adjustEvent.getPartnerParameters(),
-                    adjustEvent.getTransactionId(), 
-                    adjustEvent.getReceipt(), 
+                    adjustEvent.getCallbackId(),
+                    adjustEvent.getTransactionId(),
+                    adjustEvent.getReceipt(),
                     adjustEvent.getIsReceiptSet());
         }
 
@@ -139,34 +138,34 @@ package com.adjust.sdk {
 
         public static function getIdfa():String {
             var idfa:String = String (getExtensionContext().call("getIdfa"));
-
             return idfa;
         }
 
         public static function getAdid():String {
             var adid:String = String (getExtensionContext().call("getAdid"));
-
             return adid;
         }
 
         public static function getAttribution():AdjustAttribution {
             var attributionString:String = String (getExtensionContext().call("getAttribution"));
             var attribution:AdjustAttribution = getAttributionFromResponse(attributionString);
-            
             return attribution;
         }
 
         public static function getGoogleAdId(callback:Function):void {
             googleAdIdCallbackDelegate = callback;
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-
             getExtensionContext().call("getGoogleAdId");
         }
 
         public static function getAmazonAdId():String {
             var adid:String = String (getExtensionContext().call("getAmazonAdId"));
-
             return adid;
+        }
+
+        public static function getSdkVersion():String {
+            var sdkVersion:String = sdkPrefix + "@" + String (getExtensionContext().call("getSdkVersion"));
+            return sdkVersion;
         }
 
         public static function addSessionCallbackParameter(key:String, value:String):void {
@@ -253,8 +252,8 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var eventToken:String;
+            var callbackId:String;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -270,12 +269,14 @@ package com.adjust.sdk {
                     adid = value;
                 } else if (key == "eventToken") {
                     eventToken = value;
+                } else if (key == "callbackId") {
+                    callbackId = value;
                 } else if (key == "jsonResponse") {
                     jsonResponse = value;
                 }
             }
 
-            return new AdjustEventSuccess(message, timestamp, adid, eventToken, jsonResponse);
+            return new AdjustEventSuccess(message, timestamp, adid, eventToken, callbackId, jsonResponse);
         }
 
         private static function getEventFailFromResponse(response:String):AdjustEventFailure {
@@ -283,9 +284,9 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var eventToken:String;
+            var callbackId:String;
             var willRetry:Boolean;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -301,6 +302,8 @@ package com.adjust.sdk {
                     adid = value;
                 } else if (key == "eventToken") {
                     eventToken = value;
+                } else if (key == "callbackId") {
+                    callbackId = value;
                 } else if (key == "willRetry") {
                     var tempVal:String = value;
                     willRetry = tempVal == "true";
@@ -309,7 +312,7 @@ package com.adjust.sdk {
                 }
             }
 
-            return new AdjustEventFailure(message, timestamp, adid, eventToken, jsonResponse, willRetry);
+            return new AdjustEventFailure(message, timestamp, adid, eventToken, callbackId, jsonResponse, willRetry);
         }
 
         private static function getSessionSuccessFromResponse(response:String):AdjustSessionSuccess {
@@ -317,7 +320,6 @@ package com.adjust.sdk {
             var message:String;
             var timestamp:String;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -345,7 +347,6 @@ package com.adjust.sdk {
             var timestamp:String;
             var willRetry:Boolean;
             var jsonResponse:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -385,7 +386,6 @@ package com.adjust.sdk {
             var adgroup:String;
             var clickLabel:String;
             var adid:String;
-
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {

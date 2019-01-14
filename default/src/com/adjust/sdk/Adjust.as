@@ -56,6 +56,10 @@ package com.adjust.sdk {
             trace("Adjust: getAttribution called");
         }
 
+        public static function getSdkVersion():void {
+            trace("Adjust: getSdkVersion called");
+        }
+
         public static function getGoogleAdId(callback:Function):void {
             trace("Adjust: getGoogleAdId called");
         }

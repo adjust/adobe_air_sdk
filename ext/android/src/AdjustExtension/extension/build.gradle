@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    lintOptions {
+        abortOnError false
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+task makeDebugJar(type: Copy) {
+    dependsOn 'build'
+
+    from('build/intermediates/intermediate-jars/debug/')
+    into('build/libs/debug/')
+    include('classes.jar')
+    rename('classes.jar', "adjust-android.jar")
+}
+
+task makeReleaseJar(type: Copy) {
+    dependsOn 'build'
+
+    from('build/intermediates/intermediate-jars/release/')
+    into('build/libs/release/')
+    include('classes.jar')
+    rename('classes.jar', "adjust-android.jar")
+}
+
+dependencies {
+    implementation files('libs/FlashRuntimeExtensions.jar')
+}

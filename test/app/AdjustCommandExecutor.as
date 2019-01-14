@@ -258,6 +258,12 @@ package {
             if (params['eventCallbackSendFailure'] != null) {
                 adjustConfig.setEventTrackingFailedDelegate(eventTrackingFailedDelegate);
             }
+            if (params['deferredDeeplinkCallback'] != null) {
+                var shouldLaunchDeeplinkS:String = getFirstParameterValue(params, 'deferredDeeplinkCallback');
+                var shouldLaunchDeeplink:Boolean = (shouldLaunchDeeplinkS === 'true');
+                adjustConfig.setShouldLaunchDeeplink(shouldLaunchDeeplink);
+                adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
+            }
         }
 
         private function start(params:Object):void {
@@ -314,6 +320,10 @@ package {
             if (params['orderId'] != null) {
                 var orderId:String = getFirstParameterValue(params, 'orderId');
                 adjustEvent.setTransactionId(orderId);
+            }
+            if (params['callbackId'] != null) {
+                var callbackId:String = getFirstParameterValue(params, 'callbackId');
+                adjustEvent.setCallbackId(callbackId);
             }
         }
 
@@ -436,6 +446,7 @@ package {
             AdjustTest.addInfoToSend("timestamp", eventSuccess.getTimeStamp());
             AdjustTest.addInfoToSend("adid", eventSuccess.getAdid());
             AdjustTest.addInfoToSend("eventToken", eventSuccess.getEventToken());
+            AdjustTest.addInfoToSend("callbackId", eventSuccess.getCallbackId());
             AdjustTest.addInfoToSend("jsonResponse", eventSuccess.getJsonResponse());
             AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
         }
@@ -445,6 +456,7 @@ package {
             AdjustTest.addInfoToSend("timestamp", eventFail.getTimeStamp());
             AdjustTest.addInfoToSend("adid", eventFail.getAdid());
             AdjustTest.addInfoToSend("eventToken", eventFail.getEventToken());
+            AdjustTest.addInfoToSend("callbackId", eventFail.getCallbackId());
             AdjustTest.addInfoToSend("willRetry", eventFail.getWillRetry().toString());
             AdjustTest.addInfoToSend("jsonResponse", eventFail.getJsonResponse());
             AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
@@ -464,6 +476,11 @@ package {
             AdjustTest.addInfoToSend("adid", sessionFail.getAdid());
             AdjustTest.addInfoToSend("willRetry", sessionFail.getWillRetry().toString());
             AdjustTest.addInfoToSend("jsonResponse", sessionFail.getJsonResponse());
+            AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
+        }
+
+        private function deferredDeeplinkDelegate(deeplink:String):void {
+            AdjustTest.addInfoToSend("deeplink", deeplink);
             AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
         }
 

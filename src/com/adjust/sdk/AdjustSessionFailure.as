@@ -1,10 +1,9 @@
 package com.adjust.sdk {
     public class AdjustSessionFailure {
-        private var willRetry:Boolean;
-
         private var adid:String;
         private var message:String;
         private var timestamp:String;
+        private var willRetry:Boolean;
         private var jsonResponse:String;
 
         public function AdjustSessionFailure(
@@ -20,7 +19,7 @@ package com.adjust.sdk {
             this.willRetry = willRetry;
         }
 
-        // Getters
+        // Getters.
         public function getMessage():String {
             return this.message;
         }
