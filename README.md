@@ -23,6 +23,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
       * [In-App Purchase verification](#iap-verification)
       * [Callback parameters](#callback-parameters)
       * [Partner parameters](#partner-parameters)
+      * [Callback identifier](#callback-id)
    * [Session parameters](#session-parameters)
       * [Session callback parameters](#session-callback-parameters)
       * [Session partner parameters](#session-partner-parameters)
@@ -245,20 +246,6 @@ If you are using Proguard, add these lines to your Proguard file:
     java.lang.String getId();
     boolean isLimitAdTrackingEnabled();
 }
--keep class dalvik.system.VMRuntime {
-    java.lang.String getRuntime();
-}
--keep class android.os.Build {
-    java.lang.String[] SUPPORTED_ABIS;
-    java.lang.String CPU_ABI;
-}
--keep class android.content.res.Configuration {
-    android.os.LocaleList getLocales();
-    java.util.Locale locale;
-}
--keep class android.os.LocaledList {
-    java.util.Locale get(int);
-}
 -keep public class com.android.installreferrer.** { *; }
 ```
 
@@ -297,10 +284,8 @@ If you want to track in-app purchases, please make sure to call `trackEvent` onl
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
-
 adjustEvent.setRevenue(0.01, "EUR");
 adjustEvent.setTransactionId("transactionId");
-
 Adjust.trackEvent(adjustEvent);
 ```
 
@@ -318,10 +303,8 @@ For example, suppose you have registered the URL `http://www.adjust.com/callback
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
-
 adjustEvent.addCallbackParameter("key", "value");
 adjustEvent.addCallbackParameter("foo", "bar");
-
 Adjust.trackEvent(adjustEvent);
 ```
 
@@ -343,14 +326,22 @@ This works similarly to the callback parameters mentioned above, but can be adde
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
-
 adjustEvent.addPartnerParameter("key", "value");
 adjustEvent.addPartnerParameter("foo", "bar");
-
 Adjust.trackEvent(adjustEvent);
 ```
 
 You can read more about special partners and these integrations in our [guide to special partners][special-partners].
+
+### <a id="callback-id"></a>Callback identifier
+
+You can also add custom string identifier to each event you want to track. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully tracked or not. You can set this identifier by calling the `setCallbackId` method on your `AdjustEvent` instance:
+
+```actionscript
+var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
+adjustEvent.setCallbackId("Your-Custom-Id");
+Adjust.trackEvent(adjustEvent);
+```
 
 ### <a id="session-parameters"></a>Session parameters
 
@@ -510,6 +501,7 @@ public class Example extends Sprite {
         trace("Timestamp = " + eventSuccess.getTimeStamp());
         trace("Adid = " + eventSuccess.getAdid());
         trace("Event Token = " + eventSuccess.getEventToken());
+        trace("Callback Id = " + eventSuccess.getCallbackId());
         trace("Json Response = " + eventSuccess.getJsonResponse());
     }
 }
@@ -544,6 +536,7 @@ public class Example extends Sprite {
         trace("Timestamp = " + eventFail.getTimeStamp());
         trace("Adid = " + eventFail.getAdid());
         trace("Event Token = " + eventFail.getEventToken());
+        trace("Callback Id = " + eventFail.getCallbackId());
         trace("Will Retry = " + eventFail.getWillRetry());
         trace("Json Response = " + eventFail.getJsonResponse());
     }
@@ -627,6 +620,7 @@ The callback functions will be called after the SDK tries to send a package to t
 Both event response data objects contain:
 
 - `var eventToken:String` the event token, if the package tracked was an event.
+- `var callbackId:String` the custom defined callback ID set on event object.
 
 And both event and session failed objects also contain:
 
@@ -865,9 +859,7 @@ var appToken:String = "{YourAppToken}";
 var environment:String = Environment.SANDBOX;
       
 var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
-
 adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
-
 Adjust.start(adjustConfig);
 
 // ...
@@ -885,10 +877,8 @@ var appToken:String = "{YourAppToken}";
 var environment:String = Environment.SANDBOX;
       
 var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
-
 adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
 adjustConfig.setShouldLaunchDeeplink(true);
-
 Adjust.start(adjustConfig);
 
 // ...
@@ -974,9 +964,7 @@ private static function onInvoke(event:InvokeEvent):void {
     }
 
     var deeplink:String = event.arguments[0];
-    
     trace("Deeplink = " + deeplink);
-    
     Adjust.appWillOpenUrl(deeplink);
 }
 ```
@@ -1014,8 +1002,7 @@ private static function onInvoke(event:InvokeEvent):void {
 
 The Adjust SDK is licensed under the MIT License.
 
-Copyright (c) 2012-2018 Adjust GmbH,
-http://www.adjust.com
+Copyright (c) 2012-2019 Adjust GmbH, http://www.adjust.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
