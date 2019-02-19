@@ -1,3 +1,13 @@
+### Version 4.17.1 (19th February 2019)
+#### Changed
+- Using Xcode 10 to build native iOS parts of the ANE.
+
+#### Native SDKs
+- [iOS@v4.17.1][ios_sdk_v4.17.1]
+- [Android@v4.17.0][android_sdk_v4.17.0]
+
+---
+
 ### Version 4.17.0 (14th January 2019)
 #### Added
 - Added `getSdkVersion()` method to `Adjust` interface to obtain current SDK version string.

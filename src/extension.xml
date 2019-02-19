@@ -1,6 +1,6 @@
 <extension xmlns="http://ns.adobe.com/air/extension/16.0">
     <id>com.adjust.sdk</id>
-    <versionNumber>4.17.0</versionNumber>
+    <versionNumber>4.17.1</versionNumber>
     <platforms>
         <platform name="Android-ARM">
             <applicationDeployment>

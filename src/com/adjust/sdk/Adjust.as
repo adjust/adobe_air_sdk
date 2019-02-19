@@ -4,7 +4,7 @@ package com.adjust.sdk {
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
-        private static var sdkPrefix:String = "adobe_air4.17.0";
+        private static var sdkPrefix:String = "adobe_air4.17.1";
         private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
 
         private static var hasSdkStarted:Boolean = false;
