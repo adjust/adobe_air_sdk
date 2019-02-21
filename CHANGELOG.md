@@ -1,3 +1,13 @@
+### Version 4.17.2 (21st February 2019)
+#### Changed
+- Increased **ios_version_min** to **8.0** from **6.0** (for reference: https://github.com/adjust/adobe_air_sdk/issues/46).
+
+#### Native SDKs
+- [iOS@v4.17.1][ios_sdk_v4.17.1]
+- [Android@v4.17.0][android_sdk_v4.17.0]
+
+---
+
 ### Version 4.17.1 (19th February 2019)
 #### Changed
 - Using Xcode 10 to build native iOS parts of the ANE.
