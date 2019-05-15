@@ -23,6 +23,7 @@ AdjustTestCommandListener *adjustCommandListener;
 FREObject ADJstartTestSession(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 2) {
         NSString *baseUrl = nil;
+        NSString *controlUrl = nil;
         NSString *clientSdk = nil;
         adjustTestFREContext = ctx;
 
@@ -30,11 +31,15 @@ FREObject ADJstartTestSession(FREContext ctx, void* funcData, uint32_t argc, FRE
             FREGetObjectAsNativeString(argv[0], &baseUrl);
         }
         if (argv[1] != nil) {
-            FREGetObjectAsNativeString(argv[1], &clientSdk);
+            FREGetObjectAsNativeString(argv[1], &controlUrl);
+        }
+        if (argv[2] != nil) {
+            FREGetObjectAsNativeString(argv[2], &clientSdk);
         }
 
         adjustCommandListener = [[AdjustTestCommandListener alloc] initWithContext:&adjustTestFREContext];
         testLibrary = [ATLTestLibrary testLibraryWithBaseUrl:baseUrl
+                                               andControlUrl:controlUrl
                                           andCommandDelegate:adjustCommandListener];
 
         for (id object in selectedTests) {
