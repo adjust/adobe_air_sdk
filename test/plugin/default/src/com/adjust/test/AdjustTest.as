@@ -2,7 +2,7 @@ package com.adjust.test {
     import flash.events.*;
 
     public class AdjustTest extends EventDispatcher {
-        public static function startTestSession(baseUrl:String, clientSdk:String, testingCommandCallbackDelegate:Function):void {
+        public static function startTestSession(baseUrl:String, controlUrl:String, clientSdk:String, testingCommandCallbackDelegate:Function):void {
             trace("adjust_testing: startTestSession called");
         }
 

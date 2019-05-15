@@ -8,10 +8,12 @@ package {
     public class Main extends Sprite {
         // For Android testing: Make sure to use HTTPS with port 8443 with a physical device
         // For iOS testing: Make sure to use HTTP with port 8080 with a physical device
-        // public static var baseUrl:String = 'https://192.168.9.228:8443';
-        // public static var gdprUrl:String = 'https://192.168.9.228:8443';
-        public static var baseUrl:String = 'http://192.168.9.228:8080';
-        public static var gdprUrl:String = 'http://192.168.9.228:8080';
+        public static var ipAddress:String = '192.168.8.50';
+        public static var baseUrl:String = 'https://' + ipAddress + ':8443';
+        public static var gdprUrl:String = 'https://' + ipAddress + ':8443';
+        // public static var baseUrl:String = 'http://' + ipAddress + ':8080';
+        // public static var gdprUrl:String = 'http://' + ipAddress + ':8080';
+        public static var controlUrl:String = 'ws://' + ipAddress + ':1987';
 
         private static var commandExecutor:CommandExecutor;
 
@@ -20,7 +22,7 @@ package {
 
             // AdjustTest.addTestDirectory("current/sessionEventCallbacks/");
             // AdjustTest.addTest("current/sessionEventCallbacks/Test_EventCallback_success");
-            AdjustTest.startTestSession(baseUrl, Adjust.getSdkVersion(), testCommandCallbackDelegate);
+            AdjustTest.startTestSession(baseUrl, controlUrl, Adjust.getSdkVersion(), testCommandCallbackDelegate);
         }
 
         private static function testCommandCallbackDelegate(json:String):void {
