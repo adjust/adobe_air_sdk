@@ -96,6 +96,10 @@ package com.adjust.sdk {
             trace("Adjust: gdprForgetMe called");
         }
 
+        public static function trackAdRevenue(source:String, payload:String):void {
+            trace("Adjust: trackAdRevenue called");
+        }
+
         public static function setTestOptions(testOptions:AdjustTestOptions):void {
             trace("Adjust: setTestOptions called");
         }

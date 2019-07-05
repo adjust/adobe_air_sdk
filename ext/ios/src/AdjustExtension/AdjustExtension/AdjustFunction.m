@@ -548,6 +548,27 @@ FREObject ADJgdprForgetMe(FREContext ctx, void* funcData, uint32_t argc, FREObje
     return return_value;
 }
 
+FREObject ADJtrackAdRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 2) {
+        NSString *source = nil;
+        NSString *payload = nil;
+        if (argv[0] != nil) {
+            FREGetObjectAsNativeString(argv[0], &source);
+        }
+        if (argv[1] != nil) {
+            FREGetObjectAsNativeString(argv[1], &payload);
+        }
+        NSData *dataPayload = [payload dataUsingEncoding:NSUTF8StringEncoding];
+        [Adjust trackAdRevenue:source payload:dataPayload];
+    } else {
+        NSLog(@"AdjustFunction: Bridge trackAdRevenue method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+    return return_value;
+}
+
 FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 13) {
         AdjustTestOptions * testOptions = [[AdjustTestOptions alloc] init];

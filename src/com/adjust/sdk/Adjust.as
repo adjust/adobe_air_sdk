@@ -200,6 +200,10 @@ package com.adjust.sdk {
             getExtensionContext().call("gdprForgetMe");
         }
 
+        public static function trackAdRevenue(source:String, payload:String):void {
+            getExtensionContext().call("trackAdRevenue", source, payload);
+        }
+
         public static function setTestOptions(testOptions:AdjustTestOptions):void {
             getExtensionContext().call("setTestOptions", 
                     testOptions.hasContext,
