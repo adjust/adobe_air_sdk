@@ -8,6 +8,12 @@
                 <initializer>com.adjust.test.AdjustTestExtension</initializer>
             </applicationDeployment>
         </platform>
+        <platform name="Android-ARM64">
+            <applicationDeployment>
+                <nativeLibrary>adjust-android-test.jar</nativeLibrary>
+                <initializer>com.adjust.test.AdjustTestExtension</initializer>
+            </applicationDeployment>
+        </platform>
         <platform name="Android-x86">
             <applicationDeployment>
                 <nativeLibrary>adjust-android-test.jar</nativeLibrary>
