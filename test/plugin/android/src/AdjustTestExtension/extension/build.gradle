@@ -19,18 +19,18 @@ android {
 }
 
 task makeDebugJar(type: Copy) {
-    dependsOn 'build'
+    dependsOn 'assembleDebug'
 
-    from('build/intermediates/intermediate-jars/debug/')
+    from('build/intermediates/packaged-classes/debug/')
     into('build/libs/debug/')
     include('classes.jar')
     rename('classes.jar', "adjust-android-test.jar")
 }
 
 task makeReleaseJar(type: Copy) {
-    dependsOn 'build'
+    dependsOn 'assembleRelease'
 
-    from('build/intermediates/intermediate-jars/release/')
+    from('build/intermediates/packaged-classes/debug/')
     into('build/libs/release/')
     include('classes.jar')
     rename('classes.jar', "adjust-android-test.jar")
