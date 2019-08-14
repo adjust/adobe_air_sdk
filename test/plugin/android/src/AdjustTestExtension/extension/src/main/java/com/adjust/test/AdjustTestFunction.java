@@ -55,7 +55,6 @@ public class AdjustTestFunction implements FREFunction {
             for (int i = 0; i < selectedTestDirs.size(); i++) {
                 testLibrary.addTestDirectory(selectedTestDirs.get(i));
             }
-            Log.e("SDKVERSION", clientSdk);
             testLibrary.startTestSession(clientSdk);
         } catch (FRETypeMismatchException e) {
             Log.e(TAG, e.getMessage()); 

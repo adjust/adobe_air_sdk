@@ -14,13 +14,13 @@ package com.adjust.test {
             return mExtensionContext = ExtensionContext.createExtensionContext("com.adjust.test", null);
         }
 
-        public static function startTestSession(baseUrl:String, controlUrl:String, clientSdk:String, testingCommandCallbackDelegate:Function):void {
+        public static function startTestSession(baseUrl:String, controlUrl:String, clientSdk:String, testCommandCallback:Function):void {
             trace("[AdjustTest]: 'startTestSession' invoked!");
             trace("[AdjustTest]: 'baseUrl' = " + baseUrl);
             trace("[AdjustTest]: 'controlUrl' = " + controlUrl);
             trace("[AdjustTest]: 'clientSdk' = " + clientSdk);
-            mTestCommandCallback = testingCommandCallbackDelegate;
-            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            mTestCommandCallback = testCommandCallback;
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseCallback);
             getExtensionContext().call("startTestSession", baseUrl, controlUrl, clientSdk);
         }
 
@@ -53,7 +53,7 @@ package com.adjust.test {
             getExtensionContext().call("addTestDirectory", testDirToAdd);
         }
 
-        private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
+        private static function extensionResponseCallback(statusEvent:StatusEvent):void {
             trace("[AdjustTest]: Received event!");
             trace("[AdjustTest]: 'statusEvent' = " + statusEvent)
             trace("[AdjustTest]: 'statusEvent.level' = " + statusEvent.level)
