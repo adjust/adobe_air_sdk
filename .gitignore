@@ -39,9 +39,9 @@ DerivedData
 *.dSYM
 *.a
 *.pfx
-ext/iOS/AdjustSdk.framework
-ext/iOS/src/AdjustExtension/include/Adjust/AdjustSdk.framework
-ext/Android/adjust-android.jar
+ext/ios/AdjustSdk.framework
+ext/ios/src/AdjustExtension/include/Adjust/AdjustSdk.framework
+ext/android/adjust-android.jar
 
 ### Android Studio ###
 local.properties
