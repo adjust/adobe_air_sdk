@@ -1,3 +1,14 @@
+### Version 4.18.0 (26th November 2019)
+#### Added
+- Added 64-bit support to ANE for Android platform.
+- Added `trackAdRevenue` method to `Adjust` interface to allow tracking of ad revenue. With this release added support for `MoPub` ad revenue tracking.
+
+#### Native SDKs
+- [iOS@v4.18.3][ios_sdk_v4.18.3]
+- [Android@v4.18.4][android_sdk_v4.18.4]
+
+---
+
 ### Version 4.17.2 (21st February 2019)
 #### Changed
 - Increased **ios_version_min** to **8.0** from **6.0** (for reference: https://github.com/adjust/adobe_air_sdk/issues/46).
@@ -407,6 +418,7 @@
 [ios_sdk_v4.13.0]: https://github.com/adjust/ios_sdk/tree/v4.13.0
 [ios_sdk_v4.14.1]: https://github.com/adjust/ios_sdk/tree/v4.14.1
 [ios_sdk_v4.17.1]: https://github.com/adjust/ios_sdk/tree/v4.17.1
+[ios_sdk_v4.18.3]: https://github.com/adjust/ios_sdk/tree/v4.18.3
 
 [android_sdk_v2.1.3]: https://github.com/adjust/android_sdk/tree/v2.1.3
 [android_sdk_v2.1.4]: https://github.com/adjust/android_sdk/tree/v2.1.4
@@ -426,3 +438,4 @@
 [android_sdk_v4.13.0]: https://github.com/adjust/android_sdk/tree/v4.13.0
 [android_sdk_v4.14.0]: https://github.com/adjust/android_sdk/tree/v4.14.0
 [android_sdk_v4.17.0]: https://github.com/adjust/android_sdk/tree/v4.17.0
+[android_sdk_v4.18.4]: https://github.com/adjust/android_sdk/tree/v4.18.4

@@ -4,7 +4,7 @@ package com.adjust.sdk {
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
-        private static var sdkPrefix:String = "adobe_air4.17.2";
+        private static var sdkPrefix:String = "adobe_air4.18.0";
         private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
 
         private static var hasSdkStarted:Boolean = false;
@@ -198,6 +198,10 @@ package com.adjust.sdk {
 
         public static function gdprForgetMe():void {
             getExtensionContext().call("gdprForgetMe");
+        }
+
+        public static function trackAdRevenue(source:String, payload:String):void {
+            getExtensionContext().call("trackAdRevenue", source, payload);
         }
 
         public static function setTestOptions(testOptions:AdjustTestOptions):void {

@@ -107,6 +107,7 @@ package {
                 case "openDeeplink" : this.openDeeplink(command.params); break;
                 case "sendReferrer" : this.sendReferrer(command.params); break;
                 case "gdprForgetMe" : this.gdprForgetMe(command.params); break;
+                case "trackAdRevenue" : this.trackAdRevenue(command.params); break;
             }
 
             this.nextToSendCounter++;
@@ -427,6 +428,12 @@ package {
 
         private function gdprForgetMe(params:Object):void {
             Adjust.gdprForgetMe();
+        }
+
+        private function trackAdRevenue(params:Object):void {
+            var source:String = getFirstParameterValue(params, 'adRevenueSource');
+            var payload:String = getFirstParameterValue(params, 'adRevenueJsonString');
+            Adjust.trackAdRevenue(source, payload);
         }
 
         private function attributionCallbackDelegate(attribution:AdjustAttribution):void {

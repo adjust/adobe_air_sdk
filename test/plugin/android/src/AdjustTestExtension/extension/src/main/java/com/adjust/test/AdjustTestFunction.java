@@ -46,15 +46,15 @@ public class AdjustTestFunction implements FREFunction {
     private FREObject StartTestSession(FREContext freContext, FREObject[] freObjects) {
         try {
             String baseUrl = freObjects[0].getAsString();
-            String clientSdk = freObjects[1].getAsString();
-            testLibrary = new TestLibrary(baseUrl, new CommandListener());
+            String controlUrl = freObjects[1].getAsString();
+            String clientSdk = freObjects[2].getAsString();
+            testLibrary = new TestLibrary(baseUrl, controlUrl, new CommandListener());
             for (int i = 0; i < selectedTests.size(); i++) {
                 testLibrary.addTest(selectedTests.get(i));
             }
             for (int i = 0; i < selectedTestDirs.size(); i++) {
                 testLibrary.addTestDirectory(selectedTestDirs.get(i));
             }
-            Log.e("SDKVERSION", clientSdk);
             testLibrary.startTestSession(clientSdk);
         } catch (FRETypeMismatchException e) {
             Log.e(TAG, e.getMessage()); 

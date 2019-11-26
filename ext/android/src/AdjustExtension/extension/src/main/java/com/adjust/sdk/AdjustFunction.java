@@ -12,6 +12,7 @@ import java.lang.*;
 import com.adobe.fre.*;
 import android.net.Uri;
 import android.util.Log;
+import org.json.JSONObject;
 
 public class AdjustFunction implements FREFunction,
        OnAttributionChangedListener,
@@ -87,6 +88,9 @@ public class AdjustFunction implements FREFunction,
         }
         if (functionName == AdjustContext.SendFirstPackages) {
             return SendFirstPackages(freContext, freObjects);
+        }
+        if (functionName == AdjustContext.TrackAdRevenue) {
+            return TrackAdRevenue(freContext, freObjects);
         }
         if (functionName == AdjustContext.GetAdid) {
             return GetAdid(freContext, freObjects);
@@ -442,6 +446,19 @@ public class AdjustFunction implements FREFunction,
     private FREObject SendFirstPackages(FREContext freContext, FREObject[] freObjects) {
         try {
             Adjust.sendFirstPackages();
+        } catch (Exception e) {
+            Log.e(AdjustExtension.LogTag, e.getMessage());
+        }
+
+        return null;
+    }
+
+    private FREObject TrackAdRevenue(FREContext freContext, FREObject[] freObjects) {
+        try {
+            String source = freObjects[0].getAsString();
+            String payload = freObjects[1].getAsString();
+            JSONObject jsonPayload = new JSONObject(payload);
+            Adjust.trackAdRevenue(source, jsonPayload);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }
