@@ -21,7 +21,7 @@ AdjustTestCommandListener *adjustCommandListener;
 @end
 
 FREObject ADJstartTestSession(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 2) {
+    if (argc == 3) {
         NSString *baseUrl = nil;
         NSString *controlUrl = nil;
         NSString *clientSdk = nil;

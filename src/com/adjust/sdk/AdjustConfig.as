@@ -6,6 +6,7 @@ package com.adjust.sdk {
         private var userAgent:String;
         private var environment:String;
         private var defaultTracker:String;
+        private var externalDeviceId:String;
         private var sendInBackground:Boolean;
         private var shouldLaunchDeeplink:Boolean;
         private var eventBufferingEnabled:Boolean;
@@ -21,9 +22,12 @@ package com.adjust.sdk {
         private var info2:String;
         private var info3:String;
         private var info4:String;
-        // Android only.
+        // Android only
         private var processName:String;
         private var readMobileEquipmentIdentity:Boolean;
+        // iOS only
+        private var allowiAdInfoReading:Boolean;
+        private var allowIdfaReading:Boolean;
 
         public function AdjustConfig(appToken:String, environment:String) {
             this.appToken = appToken;
@@ -52,6 +56,10 @@ package com.adjust.sdk {
 
         public function setDefaultTracker(defaultTracker:String):void {
             this.defaultTracker = defaultTracker;
+        }
+
+        public function setExternalDeviceId(externalDeviceId:String):void {
+            this.externalDeviceId = externalDeviceId;
         }
 
         public function setProcessName(processName:String):void {
@@ -112,7 +120,15 @@ package com.adjust.sdk {
             this.readMobileEquipmentIdentity = readMobileEquipmentIdentity;
         }
 
-        // Getters.
+        public function setAllowiAdInfoReading(allowiAdInfoReading:Boolean):void {
+            this.allowiAdInfoReading = allowiAdInfoReading;
+        }
+
+        public function setAllowIdfaReading(allowIdfaReading:Boolean):void {
+            this.allowIdfaReading = allowIdfaReading;
+        }
+
+        // Getters
         public function getAppToken():String {
             return this.appToken;
         }
@@ -143,6 +159,10 @@ package com.adjust.sdk {
 
         public function getDefaultTracker():String {
             return this.defaultTracker;
+        }
+
+        public function getExternalDeviceId():String {
+            return this.externalDeviceId;
         }
 
         public function getProcessName():String {
@@ -203,6 +223,14 @@ package com.adjust.sdk {
 
         public function getReadMobileEquipmentIdentity():Boolean {
             return this.readMobileEquipmentIdentity;
+        }
+
+        public function getAllowiAdInfoReading():Boolean {
+            return this.allowiAdInfoReading;
+        }
+
+        public function getAllowIdfaReading():Boolean {
+            return this.allowIdfaReading;
         }
     }
 }

@@ -609,6 +609,16 @@ public class ActivityHandler implements IActivityHandler {
     }
 
     @Override
+    public void disableThirdPartySharing() {
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                disableThirdPartySharingI();
+            }
+        });
+    }
+
+    @Override
     public void trackAdRevenue(final String source, final JSONObject adRevenueJson) {
         executor.submit(new Runnable() {
             @Override
@@ -765,6 +775,8 @@ public class ActivityHandler implements IActivityHandler {
             SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(getContext());
             if (sharedPreferencesManager.getGdprForgetMe()) {
                 gdprForgetMe();
+            } else if (sharedPreferencesManager.getDisableThirdPartySharing()) {
+                disableThirdPartySharing();
             }
         }
 
@@ -862,6 +874,7 @@ public class ActivityHandler implements IActivityHandler {
     private void startI() {
         // check if it's the first sdk start
         if (internalState.hasFirstSdkStartNotOcurred()) {
+            AdjustSigner.onResume(adjustConfig.logger);
             startFirstSessionI();
             return;
         }
@@ -870,6 +883,8 @@ public class ActivityHandler implements IActivityHandler {
         if (!activityState.enabled) {
             return;
         }
+
+        AdjustSigner.onResume(adjustConfig.logger);
 
         updateHandlersStatusAndSendI();
 
@@ -895,12 +910,17 @@ public class ActivityHandler implements IActivityHandler {
 
         // track the first session package only if it's enabled
         if (internalState.isEnabled()) {
-            if (!sharedPreferencesManager.getGdprForgetMe()) {
+            if (sharedPreferencesManager.getGdprForgetMe()) {
+                gdprForgetMeI();
+            } else {
+                // check if disable third party sharing request came, then send it first
+                if (sharedPreferencesManager.getDisableThirdPartySharing()) {
+                    disableThirdPartySharingI();
+                }
+
                 activityState.sessionCount = 1; // this is the first session
                 transferSessionPackageI(now);
                 checkAfterNewStartI(sharedPreferencesManager);
-            } else {
-                gdprForgetMeI();
             }
         }
 
@@ -911,6 +931,7 @@ public class ActivityHandler implements IActivityHandler {
         writeActivityStateI();
         sharedPreferencesManager.removePushToken();
         sharedPreferencesManager.removeGdprForgetMe();
+        sharedPreferencesManager.removeDisableThirdPartySharing();
 
         // check for cached deep links
         processCachedDeeplinkI();
@@ -1322,6 +1343,8 @@ public class ActivityHandler implements IActivityHandler {
 
             if (sharedPreferencesManager.getGdprForgetMe()) {
                 gdprForgetMeI();
+            } else if (sharedPreferencesManager.getDisableThirdPartySharing()) {
+                disableThirdPartySharingI();
             }
 
             // check if install was tracked
@@ -1874,6 +1897,36 @@ public class ActivityHandler implements IActivityHandler {
 
         if (adjustConfig.eventBufferingEnabled) {
             logger.info("Buffered event %s", gdprPackage.getSuffix());
+        } else {
+            packageHandler.sendFirstPackage();
+        }
+    }
+
+    private void disableThirdPartySharingI() {
+        // cache the disable third party sharing request, so that the request order maintains
+        // even this call returns before making server request
+        SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(getContext());
+        sharedPreferencesManager.setDisableThirdPartySharing();
+
+        if (!checkActivityStateI(activityState)) { return; }
+        if (!isEnabledI()) { return; }
+        if (activityState.isGdprForgotten) { return; }
+        if (activityState.isThirdPartySharingDisabled) { return; }
+
+        activityState.isThirdPartySharingDisabled = true;
+        writeActivityStateI();
+
+        long now = System.currentTimeMillis();
+        PackageBuilder packageBuilder = new PackageBuilder(adjustConfig, deviceInfo, activityState, sessionParameters, now);
+
+        ActivityPackage activityPackage = packageBuilder.buildDisableThirdPartySharingPackage();
+        packageHandler.addPackage(activityPackage);
+
+        // Removed the cached disable third party sharing flag.
+        sharedPreferencesManager.removeDisableThirdPartySharing();
+
+        if (adjustConfig.eventBufferingEnabled) {
+            logger.info("Buffered event %s", activityPackage.getSuffix());
         } else {
             packageHandler.sendFirstPackage();
         }

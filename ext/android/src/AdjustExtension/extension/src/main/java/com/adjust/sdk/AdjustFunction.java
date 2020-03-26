@@ -104,6 +104,9 @@ public class AdjustFunction implements FREFunction,
         if (functionName == AdjustContext.GdprForgetMe) {
             return GdprForgetMe(freContext, freObjects);
         }
+        if (functionName == AdjustContext.DisableThirdPartySharing) {
+            return DisableThirdPartySharing(freContext, freObjects);
+        }
         if (functionName == AdjustContext.GetIdfa) {
             return GetIdfa(freContext, freObjects);
         }
@@ -320,6 +323,14 @@ public class AdjustFunction implements FREFunction,
             if (freObjects[23] != null) {
                 boolean readMobileEquipmentIdentity = freObjects[23].getAsBool();
                 adjustConfig.setReadMobileEquipmentIdentity(readMobileEquipmentIdentity);
+            }
+
+            // External device ID.
+            if (freObjects[24] != null) {
+                String externalDeviceId = freObjects[24].getAsString();
+                if (externalDeviceId != null) {
+                    adjustConfig.setExternalDeviceId(externalDeviceId);
+                }
             }
 
             Adjust.onCreate(adjustConfig);
@@ -641,6 +652,16 @@ public class AdjustFunction implements FREFunction,
     private FREObject GdprForgetMe(FREContext freContext, FREObject[] freObjects) {
         try {
             Adjust.gdprForgetMe(freContext.getActivity());
+        } catch (Exception e) {
+            Log.e(AdjustExtension.LogTag, e.getMessage());
+        }
+
+        return null;
+    }
+
+    private FREObject DisableThirdPartySharing(FREContext freContext, FREObject[] freObjects) {
+        try {
+            Adjust.disableThirdPartySharing(freContext.getActivity());
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
         }

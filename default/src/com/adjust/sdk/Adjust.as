@@ -100,6 +100,10 @@ package com.adjust.sdk {
             trace("Adjust: trackAdRevenue called");
         }
 
+        public static function disableThirdPartySharing():void {
+            trace("Adjust: disableThirdPartySharing called");
+        }
+
         public static function setTestOptions(testOptions:AdjustTestOptions):void {
             trace("Adjust: setTestOptions called");
         }

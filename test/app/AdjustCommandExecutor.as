@@ -108,6 +108,7 @@ package {
                 case "sendReferrer" : this.sendReferrer(command.params); break;
                 case "gdprForgetMe" : this.gdprForgetMe(command.params); break;
                 case "trackAdRevenue" : this.trackAdRevenue(command.params); break;
+                case "disableThirdPartySharing" : this.disableThirdPartySharing(command.params); break;
             }
 
             this.nextToSendCounter++;
@@ -147,6 +148,9 @@ package {
             }
             if (params['noBackoffWait'] != null) {
                 testOptions.noBackoffWait = getFirstParameterValue(params, 'noBackoffWait') == "true";
+            }
+            if (params['iAdFrameworkEnabled'] != null) {
+                testOptions.iAdFrameworkEnabled = getFirstParameterValue(params, 'iAdFrameworkEnabled') == "true";
             }
             if (params['teardown'] != null) {
                 var teardownOptions:Array = getValueFromKey(params, 'teardown');
@@ -216,6 +220,10 @@ package {
                 var defaultTracker:String = getFirstParameterValue(params, 'defaultTracker');
                 adjustConfig.setDefaultTracker(defaultTracker);
             }
+            if (params['externalDeviceId'] != null) {
+                var externalDeviceId:String = getFirstParameterValue(params, 'externalDeviceId');
+                adjustConfig.setExternalDeviceId(externalDeviceId);
+            }
             if (params['appSecret'] != null) {
                 var appSecretArray:Array = getValueFromKey(params, 'appSecret');
                 var secretId:Number = Number(appSecretArray[0].toString());
@@ -264,6 +272,16 @@ package {
                 var shouldLaunchDeeplink:Boolean = (shouldLaunchDeeplinkS === 'true');
                 adjustConfig.setShouldLaunchDeeplink(shouldLaunchDeeplink);
                 adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
+            }
+            if (params['allowiAdInfoReading'] != null) {
+                var allowiAdInfoReadingS:String = getFirstParameterValue(params, 'allowiAdInfoReading');
+                var allowiAdInfoReading:Boolean = (allowiAdInfoReadingS === 'true');
+                adjustConfig.setAllowiAdInfoReading(allowiAdInfoReading);
+            }
+            if (params['allowIdfaReading'] != null) {
+                var allowIdfaReadingS:String = getFirstParameterValue(params, 'allowIdfaReading');
+                var allowIdfaReading:Boolean = (allowIdfaReadingS === 'true');
+                adjustConfig.setAllowIdfaReading(allowIdfaReading);
             }
         }
 
@@ -428,6 +446,10 @@ package {
 
         private function gdprForgetMe(params:Object):void {
             Adjust.gdprForgetMe();
+        }
+
+        private function disableThirdPartySharing(params:Object):void {
+            Adjust.disableThirdPartySharing();
         }
 
         private function trackAdRevenue(params:Object):void {

@@ -1,0 +1,7 @@
+<platform xmlns="http://ns.adobe.com/air/extension/32.0">
+    <packagedDependencies>
+        <packagedDependency>gson-2.8.6.jar</packagedDependency>
+        <packagedDependency>Java-WebSocket-1.4.0.jar</packagedDependency>
+        <packagedDependency>slf4j-api-1.7.30.jar</packagedDependency>
+    </packagedDependencies>
+</platform>

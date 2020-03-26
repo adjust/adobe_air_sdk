@@ -1,0 +1,9 @@
+<platform xmlns="http://ns.adobe.com/air/extension/32.0">
+    <sdkVersion>8.0</sdkVersion>
+    <linkerOptions>
+        <option>-liconv</option>
+    </linkerOptions>
+    <packagedDependencies>
+        <packagedDependency>AdjustTestLibrary.framework</packagedDependency>
+    </packagedDependencies>
+</platform>

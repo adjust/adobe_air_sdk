@@ -79,7 +79,10 @@ package com.adjust.sdk {
                     adjustConfig.getInfo3(),
                     adjustConfig.getInfo4(),
                     adjustConfig.getIsDeviceKnown(),
-                    adjustConfig.getReadMobileEquipmentIdentity());
+                    adjustConfig.getReadMobileEquipmentIdentity(),
+                    adjustConfig.getExternalDeviceId(),
+                    adjustConfig.getAllowiAdInfoReading(),
+                    adjustConfig.getAllowIdfaReading());
 
             // For now, call onResume after onCreate.
             getExtensionContext().call("onResume");
@@ -204,6 +207,10 @@ package com.adjust.sdk {
             getExtensionContext().call("trackAdRevenue", source, payload);
         }
 
+        public static function disableThirdPartySharing():void {
+            getExtensionContext().call("disableThirdPartySharing");
+        }
+
         public static function setTestOptions(testOptions:AdjustTestOptions):void {
             getExtensionContext().call("setTestOptions", 
                     testOptions.hasContext,
@@ -218,7 +225,8 @@ package com.adjust.sdk {
                     testOptions.subsessionIntervalInMilliseconds,
                     testOptions.teardown,
                     testOptions.tryInstallReferrer,
-                    testOptions.noBackoffWait);
+                    testOptions.noBackoffWait,
+                    testOptions.iAdFrameworkEnabled);
         }
 
         public static function teardown():void {
