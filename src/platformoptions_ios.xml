@@ -6,7 +6,6 @@
         <option>-framework iAd</option>
         <option>-framework CoreTelephony</option>
         <option>-liconv</option>
-        <option>-lclang_rt.ios</option>
     </linkerOptions>
 
     <packagedDependencies>
