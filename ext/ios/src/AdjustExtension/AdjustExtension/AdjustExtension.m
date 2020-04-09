@@ -20,7 +20,7 @@ void AdjustFREContextInitializer(
     FREContext ctx,
     uint32_t* numFunctionsToSet,
     const FRENamedFunction** functionsToSet) {
-    uint32_t numberOfFunctions = 26;
+    uint32_t numberOfFunctions = 27;
 
     *numFunctionsToSet = numberOfFunctions;
 
@@ -51,7 +51,8 @@ void AdjustFREContextInitializer(
     setNamedFunction(&func[22], (const uint8_t*)"gdprForgetMe", &ADJgdprForgetMe);
     setNamedFunction(&func[23], (const uint8_t*)"setTestOptions", &ADJsetTestOptions);
     setNamedFunction(&func[24], (const uint8_t*)"teardown", &ADJteardown);
-    setNamedFunction(&func[25], (const uint8_t*)"disableThirdPartySharing", &ADJdisableThirdPartySharing);
+    setNamedFunction(&func[25], (const uint8_t*)"trackAdRevenue", &ADJtrackAdRevenue);
+    setNamedFunction(&func[26], (const uint8_t*)"disableThirdPartySharing", &ADJdisableThirdPartySharing);
 
     *functionsToSet = func;
 }
