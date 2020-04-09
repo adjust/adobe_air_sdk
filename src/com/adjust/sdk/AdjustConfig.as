@@ -32,6 +32,15 @@ package com.adjust.sdk {
         public function AdjustConfig(appToken:String, environment:String) {
             this.appToken = appToken;
             this.environment = environment;
+
+            // set Boolean members to their default values
+            this.sendInBackground = false;
+            this.shouldLaunchDeeplink = true;
+            this.eventBufferingEnabled = false;
+            this.isDeviceKnown = false;
+            this.readMobileEquipmentIdentity = false;
+            this.allowiAdInfoReading = true;
+            this.allowIdfaReading = true;
         }
 
         public function setLogLevel(logLevel:String):void {
