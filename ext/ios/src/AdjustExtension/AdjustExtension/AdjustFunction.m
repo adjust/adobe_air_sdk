@@ -128,7 +128,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
         if (argv[16] != nil) {
             BOOL sendInBackground = NO;
-            FREGetObjectAsNativeBool(argv[15], &sendInBackground);
+            FREGetObjectAsNativeBool(argv[16], &sendInBackground);
             [adjustConfig setSendInBackground:sendInBackground];
         }
         if (argv[17] != nil) {
@@ -155,7 +155,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         // arg 23 is for Android only: ReadMobileEquipmentIdentity
 
         if (argv[24] != nil) {
-            FREGetObjectAsNativeString(argv[10], &externalDeviceId);
+            FREGetObjectAsNativeString(argv[24], &externalDeviceId);
 
             if (externalDeviceId != nil) {
                 [adjustConfig setExternalDeviceId:externalDeviceId];
