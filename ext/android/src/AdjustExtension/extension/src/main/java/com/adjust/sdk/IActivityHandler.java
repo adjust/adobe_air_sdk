@@ -37,7 +37,7 @@ public interface IActivityHandler {
 
     void sendReftagReferrer();
 
-    void sendInstallReferrer(String installReferrer, long referrerClickTimestampSeconds, long installBeginTimestampSeconds);
+    void sendInstallReferrer(String installReferrer, long referrerClickTimestampSeconds, long installBeginTimestampSeconds, String referrerApi);
 
     void setOfflineMode(boolean enabled);
 
@@ -62,6 +62,8 @@ public interface IActivityHandler {
     void setPushToken(String token, boolean preSaved);
 
     void gdprForgetMe();
+
+    void disableThirdPartySharing();
 
     void trackAdRevenue(String source, JSONObject adRevenueJson);
 

@@ -390,6 +390,20 @@ public class AdjustInstance {
     }
 
     /**
+     * Called to disable the third party sharing.
+     *
+     * @param context Application context
+     */
+    public void disableThirdPartySharing(final Context context) {
+        if (!checkActivityHandler("disable third party sharing")) {
+            saveDisableThirdPartySharing(context);
+            return;
+        }
+
+        activityHandler.disableThirdPartySharing();
+    }
+
+    /**
      * Track ad revenue from a source provider
      *
      * @param source Source of ad revenue information, see AdjustConfig.AD_REVENUE_* for some possible sources
@@ -533,6 +547,22 @@ public class AdjustInstance {
     }
 
     /**
+     * Save disable third party sharing choice to shared preferences.
+     *
+     * @param context Application context
+     */
+    private void saveDisableThirdPartySharing(final Context context) {
+        Runnable command = new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(context);
+                sharedPreferencesManager.setDisableThirdPartySharing();
+            }
+        };
+        Util.runInBackground(command);
+    }
+
+    /**
      * Flag stored referrers as still not sent.
      *
      * @param context Application context
@@ -597,6 +627,12 @@ public class AdjustInstance {
         if (testOptions.noBackoffWait != null) {
             AdjustFactory.setPackageHandlerBackoffStrategy(BackoffStrategy.NO_WAIT);
             AdjustFactory.setSdkClickBackoffStrategy(BackoffStrategy.NO_WAIT);
+        }
+        if (testOptions.enableSigning != null && testOptions.enableSigning) {
+            AdjustFactory.enableSigning();
+        }
+        if (testOptions.disableSigning != null && testOptions.disableSigning) {
+            AdjustFactory.disableSigning();
         }
     }
 }

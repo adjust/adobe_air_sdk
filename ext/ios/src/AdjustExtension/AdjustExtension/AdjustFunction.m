@@ -18,11 +18,12 @@ BOOL shouldLaunchDeferredDeeplink;
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 24) {
+    if (argc == 27) {
         NSString *appToken = nil;
         NSString *environment = nil;
         NSString *logLevelString = nil;
         NSString *defaultTracker = nil;
+        NSString *externalDeviceId = nil;
         NSString *sdkPrefix = nil;
         NSString *secretId = nil;
         NSString *info1 = nil;
@@ -127,7 +128,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
         if (argv[16] != nil) {
             BOOL sendInBackground = NO;
-            FREGetObjectAsNativeBool(argv[15], &sendInBackground);
+            FREGetObjectAsNativeBool(argv[16], &sendInBackground);
             [adjustConfig setSendInBackground:sendInBackground];
         }
         if (argv[17] != nil) {
@@ -152,6 +153,24 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         }
 
         // arg 23 is for Android only: ReadMobileEquipmentIdentity
+
+        if (argv[24] != nil) {
+            FREGetObjectAsNativeString(argv[24], &externalDeviceId);
+
+            if (externalDeviceId != nil) {
+                [adjustConfig setExternalDeviceId:externalDeviceId];
+            }
+        }
+        if (argv[25] != nil) {
+            BOOL allowiAdInfoReading = YES;
+            FREGetObjectAsNativeBool(argv[25], &allowiAdInfoReading);
+            [adjustConfig setAllowiAdInfoReading:allowiAdInfoReading];
+        }
+        if (argv[26] != nil) {
+            BOOL allowIdfaReading = YES;
+            FREGetObjectAsNativeBool(argv[26], &allowIdfaReading);
+            [adjustConfig setAllowIdfaReading:allowIdfaReading];
+        }
 
         if (secretId != nil && info1 != nil && info2 != nil && info3 != nil && info4 != nil) {
             NSUInteger uiSecretId = [[NSNumber numberWithLongLong:[secretId longLongValue]] unsignedIntegerValue];
@@ -548,6 +567,18 @@ FREObject ADJgdprForgetMe(FREContext ctx, void* funcData, uint32_t argc, FREObje
     return return_value;
 }
 
+FREObject ADJdisableThirdPartySharing(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    if (argc == 0) {
+        [Adjust disableThirdPartySharing];
+    } else {
+        NSLog(@"AdjustFunction: Bridge disableThirdPartySharing method triggered with wrong number of arguments");
+    }
+
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+    return return_value;
+}
+
 FREObject ADJtrackAdRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 2) {
         NSString *source = nil;
@@ -570,7 +601,7 @@ FREObject ADJtrackAdRevenue(FREContext ctx, void* funcData, uint32_t argc, FREOb
 }
 
 FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 13) {
+    if (argc == 14) {
         AdjustTestOptions * testOptions = [[AdjustTestOptions alloc] init];
 
         // Treating Android's `hasContext` as `deleteState`
@@ -632,8 +663,13 @@ FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREOb
 
         if (argv[12] != nil) {
             BOOL value;
-            FREGetObjectAsNativeBool(argv[10], &value);
+            FREGetObjectAsNativeBool(argv[12], &value);
             testOptions.noBackoffWait = value;
+        }
+        if (argv[13] != nil) {
+            BOOL value;
+            FREGetObjectAsNativeBool(argv[13], &value);
+            testOptions.iAdFrameworkEnabled = value;
         }
 
         [Adjust setTestOptions:testOptions];

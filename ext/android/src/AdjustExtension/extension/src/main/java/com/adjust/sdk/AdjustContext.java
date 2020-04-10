@@ -39,6 +39,7 @@ public class AdjustContext extends FREContext {
     public static String GetSdkVersion = "getSdkVersion";
     public static String GdprForgetMe = "gdprForgetMe";
     public static String TrackAdRevenue = "trackAdRevenue";
+    public static String DisableThirdPartySharing = "disableThirdPartySharing";
     // iOS methods.
     public static String GetIdfa = "getIdfa";
     // Test methods.
@@ -72,6 +73,7 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.GetSdkVersion, new AdjustFunction(AdjustContext.GetSdkVersion));
         functions.put(AdjustContext.GdprForgetMe, new AdjustFunction(AdjustContext.GdprForgetMe));
         functions.put(AdjustContext.TrackAdRevenue, new AdjustFunction(AdjustContext.TrackAdRevenue));
+        functions.put(AdjustContext.DisableThirdPartySharing, new AdjustFunction(AdjustContext.DisableThirdPartySharing));
         // iOS methods.
         functions.put(AdjustContext.GetIdfa, new AdjustFunction(AdjustContext.GetIdfa));
         // Test methods.

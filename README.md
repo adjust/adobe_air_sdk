@@ -15,6 +15,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
    * [Install referrer](#install-referrer)
       * [Google Play Referrer API](#gpr-api)
       * [Google Play Store intent](#gps-intent)
+      * [Huawei Referrer API](#huawei-referrer-api)
    * [Proguard settings](#sdk-proguard)
 * [Additional features](#additional-features)
    * [Event tracking](#event-tracking)
@@ -34,6 +35,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
    * [Offline mode](#offline-mode)
    * [Event buffering](#event-buffering)
    * [GDPR right to be forgotten](#gdpr-forget-me)
+   * [Disable third-party sharing](#disable-third-party-sharing)
    * [SDK signature](#sdk-signature)
    * [Background tracking](#background-tracking)
    * [Device IDs](#device-ids)
@@ -229,6 +231,10 @@ The Google Play Store `INSTALL_REFERRER` intent should be captured with a broadc
 ```
 
 Also, in case you are using your custom broadcast receiver, please make a call to the Adjust broadcast receiver as described in [here][custom-broadcast-receiver].
+
+#### <a id="huawei-referrer-api"></a>Huawei Referrer API
+
+As of v4.21.0, the Adjust SDK supports install tracking on Huawei devices with Huawei App Gallery version 10.4 and higher. No additional integration steps are needed to start using the Huawei Referrer API.
 
 ### <a id="sdk-proguard"></a>Proguard settings
 
@@ -676,6 +682,19 @@ Adjust.gdprForgetMe();
 ```
 
 Upon receiving this information, Adjust will erase the user's data and the Adjust SDK will stop tracking the user. No requests from this device will be sent to Adjust in the future.
+
+### <a id="disable-third-party-sharing"></a>Disable third-party sharing for specific users
+
+You can now notify Adjust when a user has exercised their right to stop sharing their data with partners for marketing purposes, but has allowed it to be shared for statistics purposes. 
+
+Call the following method to instruct the Adjust SDK to communicate the user's choice to disable data sharing to the Adjust backend:
+
+
+```actionscript
+Adjust.disableThirdPartySharing();
+```
+
+Upon receiving this information, Adjust will block the sharing of that specific user's data to partners and the Adjust SDK will continue to work as usual.
 
 ### <a id="sdk-signature"></a>SDK signature
  

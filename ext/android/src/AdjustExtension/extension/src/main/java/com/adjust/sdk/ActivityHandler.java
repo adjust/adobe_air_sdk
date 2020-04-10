@@ -70,6 +70,7 @@ public class ActivityHandler implements IActivityHandler {
     private ISdkClickHandler sdkClickHandler;
     private SessionParameters sessionParameters;
     private InstallReferrer installReferrer;
+    private InstallReferrerHuawei installReferrerHuawei;
 
     @Override
     public void teardown() {
@@ -458,11 +459,15 @@ public class ActivityHandler implements IActivityHandler {
     }
 
     @Override
-    public void sendInstallReferrer(final String installReferrer, final long referrerClickTimestampSeconds, final long installBeginTimestampSeconds) {
+    public void sendInstallReferrer(final String installReferrer,
+                                    final long referrerClickTimestampSeconds,
+                                    final long installBeginTimestampSeconds,
+                                    final String referrerApi) {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                sendInstallReferrerI(installReferrer, referrerClickTimestampSeconds, installBeginTimestampSeconds);
+                sendInstallReferrerI(installReferrer, referrerClickTimestampSeconds,
+                        installBeginTimestampSeconds, referrerApi);
             }
         });
     }
@@ -604,6 +609,16 @@ public class ActivityHandler implements IActivityHandler {
             @Override
             public void run() {
                 gdprForgetMeI();
+            }
+        });
+    }
+
+    @Override
+    public void disableThirdPartySharing() {
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                disableThirdPartySharingI();
             }
         });
     }
@@ -765,6 +780,8 @@ public class ActivityHandler implements IActivityHandler {
             SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(getContext());
             if (sharedPreferencesManager.getGdprForgetMe()) {
                 gdprForgetMe();
+            } else if (sharedPreferencesManager.getDisableThirdPartySharing()) {
+                disableThirdPartySharing();
             }
         }
 
@@ -821,9 +838,17 @@ public class ActivityHandler implements IActivityHandler {
         installReferrer = new InstallReferrer(adjustConfig.context, new InstallReferrerReadListener() {
             @Override
             public void onInstallReferrerRead(String installReferrer, long referrerClickTimestampSeconds, long installBeginTimestampSeconds) {
-                sendInstallReferrer(installReferrer, referrerClickTimestampSeconds, installBeginTimestampSeconds);
+                sendInstallReferrer(installReferrer, referrerClickTimestampSeconds, installBeginTimestampSeconds, Constants.REFERRER_API_GOOGLE);
             }
         });
+
+        installReferrerHuawei = new InstallReferrerHuawei(adjustConfig.context, new InstallReferrerReadListener() {
+            @Override
+            public void onInstallReferrerRead(String installReferrer, long referrerClickTimestampSeconds, long installBeginTimestampSeconds) {
+                sendInstallReferrer(installReferrer, referrerClickTimestampSeconds, installBeginTimestampSeconds, Constants.REFERRER_API_HUAWEI);
+            }
+        });
+
         preLaunchActionsI(adjustConfig.preLaunchActionsArray);
         sendReftagReferrerI();
     }
@@ -862,6 +887,7 @@ public class ActivityHandler implements IActivityHandler {
     private void startI() {
         // check if it's the first sdk start
         if (internalState.hasFirstSdkStartNotOcurred()) {
+            AdjustSigner.onResume(adjustConfig.logger);
             startFirstSessionI();
             return;
         }
@@ -870,6 +896,8 @@ public class ActivityHandler implements IActivityHandler {
         if (!activityState.enabled) {
             return;
         }
+
+        AdjustSigner.onResume(adjustConfig.logger);
 
         updateHandlersStatusAndSendI();
 
@@ -895,12 +923,17 @@ public class ActivityHandler implements IActivityHandler {
 
         // track the first session package only if it's enabled
         if (internalState.isEnabled()) {
-            if (!sharedPreferencesManager.getGdprForgetMe()) {
+            if (sharedPreferencesManager.getGdprForgetMe()) {
+                gdprForgetMeI();
+            } else {
+                // check if disable third party sharing request came, then send it first
+                if (sharedPreferencesManager.getDisableThirdPartySharing()) {
+                    disableThirdPartySharingI();
+                }
+
                 activityState.sessionCount = 1; // this is the first session
                 transferSessionPackageI(now);
                 checkAfterNewStartI(sharedPreferencesManager);
-            } else {
-                gdprForgetMeI();
             }
         }
 
@@ -911,6 +944,7 @@ public class ActivityHandler implements IActivityHandler {
         writeActivityStateI();
         sharedPreferencesManager.removePushToken();
         sharedPreferencesManager.removeGdprForgetMe();
+        sharedPreferencesManager.removeDisableThirdPartySharing();
 
         // check for cached deep links
         processCachedDeeplinkI();
@@ -953,6 +987,7 @@ public class ActivityHandler implements IActivityHandler {
 
             // Try to check if there's new referrer information.
             installReferrer.startConnection();
+            installReferrerHuawei.readReferrer();
 
             return;
         }
@@ -1297,7 +1332,7 @@ public class ActivityHandler implements IActivityHandler {
         }
 
         if (enabled) {
-            if (activityState.isGdprForgotten) {
+            if (activityState != null && activityState.isGdprForgotten) {
                 logger.error("Re-enabling SDK not possible for forgotten user");
                 return;
             }
@@ -1322,6 +1357,8 @@ public class ActivityHandler implements IActivityHandler {
 
             if (sharedPreferencesManager.getGdprForgetMe()) {
                 gdprForgetMeI();
+            } else if (sharedPreferencesManager.getDisableThirdPartySharing()) {
+                disableThirdPartySharingI();
             }
 
             // check if install was tracked
@@ -1362,6 +1399,7 @@ public class ActivityHandler implements IActivityHandler {
 
         // try to read and send the install referrer
         installReferrer.startConnection();
+        installReferrerHuawei.readReferrer();
     }
 
     private void setOfflineModeI(boolean offline) {
@@ -1445,7 +1483,8 @@ public class ActivityHandler implements IActivityHandler {
         sdkClickHandler.sendReftagReferrers();
     }
 
-    private void sendInstallReferrerI(String installReferrer, long referrerClickTimestampSeconds, long installBeginTimestampSeconds) {
+    private void sendInstallReferrerI(String installReferrer, long referrerClickTimestampSeconds,
+                                      long installBeginTimestampSeconds, String referrerApi) {
         if (!isEnabledI()) {
             return;
         }
@@ -1454,11 +1493,20 @@ public class ActivityHandler implements IActivityHandler {
             return;
         }
 
-        if (referrerClickTimestampSeconds == activityState.clickTime
-                && installBeginTimestampSeconds == activityState.installBegin
-                && installReferrer.equals(activityState.installReferrer)) {
-            // Same click already sent before, nothing to be done.
-            return;
+        if (referrerApi.equals(Constants.REFERRER_API_GOOGLE)) {
+            if (referrerClickTimestampSeconds == activityState.clickTime
+                    && installBeginTimestampSeconds == activityState.installBegin
+                    && installReferrer.equals(activityState.installReferrer)) {
+                // Same click already sent before for google referrer, nothing to be done.
+                return;
+            }
+        } else if (referrerApi.equals(Constants.REFERRER_API_HUAWEI)) {
+            if (referrerClickTimestampSeconds == activityState.clickTimeHuawei
+                    && installBeginTimestampSeconds == activityState.installBeginHuawei
+                    && installReferrer.equals(activityState.installReferrerHuawei)) {
+                // Same click already sent before huawei referrer, nothing to be done.
+                return;
+            }
         }
 
         // Create sdk click
@@ -1466,6 +1514,7 @@ public class ActivityHandler implements IActivityHandler {
                 installReferrer,
                 referrerClickTimestampSeconds,
                 installBeginTimestampSeconds,
+                referrerApi,
                 activityState,
                 adjustConfig,
                 deviceInfo,
@@ -1879,6 +1928,36 @@ public class ActivityHandler implements IActivityHandler {
         }
     }
 
+    private void disableThirdPartySharingI() {
+        // cache the disable third party sharing request, so that the request order maintains
+        // even this call returns before making server request
+        SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(getContext());
+        sharedPreferencesManager.setDisableThirdPartySharing();
+
+        if (!checkActivityStateI(activityState)) { return; }
+        if (!isEnabledI()) { return; }
+        if (activityState.isGdprForgotten) { return; }
+        if (activityState.isThirdPartySharingDisabled) { return; }
+
+        activityState.isThirdPartySharingDisabled = true;
+        writeActivityStateI();
+
+        long now = System.currentTimeMillis();
+        PackageBuilder packageBuilder = new PackageBuilder(adjustConfig, deviceInfo, activityState, sessionParameters, now);
+
+        ActivityPackage activityPackage = packageBuilder.buildDisableThirdPartySharingPackage();
+        packageHandler.addPackage(activityPackage);
+
+        // Removed the cached disable third party sharing flag.
+        sharedPreferencesManager.removeDisableThirdPartySharing();
+
+        if (adjustConfig.eventBufferingEnabled) {
+            logger.info("Buffered event %s", activityPackage.getSuffix());
+        } else {
+            packageHandler.sendFirstPackage();
+        }
+    }
+
     private void trackAdRevenueI(String source, JSONObject adRevenueJson) {
         if (!checkActivityStateI(activityState)) { return; }
         if (!isEnabledI()) { return; }
@@ -2087,9 +2166,17 @@ public class ActivityHandler implements IActivityHandler {
             return;
         }
 
-        activityState.clickTime = responseData.clickTime;
-        activityState.installBegin = responseData.installBegin;
-        activityState.installReferrer = responseData.installReferrer;
+        boolean isInstallReferrerHuawei = responseData.referrerApi != null && responseData.referrerApi.equalsIgnoreCase(Constants.REFERRER_API_HUAWEI);
+
+        if (!isInstallReferrerHuawei) {
+            activityState.clickTime = responseData.clickTime;
+            activityState.installBegin = responseData.installBegin;
+            activityState.installReferrer = responseData.installReferrer;
+        } else {
+            activityState.clickTimeHuawei = responseData.clickTime;
+            activityState.installBeginHuawei = responseData.installBegin;
+            activityState.installReferrerHuawei = responseData.installReferrer;
+        }
 
         writeActivityStateI();
     }
