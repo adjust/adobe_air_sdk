@@ -8,7 +8,7 @@ package {
     public class Main extends Sprite {
         // Android: Make sure to use HTTPS with port 8443 with a physical device.
         // iOS: Make sure to use HTTP with port 8080 with a physical device.
-        public static var ipAddress:String = '192.168.86.28';
+        public static var ipAddress:String = '192.168.86.32';
         public static var baseUrl:String = 'https://' + ipAddress + ':8443';
         public static var gdprUrl:String = 'https://' + ipAddress + ':8443';
         public static var controlUrl:String = 'ws://' + ipAddress + ':1987';
