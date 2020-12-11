@@ -2,7 +2,21 @@ package com.adjust.sdk;
 
 import android.content.Context;
 
+import java.util.Arrays;
 import java.util.List;
+
+import static com.adjust.sdk.Constants.BASE_URL_CN;
+import static com.adjust.sdk.Constants.BASE_URL_IN;
+import static com.adjust.sdk.Constants.FALLBACK_BASE_URLS_CN;
+import static com.adjust.sdk.Constants.FALLBACK_BASE_URLS_IN;
+import static com.adjust.sdk.Constants.FALLBACK_GDPR_URLS_CN;
+import static com.adjust.sdk.Constants.FALLBACK_GDPR_URLS_IN;
+import static com.adjust.sdk.Constants.FALLBACK_SUBSCRIPTION_URLS_CN;
+import static com.adjust.sdk.Constants.FALLBACK_SUBSCRIPTION_URLS_IN;
+import static com.adjust.sdk.Constants.GDPR_URL_CN;
+import static com.adjust.sdk.Constants.GDPR_URL_IN;
+import static com.adjust.sdk.Constants.SUBSCRIPTION_URL_CN;
+import static com.adjust.sdk.Constants.SUBSCRIPTION_URL_IN;
 
 /**
  * Created by pfms on 06/11/14.
@@ -10,6 +24,7 @@ import java.util.List;
 public class AdjustConfig {
     String basePath;
     String gdprPath;
+    String subscriptionPath;
     Context context;
     String appToken;
     String environment;
@@ -36,9 +51,14 @@ public class AdjustConfig {
     String secretId;
     String appSecret;
     String externalDeviceId;
+    boolean preinstallTrackingEnabled;
+    Boolean needsCost;
 
     public static final String ENVIRONMENT_SANDBOX = "sandbox";
     public static final String ENVIRONMENT_PRODUCTION = "production";
+
+    public static final String URL_STRATEGY_INDIA = "url_strategy_india";
+    public static final String URL_STRATEGY_CHINA = "url_strategy_china";
 
     public static final String AD_REVENUE_MOPUB = "mopub";
     public static final String AD_REVENUE_ADMOB = "admob";
@@ -89,6 +109,7 @@ public class AdjustConfig {
         // default values
         this.eventBufferingEnabled = false;
         this.sendInBackground = false;
+        this.preinstallTrackingEnabled = false;
     }
 
     public void setEventBufferingEnabled(Boolean eventBufferingEnabled) {
@@ -171,12 +192,50 @@ public class AdjustConfig {
         this.externalDeviceId = externalDeviceId;
     }
 
+    public void setPreinstallTrackingEnabled(boolean preinstallTrackingEnabled) {
+        this.preinstallTrackingEnabled = preinstallTrackingEnabled;
+    }
+
+    public void setNeedsCost(boolean needsCost) {
+        this.needsCost = needsCost;
+    }
+
     public boolean isValid() {
         if (!checkAppToken(appToken)) return false;
         if (!checkEnvironment(environment)) return false;
         if (!checkContext(context)) return false;
 
         return true;
+    }
+
+    public void setUrlStrategy(String urlStrategy) {
+        if (urlStrategy == null || urlStrategy.isEmpty()) {
+            logger.error("Invalid url strategy");
+            return;
+        }
+
+        switch (urlStrategy) {
+            case URL_STRATEGY_INDIA:
+                AdjustFactory.setBaseUrl(BASE_URL_IN);
+                AdjustFactory.setGdprUrl(GDPR_URL_IN);
+                AdjustFactory.setSubscriptionUrl(SUBSCRIPTION_URL_IN);
+                AdjustFactory.setFallbackBaseUrls(Arrays.asList(FALLBACK_BASE_URLS_IN));
+                AdjustFactory.setFallbackGdprUrls(Arrays.asList(FALLBACK_GDPR_URLS_IN));
+                AdjustFactory.setFallbackSubscriptionUrls(Arrays.asList(FALLBACK_SUBSCRIPTION_URLS_IN));
+                break;
+
+            case URL_STRATEGY_CHINA:
+                AdjustFactory.setBaseUrl(BASE_URL_CN);
+                AdjustFactory.setGdprUrl(GDPR_URL_CN);
+                AdjustFactory.setSubscriptionUrl(SUBSCRIPTION_URL_CN);
+                AdjustFactory.setFallbackBaseUrls(Arrays.asList(FALLBACK_BASE_URLS_CN));
+                AdjustFactory.setFallbackGdprUrls(Arrays.asList(FALLBACK_GDPR_URLS_CN));
+                AdjustFactory.setFallbackSubscriptionUrls(Arrays.asList(FALLBACK_SUBSCRIPTION_URLS_CN));
+                break;
+
+            default:
+                logger.warn("Unrecognised url strategy %s", urlStrategy);
+        }
     }
 
     private void setLogLevel(LogLevel logLevel, String environment) {

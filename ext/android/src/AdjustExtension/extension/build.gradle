@@ -1,11 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 30
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,22 +20,34 @@ android {
     }
 }
 
-task makeDebugJar(type: Copy) {
-    dependsOn 'assembleDebug'
+// task makeDebugJar(type: Copy) {
+//     dependsOn 'assembleDebug'
 
-    from('build/intermediates/packaged-classes/debug/')
-    into('build/libs/debug/')
-    include('classes.jar')
-    rename('classes.jar', "adjust-android.jar")
+//     from('build/intermediates/packaged-classes/debug/')
+//     into('build/libs/debug/')
+//     include('classes.jar')
+//     rename('classes.jar', "adjust-android.jar")
+// }
+
+// task makeReleaseJar(type: Copy) {
+//     dependsOn 'assembleRelease'
+
+//     from('build/intermediates/packaged-classes/release/')
+//     into('build/libs/release/')
+//     include('classes.jar')
+//     rename('classes.jar', "adjust-android.jar")
+// }
+
+task makeReleaseJar(type: Jar) {
+    dependsOn 'compileReleaseJavaWithJavac'
+    from('build/intermediates/javac/release/classes/')
+    archiveName "release/adjust-android.jar"
 }
 
-task makeReleaseJar(type: Copy) {
-    dependsOn 'assembleRelease'
-
-    from('build/intermediates/packaged-classes/release/')
-    into('build/libs/release/')
-    include('classes.jar')
-    rename('classes.jar', "adjust-android.jar")
+task makeDebugJar(type: Jar) {
+    dependsOn 'compileDebugJavaWithJavac'
+    from('build/intermediates/javac/debug/classes/')
+    archiveName "debug/adjust-android.jar"
 }
 
 dependencies {

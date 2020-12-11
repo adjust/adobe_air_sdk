@@ -615,21 +615,23 @@ FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREOb
             FREGetObjectAsNativeString(argv[1], &value);
             testOptions.baseUrl = value;
         }
+        // TODO: double check value of argv[2]
         if (argv[2] != nil) {
             NSString *value;
             FREGetObjectAsNativeString(argv[2], &value);
-            testOptions.basePath = value;
+            testOptions.extraPath = value;
         }
         if (argv[3] != nil) {
             NSString *value;
             FREGetObjectAsNativeString(argv[3], &value);
             testOptions.gdprUrl = value;
         }
-        if (argv[4] != nil) {
-            NSString *value;
-            FREGetObjectAsNativeString(argv[4], &value);
-            testOptions.gdprPath = value;
-        }
+        // TODO: double check value of argv[4]
+        // if (argv[4] != nil) {
+        //     NSString *value;
+        //     FREGetObjectAsNativeString(argv[4], &value);
+        //     testOptions.gdprPath = value;
+        // }
 
         // Skipping 5th argument
 

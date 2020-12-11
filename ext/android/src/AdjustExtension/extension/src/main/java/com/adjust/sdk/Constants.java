@@ -9,9 +9,6 @@
 
 package com.adjust.sdk;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author keyboardsurfer
  * @since 8.11.13
@@ -28,9 +25,27 @@ public interface Constants {
 
     String BASE_URL = "https://app.adjust.com";
     String GDPR_URL = "https://gdpr.adjust.com";
+    String SUBSCRIPTION_URL = "https://subscription.adjust.com";
+    String BASE_URL_IN = "https://app.adjust.net.in";
+    String GDPR_URL_IN = "https://gdpr.adjust.net.in";
+    String SUBSCRIPTION_URL_IN = "https://subscription.adjust.net.in";
+    String BASE_URL_CN = "https://app.adjust.world";
+    String GDPR_URL_CN = "https://gdpr.adjust.world";
+    String SUBSCRIPTION_URL_CN = "https://subscription.adjust.world";
+
+    String[] FALLBACK_BASE_URLS = {BASE_URL_IN, BASE_URL_CN};
+    String[] FALLBACK_GDPR_URLS = {GDPR_URL_IN, GDPR_URL_CN};
+    String[] FALLBACK_SUBSCRIPTION_URLS = {SUBSCRIPTION_URL_IN, SUBSCRIPTION_URL_CN};
+    String[] FALLBACK_BASE_URLS_IN = {BASE_URL};
+    String[] FALLBACK_GDPR_URLS_IN = {GDPR_URL};
+    String[] FALLBACK_SUBSCRIPTION_URLS_IN = {SUBSCRIPTION_URL};
+    String[] FALLBACK_BASE_URLS_CN = {BASE_URL};
+    String[] FALLBACK_GDPR_URLS_CN = {GDPR_URL};
+    String[] FALLBACK_SUBSCRIPTION_URLS_CN = {SUBSCRIPTION_URL};
+
     String SCHEME = "https";
     String AUTHORITY = "app.adjust.com";
-    String CLIENT_SDK = "android4.21.1";
+    String CLIENT_SDK = "android4.25.0";
     String LOGTAG = "Adjust";
     String REFTAG = "reftag";
     String INSTALL_REFERRER = "install_referrer";
@@ -67,4 +82,21 @@ public interface Constants {
     int MAX_INSTALL_REFERRER_RETRIES = 2;
 
     String FB_AUTH_REGEX = "^(fb|vk)[0-9]{5,}[^:]*://authorize.*access_token=.*";
+
+    String PREINSTALL = "preinstall";
+    String SYSTEM_PROPERTIES = "system_properties";
+    String SYSTEM_PROPERTIES_REFLECTION = "system_properties_reflection";
+    String SYSTEM_PROPERTIES_PATH = "system_properties_path";
+    String SYSTEM_PROPERTIES_PATH_REFLECTION = "system_properties_path_reflection";
+    String CONTENT_PROVIDER = "content_provider";
+    String CONTENT_PROVIDER_INTENT_ACTION = "content_provider_intent_action";
+    String CONTENT_PROVIDER_NO_PERMISSION = "content_provider_no_permission";
+    String FILE_SYSTEM = "file_system";
+
+    String ADJUST_PREINSTALL_SYSTEM_PROPERTY_PREFIX = "adjust.preinstall.";
+    String ADJUST_PREINSTALL_SYSTEM_PROPERTY_PATH = "adjust.preinstall.path";
+    String ADJUST_PREINSTALL_CONTENT_URI_AUTHORITY = "com.adjust.preinstall";
+    String ADJUST_PREINSTALL_CONTENT_URI_PATH = "trackers";
+    String ADJUST_PREINSTALL_CONTENT_PROVIDER_INTENT_ACTION = "com.attribution.REFERRAL_PROVIDER";
+    String ADJUST_PREINSTALL_FILE_SYSTEM_PATH = "/data/local/tmp/adjust.preinstall";
 }

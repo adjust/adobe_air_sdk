@@ -11,9 +11,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class InstallReferrerHuawei {
 
     /**
+     * Huawei install referrer provider content authority.
+     */
+    private static final String REFERRER_PROVIDER_AUTHORITY = "com.huawei.appmarket.commondata";
+
+    /**
      * Huawei install referrer provider content uri.
      */
-    private static final String REFERRER_PROVIDER_URI = "content://com.huawei.appmarket.commondata/item/5";
+    private static final String REFERRER_PROVIDER_URI = "content://" + REFERRER_PROVIDER_AUTHORITY + "/item/5";
 
     /**
      * Adjust logger instance.
@@ -57,6 +62,10 @@ public class InstallReferrerHuawei {
             return;
         }
 
+        if (!Util.resolveContentProvider(context, REFERRER_PROVIDER_AUTHORITY)) {
+            return;
+        }
+
         Cursor cursor = null;
         Uri uri = Uri.parse(REFERRER_PROVIDER_URI);
         ContentResolver contentResolver = context.getContentResolver();
@@ -76,7 +85,10 @@ public class InstallReferrerHuawei {
                 long referrerClickTimestampSeconds = Long.parseLong(clickTime);
                 long installBeginTimestampSeconds = Long.parseLong(installTime);
 
-                referrerCallback.onInstallReferrerRead(installReferrer, referrerClickTimestampSeconds, installBeginTimestampSeconds);
+                ReferrerDetails referrerDetails = new ReferrerDetails(installReferrer,
+                        referrerClickTimestampSeconds, installBeginTimestampSeconds);
+
+                referrerCallback.onInstallReferrerRead(referrerDetails);
 
             } else {
                 logger.debug("InstallReferrerHuawei fail to read referrer for package [%s] and content uri [%s]", context.getPackageName(), uri.toString());

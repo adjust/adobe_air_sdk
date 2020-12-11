@@ -9,6 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -36,6 +38,10 @@ public class AdjustFactory {
     private static long maxDelayStart = -1;
     private static String baseUrl = Constants.BASE_URL;
     private static String gdprUrl = Constants.GDPR_URL;
+    private static String subscriptionUrl = Constants.SUBSCRIPTION_URL;
+    private static List<String> fallbackBaseUrls = Arrays.asList(Constants.FALLBACK_BASE_URLS);
+    private static List<String> fallbackGdprUrls = Arrays.asList(Constants.FALLBACK_GDPR_URLS);
+    private static List<String> fallbackSubscriptionUrls = Arrays.asList(Constants.FALLBACK_SUBSCRIPTION_URLS);
     private static UtilNetworking.IConnectionOptions connectionOptions = null;
     private static boolean tryInstallReferrer = true;
 
@@ -179,6 +185,34 @@ public class AdjustFactory {
         return AdjustFactory.gdprUrl;
     }
 
+    public static String getSubscriptionUrl() {
+        if (AdjustFactory.subscriptionUrl == null) {
+            return Constants.SUBSCRIPTION_URL;
+        }
+        return AdjustFactory.subscriptionUrl;
+    }
+
+    public static List<String> getFallbackBaseUrls() {
+        if (AdjustFactory.fallbackBaseUrls == null) {
+            return Arrays.asList(Constants.FALLBACK_BASE_URLS);
+        }
+        return AdjustFactory.fallbackBaseUrls;
+    }
+
+    public static List<String> getFallbackGdprUrls() {
+        if (AdjustFactory.fallbackGdprUrls == null) {
+            return Arrays.asList(Constants.FALLBACK_GDPR_URLS);
+        }
+        return AdjustFactory.fallbackGdprUrls;
+    }
+
+    public static List<String> getFallbackSubscriptionUrls() {
+        if (AdjustFactory.fallbackSubscriptionUrls == null) {
+            return Arrays.asList(Constants.FALLBACK_GDPR_URLS);
+        }
+        return AdjustFactory.fallbackSubscriptionUrls;
+    }
+
     public static UtilNetworking.IConnectionOptions getConnectionOptions() {
         if (connectionOptions == null) {
             return new UtilNetworking.ConnectionOptions();
@@ -250,6 +284,22 @@ public class AdjustFactory {
         AdjustFactory.gdprUrl = gdprUrl;
     }
 
+    public static void setSubscriptionUrl(String subscriptionUrl) {
+        AdjustFactory.subscriptionUrl = subscriptionUrl;
+    }
+
+    public static void setFallbackBaseUrls(List<String> fallbackBaseUrls) {
+        AdjustFactory.fallbackBaseUrls = fallbackBaseUrls;
+    }
+
+    public static void setFallbackGdprUrls(List<String> fallbackGdprUrls) {
+        AdjustFactory.fallbackGdprUrls = fallbackGdprUrls;
+    }
+
+    public static void setFallbackSubscriptionUrls(List<String> fallbackSubscriptionUrls) {
+        AdjustFactory.fallbackSubscriptionUrls = fallbackSubscriptionUrls;
+    }
+
     public static void useTestConnectionOptions() {
         AdjustFactory.connectionOptions = new UtilNetworking.IConnectionOptions() {
             @Override
@@ -298,7 +348,14 @@ public class AdjustFactory {
                         @Override
                         public boolean verify(String hostname, SSLSession session) {
                             getLogger().verbose("verify hostname ");
-                            return true;
+                            return isTestIp(hostname);
+                        }
+
+                        private boolean isTestIp(String hostname) {
+                            if (hostname.equals("10.0.2.2")) {
+                                return true;
+                            }
+                            return hostname.startsWith("192.168.");
                         }
                     });
                 } catch (Exception e) {
@@ -365,6 +422,7 @@ public class AdjustFactory {
         maxDelayStart = -1;
         baseUrl = Constants.BASE_URL;
         gdprUrl = Constants.GDPR_URL;
+        subscriptionUrl = Constants.SUBSCRIPTION_URL;
         connectionOptions = null;
         tryInstallReferrer = true;
     }
