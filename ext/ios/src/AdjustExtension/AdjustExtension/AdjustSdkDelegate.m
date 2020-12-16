@@ -78,15 +78,18 @@ static AdjustSdkDelegate *defaultInstance = nil;
         return;
     }
 
-    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"trackerToken", attribution.trackerToken,
-             @"trackerName", attribution.trackerName,
-             @"campaign", attribution.campaign,
-             @"network", attribution.network,
-             @"creative", attribution.creative,
-             @"adgroup", attribution.adgroup,
-             @"clickLabel", attribution.clickLabel,
-             @"adid", attribution.adid];
+    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+                                   @"trackerToken", attribution.trackerToken,
+                                   @"trackerName", attribution.trackerName,
+                                   @"campaign", attribution.campaign,
+                                   @"network", attribution.network,
+                                   @"creative", attribution.creative,
+                                   @"adgroup", attribution.adgroup,
+                                   @"clickLabel", attribution.clickLabel,
+                                   @"adid", attribution.adid,
+                                   @"costType", attribution.costType,
+                                   @"costAmount", attribution.costAmount == nil ? nil : [attribution.costAmount stringValue],
+                                   @"costCurrency", attribution.costCurrency];
     const char* cResponseData = [attributionString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_attributionData",
@@ -107,12 +110,12 @@ static AdjustSdkDelegate *defaultInstance = nil;
     }
 
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", eventSuccess.message,
-             @"timeStamp", eventSuccess.timeStamp,
-             @"adid", eventSuccess.adid,
-             @"eventToken", eventSuccess.eventToken,
-             @"callbackId", eventSuccess.callbackId,
-             @"jsonResponse", stringJsonResponse];
+                                 @"message", eventSuccess.message,
+                                 @"timeStamp", eventSuccess.timeStamp,
+                                 @"adid", eventSuccess.adid,
+                                 @"eventToken", eventSuccess.eventToken,
+                                 @"callbackId", eventSuccess.callbackId,
+                                 @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_eventTrackingSucceeded",
@@ -133,13 +136,13 @@ static AdjustSdkDelegate *defaultInstance = nil;
     }
 
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", eventFailed.message,
-             @"timeStamp", eventFailed.timeStamp,
-             @"adid", eventFailed.adid,
-             @"eventToken", eventFailed.eventToken,
-             @"callbackId", eventFailed.callbackId,
-             @"willRetry", eventFailed.willRetry ? @"true" : @"false",
-             @"jsonResponse", stringJsonResponse];
+                                 @"message", eventFailed.message,
+                                 @"timeStamp", eventFailed.timeStamp,
+                                 @"adid", eventFailed.adid,
+                                 @"eventToken", eventFailed.eventToken,
+                                 @"callbackId", eventFailed.callbackId,
+                                 @"willRetry", eventFailed.willRetry ? @"true" : @"false",
+                                 @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_eventTrackingFailed",
@@ -161,10 +164,10 @@ static AdjustSdkDelegate *defaultInstance = nil;
     }
 
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", sessionSuccess.message,
-             @"timeStamp", sessionSuccess.timeStamp,
-             @"adid", sessionSuccess.adid,
-             @"jsonResponse", stringJsonResponse];
+                                 @"message", sessionSuccess.message,
+                                 @"timeStamp", sessionSuccess.timeStamp,
+                                 @"adid", sessionSuccess.adid,
+                                 @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_sessionTrackingSucceeded",
@@ -185,11 +188,11 @@ static AdjustSdkDelegate *defaultInstance = nil;
     }
 
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-             @"message", sessionFailed.message,
-             @"timeStamp", sessionFailed.timeStamp,
-             @"adid", sessionFailed.adid,
-             @"willRetry", sessionFailed.willRetry ? @"true" : @"false",
-             @"jsonResponse", stringJsonResponse];
+                                 @"message", sessionFailed.message,
+                                 @"timeStamp", sessionFailed.timeStamp,
+                                 @"adid", sessionFailed.adid,
+                                 @"willRetry", sessionFailed.willRetry ? @"true" : @"false",
+                                 @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
             (const uint8_t *)"adjust_sessionTrackingFailed",

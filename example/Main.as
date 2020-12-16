@@ -9,6 +9,7 @@ package {
     import com.adjust.sdk.AdjustAttribution;
     import com.adjust.sdk.Environment;
     import com.adjust.sdk.LogLevel;
+    import com.adjust.sdk.UrlStrategy;
 
     import flash.display.SimpleButton;
     import flash.display.Sprite;
@@ -49,6 +50,9 @@ package {
             adjustConfig.setSessionTrackingFailedDelegate(sessionTrackingFailedDelegate);
             adjustConfig.setDeferredDeeplinkDelegate(deferredDeeplinkDelegate);
             adjustConfig.setShouldLaunchDeeplink(true);
+            // adjustConfig.deactivateSKAdNetworkHandling();
+            // adjustConfig.setUrlStrategy(UrlStrategy.CHINA);
+            adjustConfig.setPreinstallTrackingEnabled(true);
 
             Adjust.addSessionCallbackParameter("scpk1", "scpv1");
             Adjust.addSessionCallbackParameter("scpk2", "scpv2");
@@ -63,6 +67,8 @@ package {
             // Adjust.resetSessionPartnerParameters();
 
             Adjust.start(adjustConfig);
+
+            Adjust.requestTrackingAuthorizationWithCompletionHandler(authorizationStatusDelegate);
 
             // Adjust.sendFirstPackages();
 
@@ -129,6 +135,9 @@ package {
             trace("Adgroup = " + attribution.getAdGroup());
             trace("Click label = " + attribution.getClickLabel());
             trace("Adid = " + attribution.getAdid());
+            trace("Cost type = " + attribution.getCostType());
+            trace("Cost amount = " + attribution.getCostAmount());
+            trace("Cost currency = " + attribution.getCostCurrency());
         }
 
         private static function googleAdIdDelegate(adid:String):void {
@@ -171,6 +180,9 @@ package {
             trace("Adgroup = " + attribution.getAdGroup());
             trace("Click label = " + attribution.getClickLabel());
             trace("Adid = " + attribution.getAdid());
+            trace("Cost type = " + attribution.getCostType());
+            trace("Cost amount = " + attribution.getCostAmount());
+            trace("Cost currency = " + attribution.getCostCurrency());
         }
 
         private static function eventTrackingSucceededDelegate(eventSuccess:AdjustEventSuccess):void {
@@ -212,8 +224,13 @@ package {
         }
 
         private static function deferredDeeplinkDelegate(uri:String):void {
-            trace("Received Deferred Deeplink");
+            trace("Received deferred deeplink");
             trace("URI = " + uri);
+        }
+
+        private static function authorizationStatusDelegate(status:String):void {
+            trace("Received authorization status");
+            trace("Status = " + status);
         }
 
         private function buildButton(number:int, text:String, clickFunction:Function):TextField {

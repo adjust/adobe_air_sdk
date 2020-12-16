@@ -4,7 +4,7 @@ package com.adjust.sdk {
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
-        private static var sdkPrefix:String = "adobe_air4.21.0";
+        private static var sdkPrefix:String = "adobe_air4.22.0";
         private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
 
         private static var hasSdkStarted:Boolean = false;
@@ -16,6 +16,7 @@ package com.adjust.sdk {
         private static var sessionTrackingSucceededDelegate:Function;
         private static var sessionTrackingFailedDelegate:Function;
         private static var deferredDeeplinkDelegate:Function;
+        private static var authorizationStatusDelegate:Function;
 
         private static function getExtensionContext():ExtensionContext {
             if (extensionContext != null) {
@@ -82,7 +83,11 @@ package com.adjust.sdk {
                     adjustConfig.getReadMobileEquipmentIdentity(),
                     adjustConfig.getExternalDeviceId(),
                     adjustConfig.getAllowiAdInfoReading(),
-                    adjustConfig.getAllowIdfaReading());
+                    adjustConfig.getAllowIdfaReading(),
+                    adjustConfig.getUrlStrategy(),
+                    adjustConfig.getNeedsCost(),
+                    adjustConfig.getSkAdNetworkHandling(),
+                    adjustConfig.getPreinstallTrackingEnabled());
 
             // For now, call onResume after onCreate.
             getExtensionContext().call("onResume");
@@ -211,6 +216,12 @@ package com.adjust.sdk {
             getExtensionContext().call("disableThirdPartySharing");
         }
 
+        public static function requestTrackingAuthorizationWithCompletionHandler(callback:Function):void {
+            authorizationStatusDelegate = callback;
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().call("requestTrackingAuthorizationWithCompletionHandler");
+        }
+
         public static function setTestOptions(testOptions:AdjustTestOptions):void {
             getExtensionContext().call("setTestOptions", 
                     testOptions.hasContext,
@@ -256,6 +267,9 @@ package com.adjust.sdk {
             } else if (statusEvent.code == "adjust_googleAdId") {
                 var googleAdId:String = statusEvent.level;
                 googleAdIdCallbackDelegate(googleAdId);
+            } else if (statusEvent.code == "adjust_authorizationStatus") {
+                var authorizationStatus:String = statusEvent.level;
+                authorizationStatusDelegate(authorizationStatus);
             }
         }
 
@@ -398,6 +412,9 @@ package com.adjust.sdk {
             var adgroup:String;
             var clickLabel:String;
             var adid:String;
+            var costType:String;
+            var costAmount:String;
+            var costCurrency:String;
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -421,10 +438,27 @@ package com.adjust.sdk {
                     clickLabel = value;
                 } else if (key == "adid") {
                     adid = value;
+                } else if (key == "costType") {
+                    costType = value;
+                } else if (key == "costAmount") {
+                    costAmount = value;
+                } else if (key == "costCurrency") {
+                    costCurrency = value;
                 }
             }
 
-            return new AdjustAttribution(trackerToken, trackerName, campaign, network, creative, adgroup, clickLabel, adid);
+            return new AdjustAttribution(
+                trackerToken,
+                trackerName,
+                campaign,
+                network,
+                creative,
+                adgroup,
+                clickLabel,
+                adid,
+                costType,
+                costAmount,
+                costCurrency);
         }
 
         private static function onInvoke(event:InvokeEvent):void {

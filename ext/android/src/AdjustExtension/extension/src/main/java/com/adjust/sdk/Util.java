@@ -27,7 +27,6 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
 import com.adjust.sdk.scheduler.SingleThreadFutureScheduler;
-import com.adjust.sdk.scheduler.TimerOnce;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -46,6 +45,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -102,7 +102,47 @@ public class Util {
         return Util.formatString("'%s'", string);
     }
 
-    public static String getPlayAdId(final Context context) {
+    public static Object getAdvertisingInfoObject(final Context context, long timeoutMilli) {
+        return runSyncInPlayAdIdSchedulerWithTimeout(context, new Callable<Object>() {
+            @Override
+            public Object call() {
+                try {
+                    return Reflection.getAdvertisingInfoObject(context);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }, timeoutMilli);
+    }
+
+    public static String getPlayAdId(final Context context,
+                                     final Object advertisingInfoObject,
+                                     long timeoutMilli)
+    {
+        return runSyncInPlayAdIdSchedulerWithTimeout(context, new Callable<String>() {
+            @Override
+            public String call() {
+                return Reflection.getPlayAdId(context, advertisingInfoObject);
+            }
+        }, timeoutMilli);
+    }
+
+    public static Boolean isPlayTrackingEnabled(final Context context,
+                                               final Object advertisingInfoObject,
+                                               long timeoutMilli)
+    {
+        return runSyncInPlayAdIdSchedulerWithTimeout(context, new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                return Reflection.isPlayTrackingEnabled(context, advertisingInfoObject);
+            }
+        }, timeoutMilli);
+    }
+
+    private static <R> R runSyncInPlayAdIdSchedulerWithTimeout(final Context context,
+                                                               Callable<R> callable,
+                                                               long timeoutMilli)
+    {
         if (playAdIdScheduler == null) {
             synchronized (Util.class) {
                 if (playAdIdScheduler == null) {
@@ -110,15 +150,11 @@ public class Util {
                 }
             }
         }
-        ScheduledFuture<String> playAdIdFuture = playAdIdScheduler.scheduleFutureWithReturn(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return Reflection.getPlayAdId(context);
-            }
-        }, 0);
+
+        ScheduledFuture<R> playAdIdFuture = playAdIdScheduler.scheduleFutureWithReturn(callable, 0);
 
         try {
-            return playAdIdFuture.get(Constants.ONE_SECOND, TimeUnit.MILLISECONDS);
+            return playAdIdFuture.get(timeoutMilli, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
         } catch (InterruptedException e) {
         } catch (TimeoutException e) {
@@ -146,7 +182,8 @@ public class Util {
         ILogger logger = AdjustFactory.getLogger();
         if (Looper.myLooper() != Looper.getMainLooper()) {
             logger.debug("GoogleAdId being read in the background");
-            String GoogleAdId = Util.getPlayAdId(context);
+
+            String GoogleAdId = Util.getGoogleAdId(context);
 
             logger.debug("GoogleAdId read " + GoogleAdId);
             onDeviceIdRead.onGoogleAdIdRead(GoogleAdId);
@@ -159,7 +196,7 @@ public class Util {
             protected String doInBackground(Context... params) {
                 ILogger logger = AdjustFactory.getLogger();
                 Context innerContext = params[0];
-                String innerResult = Util.getPlayAdId(innerContext);
+                String innerResult = Util.getGoogleAdId(innerContext);
                 logger.debug("GoogleAdId read " + innerResult);
                 return innerResult;
             }
@@ -172,8 +209,27 @@ public class Util {
         }.execute(context);
     }
 
-    public static Boolean isPlayTrackingEnabled(Context context) {
-        return Reflection.isPlayTrackingEnabled(context);
+    private static String getGoogleAdId(Context context) {
+        String googleAdId = null;
+        try {
+            GooglePlayServicesClient.GooglePlayServicesInfo gpsInfo =
+                    GooglePlayServicesClient.getGooglePlayServicesInfo(context,
+                            Constants.ONE_SECOND * 11);
+            if (gpsInfo != null) {
+                googleAdId = gpsInfo.getGpsAdid();
+            }
+        } catch (Exception e) {
+        }
+        if (googleAdId == null) {
+            Object advertisingInfoObject = Util.getAdvertisingInfoObject(
+                    context, Constants.ONE_SECOND * 11);
+
+            if (advertisingInfoObject != null) {
+                googleAdId = Util.getPlayAdId(context, advertisingInfoObject, Constants.ONE_SECOND);
+            }
+        }
+
+        return googleAdId;
     }
 
     public static String getMacAddress(Context context) {
@@ -346,6 +402,13 @@ public class Util {
     }
 
     public static int hashLong(Long value) {
+        if (value == null) {
+            return 0;
+        }
+        return value.hashCode();
+    }
+
+    public static int hashDouble(Double value) {
         if (value == null) {
             return 0;
         }
@@ -598,7 +661,11 @@ public class Util {
         try {
             TelephonyManager teleMan =
                     (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            networkType = teleMan.getNetworkType();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                networkType = teleMan.getDataNetworkType();
+            } else {
+                networkType = teleMan.getNetworkType();
+            }
         } catch (Exception e) {
             getLogger().warn("Couldn't read network type (%s)", e.getMessage());
         }
@@ -723,5 +790,46 @@ public class Util {
 
     public static String getSdkVersion() {
         return Constants.CLIENT_SDK;
+    }
+
+    public static boolean resolveContentProvider(final Context applicationContext,
+                                                 final String authority) {
+        try {
+            return (applicationContext.getPackageManager()
+                    .resolveContentProvider(authority, 0) != null);
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isEqualReferrerDetails(final ReferrerDetails referrerDetails,
+                                                 final String referrerApi,
+                                                 final ActivityState activityState) {
+        if (referrerApi.equals(Constants.REFERRER_API_GOOGLE)) {
+            return isEqualGoogleReferrerDetails(referrerDetails, activityState);
+        } else if (referrerApi.equals(Constants.REFERRER_API_HUAWEI)) {
+            return isEqualHuaweiReferrerDetails(referrerDetails, activityState);
+        }
+
+        return false;
+    }
+
+    private static boolean isEqualGoogleReferrerDetails(final ReferrerDetails referrerDetails,
+                                                       final ActivityState activityState) {
+        return referrerDetails.referrerClickTimestampSeconds == activityState.clickTime
+                && referrerDetails.installBeginTimestampSeconds == activityState.installBegin
+                && referrerDetails.referrerClickTimestampServerSeconds == activityState.clickTimeServer
+                && referrerDetails.installBeginTimestampServerSeconds == activityState.installBeginServer
+                && Util.equalString(referrerDetails.installReferrer, activityState.installReferrer)
+                && Util.equalString(referrerDetails.installVersion, activityState.installVersion)
+                && Util.equalBoolean(referrerDetails.googlePlayInstant, activityState.googlePlayInstant) ;
+    }
+
+    private static boolean isEqualHuaweiReferrerDetails(final ReferrerDetails referrerDetails,
+                                                       final ActivityState activityState) {
+        return referrerDetails.referrerClickTimestampSeconds == activityState.clickTimeHuawei
+                && referrerDetails.installBeginTimestampSeconds == activityState.installBeginHuawei
+                && Util.equalString(referrerDetails.installReferrer, activityState.installReferrerHuawei);
     }
 }

@@ -32,88 +32,91 @@ public class AdjustFunction implements FREFunction,
     public FREObject call(FREContext freContext, FREObject[] freObjects) {
         AdjustExtension.context = (AdjustContext) freContext;
 
-        if (functionName == AdjustContext.OnCreate) {
+        if (functionName.equals(AdjustContext.OnCreate)) {
             return OnCreate(freContext, freObjects);
         }
-        if (functionName == AdjustContext.TrackEvent) {
+        if (functionName.equals(AdjustContext.TrackEvent)) {
             return TrackEvent(freContext, freObjects);
         }
-        if (functionName == AdjustContext.SetEnabled) {
+        if (functionName.equals(AdjustContext.SetEnabled)) {
             return SetEnabled(freContext, freObjects);
         }
-        if (functionName == AdjustContext.IsEnabled) {
+        if (functionName.equals(AdjustContext.IsEnabled)) {
             return IsEnabled(freContext, freObjects);
         }
-        if (functionName == AdjustContext.OnResume) {
+        if (functionName.equals(AdjustContext.OnResume)) {
             return OnResume(freContext, freObjects);
         }
-        if (functionName == AdjustContext.OnPause) {
+        if (functionName.equals(AdjustContext.OnPause)) {
             return OnPause(freContext, freObjects);
         }
-        if (functionName == AdjustContext.AppWillOpenUrl) {
+        if (functionName.equals(AdjustContext.AppWillOpenUrl)) {
             return AppWillOpenUrl(freContext, freObjects);
         }
-        if (functionName == AdjustContext.SetOfflineMode) {
+        if (functionName.equals(AdjustContext.SetOfflineMode)) {
             return SetOfflineMode(freContext, freObjects);
         }
-        if (functionName == AdjustContext.SetReferrer) {
+        if (functionName.equals(AdjustContext.SetReferrer)) {
             return SetReferrer(freContext, freObjects);
         }
-        if (functionName == AdjustContext.GetGoogleAdId) {
+        if (functionName.equals(AdjustContext.GetGoogleAdId)) {
             return GetGoogleAdId(freContext, freObjects);
         }
-        if (functionName == AdjustContext.GetAmazonAdId) {
+        if (functionName.equals(AdjustContext.GetAmazonAdId)) {
             return GetAmazonAdId(freContext, freObjects);
         }
-        if (functionName == AdjustContext.AddSessionCallbackParameter) {
+        if (functionName.equals(AdjustContext.AddSessionCallbackParameter)) {
             return AddSessionCallbackParameter(freContext, freObjects);
         }
-        if (functionName == AdjustContext.RemoveSessionCallbackParameter) {
+        if (functionName.equals(AdjustContext.RemoveSessionCallbackParameter)) {
             return RemoveSessionCallbackParameter(freContext, freObjects);
         }
-        if (functionName == AdjustContext.ResetSessionCallbackParameters) {
+        if (functionName.equals(AdjustContext.ResetSessionCallbackParameters)) {
             return ResetSessionCallbackParameters(freContext, freObjects);
         }
-        if (functionName == AdjustContext.AddSessionPartnerParameter) {
+        if (functionName.equals(AdjustContext.AddSessionPartnerParameter)) {
             return AddSessionPartnerParameter(freContext, freObjects);
         }
-        if (functionName == AdjustContext.RemoveSessionPartnerParameter) {
+        if (functionName.equals(AdjustContext.RemoveSessionPartnerParameter)) {
             return RemoveSessionPartnerParameter(freContext, freObjects);
         }
-        if (functionName == AdjustContext.ResetSessionPartnerParameters) {
+        if (functionName.equals(AdjustContext.ResetSessionPartnerParameters)) {
             return ResetSessionPartnerParameters(freContext, freObjects);
         }
-        if (functionName == AdjustContext.SetDeviceToken) {
+        if (functionName.equals(AdjustContext.SetDeviceToken)) {
             return SetDeviceToken(freContext, freObjects);
         }
-        if (functionName == AdjustContext.SendFirstPackages) {
+        if (functionName.equals(AdjustContext.SendFirstPackages)) {
             return SendFirstPackages(freContext, freObjects);
         }
-        if (functionName == AdjustContext.TrackAdRevenue) {
+        if (functionName.equals(AdjustContext.TrackAdRevenue)) {
             return TrackAdRevenue(freContext, freObjects);
         }
-        if (functionName == AdjustContext.GetAdid) {
+        if (functionName.equals(AdjustContext.GetAdid)) {
             return GetAdid(freContext, freObjects);
         }
-        if (functionName == AdjustContext.GetAttribution) {
+        if (functionName.equals(AdjustContext.GetAttribution)) {
             return GetAttribution(freContext, freObjects);
         }
-        if (functionName == AdjustContext.GetSdkVersion) {
+        if (functionName.equals(AdjustContext.GetSdkVersion)) {
             return GetSdkVersion(freContext, freObjects);
         }
-        if (functionName == AdjustContext.GdprForgetMe) {
+        if (functionName.equals(AdjustContext.GdprForgetMe)) {
             return GdprForgetMe(freContext, freObjects);
         }
-        if (functionName == AdjustContext.DisableThirdPartySharing) {
+        if (functionName.equals(AdjustContext.DisableThirdPartySharing)) {
             return DisableThirdPartySharing(freContext, freObjects);
         }
-        if (functionName == AdjustContext.GetIdfa) {
+        if (functionName.equals(AdjustContext.GetIdfa)) {
             return GetIdfa(freContext, freObjects);
         }
-        if (functionName == AdjustContext.SetTestOptions) {
+        if (functionName.equals(AdjustContext.RequestTrackingAuthorizationWithCompletionHandler)) {
+            return RequestTrackingAuthorizationWithCompletionHandler(freContext, freObjects);
+        }
+        if (functionName.equals(AdjustContext.SetTestOptions)) {
             return SetTestOptions(freContext, freObjects);
         }
-        if (functionName == AdjustContext.Teardown) {
+        if (functionName.equals(AdjustContext.Teardown)) {
             return Teardown(freContext, freObjects);
         }
 
@@ -159,24 +162,28 @@ public class AdjustFunction implements FREFunction,
 
             // Log level.
             if (logLevel != null) {
-                if (logLevel.equals("verbose")) {
-                    adjustConfig.setLogLevel(LogLevel.VERBOSE);
-                } else if (logLevel.equals("debug")) {
-                    adjustConfig.setLogLevel(LogLevel.DEBUG);
-                } else if (logLevel.equals("info")) {
-                    adjustConfig.setLogLevel(LogLevel.INFO);
-                } else if (logLevel.equals("warn")) {
-                    adjustConfig.setLogLevel(LogLevel.WARN);
-                } else if (logLevel.equals("error")) {
-                    adjustConfig.setLogLevel(LogLevel.ERROR);
-                } else if (logLevel.equals("assert")) {
-                    adjustConfig.setLogLevel(LogLevel.ASSERT);
-                } else if (logLevel.equals("assert")) {
-                    adjustConfig.setLogLevel(LogLevel.ASSERT);
-                } else if (logLevel.equals("suppress")) {
-                    adjustConfig.setLogLevel(LogLevel.SUPRESS);
-                } else {
-                    adjustConfig.setLogLevel(LogLevel.INFO);
+                switch (logLevel) {
+                    case "verbose":
+                        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+                        break;
+                    case "debug":
+                        adjustConfig.setLogLevel(LogLevel.DEBUG);
+                        break;
+                    case "warn":
+                        adjustConfig.setLogLevel(LogLevel.WARN);
+                        break;
+                    case "error":
+                        adjustConfig.setLogLevel(LogLevel.ERROR);
+                        break;
+                    case "assert":
+                        adjustConfig.setLogLevel(LogLevel.ASSERT);
+                        break;
+                    case "suppress":
+                        adjustConfig.setLogLevel(LogLevel.SUPRESS);
+                        break;
+                    default:
+                        adjustConfig.setLogLevel(LogLevel.INFO);
+                        break;
                 }
             }
 
@@ -330,6 +337,32 @@ public class AdjustFunction implements FREFunction,
                 String externalDeviceId = freObjects[24].getAsString();
                 if (externalDeviceId != null) {
                     adjustConfig.setExternalDeviceId(externalDeviceId);
+                }
+            }
+
+            // URL strategy.
+            if (freObjects[27] != null) {
+                String urlStrategy = freObjects[27].getAsString();
+                if (urlStrategy.equalsIgnoreCase("china")) {
+                    adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_CHINA);
+                } else if (urlStrategy.equalsIgnoreCase("india")) {
+                    adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_INDIA);
+                }
+            }
+
+            // Cost data in attribution callback.
+            if (freObjects[28] != null) {
+                boolean needsCost = freObjects[28].getAsBool();
+                if (needsCost == true) {
+                   adjustConfig.setNeedsCost(true);
+                }
+            }
+
+            // Preinstall tracking.
+            if (freObjects[30] != null) {
+                boolean preinstallTrackingEnabled = freObjects[30].getAsBool();
+                if (preinstallTrackingEnabled == true) {
+                    adjustConfig.setPreinstallTrackingEnabled(true);
                 }
             }
 
@@ -556,14 +589,16 @@ public class AdjustFunction implements FREFunction,
             }
 
             String response = "trackerToken==" + attribution.trackerToken + "__"
-                + "trackerName==" + attribution.trackerName + "__"
-                + "campaign==" + attribution.campaign + "__"
-                + "network==" + attribution.network + "__"
-                + "creative==" + attribution.creative + "__"
-                + "adgroup==" + attribution.adgroup + "__"
-                + "clickLabel==" + attribution.clickLabel + "__"
-                + "adid==" + attribution.adid;
-
+                    + "trackerName==" + attribution.trackerName + "__"
+                    + "campaign==" + attribution.campaign + "__"
+                    + "network==" + attribution.network + "__"
+                    + "creative==" + attribution.creative + "__"
+                    + "adgroup==" + attribution.adgroup + "__"
+                    + "clickLabel==" + attribution.clickLabel + "__"
+                    + "adid==" + attribution.adid + "__"
+                    + "costType==" + attribution.costType + "__"
+                    + "costAmount==" + (attribution.costAmount.isNaN() ? "" : attribution.costAmount.toString()) + "__"
+                    + "costCurrency==" + attribution.costCurrency;
             return FREObject.newObject(response);
         } catch (Exception e) {
             Log.e(AdjustExtension.LogTag, e.getMessage());
@@ -671,6 +706,8 @@ public class AdjustFunction implements FREFunction,
 
     private FREObject GetIdfa(FREContext freContext, FREObject[] freObjects) { return null; }
 
+    private FREObject RequestTrackingAuthorizationWithCompletionHandler(FREContext freContext, FREObject[] freObjects) { return null; }
+
     private FREObject SetTestOptions(FREContext freContext, FREObject[] freObjects) {
         try {
             final AdjustTestOptions testOptions = new AdjustTestOptions();
@@ -752,13 +789,16 @@ public class AdjustFunction implements FREFunction,
         }
 
         String response = "trackerToken==" + attribution.trackerToken + "__"
-            + "trackerName==" + attribution.trackerName + "__"
-            + "campaign==" + attribution.campaign + "__"
-            + "network==" + attribution.network + "__"
-            + "creative==" + attribution.creative + "__"
-            + "adgroup==" + attribution.adgroup + "__"
-            + "clickLabel==" + attribution.clickLabel + "__"
-            + "adid==" + attribution.adid;
+                + "trackerName==" + attribution.trackerName + "__"
+                + "campaign==" + attribution.campaign + "__"
+                + "network==" + attribution.network + "__"
+                + "creative==" + attribution.creative + "__"
+                + "adgroup==" + attribution.adgroup + "__"
+                + "clickLabel==" + attribution.clickLabel + "__"
+                + "adid==" + attribution.adid + "__"
+                + "costType==" + attribution.costType + "__"
+                + "costAmount==" + (attribution.costAmount.isNaN() ? "" : attribution.costAmount.toString()) + "__"
+                + "costCurrency==" + attribution.costCurrency;
         AdjustExtension.context.dispatchStatusEventAsync("adjust_attributionData", response);
     }
 
@@ -836,11 +876,6 @@ public class AdjustFunction implements FREFunction,
     public boolean launchReceivedDeeplink(Uri deeplink) {
         String response = deeplink.toString();
         AdjustExtension.context.dispatchStatusEventAsync("adjust_deferredDeeplink", response);
-        if (shouldLaunchDeeplink) {
-            Log.e("RANDOM-TAG", "Launcing ovo sranje!");
-        } else {
-            Log.e("RANDOM-TAG", "NE Launcing ovo sranje!");
-        }
         return shouldLaunchDeeplink;
     }
 }

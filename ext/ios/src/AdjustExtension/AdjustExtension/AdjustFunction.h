@@ -34,6 +34,7 @@ FREObject ADJgetSdkVersion(FREContext ctx, void* funcData, uint32_t argc, FREObj
 FREObject ADJgdprForgetMe(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJtrackAdRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJdisableThirdPartySharing(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJrequestTrackingAuthorizationWithCompletionHandler(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 // Android methods.
 FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

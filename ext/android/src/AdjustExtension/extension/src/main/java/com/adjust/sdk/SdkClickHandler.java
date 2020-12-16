@@ -8,12 +8,10 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
-import java.util.List;
-import java.util.ArrayList;
-
 import java.lang.ref.WeakReference;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SdkClickHandler class.
@@ -197,6 +195,35 @@ public class SdkClickHandler implements ISdkClickHandler {
      * {@inheritDoc}
      */
     @Override
+    public void sendPreinstallPayload(final String preinstallPayload, final String preinstallLocation) {
+        scheduler.submit(new Runnable() {
+
+            @Override
+            public void run() {
+                IActivityHandler activityHandler = activityHandlerWeakRef.get();
+                if (activityHandler == null) {
+                    return;
+                }
+
+                // Create sdk click
+                ActivityPackage sdkClickPackage = PackageFactory.buildPreinstallSdkClickPackage(
+                        preinstallPayload,
+                        preinstallLocation,
+                        activityHandler.getActivityState(),
+                        activityHandler.getAdjustConfig(),
+                        activityHandler.getDeviceInfo(),
+                        activityHandler.getSessionParameters());
+
+                // Send preinstall info sdk_click package.
+                sendSdkClick(sdkClickPackage);
+            }
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void teardown() {
         logger.verbose("SdkClickHandler teardown");
 
@@ -234,10 +261,16 @@ public class SdkClickHandler implements ISdkClickHandler {
      * Send next sdk_click package from the queue (runs within scheduled executor).
      */
     private void sendNextSdkClickI() {
+        IActivityHandler activityHandler = activityHandlerWeakRef.get();
+        if (activityHandler.getActivityState() == null) {
+            return;
+        }
+        if (activityHandler.getActivityState().isGdprForgotten) {
+            return;
+        }
         if (paused) {
             return;
         }
-
         if (packageQueue.isEmpty()) {
             return;
         }
@@ -248,7 +281,20 @@ public class SdkClickHandler implements ISdkClickHandler {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                sendSdkClickI(sdkClickPackage);
+                List<String> urls = UrlFactory.getBaseUrls();
+                boolean requestProcessed = false;
+                for (int i=0; i<urls.size() && !requestProcessed; i++) {
+                    String baseUrl = urls.get(i);
+                    if (basePath != null) {
+                        baseUrl += basePath;
+                    }
+                    baseUrl += sdkClickPackage.getPath();
+                    boolean isLastUrl = i == urls.size()-1;
+                    requestProcessed = sendSdkClickI(sdkClickPackage, baseUrl, isLastUrl);
+                    if (requestProcessed && i > 0) {
+                        UrlFactory.prioritiseBaseUrl(urls.get(i));
+                    }
+                }
                 sendNextSdkClick();
             }
         };
@@ -271,13 +317,11 @@ public class SdkClickHandler implements ISdkClickHandler {
      * Send sdk_click package passed as the parameter (runs within scheduled executor).
      *
      * @param sdkClickPackage sdk_click package to be sent.
+     * @param targetURL end point where sdk_click package to be sent.
+     * @param isLastUrl indicates if it is last in the fallback.
      */
-    private void sendSdkClickI(final ActivityPackage sdkClickPackage) {
+    private boolean sendSdkClickI(final ActivityPackage sdkClickPackage, final String targetURL, final boolean isLastUrl) {
         IActivityHandler activityHandler = activityHandlerWeakRef.get();
-        if (activityHandler.getActivityState().isGdprForgotten) {
-            return;
-        }
-
         String source = sdkClickPackage.getParameters().get("source");
         boolean isReftag = source != null && source.equals(SOURCE_REFTAG);
         String rawReferrerString = sdkClickPackage.getParameters().get("raw_referrer");
@@ -292,7 +336,7 @@ public class SdkClickHandler implements ISdkClickHandler {
                     sdkClickPackage.getClickTimeInMilliseconds());
 
             if (rawReferrer == null) {
-                return;
+                return true;
             }
         }
 
@@ -300,6 +344,10 @@ public class SdkClickHandler implements ISdkClickHandler {
         long clickTime = -1;
         long installBegin = -1;
         String installReferrer = null;
+        long clickTimeServer = -1;
+        long installBeginServer = -1;
+        String installVersion = null;
+        Boolean googlePlayInstant = null;
         String referrerApi = null;
 
         if (isInstallReferrer) {
@@ -309,16 +357,14 @@ public class SdkClickHandler implements ISdkClickHandler {
             clickTime = sdkClickPackage.getClickTimeInSeconds();
             installBegin = sdkClickPackage.getInstallBeginTimeInSeconds();
             installReferrer = sdkClickPackage.getParameters().get("referrer");
+            clickTimeServer = sdkClickPackage.getClickTimeServerInSeconds();
+            installBeginServer = sdkClickPackage.getInstallBeginTimeServerInSeconds();
+            installVersion = sdkClickPackage.getInstallVersion();
+            googlePlayInstant = sdkClickPackage.getGooglePlayInstant();
             referrerApi = sdkClickPackage.getParameters().get("referrer_api");
         }
 
-        String url = AdjustFactory.getBaseUrl();
-
-        if (basePath != null) {
-            url += basePath;
-        }
-
-        String targetURL = url + sdkClickPackage.getPath();
+        boolean isPreinstall = source != null && source.equals(Constants.PREINSTALL);
 
         try {
             SdkClickResponseData responseData = (SdkClickResponseData) UtilNetworking.createPOSTHttpsURLConnection(
@@ -328,16 +374,16 @@ public class SdkClickHandler implements ISdkClickHandler {
 
             if (responseData.jsonResponse == null) {
                 retrySendingI(sdkClickPackage);
-                return;
+                return true;
             }
 
             if (activityHandler == null) {
-                return;
+                return true;
             }
 
             if (responseData.trackingState == TrackingState.OPTED_OUT) {
                 activityHandler.gotOptOutResponse();
-                return;
+                return true;
             }
 
             if (isReftag) {
@@ -355,21 +401,47 @@ public class SdkClickHandler implements ISdkClickHandler {
                 responseData.clickTime = clickTime;
                 responseData.installBegin = installBegin;
                 responseData.installReferrer = installReferrer;
+                responseData.clickTimeServer = clickTimeServer;
+                responseData.installBeginServer = installBeginServer;
+                responseData.installVersion = installVersion;
+                responseData.googlePlayInstant = googlePlayInstant;
                 responseData.referrerApi = referrerApi;
                 responseData.isInstallReferrer = true;
             }
 
+            if (isPreinstall) {
+                String payloadLocation = sdkClickPackage.getParameters().get("found_location");
+                if (payloadLocation != null && !payloadLocation.isEmpty()) {
+                    // update preinstall flag in shared preferences after sdk_click is sent.
+                    SharedPreferencesManager sharedPreferencesManager
+                            = new SharedPreferencesManager(activityHandler.getContext());
+
+                    long currentStatus = sharedPreferencesManager.getPreinstallPayloadReadStatus();
+                    long updatedStatus = PreinstallUtil.markAsRead(payloadLocation, currentStatus);
+                    sharedPreferencesManager.setPreinstallPayloadReadStatus(updatedStatus);
+                }
+            }
+
             activityHandler.finishedTrackingActivity(responseData);
+            return true;
         } catch (UnsupportedEncodingException e) {
             logErrorMessageI(sdkClickPackage, "Sdk_click failed to encode parameters", e);
+            return true;
         } catch (SocketTimeoutException e) {
             logErrorMessageI(sdkClickPackage, "Sdk_click request timed out. Will retry later", e);
-            retrySendingI(sdkClickPackage);
+            if (isLastUrl) {
+                retrySendingI(sdkClickPackage);
+            }
+            return false;
         } catch (IOException e) {
             logErrorMessageI(sdkClickPackage, "Sdk_click request failed. Will retry later", e);
-            retrySendingI(sdkClickPackage);
+            if (isLastUrl) {
+                retrySendingI(sdkClickPackage);
+            }
+            return false;
         } catch (Throwable e) {
             logErrorMessageI(sdkClickPackage, "Sdk_click runtime exception", e);
+            return true;
         }
     }
 

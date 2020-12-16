@@ -18,7 +18,7 @@ BOOL shouldLaunchDeferredDeeplink;
 @end
 
 FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    if (argc == 27) {
+    if (argc == 31) {
         NSString *appToken = nil;
         NSString *environment = nil;
         NSString *logLevelString = nil;
@@ -152,7 +152,7 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             [adjustConfig setIsDeviceKnown:isDeviceKnown];
         }
 
-        // arg 23 is for Android only: ReadMobileEquipmentIdentity
+        // arg 23 is for Android only: readMobileEquipmentIdentity
 
         if (argv[24] != nil) {
             FREGetObjectAsNativeString(argv[24], &externalDeviceId);
@@ -171,6 +171,31 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
             FREGetObjectAsNativeBool(argv[26], &allowIdfaReading);
             [adjustConfig setAllowIdfaReading:allowIdfaReading];
         }
+        if (argv[27] != nil) {
+            NSString *urlStrategy = nil;
+            FREGetObjectAsNativeString(argv[27], &urlStrategy);
+            if ([urlStrategy isEqualToString:@"china"]) {
+                [adjustConfig setUrlStrategy:ADJUrlStrategyChina];
+            } else if ([urlStrategy isEqualToString:@"india"]) {
+                [adjustConfig setUrlStrategy:ADJUrlStrategyIndia];
+            }
+        }
+        if (argv[28] != nil) {
+            BOOL needsCost = NO;
+            FREGetObjectAsNativeBool(argv[28], &needsCost);
+            if (YES == needsCost) {
+                [adjustConfig setNeedsCost:YES];
+            }
+        }
+        if (argv[29] != nil) {
+            BOOL skAdNetworkHandling = YES;
+            FREGetObjectAsNativeBool(argv[29], &skAdNetworkHandling);
+            if (NO == skAdNetworkHandling) {
+                [adjustConfig deactivateSKAdNetworkHandling];
+            }
+        }
+        
+        // argv[30] is for Android only: preinstallTrackingEnabled
 
         if (secretId != nil && info1 != nil && info2 != nil && info3 != nil && info4 != nil) {
             NSUInteger uiSecretId = [[NSNumber numberWithLongLong:[secretId longLongValue]] unsignedIntegerValue];
@@ -189,18 +214,18 @@ FREObject ADJonCreate(FREContext ctx, void* funcData, uint32_t argc, FREObject a
         NSLog(@"AdjustFunction: Bridge onCreate method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 9) {
         double revenue;
-        BOOL isReceiptSet;
+        // BOOL isReceiptSet;
         NSString *eventToken = nil;
         NSString *currency = nil;
-        NSString *receipt = nil;
+        // NSString *receipt = nil;
         NSString *callbackId = nil;
         NSString *transactionId = nil;
         NSMutableArray *callbackParameters = nil;
@@ -271,9 +296,9 @@ FREObject ADJtrackEvent(FREContext ctx, void* funcData, uint32_t argc, FREObject
         NSLog(@"AdjustFunction: Bridge trackEvent method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -285,37 +310,37 @@ FREObject ADJsetEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject
         NSLog(@"AdjustFunction: Bridge setEnabled method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJisEnabled(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 0) {
         BOOL isEnabled = [Adjust isEnabled];
-        FREObject return_value;
-        FRENewObjectFromBool((uint32_t)isEnabled, &return_value);
-        return return_value;
+        FREObject returnValue;
+        FRENewObjectFromBool((uint32_t)isEnabled, &returnValue);
+        return returnValue;
     } else {
         NSLog(@"AdjustFunction: Bridge isEnabled method triggered with wrong number of arguments");
-        FREObject return_value;
-        FRENewObjectFromBool(false, &return_value);
-        return return_value;
+        FREObject returnValue;
+        FRENewObjectFromBool(false, &returnValue);
+        return returnValue;
     }
 }
 
 FREObject ADJonResume(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     [Adjust trackSubsessionStart];
-    FREObject return_value;
-    FRENewObjectFromBool((uint32_t)ADJisEnabled, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool((uint32_t)ADJisEnabled, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJonPause(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     [Adjust trackSubsessionEnd];
-    FREObject return_value;
-    FRENewObjectFromBool((uint32_t)ADJisEnabled, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool((uint32_t)ADJisEnabled, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -328,9 +353,9 @@ FREObject ADJappWillOpenUrl(FREContext ctx, void* funcData, uint32_t argc, FREOb
         NSLog(@"AdjustFunction: Bridge appWillOpenUrl method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -342,9 +367,9 @@ FREObject ADJsetOfflineMode(FREContext ctx, void* funcData, uint32_t argc, FREOb
         NSLog(@"AdjustFunction: Bridge setOfflineMode method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -356,17 +381,17 @@ FREObject ADJsetDeviceToken(FREContext ctx, void* funcData, uint32_t argc, FREOb
         NSLog(@"AdjustFunction: Bridge setDeviceToken method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 0) {
         NSString *idfa = [Adjust idfa];
-        FREObject return_value;
-        FRENewObjectFromUTF8((uint32_t)[idfa length], (const uint8_t *)[idfa UTF8String], &return_value);
-        return return_value;
+        FREObject returnValue;
+        FRENewObjectFromUTF8((uint32_t)[idfa length], (const uint8_t *)[idfa UTF8String], &returnValue);
+        return returnValue;
     } else {
         NSLog(@"AdjustFunction: Bridge getIdfa method triggered with wrong number of arguments");
         return NULL;
@@ -379,9 +404,9 @@ FREObject ADJgetAdid(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
         if (adid == nil) {
             return NULL;
         }
-        FREObject return_value;
-        FRENewObjectFromUTF8((uint32_t)[adid length], (const uint8_t *)[adid UTF8String], &return_value);
-        return return_value;
+        FREObject returnValue;
+        FRENewObjectFromUTF8((uint32_t)[adid length], (const uint8_t *)[adid UTF8String], &returnValue);
+        return returnValue;
     } else {
         NSLog(@"AdjustFunction: Bridge getAdid method triggered with wrong number of arguments");
         return NULL;
@@ -395,19 +420,21 @@ FREObject ADJgetAttribution(FREContext ctx, void* funcData, uint32_t argc, FREOb
             return NULL;
         }
 
-        NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
-                @"trackerToken", attribution.trackerToken,
-                @"trackerName", attribution.trackerName,
-                @"campaign", attribution.campaign,
-                @"network", attribution.network,
-                @"creative", attribution.creative,
-                @"adgroup", attribution.adgroup,
-                @"clickLabel", attribution.clickLabel,
-                @"adid", attribution.adid];
-
-        FREObject return_value;
-        FRENewObjectFromUTF8((uint32_t)[attributionString length], (const uint8_t *)[attributionString UTF8String], &return_value);
-        return return_value;
+        NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+                                       @"trackerToken", attribution.trackerToken,
+                                       @"trackerName", attribution.trackerName,
+                                       @"campaign", attribution.campaign,
+                                       @"network", attribution.network,
+                                       @"creative", attribution.creative,
+                                       @"adgroup", attribution.adgroup,
+                                       @"clickLabel", attribution.clickLabel,
+                                       @"adid", attribution.adid,
+                                       @"costType", attribution.costType,
+                                       @"costAmount", attribution.costAmount == nil ? nil : [attribution.costAmount stringValue],
+                                       @"costCurrency", attribution.costCurrency];
+        FREObject returnValue;
+        FRENewObjectFromUTF8((uint32_t)[attributionString length], (const uint8_t *)[attributionString UTF8String], &returnValue);
+        return returnValue;
     } else {
         NSLog(@"AdjustFunction: Bridge getAttribution method triggered with wrong number of arguments");
         return NULL;
@@ -420,9 +447,9 @@ FREObject ADJgetSdkVersion(FREContext ctx, void* funcData, uint32_t argc, FREObj
         if (sdkVersion == nil) {
             return NULL;
         }
-        FREObject return_value;
-        FRENewObjectFromUTF8((uint32_t)[sdkVersion length], (const uint8_t *)[sdkVersion UTF8String], &return_value);
-        return return_value;
+        FREObject returnValue;
+        FRENewObjectFromUTF8((uint32_t)[sdkVersion length], (const uint8_t *)[sdkVersion UTF8String], &returnValue);
+        return returnValue;
     } else {
         NSLog(@"AdjustFunction: Bridge getSdkVersion method triggered with wrong number of arguments");
         return NULL;
@@ -430,21 +457,21 @@ FREObject ADJgetSdkVersion(FREContext ctx, void* funcData, uint32_t argc, FREObj
 }
 
 FREObject ADJsetReferrer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJgetGoogleAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJgetAmazonAdId(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJaddSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -462,9 +489,9 @@ FREObject ADJaddSessionCallbackParameter(FREContext ctx, void* funcData, uint32_
         NSLog(@"AdjustFunction: Bridge addSessionCallbackParameter method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJremoveSessionCallbackParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -478,9 +505,9 @@ FREObject ADJremoveSessionCallbackParameter(FREContext ctx, void* funcData, uint
         NSLog(@"AdjustFunction: Bridge removeSessionCallbackParameter method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJresetSessionCallbackParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -490,9 +517,9 @@ FREObject ADJresetSessionCallbackParameters(FREContext ctx, void* funcData, uint
         NSLog(@"AdjustFunction: Bridge resetSessionCallbackParameters method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJaddSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -510,9 +537,9 @@ FREObject ADJaddSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t
         NSLog(@"AdjustFunction: Bridge addSessionPartnerParameter method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJremoveSessionPartnerParameter(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -526,9 +553,9 @@ FREObject ADJremoveSessionPartnerParameter(FREContext ctx, void* funcData, uint3
         NSLog(@"AdjustFunction: Bridge removeSessionPartnerParameter method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJresetSessionPartnerParameters(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -538,9 +565,9 @@ FREObject ADJresetSessionPartnerParameters(FREContext ctx, void* funcData, uint3
         NSLog(@"AdjustFunction: Bridge resetSessionPartnerParameters method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -550,9 +577,9 @@ FREObject ADJsendFirstPackages(FREContext ctx, void* funcData, uint32_t argc, FR
         NSLog(@"AdjustFunction: Bridge sendFirstPackages method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJgdprForgetMe(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -562,9 +589,9 @@ FREObject ADJgdprForgetMe(FREContext ctx, void* funcData, uint32_t argc, FREObje
         NSLog(@"AdjustFunction: Bridge gdprForgetMe method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJdisableThirdPartySharing(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -574,9 +601,9 @@ FREObject ADJdisableThirdPartySharing(FREContext ctx, void* funcData, uint32_t a
         NSLog(@"AdjustFunction: Bridge disableThirdPartySharing method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJtrackAdRevenue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -595,9 +622,23 @@ FREObject ADJtrackAdRevenue(FREContext ctx, void* funcData, uint32_t argc, FREOb
         NSLog(@"AdjustFunction: Bridge trackAdRevenue method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
+}
+
+FREObject ADJrequestTrackingAuthorizationWithCompletionHandler(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+    [Adjust requestTrackingAuthorizationWithCompletionHandler:^(NSUInteger status) {
+        NSString *formattedString = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:@"%zd", status]];
+        const char* cResponseData = [formattedString UTF8String];
+        FREDispatchStatusEventAsync(ctx,
+                (const uint8_t *)"adjust_authorizationStatus",
+                (const uint8_t *)cResponseData);
+    }];
+    
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
@@ -615,21 +656,23 @@ FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREOb
             FREGetObjectAsNativeString(argv[1], &value);
             testOptions.baseUrl = value;
         }
+        // TODO: double check value of argv[2]
         if (argv[2] != nil) {
             NSString *value;
             FREGetObjectAsNativeString(argv[2], &value);
-            testOptions.basePath = value;
+            testOptions.extraPath = value;
         }
         if (argv[3] != nil) {
             NSString *value;
             FREGetObjectAsNativeString(argv[3], &value);
             testOptions.gdprUrl = value;
         }
-        if (argv[4] != nil) {
-            NSString *value;
-            FREGetObjectAsNativeString(argv[4], &value);
-            testOptions.gdprPath = value;
-        }
+        // TODO: double check value of argv[4]
+        // if (argv[4] != nil) {
+        //     NSString *value;
+        //     FREGetObjectAsNativeString(argv[4], &value);
+        //     testOptions.gdprPath = value;
+        // }
 
         // Skipping 5th argument
 
@@ -677,16 +720,16 @@ FREObject ADJsetTestOptions(FREContext ctx, void* funcData, uint32_t argc, FREOb
         NSLog(@"AdjustFunction: Bridge setTestOptions method triggered with wrong number of arguments");
     }
 
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 FREObject ADJteardown(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     [AdjustSdkDelegate teardown];
-    FREObject return_value;
-    FRENewObjectFromBool(true, &return_value);
-    return return_value;
+    FREObject returnValue;
+    FRENewObjectFromBool(true, &returnValue);
+    return returnValue;
 }
 
 NSNumber *convertMilliStringToNumber(NSString *milliS) {

@@ -104,6 +104,10 @@ package com.adjust.sdk {
             trace("Adjust: disableThirdPartySharing called");
         }
 
+        public static function requestTrackingAuthorizationWithCompletionHandler(callback:Function):void {
+            trace("Adjust: requestTrackingAuthorizationWithCompletionHandler called");
+        }
+
         public static function setTestOptions(testOptions:AdjustTestOptions):void {
             trace("Adjust: setTestOptions called");
         }

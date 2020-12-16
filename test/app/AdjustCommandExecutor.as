@@ -467,6 +467,9 @@ package {
             AdjustTest.addInfoToSend("creative", attribution.getCreative());
             AdjustTest.addInfoToSend("clickLabel", attribution.getClickLabel());
             AdjustTest.addInfoToSend("adid", attribution.getAdid());
+            AdjustTest.addInfoToSend("costType", attribution.getCostType());
+            AdjustTest.addInfoToSend("costAmount", attribution.getCostAmount());
+            AdjustTest.addInfoToSend("costCurrency", attribution.getCostCurrency());
             AdjustTest.sendInfoToServer(AdjustCommandExecutor.basePath);
         }
 

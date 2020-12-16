@@ -23,9 +23,6 @@ public class AdjustContext extends FREContext {
     public static String OnPause = "onPause";
     public static String AppWillOpenUrl = "appWillOpenUrl";
     public static String SetOfflineMode = "setOfflineMode";
-    public static String SetReferrer = "setReferrer";
-    public static String GetGoogleAdId = "getGoogleAdId";
-    public static String GetAmazonAdId = "getAmazonAdId";
     public static String AddSessionCallbackParameter = "addSessionCallbackParameter";
     public static String RemoveSessionCallbackParameter = "removeSessionCallbackParameter";
     public static String ResetSessionCallbackParameters = "resetSessionCallbackParameters";
@@ -40,9 +37,14 @@ public class AdjustContext extends FREContext {
     public static String GdprForgetMe = "gdprForgetMe";
     public static String TrackAdRevenue = "trackAdRevenue";
     public static String DisableThirdPartySharing = "disableThirdPartySharing";
-    // iOS methods.
+    // iOS methods
     public static String GetIdfa = "getIdfa";
-    // Test methods.
+    public static String RequestTrackingAuthorizationWithCompletionHandler = "requestTrackingAuthorizationWithCompletionHandler";
+    // Android methods
+    public static String SetReferrer = "setReferrer";
+    public static String GetGoogleAdId = "getGoogleAdId";
+    public static String GetAmazonAdId = "getAmazonAdId";
+    // test methods
     public static String SetTestOptions = "setTestOptions";
     public static String Teardown = "teardown";
 
@@ -57,9 +59,6 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.OnPause, new AdjustFunction(AdjustContext.OnPause));
         functions.put(AdjustContext.AppWillOpenUrl, new AdjustFunction(AdjustContext.AppWillOpenUrl));
         functions.put(AdjustContext.SetOfflineMode, new AdjustFunction(AdjustContext.SetOfflineMode));
-        functions.put(AdjustContext.SetReferrer, new AdjustFunction(AdjustContext.SetReferrer));
-        functions.put(AdjustContext.GetGoogleAdId, new AdjustFunction(AdjustContext.GetGoogleAdId));
-        functions.put(AdjustContext.GetAmazonAdId, new AdjustFunction(AdjustContext.GetAmazonAdId));
         functions.put(AdjustContext.AddSessionCallbackParameter, new AdjustFunction(AdjustContext.AddSessionCallbackParameter));
         functions.put(AdjustContext.RemoveSessionCallbackParameter, new AdjustFunction(AdjustContext.RemoveSessionCallbackParameter));
         functions.put(AdjustContext.ResetSessionCallbackParameters, new AdjustFunction(AdjustContext.ResetSessionCallbackParameters));
@@ -74,9 +73,14 @@ public class AdjustContext extends FREContext {
         functions.put(AdjustContext.GdprForgetMe, new AdjustFunction(AdjustContext.GdprForgetMe));
         functions.put(AdjustContext.TrackAdRevenue, new AdjustFunction(AdjustContext.TrackAdRevenue));
         functions.put(AdjustContext.DisableThirdPartySharing, new AdjustFunction(AdjustContext.DisableThirdPartySharing));
-        // iOS methods.
+        // iOS methods
         functions.put(AdjustContext.GetIdfa, new AdjustFunction(AdjustContext.GetIdfa));
-        // Test methods.
+        functions.put(AdjustContext.RequestTrackingAuthorizationWithCompletionHandler, new AdjustFunction(AdjustContext.RequestTrackingAuthorizationWithCompletionHandler));
+        // Android methods
+        functions.put(AdjustContext.SetReferrer, new AdjustFunction(AdjustContext.SetReferrer));
+        functions.put(AdjustContext.GetGoogleAdId, new AdjustFunction(AdjustContext.GetGoogleAdId));
+        functions.put(AdjustContext.GetAmazonAdId, new AdjustFunction(AdjustContext.GetAmazonAdId));
+        // test methods
         functions.put(AdjustContext.SetTestOptions, new AdjustFunction(AdjustContext.SetTestOptions));
         functions.put(AdjustContext.Teardown, new AdjustFunction(AdjustContext.Teardown));
 
