@@ -8,6 +8,9 @@ package com.adjust.sdk {
         private var adgroup:String;
         private var clickLabel:String;
         private var adid:String;
+        private var costType:String;
+        private var costAmount:String;
+        private var costCurrency:String;
 
         public function AdjustAttribution(
             trackerToken:String,
@@ -17,7 +20,10 @@ package com.adjust.sdk {
             creative:String,
             adgroup:String,
             clickLabel:String,
-            adid:String) {
+            adid:String,
+            costType:String,
+            costAmount:String,
+            costCurrency:String) {
             this.trackerToken = trackerToken;
             this.trackerName = trackerName;
             this.campaign = campaign;
@@ -26,9 +32,12 @@ package com.adjust.sdk {
             this.adgroup = adgroup;
             this.clickLabel = clickLabel;
             this.adid = adid;
+            this.costType = costType;
+            this.costAmount = costAmount;
+            this.costCurrency = costCurrency;
         }
 
-        // Getters.
+        // Getters
         public function getTrackerToken():String {
             return this.trackerToken;
         }
@@ -59,6 +68,18 @@ package com.adjust.sdk {
 
         public function getAdid():String {
             return this.adid;
+        }
+
+        public function getCostType():String {
+            return this.costType;
+        }
+
+        public function getCostAmount():String {
+            return this.costAmount;
+        }
+
+        public function getCostCurrency():String {
+            return this.costCurrency;
         }
     }
 }

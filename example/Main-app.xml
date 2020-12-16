@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<application xmlns="http://ns.adobe.com/air/application/32.0"> 
+<application xmlns="http://ns.adobe.com/air/application/33.1"> 
   <id>com.adjust.examples</id> 
   <versionNumber>4.22.0</versionNumber> 
   <filename>Adjust AIR SDK Demo</filename> 
@@ -29,6 +29,8 @@
           </array>
         </dict>
       </array>
+      <key>NSUserTrackingUsageDescription</key>
+      <string>Random message explaning why is access to IDFA necessary.</string>
       ]]>
     </InfoAdditions>
   </iPhone>

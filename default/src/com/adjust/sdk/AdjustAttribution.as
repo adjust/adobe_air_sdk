@@ -8,6 +8,9 @@ package com.adjust.sdk {
         private var adgroup:String;
         private var clickLabel:String;
         private var adid:String;
+        private var costType:String;
+        private var costAmount:String;
+        private var costCurrency:String;
 
         public function AdjustAttribution(
             trackerToken:String,
@@ -17,15 +20,21 @@ package com.adjust.sdk {
             creative:String,
             adgroup:String,
             clickLabel:String,
-            adid:String) {
-            this.trackerToken = trackerToken == null ? "" : trackerToken;
-            this.trackerName = trackerName == null ? "" : trackerName;
-            this.campaign = campaign == null ? "" : campaign;
-            this.network = network == null ? "" : network;
-            this.creative = creative == null ? "" : creative;
-            this.adgroup = adgroup == null ? "" : adgroup;
-            this.clickLabel = clickLabel == null ? "" : clickLabel;
-            this.adid = adid == null ? "" : adid;
+            adid:String,
+            costType:String,
+            costAmount:String,
+            costCurrency:String) {
+            this.trackerToken = trackerToken;
+            this.trackerName = trackerName;
+            this.campaign = campaign;
+            this.network = network;
+            this.creative = creative;
+            this.adgroup = adgroup;
+            this.clickLabel = clickLabel;
+            this.adid = adid;
+            this.costType = costType;
+            this.costAmount = costAmount;
+            this.costCurrency = costCurrency;
         }
 
         // Getters
@@ -59,6 +68,18 @@ package com.adjust.sdk {
 
         public function getAdid():String {
             return this.adid;
+        }
+
+        public function getCostType():String {
+            return this.costType;
+        }
+
+        public function getCostAmount():String {
+            return this.costAmount;
+        }
+
+        public function getCostCurrency():String {
+            return this.costCurrency;
         }
     }
 }

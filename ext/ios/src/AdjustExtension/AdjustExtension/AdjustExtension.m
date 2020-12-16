@@ -20,7 +20,7 @@ void AdjustFREContextInitializer(
     FREContext ctx,
     uint32_t* numFunctionsToSet,
     const FRENamedFunction** functionsToSet) {
-    uint32_t numberOfFunctions = 27;
+    uint32_t numberOfFunctions = 28;
 
     *numFunctionsToSet = numberOfFunctions;
 
@@ -53,6 +53,7 @@ void AdjustFREContextInitializer(
     setNamedFunction(&func[24], (const uint8_t*)"teardown", &ADJteardown);
     setNamedFunction(&func[25], (const uint8_t*)"trackAdRevenue", &ADJtrackAdRevenue);
     setNamedFunction(&func[26], (const uint8_t*)"disableThirdPartySharing", &ADJdisableThirdPartySharing);
+    setNamedFunction(&func[27], (const uint8_t*)"requestTrackingAuthorizationWithCompletionHandler", &ADJrequestTrackingAuthorizationWithCompletionHandler);
 
     *functionsToSet = func;
 }
@@ -73,4 +74,3 @@ void AdjustFREInitializer(
 void AdjustFREFinalizer(void* extData) {
     return;
 }
-
