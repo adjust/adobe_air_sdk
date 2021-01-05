@@ -6,7 +6,7 @@
         <option>-framework iAd</option>
         <option>-framework CoreTelephony</option>
         <option>-framework StoreKit</option>
-        <option>-framework AppTrackingTransparency</option>
+        <option>-weak_framework AppTrackingTransparency</option>
         <option>-liconv</option>
         <option>-lclang_rt.ios</option>
     </linkerOptions>
