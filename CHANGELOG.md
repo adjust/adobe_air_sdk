@@ -1,3 +1,13 @@
+### Version 4.22.1 (5th January 2021)
+#### Fixed
+- Fixed `AppTrackingTransparency` framework linking issue which caused crashes on pre iOS 14 devices.
+
+#### Native SDKs
+- [iOS@v4.24.0][ios_sdk_v4.24.0]
+- [Android@v4.25.0][android_sdk_v4.25.0]
+
+---
+
 ### Version 4.22.0 (16th December 2020)
 #### Added
 - Added communication with SKAdNetwork framework by default on iOS 14.
