@@ -37,6 +37,8 @@ public interface IActivityHandler {
 
     void sendReftagReferrer();
 
+    void sendPreinstallReferrer();
+
     void sendInstallReferrer(ReferrerDetails referrerDetails, String referrerApi);
 
     void setOfflineMode(boolean enabled);
@@ -65,6 +67,10 @@ public interface IActivityHandler {
 
     void disableThirdPartySharing();
 
+    void trackThirdPartySharing(AdjustThirdPartySharing adjustThirdPartySharing);
+
+    void trackMeasurementConsent(boolean consentMeasurement);
+
     void trackAdRevenue(String source, JSONObject adRevenueJson);
 
     void trackPlayStoreSubscription(AdjustPlayStoreSubscription subscription);
@@ -84,10 +90,4 @@ public interface IActivityHandler {
     ActivityState getActivityState();
 
     SessionParameters getSessionParameters();
-
-    String getBasePath();
-
-    String getGdprPath();
-
-    String getSubscriptionPath();
 }
