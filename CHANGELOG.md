@@ -1,3 +1,13 @@
+### Version 4.28.0 (2nd April 2021)
+#### Changed
+- Removed native iOS legacy code.
+
+#### Native SDKs
+- [iOS@v4.28.0][ios_sdk_v4.28.0]
+- [Android@v4.27.0][android_sdk_v4.27.0]
+
+---
+
 ### Version 4.22.1 (5th January 2021)
 #### Fixed
 - Fixed `AppTrackingTransparency` framework linking issue which caused crashes on pre iOS 14 devices.
@@ -483,6 +493,7 @@
 [ios_sdk_v4.21.1]: https://github.com/adjust/ios_sdk/tree/v4.21.1
 [ios_sdk_v4.21.3]: https://github.com/adjust/ios_sdk/tree/v4.21.3
 [ios_sdk_v4.24.0]: https://github.com/adjust/ios_sdk/tree/v4.24.0
+[ios_sdk_v4.28.0]: https://github.com/adjust/ios_sdk/tree/v4.28.0
 
 [android_sdk_v2.1.3]: https://github.com/adjust/android_sdk/tree/v2.1.3
 [android_sdk_v2.1.4]: https://github.com/adjust/android_sdk/tree/v2.1.4
@@ -505,3 +516,4 @@
 [android_sdk_v4.18.4]: https://github.com/adjust/android_sdk/tree/v4.18.4
 [android_sdk_v4.21.1]: https://github.com/adjust/android_sdk/tree/v4.21.1
 [android_sdk_v4.25.0]: https://github.com/adjust/android_sdk/tree/v4.25.0
+[android_sdk_v4.27.0]: https://github.com/adjust/android_sdk/tree/v4.27.0
