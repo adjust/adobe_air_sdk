@@ -734,10 +734,10 @@ public class AdjustFunction implements FREFunction,
                 String value = freObjects[4].getAsString();
                 testOptions.gdprPath = value;
             }
-            if (freObjects[5] != null) {
-                boolean value = freObjects[5].getAsBool();
-                testOptions.useTestConnectionOptions = value;
-            }
+            // if (freObjects[5] != null) {
+            //     boolean value = freObjects[5].getAsBool();
+            //     testOptions.useTestConnectionOptions = value;
+            // }
             if (freObjects[6] != null) {
                 String str = freObjects[6].getAsString();
                 long value = Long.parseLong(str);

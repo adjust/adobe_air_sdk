@@ -15,6 +15,18 @@ import java.util.ArrayList;
  * @since 12th April 2014
  */
 public class AdjustInstance {
+    public static class PreLaunchActions {
+        public List<IRunActivityHandler> preLaunchActionsArray;
+        public List<AdjustThirdPartySharing> preLaunchAdjustThirdPartySharingArray;
+        public Boolean lastMeasurementConsentTracked;
+
+        public PreLaunchActions() {
+            preLaunchActionsArray = new ArrayList<>();
+            preLaunchAdjustThirdPartySharingArray = new ArrayList<>();
+            lastMeasurementConsentTracked = null;
+        }
+    }
+
     /**
      * Push notifications token.
      */
@@ -35,10 +47,7 @@ public class AdjustInstance {
      */
     private IActivityHandler activityHandler;
 
-    /**
-     * Array of actions that were requested before SDK initialisation.
-     */
-    private List<IRunActivityHandler> preLaunchActionsArray;
+    private PreLaunchActions preLaunchActions = new PreLaunchActions();
 
     /**
      * Base path for Adjust packages.
@@ -74,7 +83,7 @@ public class AdjustInstance {
             return;
         }
 
-        adjustConfig.preLaunchActionsArray = preLaunchActionsArray;
+        adjustConfig.preLaunchActions = preLaunchActions;
         adjustConfig.pushToken = pushToken;
         adjustConfig.startEnabled = startEnabled;
         adjustConfig.startOffline = startOffline;
@@ -195,6 +204,26 @@ public class AdjustInstance {
     }
 
     /**
+     * Called to process preinstall payload information sent with SYSTEM_INSTALLER_REFERRER intent.
+     *
+     * @param referrer    Preinstall referrer content
+     * @param context     Application context
+     */
+    public void sendPreinstallReferrer(final String referrer, final Context context) {
+        // Check for referrer validity. If invalid, return.
+        if (referrer == null || referrer.length() == 0) {
+            return;
+        }
+
+        savePreinstallReferrer(referrer, context);
+        if (checkActivityHandler("preinstall referrer")) {
+            if (activityHandler.isEnabled()) {
+                activityHandler.sendPreinstallReferrer();
+            }
+        }
+    }
+
+    /**
      * Called to set SDK to offline or online mode.
      *
      * @param enabled boolean indicating should SDK be in offline mode (true) or not (false)
@@ -228,10 +257,8 @@ public class AdjustInstance {
             activityHandler.addSessionCallbackParameter(key, value);
             return;
         }
-        if (preLaunchActionsArray == null) {
-            preLaunchActionsArray = new ArrayList<IRunActivityHandler>();
-        }
-        preLaunchActionsArray.add(new IRunActivityHandler() {
+
+        preLaunchActions.preLaunchActionsArray.add(new IRunActivityHandler() {
             @Override
             public void run(final ActivityHandler activityHandler) {
                 activityHandler.addSessionCallbackParameterI(key, value);
@@ -250,10 +277,7 @@ public class AdjustInstance {
             activityHandler.addSessionPartnerParameter(key, value);
             return;
         }
-        if (preLaunchActionsArray == null) {
-            preLaunchActionsArray = new ArrayList<IRunActivityHandler>();
-        }
-        preLaunchActionsArray.add(new IRunActivityHandler() {
+        preLaunchActions.preLaunchActionsArray.add(new IRunActivityHandler() {
             @Override
             public void run(final ActivityHandler activityHandler) {
                 activityHandler.addSessionPartnerParameterI(key, value);
@@ -271,10 +295,7 @@ public class AdjustInstance {
             activityHandler.removeSessionCallbackParameter(key);
             return;
         }
-        if (preLaunchActionsArray == null) {
-            preLaunchActionsArray = new ArrayList<IRunActivityHandler>();
-        }
-        preLaunchActionsArray.add(new IRunActivityHandler() {
+        preLaunchActions.preLaunchActionsArray.add(new IRunActivityHandler() {
             @Override
             public void run(final ActivityHandler activityHandler) {
                 activityHandler.removeSessionCallbackParameterI(key);
@@ -292,10 +313,7 @@ public class AdjustInstance {
             activityHandler.removeSessionPartnerParameter(key);
             return;
         }
-        if (preLaunchActionsArray == null) {
-            preLaunchActionsArray = new ArrayList<IRunActivityHandler>();
-        }
-        preLaunchActionsArray.add(new IRunActivityHandler() {
+        preLaunchActions.preLaunchActionsArray.add(new IRunActivityHandler() {
             @Override
             public void run(final ActivityHandler activityHandler) {
                 activityHandler.removeSessionPartnerParameterI(key);
@@ -311,10 +329,7 @@ public class AdjustInstance {
             activityHandler.resetSessionCallbackParameters();
             return;
         }
-        if (preLaunchActionsArray == null) {
-            preLaunchActionsArray = new ArrayList<IRunActivityHandler>();
-        }
-        preLaunchActionsArray.add(new IRunActivityHandler() {
+        preLaunchActions.preLaunchActionsArray.add(new IRunActivityHandler() {
             @Override
             public void run(final ActivityHandler activityHandler) {
                 activityHandler.resetSessionCallbackParametersI();
@@ -330,10 +345,7 @@ public class AdjustInstance {
             activityHandler.resetSessionPartnerParameters();
             return;
         }
-        if (preLaunchActionsArray == null) {
-            preLaunchActionsArray = new ArrayList<IRunActivityHandler>();
-        }
-        preLaunchActionsArray.add(new IRunActivityHandler() {
+        preLaunchActions.preLaunchActionsArray.add(new IRunActivityHandler() {
             @Override
             public void run(final ActivityHandler activityHandler) {
                 activityHandler.resetSessionPartnerParametersI();
@@ -407,6 +419,24 @@ public class AdjustInstance {
         }
 
         activityHandler.disableThirdPartySharing();
+    }
+
+    public void trackThirdPartySharing(final AdjustThirdPartySharing adjustThirdPartySharing) {
+        if (!checkActivityHandler("third party sharing")) {
+            preLaunchActions.preLaunchAdjustThirdPartySharingArray.add(adjustThirdPartySharing);
+            return;
+        }
+
+        activityHandler.trackThirdPartySharing(adjustThirdPartySharing);
+    }
+
+    public void trackMeasurementConsent(final boolean consentMeasurement) {
+        if (!checkActivityHandler("measurement consent")) {
+            preLaunchActions.lastMeasurementConsentTracked = consentMeasurement;
+            return;
+        }
+
+        activityHandler.trackMeasurementConsent(consentMeasurement);
     }
 
     /**
@@ -532,6 +562,23 @@ public class AdjustInstance {
     }
 
     /**
+     * Save preinstall referrer to shared preferences.
+     *
+     * @param referrer    Preinstall referrer content
+     * @param context     Application context
+     */
+    private void savePreinstallReferrer(final String referrer, final Context context) {
+        Runnable command = new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(context);
+                sharedPreferencesManager.savePreinstallReferrer(referrer);
+            }
+        };
+        Util.runInBackground(command);
+    }
+
+    /**
      * Save push token to shared preferences.
      *
      * @param pushToken Push notifications token
@@ -629,9 +676,6 @@ public class AdjustInstance {
         }
         if (testOptions.subscriptionUrl != null) {
             AdjustFactory.setSubscriptionUrl(testOptions.subscriptionUrl);
-        }
-        if (testOptions.useTestConnectionOptions != null && testOptions.useTestConnectionOptions.booleanValue()) {
-            AdjustFactory.useTestConnectionOptions();
         }
         if (testOptions.timerIntervalInMilliseconds != null) {
             AdjustFactory.setTimerInterval(testOptions.timerIntervalInMilliseconds);
