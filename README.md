@@ -850,8 +850,6 @@ var adid:String = Adjust.getAdid();
 
 **Note**: Information about the **adid** is available after app installation has been tracked by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialised and installation of your app has been successfully tracked.
 
-# [Set external device ID](#set-external-device-id)
-
 ### <a id="set-external-device-id"></a>Set external device ID
 
 > **Note** If you want to use external device IDs, please contact your Adjust representative. They will talk you through the best approach for your use case.
