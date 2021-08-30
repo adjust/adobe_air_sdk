@@ -30,7 +30,7 @@ task makeDebugJar(type: Copy) {
 task makeReleaseJar(type: Copy) {
     dependsOn 'assembleRelease'
 
-    from('build/intermediates/packaged-classes/debug/')
+    from('build/intermediates/packaged-classes/release/')
     into('build/libs/release/')
     include('classes.jar')
     rename('classes.jar', "adjust-android-test.jar")
