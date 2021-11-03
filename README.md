@@ -24,7 +24,6 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
    * [Event tracking](#event-tracking)
       * [Revenue tracking](#revenue-tracking)
       * [Revenue deduplication](#revenue-deduplication)
-      * [In-App Purchase verification](#iap-verification)
       * [Callback parameters](#callback-parameters)
       * [Partner parameters](#partner-parameters)
       * [Callback identifier](#callback-id)
@@ -381,10 +380,6 @@ Adjust.trackEvent(adjustEvent);
 ```
 
 **Note**: Transaction ID is the iOS term; the unique identifier for successfully completed Android in-app purchases is named **Order ID**.
-
-### <a id="iap-verification"></a>In-App Purchase verification
-
-In-app purchase verification can be done with the Adobe AIR purchase SDK, which is currently being developed and will soon be publicly available. For more information, please contact support@adjust.com.
 
 ### <a id="callback-parameters"></a>Callback parameters
 
