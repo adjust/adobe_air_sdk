@@ -254,7 +254,7 @@ As of v4.21.0, the Adjust SDK supports install tracking on Huawei devices with H
 If you are using Proguard, add these lines to your Proguard file:
 
 ```
--keep public class com.adjust.sdk.** { *; }
+-keep class com.adjust.sdk.** { *; }
 -keep class com.google.android.gms.common.ConnectionResult {
     int SUCCESS;
 }
