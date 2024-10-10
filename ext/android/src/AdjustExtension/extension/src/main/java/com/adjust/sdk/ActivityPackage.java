@@ -9,6 +9,8 @@
 
 package com.adjust.sdk;
 
+import com.adjust.sdk.network.ErrorCodes;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,6 +25,7 @@ import java.util.TreeMap;
 public class ActivityPackage implements Serializable {
     private static final long serialVersionUID = -35935556512024097L;
 
+    @SuppressWarnings("unchecked")
     private static final ObjectStreamField[] serialPersistentFields = {
             new ObjectStreamField("path", String.class),
             new ObjectStreamField("clientSdk", String.class),
@@ -31,6 +34,10 @@ public class ActivityPackage implements Serializable {
             new ObjectStreamField("suffix", String.class),
             new ObjectStreamField("callbackParameters", (Class<Map<String,String>>)(Class)Map.class),
             new ObjectStreamField("partnerParameters", (Class<Map<String,String>>)(Class)Map.class),
+            new ObjectStreamField("retryCount", int.class),
+            new ObjectStreamField("firstErrorCode", int.class),
+            new ObjectStreamField("lastErrorCode", int.class),
+            new ObjectStreamField("waitBeforeSendTimeSeconds", double.class),
     };
 
     private transient int hashCode;
@@ -48,6 +55,9 @@ public class ActivityPackage implements Serializable {
     private Map<String, String> callbackParameters;
     private Map<String, String> partnerParameters;
 
+    // callbacks
+    private OnPurchaseVerificationFinishedListener purchaseVerificationCallback;
+
     private int retries;
     private long clickTimeInMilliseconds;
     private long clickTimeInSeconds;
@@ -56,6 +66,13 @@ public class ActivityPackage implements Serializable {
     private long installBeginTimeServerInSeconds;
     private String installVersion;
     private Boolean googlePlayInstant;
+    private Boolean isClick;
+    private int retryCount;
+    private int firstErrorCode;
+    private int lastErrorCode;
+    private double waitBeforeSendTimeSeconds;
+
+    public transient AdjustEvent event;
 
     public String getPath() {
         return path;
@@ -165,6 +182,22 @@ public class ActivityPackage implements Serializable {
         this.googlePlayInstant = googlePlayInstant;
     }
 
+    public Boolean getIsClick() {
+        return this.isClick;
+    }
+
+    public void setIsClick(Boolean isClick) {
+        this.isClick = isClick;
+    }
+    
+    public OnPurchaseVerificationFinishedListener getPurchaseVerificationCallback() {
+        return this.purchaseVerificationCallback;
+    }
+
+    public void setPurchaseVerificationCallback(final OnPurchaseVerificationFinishedListener callback) {
+        this.purchaseVerificationCallback = callback;
+    }
+
     public Map<String, String> getCallbackParameters() {
         return callbackParameters;
     }
@@ -189,7 +222,7 @@ public class ActivityPackage implements Serializable {
         if (parameters != null) {
             builder.append("Parameters:");
             SortedMap<String,String> sortedParameters = new TreeMap<String,String>(parameters);
-            List<String> stringsToExclude = Arrays.asList("app_secret", "secret_id", "event_callback_id");
+            List<String> stringsToExclude = Arrays.asList("secret_id", "adj_signing_id");
             for (Map.Entry<String,String> entry : sortedParameters.entrySet() ) {
                 String key = entry.getKey();
                 if (stringsToExclude.contains(key)) {
@@ -203,6 +236,35 @@ public class ActivityPackage implements Serializable {
 
     public String getFailureMessage() {
         return Util.formatString("Failed to track %s%s", activityKind.toString(), suffix);
+    }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public int getFirstErrorCode() {
+        return firstErrorCode;
+    }
+
+    public int getLastErrorCode() {
+        return lastErrorCode;
+    }
+
+    public double getWaitBeforeSendTimeSeconds() {
+        return waitBeforeSendTimeSeconds;
+    }
+
+    public void setWaitBeforeSendTimeSeconds(double waitSeconds) {
+        waitBeforeSendTimeSeconds = waitSeconds;
+    }
+
+    public void addError(int errorCode) {
+        retryCount++;
+        if (firstErrorCode == 0) {
+            firstErrorCode = errorCode;
+        } else {
+            lastErrorCode = errorCode;
+        }
     }
 
     private void writeObject(ObjectOutputStream stream) throws IOException {
@@ -219,6 +281,10 @@ public class ActivityPackage implements Serializable {
         suffix = Util.readStringField(fields, "suffix", null);
         callbackParameters = Util.readObjectField(fields, "callbackParameters", null);
         partnerParameters = Util.readObjectField(fields, "partnerParameters", null);
+        retryCount = Util.readIntField(fields, "errorCount", 0);
+        firstErrorCode = Util.readIntField(fields, "firstErrorCode", 0);
+        lastErrorCode = Util.readIntField(fields, "lastErrorCode", 0);
+        waitBeforeSendTimeSeconds = Util.readDoubleField(fields, "waitBeforeSendTimeSeconds", 0.0);
     }
 
     @Override
@@ -235,6 +301,10 @@ public class ActivityPackage implements Serializable {
         if (!Util.equalString(suffix, otherActivityPackage.suffix))       return false;
         if (!Util.equalObject(callbackParameters, otherActivityPackage.callbackParameters))   return false;
         if (!Util.equalObject(partnerParameters, otherActivityPackage.partnerParameters))   return false;
+        if (!Util.equalInt(retryCount, otherActivityPackage.retryCount))   return false;
+        if (!Util.equalInt(firstErrorCode, otherActivityPackage.firstErrorCode))   return false;
+        if (!Util.equalInt(lastErrorCode, otherActivityPackage.lastErrorCode))   return false;
+        if (!Util.equalsDouble(waitBeforeSendTimeSeconds, otherActivityPackage.waitBeforeSendTimeSeconds)) return false;
         return true;
     }
 
@@ -242,13 +312,17 @@ public class ActivityPackage implements Serializable {
     public int hashCode() {
         if (hashCode == 0) {
             hashCode = 17;
-            hashCode = 37 * hashCode + Util.hashString(path);
-            hashCode = 37 * hashCode + Util.hashString(clientSdk);
-            hashCode = 37 * hashCode + Util.hashObject(parameters);
-            hashCode = 37 * hashCode + Util.hashEnum(activityKind);
-            hashCode = 37 * hashCode + Util.hashString(suffix);
-            hashCode = 37 * hashCode + Util.hashObject(callbackParameters);
-            hashCode = 37 * hashCode + Util.hashObject(partnerParameters);
+            hashCode = Util.hashString(path, hashCode);
+            hashCode = Util.hashString(clientSdk, hashCode);
+            hashCode = Util.hashObject(parameters, hashCode);
+            hashCode = Util.hashEnum(activityKind, hashCode);
+            hashCode = Util.hashString(suffix, hashCode);
+            hashCode = Util.hashObject(callbackParameters, hashCode);
+            hashCode = Util.hashObject(partnerParameters, hashCode);
+            hashCode = 37 * hashCode + retryCount;
+            hashCode = 37 * hashCode + firstErrorCode;
+            hashCode = 37 * hashCode + lastErrorCode;
+            hashCode = Util.hashDouble(waitBeforeSendTimeSeconds, hashCode);
         }
         return hashCode;
     }

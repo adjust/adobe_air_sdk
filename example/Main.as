@@ -9,7 +9,6 @@ package {
     import com.adjust.sdk.AdjustAttribution;
     import com.adjust.sdk.Environment;
     import com.adjust.sdk.LogLevel;
-    import com.adjust.sdk.UrlStrategy;
 
     import flash.display.SimpleButton;
     import flash.display.Sprite;

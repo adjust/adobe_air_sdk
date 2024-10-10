@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class Reflection {
         return invokeStaticMethod("com.google.android.gms.ads.identifier.AdvertisingIdClient", "getAdvertisingIdInfo", new Class[]{Context.class}, context);
     }
 
+    @SuppressWarnings("unchecked")
     static Map<String, String> getImeiParameters(Context context, ILogger logger) {
         Object nonPlayParameters = null;
         try {
@@ -25,6 +27,7 @@ public class Reflection {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     static Map<String, String> getOaidParameters(Context context, ILogger logger) {
         Object oaidParameters = null;
         try {
@@ -57,6 +60,126 @@ public class Reflection {
         }
     }
 
+    public static ReferrerDetails getMetaReferrer(Context context, String fbAppId, ILogger logger) {
+        ReferrerDetails referrerDetails = null;
+        try {
+            referrerDetails = (ReferrerDetails) invokeStaticMethod("com.adjust.sdk.meta.Util",
+                    "getMetaInstallReferrerDetails",
+                    new Class[]{Context.class, String.class, ILogger.class},
+                    context, fbAppId, logger);
+        } catch (Exception e) {
+        }
+        return referrerDetails;
+    }
+
+    public static ReferrerDetails getHuaweiAdsReferrer(Context context, ILogger logger) {
+        ReferrerDetails referrerDetails = null;
+        try {
+            referrerDetails = (ReferrerDetails) invokeStaticMethod("com.adjust.sdk.huawei.Util",
+                    "getHuaweiAdsInstallReferrerDetails",
+                    new Class[]{Context.class, ILogger.class},
+                    context, logger);
+        } catch (Exception e) {
+        }
+        return referrerDetails;
+    }
+
+    public static ReferrerDetails getHuaweiAppGalleryReferrer(Context context, ILogger logger) {
+        ReferrerDetails referrerDetails = null;
+        try {
+            referrerDetails = (ReferrerDetails) invokeStaticMethod("com.adjust.sdk.huawei.Util",
+                    "getHuaweiAppGalleryInstallReferrerDetails",
+                    new Class[]{Context.class, ILogger.class},
+                    context, logger);
+        } catch (Exception e) {
+        }
+        return referrerDetails;
+    }
+
+    public static ReferrerDetails getSamsungReferrer(Context context, ILogger logger) {
+        ReferrerDetails referrerDetails = null;
+        try {
+            referrerDetails = (ReferrerDetails) invokeStaticMethod("com.adjust.sdk.samsung.Util",
+                                                                   "getSamsungInstallReferrerDetails",
+                                                                   new Class[]{Context.class, ILogger.class},
+                                                                   context, logger);
+        } catch (Exception e) {
+        }
+        return referrerDetails;
+    }
+
+    public static ReferrerDetails getXiaomiReferrer(Context context, ILogger logger) {
+        ReferrerDetails referrerDetails = null;
+        try {
+            referrerDetails = (ReferrerDetails) invokeStaticMethod("com.adjust.sdk.xiaomi.Util",
+                                                                   "getXiaomiInstallReferrerDetails",
+                                                                   new Class[]{Context.class, ILogger.class},
+                                                                   context, logger);
+        } catch (Exception e) {
+        }
+        return referrerDetails;
+    }
+
+    public static ReferrerDetails getVivoReferrer(Context context, ILogger logger) {
+        ReferrerDetails referrerDetails = null;
+        try {
+            referrerDetails = (ReferrerDetails) invokeStaticMethod("com.adjust.sdk.vivo.Util",
+                                                                   "getVivoInstallReferrerDetails",
+                                                                   new Class[]{Context.class, ILogger.class},
+                                                                   context, logger);
+        } catch (Exception e) {
+        }
+        return referrerDetails;
+    }
+
+    public static String getAppSetId(Context context) {
+        try {
+            Object appSetIdClientObject =
+              invokeStaticMethod("com.google.android.gms.appset.AppSet",
+                "getClient",
+                new Class[]{Context.class}, context);
+
+            Object taskWithAppSetInfoObject =
+              invokeInstanceMethod(appSetIdClientObject,
+                "getAppSetIdInfo", null);
+
+            Object appSetInfoObject =
+              invokeStaticMethod("com.google.android.gms.tasks.Tasks",
+                "await",
+                new Class[]{forName("com.google.android.gms.tasks.Task")},
+                taskWithAppSetInfoObject);
+
+            return (String) invokeInstanceMethod(appSetInfoObject,
+              "getId", null);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    public static String getSamsungCloudDevGoogleAdId(Context context, ILogger logger) {
+        String googleAdId = null;
+        try {
+            googleAdId = (String) invokeStaticMethod("com.adjust.sdk.samsung.clouddev.Util",
+                    "getGoogleAdIdInCloudEnvironment",
+                    new Class[]{Context.class, ILogger.class},
+                    context, logger);
+        } catch (Exception e) {
+        }
+        return googleAdId;
+    }
+
+    public static boolean isAppRunningInSamsungCloudEnvironment(Context context, ILogger logger) {
+        boolean isCloudEnvironment = false;
+        try {
+            isCloudEnvironment = (boolean) invokeStaticMethod("com.adjust.sdk.samsung.clouddev.Util",
+                    "isAppRunningInCloudEnvironment",
+                    new Class[]{Context.class, ILogger.class},
+                    context, logger);
+        } catch (Exception e) {
+        }
+        return isCloudEnvironment;
+    }
+
     public static Class forName(String className) {
         try {
             Class classObject = Class.forName(className);
@@ -76,9 +199,10 @@ public class Reflection {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     public static Object createDefaultInstance(Class classObject) {
         try {
-            Object instance = classObject.newInstance();
+            Object instance = classObject.getDeclaredConstructor().newInstance();
             return instance;
         } catch (Throwable t) {
             return null;

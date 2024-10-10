@@ -2,6 +2,7 @@ package com.adjust.sdk;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,18 +38,19 @@ public class SharedPreferencesManager {
 
     private static final String PREFS_KEY_GDPR_FORGET_ME = "gdpr_forget_me";
 
-    private static final String PREFS_KEY_DISABLE_THIRD_PARTY_SHARING
-            = "disable_third_party_sharing";
-
     private static final String PREFS_KEY_DEEPLINK_URL = "deeplink_url";
 
     private static final String PREFS_KEY_DEEPLINK_CLICK_TIME = "deeplink_click_time";
+
+    private static final String PREFS_KEY_DEEPLINK_URL_CACHED = "deeplink_url_cached";
 
     private static final String PREFS_KEY_PREINSTALL_PAYLOAD_READ_STATUS
             = "preinstall_payload_read_status";
 
     private static final String PREFS_KEY_PREINSTALL_SYSTEM_INSTALLER_REFERRER
             = "preinstall_system_installer_referrer";
+
+    private static final String PREFS_KEY_CONTROL_PARAMS = "control_params";
 
     /**
      * Index for raw referrer string content in saved JSONArray object.
@@ -73,15 +75,39 @@ public class SharedPreferencesManager {
     /**
      * Shared preferences of the app.
      */
-    private final SharedPreferences sharedPreferences;
+    private static SharedPreferences sharedPreferences;
+
+    /**
+     * Shared preferences editor of the app.
+     */
+    private static SharedPreferences.Editor sharedPreferencesEditor;
+
+    /**
+     * Singleton instance.
+     */
+    private static SharedPreferencesManager defaultInstance;
 
     /**
      * Default constructor.
      *
      * @param context Application context
      */
-    public SharedPreferencesManager(final Context context) {
-        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    private SharedPreferencesManager(final Context context) {
+        try {
+            sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            sharedPreferencesEditor = sharedPreferences.edit();
+        } catch (Exception exception) {
+            AdjustFactory.getLogger().error("Cannot access to SharedPreferences", exception.getMessage());
+            sharedPreferences = null;
+            sharedPreferencesEditor = null;
+        }
+    }
+
+    public static synchronized SharedPreferencesManager getDefaultInstance(final Context context) {
+        if (defaultInstance == null) {
+            defaultInstance = new SharedPreferencesManager(context);
+        }
+        return defaultInstance;
     }
 
     /**
@@ -235,8 +261,6 @@ public class SharedPreferencesManager {
 
     /**
      * Remove saved preinstall referrer string from shared preferences.
-     *
-     * @return referrer Preinstall referrer string
      */
     public synchronized void removePreinstallReferrer() {
         remove(PREFS_KEY_PREINSTALL_SYSTEM_INSTALLER_REFERRER);
@@ -350,18 +374,6 @@ public class SharedPreferencesManager {
         remove(PREFS_KEY_GDPR_FORGET_ME);
     }
 
-    public synchronized void setDisableThirdPartySharing() {
-        saveBoolean(PREFS_KEY_DISABLE_THIRD_PARTY_SHARING, true);
-    }
-
-    public synchronized boolean getDisableThirdPartySharing() {
-        return getBoolean(PREFS_KEY_DISABLE_THIRD_PARTY_SHARING, false);
-    }
-
-    public synchronized void removeDisableThirdPartySharing() {
-        remove(PREFS_KEY_DISABLE_THIRD_PARTY_SHARING);
-    }
-
     public synchronized void saveDeeplink(final Uri deeplink, final long clickTime) {
         if (deeplink == null) {
             return;
@@ -384,6 +396,18 @@ public class SharedPreferencesManager {
         remove(PREFS_KEY_DEEPLINK_CLICK_TIME);
     }
 
+    public synchronized void cacheDeeplink(final Uri deeplink) {
+        if (deeplink == null) {
+            return;
+        }
+
+        saveString(PREFS_KEY_DEEPLINK_URL_CACHED, deeplink.toString());
+    }
+
+    public synchronized String getCachedDeeplink() {
+        return getString(PREFS_KEY_DEEPLINK_URL_CACHED);
+    }
+
     /**
      * Save information that preinstall tracker has been tracked to shared preferences.
      */
@@ -402,10 +426,43 @@ public class SharedPreferencesManager {
     }
 
     /**
+     * Save control params json to shared preferences.
+     *
+     * @param controlParams Control params json to be saved
+     */
+    public synchronized void saveControlParams(final JSONObject controlParams) {
+        try {
+            saveString(PREFS_KEY_CONTROL_PARAMS, controlParams.toString());
+        } catch (Throwable t) {
+        }
+    }
+
+    /**
+     * Get saved control params json object.
+     *
+     * @return JSONObject containing control params information. Defaults to null if not found.
+     */
+    public synchronized JSONObject getControlParamsJson() {
+        String controlParamsString = getString(PREFS_KEY_CONTROL_PARAMS);
+
+        if (controlParamsString != null) {
+            try {
+                return new JSONObject(controlParamsString);
+            } catch (JSONException e) {
+            } catch (Throwable t) {
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Remove all key-value pairs from shared preferences.
      */
     public synchronized void clear() {
-        this.sharedPreferences.edit().clear().apply();
+        if (sharedPreferencesEditor != null) {
+            sharedPreferencesEditor.clear().apply();
+        }
     }
 
     /**
@@ -415,7 +472,9 @@ public class SharedPreferencesManager {
      * @param value Value to be written to shared preferences
      */
     private synchronized void saveString(final String key, final String value) {
-        this.sharedPreferences.edit().putString(key, value).apply();
+        if (sharedPreferencesEditor != null) {
+            sharedPreferencesEditor.putString(key, value).apply();
+        }
     }
 
     /**
@@ -425,7 +484,9 @@ public class SharedPreferencesManager {
      * @param value Value to be written to shared preferences
      */
     private synchronized void saveBoolean(final String key, final boolean value) {
-        this.sharedPreferences.edit().putBoolean(key, value).apply();
+        if (sharedPreferencesEditor != null) {
+            sharedPreferencesEditor.putBoolean(key, value).apply();
+        }
     }
 
     /**
@@ -435,7 +496,9 @@ public class SharedPreferencesManager {
      * @param value Value to be written to shared preferences
      */
     private synchronized void saveLong(final String key, final long value) {
-        this.sharedPreferences.edit().putLong(key, value).apply();
+        if (sharedPreferencesEditor != null) {
+            sharedPreferencesEditor.putLong(key, value).apply();
+        }
     }
 
     /**
@@ -445,7 +508,9 @@ public class SharedPreferencesManager {
      * @param value Value to be written to shared preferences
      */
     private synchronized void saveInteger(final String key, final int value) {
-        this.sharedPreferences.edit().putInt(key, value).apply();
+        if (sharedPreferencesEditor != null) {
+            sharedPreferencesEditor.putInt(key, value).apply();
+        }
     }
 
     /**
@@ -455,14 +520,18 @@ public class SharedPreferencesManager {
      * @return String value for given key saved in shared preferences (null if not found)
      */
     private synchronized String getString(final String key) {
-        try {
-            return this.sharedPreferences.getString(key, null);
-        } catch (ClassCastException e) {
-            return null;
-        } catch (Throwable t) {
-            if (key.equals(PREFS_KEY_RAW_REFERRERS)) {
-                remove(PREFS_KEY_RAW_REFERRERS);
+        if (sharedPreferences != null) {
+            try {
+                return sharedPreferences.getString(key, null);
+            } catch (ClassCastException e) {
+                return null;
+            } catch (Throwable t) {
+                if (key.equals(PREFS_KEY_RAW_REFERRERS)) {
+                    remove(PREFS_KEY_RAW_REFERRERS);
+                }
+                return null;
             }
+        } else {
             return null;
         }
     }
@@ -475,9 +544,13 @@ public class SharedPreferencesManager {
      * @return Boolean value for given key saved in shared preferences
      */
     private synchronized boolean getBoolean(final String key, final boolean defaultValue) {
-        try {
-            return this.sharedPreferences.getBoolean(key, defaultValue);
-        } catch (ClassCastException e) {
+        if (sharedPreferences != null) {
+            try {
+                return sharedPreferences.getBoolean(key, defaultValue);
+            } catch (ClassCastException e) {
+                return defaultValue;
+            }
+        } else {
             return defaultValue;
         }
     }
@@ -490,9 +563,13 @@ public class SharedPreferencesManager {
      * @return Long value for given key saved in shared preferences
      */
     private synchronized long getLong(final String key, final long defaultValue) {
-        try {
-            return this.sharedPreferences.getLong(key, defaultValue);
-        } catch (ClassCastException e) {
+        if (sharedPreferences != null) {
+            try {
+                return sharedPreferences.getLong(key, defaultValue);
+            } catch (ClassCastException e) {
+                return defaultValue;
+            }
+        } else {
             return defaultValue;
         }
     }
@@ -503,6 +580,8 @@ public class SharedPreferencesManager {
      * @param key Key to be removed
      */
     private synchronized void remove(final String key) {
-        this.sharedPreferences.edit().remove(key).apply();
+        if (sharedPreferencesEditor != null) {
+            sharedPreferencesEditor.remove(key).apply();
+        }
     }
 }

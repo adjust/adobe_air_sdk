@@ -9,24 +9,19 @@
 
 package com.adjust.sdk;
 
-import android.content.ContentResolver;
+import static com.adjust.sdk.Constants.ENCODING;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.LocaleList;
-import android.os.Looper;
-import android.provider.Settings.Secure;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 
+import com.adjust.sdk.scheduler.AsyncTaskExecutor;
 import com.adjust.sdk.scheduler.SingleThreadFutureScheduler;
+
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -45,9 +40,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -57,11 +52,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.adjust.sdk.Constants.ENCODING;
-import static com.adjust.sdk.Constants.MD5;
-import static com.adjust.sdk.Constants.SHA1;
-import static com.adjust.sdk.Constants.SHA256;
 
 /**
  * Collects utility functions used by Adjust.
@@ -163,35 +153,14 @@ public class Util {
         return null;
     }
 
-    public static void runInBackground(Runnable command) {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            command.run();
-            return;
-        }
-        new AsyncTask<Object,Void,Void>() {
-            @Override
-            protected Void doInBackground(Object... params) {
-                Runnable command = (Runnable)params[0];
-                command.run();
-                return null;
-            }
-        }.execute((Object)command);
-    }
-
-    public static void getGoogleAdId(Context context, final OnDeviceIdsRead onDeviceIdRead) {
-        ILogger logger = AdjustFactory.getLogger();
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            logger.debug("GoogleAdId being read in the background");
-
-            String GoogleAdId = Util.getGoogleAdId(context);
-
-            logger.debug("GoogleAdId read " + GoogleAdId);
-            onDeviceIdRead.onGoogleAdIdRead(GoogleAdId);
-            return;
-        }
-
-        logger.debug("GoogleAdId being read in the foreground");
-        new AsyncTask<Context,Void,String>() {
+    /**
+     * Called to get value of Google Play Advertising Identifier.
+     *
+     * @param context                  Application context
+     * @param onGoogleAdIdReadListener Callback to get triggered once identifier is obtained
+     */
+    public static void getGoogleAdId(final Context context, final OnGoogleAdIdReadListener onGoogleAdIdReadListener) {
+        new AsyncTaskExecutor<Context, String>() {
             @Override
             protected String doInBackground(Context... params) {
                 ILogger logger = AdjustFactory.getLogger();
@@ -203,8 +172,9 @@ public class Util {
 
             @Override
             protected void onPostExecute(String playAdiId) {
-                ILogger logger = AdjustFactory.getLogger();
-                onDeviceIdRead.onGoogleAdIdRead(playAdiId);
+                if (onGoogleAdIdReadListener != null) {
+                    onGoogleAdIdReadListener.onGoogleAdIdRead(playAdiId);
+                }
             }
         }.execute(context);
     }
@@ -230,10 +200,6 @@ public class Util {
         }
 
         return googleAdId;
-    }
-
-    public static String getMacAddress(Context context) {
-        return MacAddressUtil.getMacAddress(context);
     }
 
     public static String getAndroidId(Context context) {
@@ -324,6 +290,7 @@ public class Util {
         return readObjectField(fields, name, defaultValue);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T readObjectField(ObjectInputStream.GetField fields, String name, T defaultValue) {
         try {
             return (T) fields.get(name, defaultValue);
@@ -352,6 +319,15 @@ public class Util {
     }
 
     public static long readLongField(ObjectInputStream.GetField fields, String name, long defaultValue) {
+        try {
+            return fields.get(name, defaultValue);
+        } catch (Exception e) {
+            getLogger().debug(fieldReadErrorMessage, name, e.getMessage());
+            return defaultValue;
+        }
+    }
+
+    public static double readDoubleField(ObjectInputStream.GetField fields, String name, double defaultValue) {
         try {
             return fields.get(name, defaultValue);
         } catch (Exception e) {
@@ -394,58 +370,46 @@ public class Util {
         return equalObject(first, second);
     }
 
-    public static int hashBoolean(Boolean value) {
+    public static int hashBoolean(Boolean value, int hashCode) {
         if (value == null) {
-            return 0;
+            return 37 * hashCode;
         }
-        return value.hashCode();
+        return 37 * hashCode + value.hashCode();
     }
 
-    public static int hashLong(Long value) {
+    public static int hashLong(Long value, int hashCode) {
         if (value == null) {
-            return 0;
+            return 37 * hashCode;
         }
-        return value.hashCode();
+        return 37 * hashCode + value.hashCode();
     }
 
-    public static int hashDouble(Double value) {
+    public static int hashDouble(Double value, int hashCode) {
         if (value == null) {
-            return 0;
+            return 37 * hashCode;
         }
-        return value.hashCode();
+        return 37 * hashCode + value.hashCode();
     }
 
-    public static int hashString(String value) {
+    public static int hashString(String value, int hashCode) {
         if (value == null) {
-            return 0;
+            return 37 * hashCode;
         }
-        return value.hashCode();
+        return 37 * hashCode + value.hashCode();
     }
 
-    public static int hashEnum(Enum value) {
+    public static int hashEnum(Enum value, int hashCode) {
         if (value == null) {
-            return 0;
+            return 37 * hashCode;
         }
-        return value.hashCode();
+        return 37 * hashCode + value.hashCode();
     }
 
-    public static int hashObject(Object value) {
+    public static int hashObject(Object value, int hashCode) {
         if (value == null) {
-            return 0;
+            return 37 * hashCode;
         }
-        return value.hashCode();
-    }
-
-    public static String sha1(final String text) {
-        return hash(text, SHA1);
-    }
-
-    public static String sha256(final String text) {
-        return hash(text, SHA256);
-    }
-
-    public static String md5(final String text) {
-        return hash(text, MD5);
+        return 37 * hashCode + value.hashCode();
     }
 
     public static String hash(final String text, final String method) {
@@ -474,6 +438,7 @@ public class Util {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public static String getCpuAbi() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return Build.CPU_ABI;
@@ -527,6 +492,14 @@ public class Util {
         return true;
     }
 
+    public static boolean isAdjustUninstallDetectionPayload(Map<String, String> payload) {
+        if (payload == null) {
+            return false;
+        }
+        return payload.size() == 1 &&
+          Objects.equals(payload.get(Constants.FCM_PAYLOAD_KEY), Constants.FCM_PAYLOAD_VALUE);
+    }
+
     public static Map<String, String> mergeParameters(Map<String, String> target,
                                                       Map<String, String> source,
                                                       String parameterName) {
@@ -551,6 +524,7 @@ public class Util {
         return mergedParameters;
     }
 
+    @SuppressWarnings("deprecation")
     public static Locale getLocale(Configuration configuration) {
         // Configuration.getLocales() added as of API 24.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -564,145 +538,6 @@ public class Util {
             return configuration.locale;
         }
         return null;
-    }
-
-    public static String getFireAdvertisingId(ContentResolver contentResolver) {
-        if (contentResolver == null) {
-            return null;
-        }
-        try {
-            // get advertising
-            return Secure.getString(contentResolver, "advertising_id");
-        } catch (Exception ex) {
-            // not supported
-        }
-        return null;
-    }
-
-    public static Boolean getFireTrackingEnabled(ContentResolver contentResolver) {
-        try {
-            // get user's tracking preference
-            return Secure.getInt(contentResolver, "limit_ad_tracking") == 0;
-        } catch (Exception ex) {
-            // not supported
-        }
-        return null;
-    }
-
-    public static int getConnectivityType(Context context) {
-        try {
-            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            if (cm == null) {
-                return -1;
-            }
-
-            // for api 22 or lower, still need to get raw type
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                return activeNetwork.getType();
-            }
-
-            // .getActiveNetwork() is only available from api 23
-            Network activeNetwork = cm.getActiveNetwork();
-            if (activeNetwork == null) {
-                return -1;
-            }
-
-            NetworkCapabilities activeNetworkCapabilities = cm.getNetworkCapabilities(activeNetwork);
-            if (activeNetworkCapabilities == null) {
-                return -1;
-            }
-
-            // check each network capability available from api 23
-            if (activeNetworkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                return NetworkCapabilities.TRANSPORT_WIFI;
-            }
-            if (activeNetworkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                return NetworkCapabilities.TRANSPORT_CELLULAR;
-            }
-            if (activeNetworkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                return NetworkCapabilities.TRANSPORT_ETHERNET;
-            }
-            if (activeNetworkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
-                return NetworkCapabilities.TRANSPORT_VPN;
-            }
-            if (activeNetworkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH)) {
-                return NetworkCapabilities.TRANSPORT_BLUETOOTH;
-            }
-
-            // only after api 26, that more transport capabilities were added
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                return -1;
-            }
-
-            if (activeNetworkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI_AWARE)) {
-                return NetworkCapabilities.TRANSPORT_WIFI_AWARE;
-            }
-
-            // and then after api 27, that more transport capabilities were added
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {
-                return -1;
-            }
-
-            if (activeNetworkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_LOWPAN)) {
-                return NetworkCapabilities.TRANSPORT_LOWPAN;
-            }
-        } catch (Exception e) {
-            getLogger().warn("Couldn't read connectivity type (%s)", e.getMessage());
-        }
-
-        return -1;
-    }
-
-    public static int getNetworkType(Context context) {
-        int networkType = -1; // default value that will not be send
-
-        try {
-            TelephonyManager teleMan =
-                    (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                networkType = teleMan.getDataNetworkType();
-            } else {
-                networkType = teleMan.getNetworkType();
-            }
-        } catch (Exception e) {
-            getLogger().warn("Couldn't read network type (%s)", e.getMessage());
-        }
-
-        return networkType;
-    }
-
-    public static String getMcc(Context context) {
-        try {
-            TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            String networkOperator = tel.getNetworkOperator();
-
-            if (TextUtils.isEmpty(networkOperator)) {
-                AdjustFactory.getLogger().warn("Couldn't receive networkOperator string to read MCC");
-                return null;
-            }
-            return networkOperator.substring(0, 3);
-        } catch (Exception ex) {
-            AdjustFactory.getLogger().warn("Couldn't return mcc");
-            return null;
-        }
-    }
-
-    public static String getMnc(Context context) {
-        try {
-            TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            String networkOperator = tel.getNetworkOperator();
-
-            if (TextUtils.isEmpty(networkOperator)) {
-                AdjustFactory.getLogger().warn("Couldn't receive networkOperator string to read MNC");
-                return null;
-            }
-            return networkOperator.substring(3);
-        } catch (Exception ex) {
-            AdjustFactory.getLogger().warn("Couldn't return mnc");
-            return null;
-        }
     }
 
     public static String formatString(String format, Object... args) {
@@ -808,11 +643,34 @@ public class Util {
                                                  final ActivityState activityState) {
         if (referrerApi.equals(Constants.REFERRER_API_GOOGLE)) {
             return isEqualGoogleReferrerDetails(referrerDetails, activityState);
-        } else if (referrerApi.equals(Constants.REFERRER_API_HUAWEI)) {
-            return isEqualHuaweiReferrerDetails(referrerDetails, activityState);
+        } else if (referrerApi.equals(Constants.REFERRER_API_HUAWEI_ADS)) {
+            return isEqualHuaweiReferrerAdsDetails(referrerDetails, activityState);
+        } else if (referrerApi.equals(Constants.REFERRER_API_HUAWEI_APP_GALLERY)) {
+            return isEqualHuaweiReferrerAppGalleryDetails(referrerDetails, activityState);
+        } else if (referrerApi.equals(Constants.REFERRER_API_SAMSUNG)) {
+            return isEqualSamsungReferrerDetails(referrerDetails, activityState);
+        } else if (referrerApi.equals(Constants.REFERRER_API_XIAOMI)) {
+            return isEqualXiaomiReferrerDetails(referrerDetails, activityState);
+        } else if (referrerApi.equals(Constants.REFERRER_API_VIVO)) {
+            return isEqualVivoReferrerDetails(referrerDetails, activityState);
+        } else if (referrerApi.equals(Constants.REFERRER_API_META)) {
+            return isEqualMetaReferrerDetails(referrerDetails, activityState);
         }
 
         return false;
+    }
+
+    public static boolean canReadPlayIds(final AdjustConfig adjustConfig) {
+        return !adjustConfig.coppaComplianceEnabled && !adjustConfig.playStoreKidsComplianceEnabled;
+    }
+
+    public static boolean canReadNonPlayIds(final AdjustConfig adjustConfig) {
+        return !adjustConfig.coppaComplianceEnabled && !adjustConfig.playStoreKidsComplianceEnabled;
+    }
+
+    public static boolean isGooglePlayGamesForPC(final Context context) {
+        PackageManager pm = context.getPackageManager();
+        return pm.hasSystemFeature("com.google.android.play.feature.HPE_EXPERIENCE");
     }
 
     private static boolean isEqualGoogleReferrerDetails(final ReferrerDetails referrerDetails,
@@ -826,10 +684,101 @@ public class Util {
                 && Util.equalBoolean(referrerDetails.googlePlayInstant, activityState.googlePlayInstant) ;
     }
 
-    private static boolean isEqualHuaweiReferrerDetails(final ReferrerDetails referrerDetails,
-                                                       final ActivityState activityState) {
+    private static boolean isEqualHuaweiReferrerAdsDetails(final ReferrerDetails referrerDetails,
+                                                           final ActivityState activityState) {
         return referrerDetails.referrerClickTimestampSeconds == activityState.clickTimeHuawei
                 && referrerDetails.installBeginTimestampSeconds == activityState.installBeginHuawei
                 && Util.equalString(referrerDetails.installReferrer, activityState.installReferrerHuawei);
+    }
+
+    private static boolean isEqualHuaweiReferrerAppGalleryDetails(final ReferrerDetails referrerDetails,
+                                                                  final ActivityState activityState) {
+        return referrerDetails.referrerClickTimestampSeconds == activityState.clickTimeHuawei
+               && referrerDetails.installBeginTimestampSeconds == activityState.installBeginHuawei
+               && Util.equalString(referrerDetails.installReferrer, activityState.installReferrerHuaweiAppGallery);
+    }
+
+    private static boolean isEqualSamsungReferrerDetails(final ReferrerDetails referrerDetails,
+                                                         final ActivityState activityState) {
+        return referrerDetails.referrerClickTimestampSeconds == activityState.clickTimeSamsung
+               && referrerDetails.installBeginTimestampSeconds == activityState.installBeginSamsung
+               && Util.equalString(referrerDetails.installReferrer, activityState.installReferrerSamsung);
+    }
+
+    private static boolean isEqualXiaomiReferrerDetails(final ReferrerDetails referrerDetails,
+                                                        final ActivityState activityState) {
+        return referrerDetails.referrerClickTimestampSeconds == activityState.clickTimeXiaomi
+               && referrerDetails.installBeginTimestampSeconds == activityState.installBeginXiaomi
+               && referrerDetails.referrerClickTimestampServerSeconds == activityState.clickTimeServerXiaomi
+               && referrerDetails.installBeginTimestampServerSeconds == activityState.installBeginServerXiaomi
+               && Util.equalString(referrerDetails.installReferrer, activityState.installReferrerXiaomi)
+               && Util.equalString(referrerDetails.installVersion, activityState.installVersionXiaomi);
+    }
+
+    private static boolean isEqualVivoReferrerDetails(final ReferrerDetails referrerDetails,
+                                                        final ActivityState activityState) {
+        return referrerDetails.referrerClickTimestampSeconds == activityState.clickTimeVivo
+               && referrerDetails.installBeginTimestampSeconds == activityState.installBeginVivo
+               && Util.equalString(referrerDetails.installReferrer, activityState.installReferrerVivo)
+               && Util.equalString(referrerDetails.installVersion, activityState.installVersionVivo);
+    }
+
+    private static boolean isEqualMetaReferrerDetails(final ReferrerDetails referrerDetails,
+                                                      final ActivityState activityState) {
+        return referrerDetails.referrerClickTimestampSeconds == activityState.clickTimeMeta
+                && Util.equalString(referrerDetails.installReferrer, activityState.installReferrerMeta)
+                && Util.equalBoolean(referrerDetails.isClick, activityState.isClickMeta);
+    }
+
+    public static boolean isEnabledFromActivityStateFile(final Context context) {
+        ActivityState activityState = Util.readObject(
+                context,
+                Constants.ACTIVITY_STATE_FILENAME,
+                "Activity state",
+                ActivityState.class);
+        if (activityState == null) {
+            return true;
+        } else {
+            return activityState.enabled;
+        }
+    }
+
+    public static AdjustAttribution attributionFromJson(final JSONObject jsonObject,
+                                                        final String sdkPlatform) {
+        if (jsonObject == null) {
+            return null;
+        }
+
+        AdjustAttribution attribution = new AdjustAttribution();
+
+        if ("unity".equals(sdkPlatform)) {
+            // Unity platform.
+            attribution.trackerToken = jsonObject.optString("tracker_token", "");
+            attribution.trackerName = jsonObject.optString("tracker_name", "");
+            attribution.network = jsonObject.optString("network", "");
+            attribution.campaign = jsonObject.optString("campaign", "");
+            attribution.adgroup = jsonObject.optString("adgroup", "");
+            attribution.creative = jsonObject.optString("creative", "");
+            attribution.clickLabel = jsonObject.optString("click_label", "");
+            attribution.costType = jsonObject.optString("cost_type", "");
+            attribution.costAmount = jsonObject.optDouble("cost_amount", 0);
+            attribution.costCurrency = jsonObject.optString("cost_currency", "");
+            attribution.fbInstallReferrer = jsonObject.optString("fb_install_referrer", "");
+        } else {
+            // Rest of all platforms.
+            attribution.trackerToken = jsonObject.optString("tracker_token");
+            attribution.trackerName = jsonObject.optString("tracker_name");
+            attribution.network = jsonObject.optString("network");
+            attribution.campaign = jsonObject.optString("campaign");
+            attribution.adgroup = jsonObject.optString("adgroup");
+            attribution.creative = jsonObject.optString("creative");
+            attribution.clickLabel = jsonObject.optString("click_label");
+            attribution.costType = jsonObject.optString("cost_type");
+            attribution.costAmount = jsonObject.optDouble("cost_amount");
+            attribution.costCurrency = jsonObject.optString("cost_currency");
+            attribution.fbInstallReferrer = jsonObject.optString("fb_install_referrer");
+        }
+
+        return attribution;
     }
 }

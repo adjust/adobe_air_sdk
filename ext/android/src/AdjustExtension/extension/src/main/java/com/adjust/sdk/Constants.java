@@ -26,23 +26,36 @@ public interface Constants {
     String BASE_URL = "https://app.adjust.com";
     String GDPR_URL = "https://gdpr.adjust.com";
     String SUBSCRIPTION_URL = "https://subscription.adjust.com";
+    String PURCHASE_VERIFICATION_URL = "https://ssrv.adjust.com";
+
+    String BASE_URL_FORMAT = "https://app.%s";
+    String GDPR_URL_FORMAT = "https://gdpr.%s";
+    String SUBSCRIPTION_URL_FORMAT = "https://subscription.%s";
+    String PURCHASE_VERIFICATION_URL_FORMAT = "https://ssrv.%s";
+
+    String BASE_URL_NO_SUB_DOMAIN_FORMAT = "https://%s";
 
     String SCHEME = "https";
     String AUTHORITY = "app.adjust.com";
-    String CLIENT_SDK = "android4.27.0";
+    String CLIENT_SDK = "android5.0.1";
     String LOGTAG = "Adjust";
     String REFTAG = "reftag";
     String INSTALL_REFERRER = "install_referrer";
     String REFERRER_API_GOOGLE = "google";
-    String REFERRER_API_HUAWEI = "huawei";
+    String REFERRER_API_HUAWEI_ADS = "huawei_ads";
+    String REFERRER_API_HUAWEI_APP_GALLERY = "huawei_app_gallery";
+    String REFERRER_API_SAMSUNG = "samsung";
+    String REFERRER_API_XIAOMI = "xiaomi";
+    String REFERRER_API_VIVO = "vivo";
+    String REFERRER_API_META = "meta";
     String DEEPLINK = "deeplink";
     String PUSH = "push";
     String THREAD_PREFIX = "Adjust-";
 
     String ACTIVITY_STATE_FILENAME = "AdjustIoActivityState";
     String ATTRIBUTION_FILENAME = "AdjustAttribution";
-    String SESSION_CALLBACK_PARAMETERS_FILENAME = "AdjustSessionCallbackParameters";
-    String SESSION_PARTNER_PARAMETERS_FILENAME = "AdjustSessionPartnerParameters";
+    String GLOBAL_CALLBACK_PARAMETERS_FILENAME = "AdjustGlobalCallbackParameters";
+    String GLOBAL_PARTNER_PARAMETERS_FILENAME = "AdjustGlobalPartnerParameters";
 
     String MALFORMED = "malformed";
     String SMALL = "small";
@@ -56,13 +69,14 @@ public interface Constants {
     String REFERRER = "referrer";
 
     String ENCODING = "UTF-8";
-    String MD5 = "MD5";
-    String SHA1 = "SHA-1";
-    String SHA256 = "SHA-256";
     int MINIMAL_ERROR_STATUS_CODE = 400;
 
     String CALLBACK_PARAMETERS = "callback_params";
     String PARTNER_PARAMETERS = "partner_params";
+
+    String FCM_PAYLOAD_KEY = "adjust_purpose";
+
+    String FCM_PAYLOAD_VALUE = "uninstall detection";
 
     int MAX_INSTALL_REFERRER_RETRIES = 2;
 

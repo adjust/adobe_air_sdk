@@ -73,6 +73,8 @@ public class SdkClickHandler implements ISdkClickHandler {
 
     private IActivityPackageSender activityPackageSender;
 
+    private long lastPackageRetryInMilli = 0L;
+
     /**
      * SdkClickHandler constructor.
      *
@@ -87,7 +89,7 @@ public class SdkClickHandler implements ISdkClickHandler {
         this.
         logger = AdjustFactory.getLogger();
         backoffStrategy = AdjustFactory.getSdkClickBackoffStrategy();
-        scheduler = new SingleThreadCachedScheduler("SdkClickHandler");
+        scheduler = new SingleThreadCachedScheduler(SCHEDULED_EXECUTOR_SOURCE);
     }
 
     /**
@@ -148,7 +150,7 @@ public class SdkClickHandler implements ISdkClickHandler {
             @Override
             public void run() {
                 IActivityHandler activityHandler = activityHandlerWeakRef.get();
-                SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(
+                SharedPreferencesManager sharedPreferencesManager = SharedPreferencesManager.getDefaultInstance(
                         activityHandler.getContext());
                 try {
                     JSONArray rawReferrerArray = sharedPreferencesManager.getRawReferrerArray();
@@ -177,7 +179,8 @@ public class SdkClickHandler implements ISdkClickHandler {
                                 activityHandler.getActivityState(),
                                 activityHandler.getAdjustConfig(),
                                 activityHandler.getDeviceInfo(),
-                                activityHandler.getSessionParameters());
+                                activityHandler.getGlobalParameters(),
+                                activityHandler.getInternalState());
 
                         // Send referrer sdk_click package.
                         sendSdkClick(sdkClickPackage);
@@ -214,7 +217,7 @@ public class SdkClickHandler implements ISdkClickHandler {
                         activityHandler.getActivityState(),
                         activityHandler.getAdjustConfig(),
                         activityHandler.getDeviceInfo(),
-                        activityHandler.getSessionParameters());
+                        activityHandler.getGlobalParameters());
 
                 // Send preinstall info sdk_click package.
                 sendSdkClick(sdkClickPackage);
@@ -288,18 +291,12 @@ public class SdkClickHandler implements ISdkClickHandler {
             }
         };
 
-        if (retries <= 0) {
+        long waitTimeMilliSeconds = waitTime(retries);
+        if (waitTimeMilliSeconds > 0) {
+            scheduler.schedule(runnable, waitTimeMilliSeconds);
+        } else {
             runnable.run();
-            return;
         }
-
-        long waitTimeMilliSeconds = Util.getWaitingTime(retries, backoffStrategy);
-        double waitTimeSeconds = waitTimeMilliSeconds / MILLISECONDS_TO_SECONDS_DIVISOR;
-        String secondsString = Util.SecondsDisplayFormat.format(waitTimeSeconds);
-
-        logger.verbose("Waiting for %s seconds before retrying sdk_click for the %d time", secondsString, retries);
-
-        scheduler.schedule(runnable, waitTimeMilliSeconds);
     }
 
     /**
@@ -315,10 +312,7 @@ public class SdkClickHandler implements ISdkClickHandler {
 
         if (isReftag) {
             // Check before sending if referrer was removed already.
-            SharedPreferencesManager sharedPreferencesManager
-                    = new SharedPreferencesManager(activityHandler.getContext());
-
-            JSONArray rawReferrer = sharedPreferencesManager.getRawReferrer(
+            JSONArray rawReferrer = SharedPreferencesManager.getDefaultInstance(activityHandler.getContext()).getRawReferrer(
                     rawReferrerString,
                     sdkClickPackage.getClickTimeInMilliseconds());
 
@@ -335,6 +329,7 @@ public class SdkClickHandler implements ISdkClickHandler {
         long installBeginServer = -1;
         String installVersion = null;
         Boolean googlePlayInstant = null;
+        Boolean isClick = null;
         String referrerApi = null;
 
         if (isInstallReferrer) {
@@ -348,6 +343,7 @@ public class SdkClickHandler implements ISdkClickHandler {
             installBeginServer = sdkClickPackage.getInstallBeginTimeServerInSeconds();
             installVersion = sdkClickPackage.getInstallVersion();
             googlePlayInstant = sdkClickPackage.getGooglePlayInstant();
+            isClick = sdkClickPackage.getIsClick();
             referrerApi = sdkClickPackage.getParameters().get("referrer_api");
         }
 
@@ -366,9 +362,11 @@ public class SdkClickHandler implements ISdkClickHandler {
         SdkClickResponseData sdkClickResponseData = (SdkClickResponseData)responseData;
 
         if (sdkClickResponseData.willRetry) {
-            retrySendingI(sdkClickPackage);
+            retrySendingI(sdkClickPackage, sdkClickResponseData.retryIn);
             return;
         }
+
+        lastPackageRetryInMilli = 0L;
 
         if (activityHandler == null) {
             return;
@@ -381,10 +379,8 @@ public class SdkClickHandler implements ISdkClickHandler {
 
         if (isReftag) {
             // Remove referrer from shared preferences after sdk_click is sent.
-            SharedPreferencesManager sharedPreferencesManager
-                    = new SharedPreferencesManager(activityHandler.getContext());
-
-            sharedPreferencesManager.removeRawReferrer(
+            SharedPreferencesManager.getDefaultInstance(
+                    activityHandler.getContext()).removeRawReferrer(
                     rawReferrerString,
                     sdkClickPackage.getClickTimeInMilliseconds());
         }
@@ -398,6 +394,7 @@ public class SdkClickHandler implements ISdkClickHandler {
             sdkClickResponseData.installBeginServer = installBeginServer;
             sdkClickResponseData.installVersion = installVersion;
             sdkClickResponseData.googlePlayInstant = googlePlayInstant;
+            sdkClickResponseData.isClick = isClick;
             sdkClickResponseData.referrerApi = referrerApi;
             sdkClickResponseData.isInstallReferrer = true;
         }
@@ -407,7 +404,7 @@ public class SdkClickHandler implements ISdkClickHandler {
             if (payloadLocation != null && !payloadLocation.isEmpty()) {
                 // update preinstall flag in shared preferences after sdk_click is sent.
                 SharedPreferencesManager sharedPreferencesManager
-                        = new SharedPreferencesManager(activityHandler.getContext());
+                        = SharedPreferencesManager.getDefaultInstance(activityHandler.getContext());
 
                 if (Constants.SYSTEM_INSTALLER_REFERRER.equalsIgnoreCase(payloadLocation)) {
                     sharedPreferencesManager.removePreinstallReferrer();
@@ -440,11 +437,16 @@ public class SdkClickHandler implements ISdkClickHandler {
      * Retry sending of the sdk_click package passed as the parameter (runs within scheduled executor).
      *
      * @param sdkClickPackage sdk_click package to be retried.
+     * @param retryIn
      */
-    private void retrySendingI(final ActivityPackage sdkClickPackage) {
-        int retries = sdkClickPackage.increaseRetries();
+    private void retrySendingI(final ActivityPackage sdkClickPackage, Long retryIn) {
+        if (retryIn != null && retryIn > 0) {
+            lastPackageRetryInMilli = retryIn;
+        } else {
+            int retries = sdkClickPackage.increaseRetries();
 
-        logger.error("Retrying sdk_click package for the %d time", retries);
+            logger.error("Retrying sdk_click package for the %d time", retries);
+        }
 
         sendSdkClick(sdkClickPackage);
     }
@@ -465,4 +467,26 @@ public class SdkClickHandler implements ISdkClickHandler {
 
         logger.error(finalMessage);
     }
+
+    /**
+     * calculate wait time (runs within scheduled executor).
+     * @param retries count of retries
+     * @return calculated wait time depends on the number of retry in and backoff strategy
+     */
+    private long waitTime(int retries) {
+        if (lastPackageRetryInMilli > 0) {
+            return lastPackageRetryInMilli;
+        }
+
+        if (retries > 0) {
+            long waitTimeMilliSeconds = Util.getWaitingTime(retries, backoffStrategy);
+            double waitTimeSeconds = waitTimeMilliSeconds / MILLISECONDS_TO_SECONDS_DIVISOR;
+            String secondsString = Util.SecondsDisplayFormat.format(waitTimeSeconds);
+            logger.verbose("Waiting for %s seconds before retrying sdk_click for the %d time", secondsString, retries);
+            return waitTimeMilliSeconds;
+        }
+
+        return 0L;
+    }
+
 }

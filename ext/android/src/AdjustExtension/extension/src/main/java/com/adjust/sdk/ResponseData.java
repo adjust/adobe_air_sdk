@@ -25,6 +25,9 @@ public class ResponseData {
 
     public ActivityPackage activityPackage;
     public Map<String, String> sendingParameters;
+    public Map<String, String> signedParameters;
+    public String resolvedDeeplink;
+    public JSONObject controlParams;
 
     protected ResponseData() {
         success = false;
@@ -33,7 +36,8 @@ public class ResponseData {
 
     public static ResponseData buildResponseData(
             ActivityPackage activityPackage,
-            Map<String, String> sendingParameters)
+            Map<String, String> sendingParameters,
+            Map<String, String> signedParameters)
     {
         ResponseData responseData;
         ActivityKind activityKind = activityPackage.getActivityKind();
@@ -50,6 +54,9 @@ public class ResponseData {
             case EVENT:
                 responseData = new EventResponseData(activityPackage);
                 break;
+            case PURCHASE_VERIFICATION:
+                responseData = new PurchaseVerificationResponseData();
+                break;
             default:
                 responseData = new ResponseData();
                 break;
@@ -57,6 +64,7 @@ public class ResponseData {
         responseData.activityKind = activityKind;
         responseData.activityPackage = activityPackage;
         responseData.sendingParameters = sendingParameters;
+        responseData.signedParameters = signedParameters;
 
         return responseData;
     }

@@ -1,10 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
+    namespace 'com.adjust.sdk'
+    compileSdkVersion 35
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 30
+        minSdkVersion 21
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -18,38 +19,43 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
-// task makeDebugJar(type: Copy) {
-//     dependsOn 'assembleDebug'
+ task makeDebugJar(type: Copy) {
+     dependsOn 'assembleDebug'
 
-//     from('build/intermediates/packaged-classes/debug/')
-//     into('build/libs/debug/')
-//     include('classes.jar')
-//     rename('classes.jar', "adjust-android.jar")
-// }
+     from('build/intermediates/packaged-classes/debug/')
+     into('build/libs/debug/')
+     include('classes.jar')
+     rename('classes.jar', "adjust-android.jar")
+ }
 
-// task makeReleaseJar(type: Copy) {
-//     dependsOn 'assembleRelease'
+ task makeReleaseJar(type: Copy) {
+     dependsOn 'assembleRelease'
 
-//     from('build/intermediates/packaged-classes/release/')
-//     into('build/libs/release/')
-//     include('classes.jar')
-//     rename('classes.jar', "adjust-android.jar")
-// }
+     from('build/intermediates/packaged-classes/release/')
+     into('build/libs/release/')
+     include('classes.jar')
+     rename('classes.jar', "adjust-android.jar")
+ }
 
-task makeReleaseJar(type: Jar) {
-    dependsOn 'compileReleaseJavaWithJavac'
-    from('build/intermediates/javac/release/classes/')
-    archiveName "release/adjust-android.jar"
-}
-
-task makeDebugJar(type: Jar) {
-    dependsOn 'compileDebugJavaWithJavac'
-    from('build/intermediates/javac/debug/classes/')
-    archiveName "debug/adjust-android.jar"
-}
+//task makeReleaseJar(type: Jar) {
+//    dependsOn 'compileReleaseJavaWithJavac'
+//    from('build/intermediates/javac/release/classes/')
+//    archiveFileName = "release/adjust-android.jar"
+//}
+//
+//task makeDebugJar(type: Jar) {
+//    dependsOn 'compileDebugJavaWithJavac'
+//    from('build/intermediates/javac/debug/classes/')
+//    archiveFileName = "debug/adjust-android.jar"
+//}
 
 dependencies {
     implementation files('libs/FlashRuntimeExtensions.jar')
+    implementation 'androidx.annotation:annotation:1.8.2'
 }

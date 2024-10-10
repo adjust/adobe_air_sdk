@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<application xmlns="http://ns.adobe.com/air/application/33.1"> 
+<application xmlns="http://ns.adobe.com/air/application/51.1"> 
   <id>com.adjust.examples</id> 
-  <versionNumber>4.28.1</versionNumber> 
+  <versionNumber>5.0.0</versionNumber> 
   <filename>Adjust AIR SDK Test</filename> 
 
   <initialWindow>
@@ -70,6 +70,10 @@
               <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
           </receiver>
+          <provider
+            android:name="com.adjust.sdk.SystemLifecycleContentProvider"
+            android:authorities="${applicationId}.adjust-lifecycle-provider"
+            android:exported="false" />
         </application>
       </manifest>
       ]]> 

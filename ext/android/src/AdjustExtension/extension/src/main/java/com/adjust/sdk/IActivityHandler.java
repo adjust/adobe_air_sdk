@@ -3,8 +3,6 @@ package com.adjust.sdk;
 import android.content.Context;
 import android.net.Uri;
 
-import org.json.JSONObject;
-
 /**
  * Created by pfms on 15/12/14.
  */
@@ -22,8 +20,11 @@ public interface IActivityHandler {
     void setEnabled(boolean enabled);
 
     boolean isEnabled();
+    void isEnabled(OnIsEnabledListener onIsEnabledListener);
 
-    void readOpenUrl(Uri url, long clickTime);
+    void processDeeplink(Uri url, long clickTime);
+
+    void processAndResolveDeeplink(Uri url, long clickTime, OnDeeplinkResolvedListener callback);
 
     boolean updateAttributionI(AdjustAttribution attribution);
 
@@ -35,6 +36,8 @@ public interface IActivityHandler {
 
     void launchAttributionResponseTasks(AttributionResponseData attributionResponseData);
 
+    void launchPurchaseVerificationResponseTasks(PurchaseVerificationResponseData purchaseVerificationResponseData);
+
     void sendReftagReferrer();
 
     void sendPreinstallReferrer();
@@ -45,19 +48,17 @@ public interface IActivityHandler {
 
     void setAskingAttribution(boolean askingAttribution);
 
-    void sendFirstPackages();
+    void addGlobalCallbackParameter(String key, String value);
 
-    void addSessionCallbackParameter(String key, String value);
+    void addGlobalPartnerParameter(String key, String value);
 
-    void addSessionPartnerParameter(String key, String value);
+    void removeGlobalCallbackParameter(String key);
 
-    void removeSessionCallbackParameter(String key);
+    void removeGlobalPartnerParameter(String key);
 
-    void removeSessionPartnerParameter(String key);
+    void removeGlobalCallbackParameters();
 
-    void resetSessionCallbackParameters();
-
-    void resetSessionPartnerParameters();
+    void removeGlobalPartnerParameters();
 
     void teardown();
 
@@ -65,23 +66,25 @@ public interface IActivityHandler {
 
     void gdprForgetMe();
 
-    void disableThirdPartySharing();
-
     void trackThirdPartySharing(AdjustThirdPartySharing adjustThirdPartySharing);
 
     void trackMeasurementConsent(boolean consentMeasurement);
 
-    void trackAdRevenue(String source, JSONObject adRevenueJson);
+    void trackAdRevenue(AdjustAdRevenue adjustAdRevenue);
 
     void trackPlayStoreSubscription(AdjustPlayStoreSubscription subscription);
+
+    void verifyPlayStorePurchase(AdjustPlayStorePurchase purchase, OnPurchaseVerificationFinishedListener callback);
+
+    void verifyAndTrackPlayStorePurchase(AdjustEvent event, OnPurchaseVerificationFinishedListener callback);
 
     void gotOptOutResponse();
 
     Context getContext();
 
-    String getAdid();
+    void getAdid(OnAdidReadListener onAdidReadListener);
 
-    AdjustAttribution getAttribution();
+    void getAttribution(OnAttributionReadListener onAttributionReadListener);
 
     AdjustConfig getAdjustConfig();
 
@@ -89,5 +92,8 @@ public interface IActivityHandler {
 
     ActivityState getActivityState();
 
-    SessionParameters getSessionParameters();
+    GlobalParameters getGlobalParameters();
+
+    ActivityHandler.InternalState getInternalState();
+
 }

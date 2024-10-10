@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.adjust.sdk.Constants.CALLBACK_PARAMETERS;
-import static com.adjust.sdk.Constants.PARTNER_PARAMETERS;
 
 // persistent
 public class PackageHandler implements IPackageHandler,
@@ -42,6 +40,9 @@ public class PackageHandler implements IPackageHandler,
     private ILogger logger;
     private BackoffStrategy backoffStrategy;
     private BackoffStrategy backoffStrategyForInstallSession;
+    private boolean isRetrying;
+    private long retryStartedAtTimeMilliSeconds;
+    private double totalWaitTimeSeconds;
 
     @Override
     public void teardown() {
@@ -77,7 +78,8 @@ public class PackageHandler implements IPackageHandler,
         this.logger = AdjustFactory.getLogger();
         this.backoffStrategy = AdjustFactory.getPackageHandlerBackoffStrategy();
         this.backoffStrategyForInstallSession = AdjustFactory.getInstallSessionBackoffStrategy();
-
+        this.isRetrying = false;
+        this.totalWaitTimeSeconds = 0.0;
 
         init(activityHandler, context, startsSending, packageHandlerActivityPackageSender);
 
@@ -136,7 +138,7 @@ public class PackageHandler implements IPackageHandler,
             scheduler.submit(new Runnable() {
                 @Override
                 public void run() {
-                    sendNextI();
+                    sendNextI(responseData.continueIn);
                 }
             });
 
@@ -145,6 +147,13 @@ public class PackageHandler implements IPackageHandler,
             }
             return;
         }
+
+        if (!isRetrying) {
+            isRetrying = true;
+            retryStartedAtTimeMilliSeconds = System.currentTimeMillis();
+        }
+
+        writePackageQueueI();
 
         if (activityHandler != null) {
             activityHandler.finishedTrackingActivity(responseData);
@@ -161,19 +170,19 @@ public class PackageHandler implements IPackageHandler,
             }
         };
 
-        if (responseData.activityPackage == null) {
-            runnable.run();
+        if (responseData.retryIn != null) {
+            long retryIn = responseData.retryIn;
+            scheduler.schedule(runnable, retryIn);
             return;
         }
 
         int retries = responseData.activityPackage.increaseRetries();
         long waitTimeMilliSeconds;
 
-        SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManager(context);
+        SharedPreferencesManager sharedPreferencesManager = SharedPreferencesManager.getDefaultInstance(context);
 
         if (responseData.activityPackage.getActivityKind() ==
-                ActivityKind.SESSION && !sharedPreferencesManager.getInstallTracked())
-        {
+                ActivityKind.SESSION && !sharedPreferencesManager.getInstallTracked()) {
             waitTimeMilliSeconds = Util.getWaitingTime(retries, backoffStrategyForInstallSession);
         } else {
             waitTimeMilliSeconds = Util.getWaitingTime(retries, backoffStrategy);
@@ -182,8 +191,14 @@ public class PackageHandler implements IPackageHandler,
         double waitTimeSeconds = waitTimeMilliSeconds / 1000.0;
         String secondsString = Util.SecondsDisplayFormat.format(waitTimeSeconds);
 
-        logger.verbose("Waiting for %s seconds before retrying the %d time", secondsString, retries);
+        totalWaitTimeSeconds += waitTimeSeconds;
+
+        logger.verbose("Waiting for %s seconds before retrying %s for the %d time",
+                secondsString,
+                responseData.activityPackage.getActivityKind().toString(),
+                retries);
         scheduler.schedule(runnable, waitTimeMilliSeconds);
+        responseData.activityPackage.setWaitBeforeSendTimeSeconds(responseData.activityPackage.getWaitBeforeSendTimeSeconds() + waitTimeSeconds);
     }
 
     // interrupt the sending loop after the current request has finished
@@ -196,22 +211,6 @@ public class PackageHandler implements IPackageHandler,
     @Override
     public void resumeSending() {
         paused = false;
-    }
-
-    @Override
-    public void updatePackages(SessionParameters sessionParameters) {
-        final SessionParameters sessionParametersCopy;
-        if (sessionParameters != null) {
-            sessionParametersCopy = sessionParameters.deepCopy();
-        } else {
-            sessionParametersCopy = null;
-        }
-        scheduler.submit(new Runnable() {
-            @Override
-            public void run() {
-                updatePackagesI(sessionParametersCopy);
-            }
-        });
     }
 
     @Override
@@ -232,6 +231,13 @@ public class PackageHandler implements IPackageHandler,
     }
 
     private void addI(ActivityPackage newPackage) {
+        if (isRetrying) {
+            long now = System.currentTimeMillis();
+            double waitSeconds = totalWaitTimeSeconds - (now - retryStartedAtTimeMilliSeconds) / 1000.0;;
+            newPackage.setWaitBeforeSendTimeSeconds(waitSeconds);
+        }
+        PackageBuilder.addLong(newPackage.getParameters(), "enqueue_size", packageQueue.size());
+
         packageQueue.add(newPackage);
         logger.debug("Added package %d (%s)", packageQueue.size(), newPackage);
         logger.verbose("%s", newPackage.getExtendedString());
@@ -256,6 +262,13 @@ public class PackageHandler implements IPackageHandler,
         Map<String, String> sendingParameters = generateSendingParametersI();
 
         ActivityPackage firstPackage = packageQueue.get(0);
+
+        PackageBuilder.addLong(sendingParameters, "retry_count", firstPackage.getRetryCount());
+        PackageBuilder.addLong(sendingParameters, "first_error", firstPackage.getFirstErrorCode());
+        PackageBuilder.addLong(sendingParameters, "last_error", firstPackage.getLastErrorCode());
+        PackageBuilder.addDouble(sendingParameters, "wait_total", totalWaitTimeSeconds);
+        PackageBuilder.addDouble(sendingParameters, "wait_time", firstPackage.getWaitBeforeSendTimeSeconds());
+
         activityPackageSender.sendActivityPackage(firstPackage,
                 sendingParameters,
                 this);
@@ -276,44 +289,38 @@ public class PackageHandler implements IPackageHandler,
         return sendingParameters;
     }
 
-    private void sendNextI() {
+    private void sendNextI(Long previousResponseContinueIn) {
+        isRetrying = false;
+        retryStartedAtTimeMilliSeconds = 0;
+
         if (packageQueue.isEmpty()) {
+            // at this point, the queue has been emptied
+            // reset total_wait in this moment to allow all requests to populate total_wait
+            totalWaitTimeSeconds = 0.0;
             return;
         }
 
         packageQueue.remove(0);
         writePackageQueueI();
-        isSending.set(false);
-        logger.verbose("Package handler can send");
-        sendFirstI();
-    }
 
-    public void updatePackagesI(SessionParameters sessionParameters) {
-        if (sessionParameters == null) {
-            return;
+        if (previousResponseContinueIn != null && previousResponseContinueIn > 0) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    logger.verbose("Package handler finished waiting to continue");
+                    isSending.set(false);
+                    sendFirstPackage();
+                }
+            };
+
+            logger.verbose("Waiting for %d seconds before continuing for next package in continue_in", previousResponseContinueIn / 1000.0);
+            scheduler.schedule(runnable, previousResponseContinueIn);
+
+        } else {
+            logger.verbose("Package handler can send");
+            isSending.set(false);
+            sendFirstI();
         }
-
-        logger.debug("Updating package handler queue");
-        logger.verbose("Session callback parameters: %s", sessionParameters.callbackParameters);
-        logger.verbose("Session partner parameters: %s", sessionParameters.partnerParameters);
-
-        for (ActivityPackage activityPackage : packageQueue) {
-            Map<String, String> parameters = activityPackage.getParameters();
-            // callback parameters
-            Map<String, String> mergedCallbackParameters = Util.mergeParameters(sessionParameters.callbackParameters,
-                    activityPackage.getCallbackParameters(),
-                    "Callback");
-
-            PackageBuilder.addMapJson(parameters, CALLBACK_PARAMETERS, mergedCallbackParameters);
-            // partner parameters
-            Map<String, String> mergedPartnerParameters = Util.mergeParameters(sessionParameters.partnerParameters,
-                    activityPackage.getPartnerParameters(),
-                    "Partner");
-
-            PackageBuilder.addMapJson(parameters, PARTNER_PARAMETERS, mergedPartnerParameters);
-        }
-
-        writePackageQueueI();
     }
 
     private void flushI() {
@@ -321,6 +328,7 @@ public class PackageHandler implements IPackageHandler,
         writePackageQueueI();
     }
 
+    @SuppressWarnings("unchecked")
     private void readPackageQueueI() {
         try {
             packageQueue = Util.readObject(context,
