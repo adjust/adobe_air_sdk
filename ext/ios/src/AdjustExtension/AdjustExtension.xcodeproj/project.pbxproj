@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		20751CEB1E0426270076059F /* AdjustSdkDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20751CEA1E0426270076059F /* AdjustSdkDelegate.m */; };
-		96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96332CBF1A8B982000D38FAF /* AdSupport.framework */; };
-		96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96332CC11A8B982600D38FAF /* iAd.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		96471C231993B3F1000CD897 /* AdjustFREUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 96471C221993B3F1000CD897 /* AdjustFREUtils.m */; };
 		9696C5F91993CF0D003B644E /* AdjustFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 9696C5F81993CF0D003B644E /* AdjustFunction.m */; };
 		96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
@@ -17,7 +15,11 @@
 		96E1BBE61993872F004E270B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1BBD61993872F004E270B /* Foundation.framework */; };
 		96E1BBF119938730004E270B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96E1BBEF19938730004E270B /* InfoPlist.strings */; };
 		96E1BBF319938730004E270B /* AdjustExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1BBF219938730004E270B /* AdjustExtensionTests.m */; };
-		9D85274725880B6900EA698E /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D85274625880B6900EA698E /* AppTrackingTransparency.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		9D33BF982CB7D99A003DBDC8 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D33BF972CB7D99A003DBDC8 /* AdSupport.framework */; };
+		9D33BF9A2CB7DA04003DBDC8 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D33BF992CB7DA04003DBDC8 /* AppTrackingTransparency.framework */; };
+		9DCBC7382CC66C8E004363AD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBC7372CC66C8E004363AD /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9DCBC73A2CC66C9A004363AD /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBC7392CC66C9A004363AD /* AdServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9DCBC73C2CC67E2C004363AD /* AdjustSigSdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBC73B2CC67E2B004363AD /* AdjustSigSdk.framework */; };
 		9DCED7FA1C8D9F45007C1574 /* AdjustSdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */; };
 /* End PBXBuildFile section */
 
@@ -46,8 +48,6 @@
 /* Begin PBXFileReference section */
 		20751CE91E0426270076059F /* AdjustSdkDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdjustSdkDelegate.h; sourceTree = "<group>"; };
 		20751CEA1E0426270076059F /* AdjustSdkDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdjustSdkDelegate.m; sourceTree = "<group>"; };
-		96332CBF1A8B982000D38FAF /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		96332CC11A8B982600D38FAF /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		96471C211993B3F1000CD897 /* AdjustFREUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdjustFREUtils.h; sourceTree = "<group>"; };
 		96471C221993B3F1000CD897 /* AdjustFREUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdjustFREUtils.m; sourceTree = "<group>"; };
 		9696C5F71993CF0D003B644E /* AdjustFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdjustFunction.h; sourceTree = "<group>"; };
@@ -61,7 +61,11 @@
 		96E1BBF019938730004E270B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		96E1BBF219938730004E270B /* AdjustExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdjustExtensionTests.m; sourceTree = "<group>"; };
 		96E1BBFC1993897B004E270B /* FlashRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashRuntimeExtensions.h; sourceTree = "<group>"; };
-		9D85274625880B6900EA698E /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = DEVELOPER_DIR; };
+		9D33BF972CB7D99A003DBDC8 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/AdSupport.framework; sourceTree = DEVELOPER_DIR; };
+		9D33BF992CB7DA04003DBDC8 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = DEVELOPER_DIR; };
+		9DCBC7372CC66C8E004363AD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/iOSSupport/System/Library/Frameworks/StoreKit.framework; sourceTree = DEVELOPER_DIR; };
+		9DCBC7392CC66C9A004363AD /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/AdServices.framework; sourceTree = DEVELOPER_DIR; };
+		9DCBC73B2CC67E2B004363AD /* AdjustSigSdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdjustSigSdk.framework; path = include/Adjust/AdjustSigSdk.framework; sourceTree = "<group>"; };
 		9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdjustSdk.framework; path = include/Adjust/AdjustSdk.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,11 +74,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DCBC73A2CC66C9A004363AD /* AdServices.framework in Frameworks */,
+				9DCBC73C2CC67E2C004363AD /* AdjustSigSdk.framework in Frameworks */,
+				9D33BF982CB7D99A003DBDC8 /* AdSupport.framework in Frameworks */,
+				9D33BF9A2CB7DA04003DBDC8 /* AppTrackingTransparency.framework in Frameworks */,
+				9DCBC7382CC66C8E004363AD /* StoreKit.framework in Frameworks */,
 				96E1BBD71993872F004E270B /* Foundation.framework in Frameworks */,
 				9DCED7FA1C8D9F45007C1574 /* AdjustSdk.framework in Frameworks */,
-				9D85274725880B6900EA698E /* AppTrackingTransparency.framework in Frameworks */,
-				96332CC01A8B982000D38FAF /* AdSupport.framework in Frameworks */,
-				96332CC21A8B982600D38FAF /* iAd.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,10 +117,12 @@
 		96E1BBD51993872F004E270B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9D85274625880B6900EA698E /* AppTrackingTransparency.framework */,
+				9DCBC73B2CC67E2B004363AD /* AdjustSigSdk.framework */,
+				9DCBC7392CC66C9A004363AD /* AdServices.framework */,
+				9DCBC7372CC66C8E004363AD /* StoreKit.framework */,
+				9D33BF992CB7DA04003DBDC8 /* AppTrackingTransparency.framework */,
+				9D33BF972CB7D99A003DBDC8 /* AdSupport.framework */,
 				9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */,
-				96332CC11A8B982600D38FAF /* iAd.framework */,
-				96332CBF1A8B982000D38FAF /* AdSupport.framework */,
 				96E1BBD61993872F004E270B /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -371,6 +379,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AdjustExtension/AdjustExtension-Prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/AdjustExtension",
@@ -393,6 +402,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AdjustExtension/AdjustExtension-Prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/AdjustExtension",

@@ -32,13 +32,29 @@ package com.adjust.sdk {
         }
 
         public function addCallbackParameter(key:String, value:String):void {
-            this.callbackParameters.push(key);
-            this.callbackParameters.push(value);
+            if (key == null) {
+                this.callbackParameters.push("ADJ__NULL");
+            } else {
+                this.callbackParameters.push(key);
+            }
+            if (value == null) {
+                this.callbackParameters.push("ADJ__NULL");
+            } else {
+                this.callbackParameters.push(value);
+            }
         }
 
         public function addPartnerParameter(key:String, value:String):void {
-            this.partnerParameters.push(key);
-            this.partnerParameters.push(value);
+            if (key == null) {
+                this.partnerParameters.push("ADJ__NULL");
+            } else {
+                this.partnerParameters.push(key);
+            }
+            if (value == null) {
+                this.partnerParameters.push("ADJ__NULL");
+            } else {
+                this.partnerParameters.push(value);
+            }
         }
 
         // getters

@@ -55,6 +55,7 @@ package com.adjust.sdk {
 
             // set int members to default invalid values
             this.eventDeduplicationIdsMaxSize = -1;
+            this.attConsentWaitingInterval = -1;
 
             // android only
             this.isPreinstallTrackingEnabled = false;

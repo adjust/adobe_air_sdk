@@ -601,14 +601,6 @@ public class AdjustFunction implements FREFunction,
             AdjustThirdPartySharing adjustThirdPartySharing;
             // isEnabled [0]
             if (freObjects[0] != null) {
-//                int enabled = freObjects[0].getAsInt();
-//                if (enabled == 0) {
-//                    adjustThirdPartySharing = new AdjustThirdPartySharing(false);
-//                } else if (enabled == 1) {
-//                    adjustThirdPartySharing = new AdjustThirdPartySharing(true);
-//                } else {
-//                    adjustThirdPartySharing = new AdjustThirdPartySharing(null);
-//                }
                 boolean isEnabled = freObjects[0].getAsBool();
                 adjustThirdPartySharing = new AdjustThirdPartySharing(isEnabled);
             } else {

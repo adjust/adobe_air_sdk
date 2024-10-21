@@ -214,9 +214,9 @@ package {
 
             Adjust.setTestOptions(testOptions);
             if (useTestConnectionOptions == true) {
-                AdjustTest.setTestConnectionOptions();
+                // AdjustTest.setTestConnectionOptions();
             }
-            // Adjust.teardown();
+            Adjust.teardown();
         }
 
         private function config(params:Object):void {
@@ -374,6 +374,15 @@ package {
                 }
                 adjustConfig.setDeferredDeeplinkCallback(function (deeplink:String):void {
                     AdjustTest.addInfoToSend("deeplink", deeplink);
+                    AdjustTest.sendInfoToServer(AdjustCommandExecutor.extraPath);
+                });
+            }
+            if (params["skanCallback"] != null) {
+                adjustConfig.setSkanUpdatedCallback(function (skanUpdatedData:Dictionary):void {
+                    AdjustTest.addInfoToSend("conversion_value", skanUpdatedData["conversionValue"].toString());
+                    AdjustTest.addInfoToSend("coarse_value", skanUpdatedData["coarseValue"]);
+                    AdjustTest.addInfoToSend("lock_window", skanUpdatedData["lockWindow"].toString());
+                    AdjustTest.addInfoToSend("error", skanUpdatedData["error"]);
                     AdjustTest.sendInfoToServer(AdjustCommandExecutor.extraPath);
                 });
             }
@@ -610,10 +619,11 @@ package {
         }
 
         private function trackThirdPartySharing(params:Object):void {
-            var isEnabled:Object = null;
+            var isEnabled:String = null;
             if (getFirstParameterValue(params, "isEnabled") != null) {
-                isEnabled = getFirstParameterValue(params, "isEnabled") === "true";
+                isEnabled = getFirstParameterValue(params, "isEnabled");
             }
+
             var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing(isEnabled);
 
             if (params["granularOptions"] != null) {
@@ -820,7 +830,8 @@ package {
                 eventNumber = parseInt(eventName.substr(eventName.length - 1));
             }
             var adjustEvent:AdjustEvent = this.savedEvents[eventNumber];
-            Adjust.verifyAndTrackPlayStorePurchase(
+            // Adjust.verifyAndTrackPlayStorePurchase(
+            Adjust.verifyAndTrackAppStorePurchase(
                 adjustEvent,
                 function (verificationResult:AdjustPurchaseVerificationResult):void {
                 AdjustTest.addInfoToSend("verification_status", verificationResult.getVerificationStatus());

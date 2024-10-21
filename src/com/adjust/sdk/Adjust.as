@@ -1,5 +1,6 @@
 package com.adjust.sdk {
     import flash.events.*;
+    import flash.utils.Dictionary;
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
@@ -34,6 +35,7 @@ package com.adjust.sdk {
         private static var requestAppTrackingAuthorizationCallback:Function;
         private static var verifyAppStorePurchaseCallback:Function;
         private static var verifyAndTrackAppStorePurchaseCallback:Function;
+        private static var updateSkanConversionValueCallback:Function;
 
         private static function getExtensionContext():ExtensionContext {
             if (extensionContext != null) {
@@ -96,7 +98,8 @@ package com.adjust.sdk {
                 adjustConfig.getIsIdfaReadingEnabled(), // [28]
                 adjustConfig.getIsIdfvReadingEnabled(), // [29]
                 adjustConfig.getIsSkanAttributionEnabled(), // [30]
-                adjustConfig.getAttConsentWaitingInterval(), // [31]
+                adjustConfig.getAttConsentWaitingInterval() > -1 ?
+                    adjustConfig.getAttConsentWaitingInterval() : null, // [31]
                 adjustConfig.getSkanUpdatedCallback() != null); // [32]
         }
 
@@ -444,6 +447,21 @@ package com.adjust.sdk {
             getExtensionContext().call("requestAppTrackingAuthorization");
         }
 
+        public static function updateSkanConversionValue(
+            conversionValue:int,
+            coarseValue:String,
+            lockWindow:Boolean,
+            callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            updateSkanConversionValueCallback = callback;
+            getExtensionContext().call("updateSkanConversionValue", conversionValue, coarseValue, lockWindow);
+        }
+
         // android only
 
         public static function trackPlayStoreSubscription(adjustPlayStoreSubscription:AdjustPlayStoreSubscription):void {
@@ -554,6 +572,36 @@ package com.adjust.sdk {
 
         public static function teardown():void {
             getExtensionContext().call("teardown");
+
+            extensionContext = null;
+            
+            attributionCallback = null;
+            eventSuccessCallback = null;
+            eventFailureCallback = null;
+            sessionSuccessCallback = null;
+            sessionFailureCallback = null;
+            deferredDeeplinkCallback = null;
+            skanUpdatedCallback = null;
+
+            isEnabledCalback = null;
+            getAdidCallback = null;
+            getAttributionCallback = null;
+            getSdkVersionCallbak = null;
+            getLastDeeplinkCallback = null;
+            processAndResolveDeeplinkCallback = null;
+        
+            getGoogleAdIdCallback = null;
+            getAmazonAdIdCallback = null;
+            verifyPlayStorePurchaseCallback = null;
+            verifyAndTrackPlayStorePurchaseCallback = null;
+
+            getIdfaCallback = null;
+            getIdfvCallback = null;
+            getAppTrackingStatusCallback = null;
+            requestAppTrackingAuthorizationCallback = null;
+            verifyAppStorePurchaseCallback = null;
+            verifyAndTrackAppStorePurchaseCallback = null;
+            updateSkanConversionValueCallback = null;
         }
 
         // private and helper methods
@@ -608,17 +656,62 @@ package com.adjust.sdk {
                 }
                 getAmazonAdIdCallback(amazonAdId);
             } else if (statusEvent.code == "adjust_verifyPlayStorePurchase") {
-                var purchaseVerificationResultVerify:AdjustPurchaseVerificationResult = 
+                var purchasePlayStoreVerificationResultVerify:AdjustPurchaseVerificationResult = 
                 getPurchaseVerificationResultFromResponse(statusEvent.level);
-                verifyPlayStorePurchaseCallback(purchaseVerificationResultVerify);
+                verifyPlayStorePurchaseCallback(purchasePlayStoreVerificationResultVerify);
             } else if (statusEvent.code == "adjust_verifyAndTrackPlayStorePurchase") {
-                var purchaseVerificationResultVerifyAndTrack:AdjustPurchaseVerificationResult = 
+                var purchasePlayStoreVerificationResultVerifyAndTrack:AdjustPurchaseVerificationResult = 
                 getPurchaseVerificationResultFromResponse(statusEvent.level);
-                verifyAndTrackPlayStorePurchaseCallback(purchaseVerificationResultVerifyAndTrack);
+                verifyAndTrackPlayStorePurchaseCallback(purchasePlayStoreVerificationResultVerifyAndTrack);
             } else if (statusEvent.code == "adjust_processAndResolveDeeplink") {
                 var resolvedLink:String = statusEvent.level;
                 processAndResolveDeeplinkCallback(resolvedLink);
-            } 
+            } else if (statusEvent.code == "adjust_verifyAppStorePurchase") {
+                var purchaseAppStoreVerificationResultVerify:AdjustPurchaseVerificationResult = 
+                getPurchaseVerificationResultFromResponse(statusEvent.level);
+                verifyAppStorePurchaseCallback(purchaseAppStoreVerificationResultVerify);
+            } else if (statusEvent.code == "adjust_verifyAndTrackAppStorePurchase") {
+                var purchaseAppStoreVerificationResultVerifyAndTrack:AdjustPurchaseVerificationResult = 
+                getPurchaseVerificationResultFromResponse(statusEvent.level);
+                verifyAndTrackAppStorePurchaseCallback(purchaseAppStoreVerificationResultVerifyAndTrack);
+            } else if (statusEvent.code == "adjust_getIdfa") {
+                var idfa:String = statusEvent.level;
+                getIdfaCallback(idfa);
+            } else if (statusEvent.code == "adjust_getIdfv") {
+                var idfv:String = statusEvent.level;
+                getIdfvCallback(idfv);
+            } else if (statusEvent.code == "adjust_skanUpdatedCallback") {
+                var parts:Array = statusEvent.level.split("__");
+
+                var conversionValue:int;
+                var coarseValue:String;
+                var lockWindow:Boolean;
+                var error:String;
+
+                for (var i:int = 0; i < parts.length; i++) {
+                    var field:Array = parts[i].split("==");
+                    var key:String = field[0];
+                    var value:String = field[1];
+
+                    if (key == "conversionValue") {
+                        conversionValue = parseInt(value);
+                    } else if (key == "coarseValue") {
+                        coarseValue = value;
+                    } else if (key == "lockWindow") {
+                        var tempVal:String = value;
+                        lockWindow = tempVal == "true";
+                    } else if (key == "error") {
+                        error = value;
+                    }
+                }
+
+                var skanUpdatedData:Dictionary = new Dictionary();
+                skanUpdatedData["conversionValue"] = conversionValue;
+                skanUpdatedData["coarseValue"] = coarseValue;
+                skanUpdatedData["lockWindow"] = lockWindow;
+                skanUpdatedData["error"] = error;
+                skanUpdatedCallback(skanUpdatedData);
+            }
             // TODO: add ios events
             // else if (statusEvent.code == "adjust_authorizationStatus") {
             //     var authorizationStatus:String = statusEvent.level;
