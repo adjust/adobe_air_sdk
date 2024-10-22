@@ -474,6 +474,12 @@ public class AdjustFunction implements FREFunction,
                     if (((FREArray) freObjects[6]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[6]).getObjectAt(i + 1).getAsString();
                     }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
+                    }
                     adjustEvent.addCallbackParameter(key, value);
                 }
             }
@@ -488,6 +494,12 @@ public class AdjustFunction implements FREFunction,
                     }
                     if (((FREArray) freObjects[7]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[7]).getObjectAt(i + 1).getAsString();
+                    }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
                     }
                     adjustEvent.addPartnerParameter(key, value);
                 }
@@ -569,6 +581,12 @@ public class AdjustFunction implements FREFunction,
                     if (((FREArray) freObjects[7]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[7]).getObjectAt(i + 1).getAsString();
                     }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
+                    }
                     adjustAdRevenue.addCallbackParameter(key, value);
                 }
             }
@@ -584,6 +602,12 @@ public class AdjustFunction implements FREFunction,
                     if (((FREArray) freObjects[8]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[8]).getObjectAt(i + 1).getAsString();
                     }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
+                    }
                     adjustAdRevenue.addPartnerParameter(key, value);
                 }
             }
@@ -598,14 +622,14 @@ public class AdjustFunction implements FREFunction,
 
     private FREObject TrackThirdPartySharing(FREObject[] freObjects) {
         try {
-            AdjustThirdPartySharing adjustThirdPartySharing;
             // isEnabled [0]
+            Boolean isEnabled = null;
             if (freObjects[0] != null) {
-                boolean isEnabled = freObjects[0].getAsBool();
-                adjustThirdPartySharing = new AdjustThirdPartySharing(isEnabled);
-            } else {
-                adjustThirdPartySharing = new AdjustThirdPartySharing(null);
+                String strIsEnabled = freObjects[0].getAsString();
+                isEnabled = Boolean.valueOf(strIsEnabled);
             }
+
+            AdjustThirdPartySharing adjustThirdPartySharing = new AdjustThirdPartySharing(isEnabled);
 
             // granular options [1]
             if (freObjects[1] != null) {
@@ -622,6 +646,15 @@ public class AdjustFunction implements FREFunction,
                     if (((FREArray) freObjects[1]).getObjectAt(i + 2) != null) {
                         value = ((FREArray) freObjects[1]).getObjectAt(i + 2).getAsString();
                     }
+                    if (partnerName != null && partnerName.equals("ADJ__NULL")) {
+                        partnerName = null;
+                    }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
+                    }
                     adjustThirdPartySharing.addGranularOption(partnerName, key, value);
                 }
             }
@@ -631,7 +664,7 @@ public class AdjustFunction implements FREFunction,
                 for (int i = 0; i < ((FREArray) freObjects[2]).getLength(); i += 3) {
                     String partnerName = null;
                     String key = null;
-                    Boolean value = null;
+                    String value = null;
                     if (((FREArray) freObjects[2]).getObjectAt(i) != null) {
                         partnerName = ((FREArray) freObjects[2]).getObjectAt(i).getAsString();
                     }
@@ -639,9 +672,18 @@ public class AdjustFunction implements FREFunction,
                         key = ((FREArray) freObjects[2]).getObjectAt(i + 1).getAsString();
                     }
                     if (((FREArray) freObjects[2]).getObjectAt(i + 2) != null) {
-                        value = ((FREArray) freObjects[2]).getObjectAt(i + 2).getAsBool();
+                        value = ((FREArray) freObjects[2]).getObjectAt(i + 2).getAsString();
                     }
-                    adjustThirdPartySharing.addPartnerSharingSetting(partnerName, key, value);
+                    if (partnerName != null && partnerName.equals("ADJ__NULL")) {
+                        partnerName = null;
+                    }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    adjustThirdPartySharing.addPartnerSharingSetting(
+                            partnerName,
+                            key,
+                            Boolean.valueOf(value));
                 }
             }
 
@@ -963,6 +1005,12 @@ public class AdjustFunction implements FREFunction,
                     if (((FREArray) freObjects[7]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[7]).getObjectAt(i + 1).getAsString();
                     }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
+                    }
                     adjustPlayStoreSubscription.addCallbackParameter(key, value);
                 }
             }
@@ -977,6 +1025,12 @@ public class AdjustFunction implements FREFunction,
                     }
                     if (((FREArray) freObjects[8]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[8]).getObjectAt(i + 1).getAsString();
+                    }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
                     }
                     adjustPlayStoreSubscription.addPartnerParameter(key, value);
                 }
@@ -1083,6 +1137,12 @@ public class AdjustFunction implements FREFunction,
                     if (((FREArray) freObjects[6]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[6]).getObjectAt(i + 1).getAsString();
                     }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
+                    }
                     adjustEvent.addCallbackParameter(key, value);
                 }
             }
@@ -1097,6 +1157,12 @@ public class AdjustFunction implements FREFunction,
                     }
                     if (((FREArray) freObjects[7]).getObjectAt(i + 1) != null) {
                         value = ((FREArray) freObjects[7]).getObjectAt(i + 1).getAsString();
+                    }
+                    if (key != null && key.equals("ADJ__NULL")) {
+                        key = null;
+                    }
+                    if (value != null && value.equals("ADJ__NULL")) {
+                        value = null;
                     }
                     adjustEvent.addPartnerParameter(key, value);
                 }

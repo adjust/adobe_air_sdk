@@ -473,7 +473,6 @@ FREObject ADJtrackThirdPartySharing(FREContext ctx, void* funcData, uint32_t arg
         if (argv[0] != nil) {
             NSString *strIsEnabled = nil;
             FREGetObjectAsNativeString(argv[0], &strIsEnabled);
-            NSLog(@"##### KOSTOVIC: %@", strIsEnabled);
             if ([strIsEnabled isEqualToString:@"true"]) {
                 isEnabled = @YES;
             } else if ([strIsEnabled isEqualToString:@"false"]) {

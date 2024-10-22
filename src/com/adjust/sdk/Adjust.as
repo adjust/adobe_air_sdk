@@ -372,6 +372,7 @@ package com.adjust.sdk {
                 return;
             }
 
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
             verifyAppStorePurchaseCallback = callback;
             getExtensionContext().call("verifyAppStorePurchase",
                 adjustAppStorePurchase.getProductId(), // [0]
@@ -386,6 +387,7 @@ package com.adjust.sdk {
                 return;
             }
 
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
             verifyAndTrackAppStorePurchaseCallback = callback;
             getExtensionContext().call("verifyAndTrackAppStorePurchase",
                 // common
@@ -490,6 +492,7 @@ package com.adjust.sdk {
                 return;
             }
 
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
             verifyPlayStorePurchaseCallback = callback;
             getExtensionContext().call("verifyPlayStorePurchase",
                 adjustPlayStorePurchase.getProductId(), // [0]
@@ -504,6 +507,7 @@ package com.adjust.sdk {
                 return;
             }
 
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
             verifyAndTrackPlayStorePurchaseCallback = callback;
             getExtensionContext().call("verifyAndTrackPlayStorePurchase",
                 // common

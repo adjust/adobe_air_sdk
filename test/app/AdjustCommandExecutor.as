@@ -214,7 +214,7 @@ package {
 
             Adjust.setTestOptions(testOptions);
             if (useTestConnectionOptions == true) {
-                // AdjustTest.setTestConnectionOptions();
+                AdjustTest.setTestConnectionOptions();
             }
             Adjust.teardown();
         }

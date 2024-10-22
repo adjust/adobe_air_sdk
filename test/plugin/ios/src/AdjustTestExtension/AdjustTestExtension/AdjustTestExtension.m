@@ -2,8 +2,8 @@
 //  AdjustTestExtension.m
 //  AdjustTestExtension
 //
-//  Created by Abdullah Obaied (@obaied) on 20th February 2018.
-//  Copyright © 2012-2018 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 20th February 2018.
+//  Copyright © 2018-Present Adjust GmbH. All rights reserved.
 //
 
 #import "AdjustTestFunction.h"
@@ -19,7 +19,7 @@ void AdjustTestFREContextInitializer(void* extData,
                                      FREContext ctx,
                                      uint32_t* numFunctionsToSet,
                                      const FRENamedFunction** functionsToSet) {
-    uint32_t numberOfFunctions = 5;
+    uint32_t numberOfFunctions = 6;
     *numFunctionsToSet = numberOfFunctions;
 
     FRENamedFunction* func = (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * numberOfFunctions);
@@ -28,6 +28,7 @@ void AdjustTestFREContextInitializer(void* extData,
     setNamedFunction(&func[2], (const uint8_t*)"sendInfoToServer", &ADJsendInfoToServer);
     setNamedFunction(&func[3], (const uint8_t*)"addTest", &ADJaddTest);
     setNamedFunction(&func[4], (const uint8_t*)"addTestDirectory", &ADJaddTestDirectory);
+    setNamedFunction(&func[5], (const uint8_t*)"setTestConnectionOptions", &ADJsetTestConnectionOptions);
 
     *functionsToSet = func;
 }

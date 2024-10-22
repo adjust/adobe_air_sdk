@@ -3,7 +3,7 @@
 //  AdjustTestExtension
 //
 //  Created by Pedro Silva (@nonelse) on 8th July 2014.
-//  Copyright © 2012-2018 Adjust GmbH. All rights reserved.
+//  Copyright © 2014-Present Adjust GmbH. All rights reserved.
 //
 
 #import "AdjustTestFREUtils.h"

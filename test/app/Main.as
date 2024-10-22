@@ -12,7 +12,7 @@ package {
     public class Main extends Sprite {
         // Android: Make sure to use HTTPS with port 8443 with a physical device.
         // iOS: Make sure to use HTTP with port 8080 with a physical device.
-        public static var ipAddress:String = '192.168.86.126';
+        public static var ipAddress:String = '192.168.8.160';
         public static var baseUrl:String = 'http://' + ipAddress + ':8080';
         public static var gdprUrl:String = 'http://' + ipAddress + ':8080';
         public static var controlUrl:String = 'ws://' + ipAddress + ':1987';
@@ -23,41 +23,6 @@ package {
             commandExecutor = new CommandExecutor(baseUrl);
             trace('[ADJUST][TEST-APP]: Starting Adjust test application session!');
             Adjust.getSdkVersion(function (sdkVersion:String):void {
-                // AdjustTest.addTestDirectory("ad-revenue");
-                // AdjustTest.addTestDirectory("attribution-callback");
-                // AdjustTest.addTestDirectory("attribution-getter");
-                // AdjustTest.addTestDirectory("attribution-initiated-by");
-                // AdjustTest.addTestDirectory("continue-in");
-                // AdjustTest.addTestDirectory("coppa");
-                // AdjustTest.addTestDirectory("deeplink");
-                // AdjustTest.addTestDirectory("deeplink-deferred");
-                // AdjustTest.addTestDirectory("deeplink-getter");
-                // AdjustTest.addTestDirectory("default-tracker");
-                // AdjustTest.addTestDirectory("disable-enable");
-                // AdjustTest.addTestDirectory("error-responses");
-                // AdjustTest.addTestDirectory("event-callbacks");
-                // AdjustTest.addTestDirectory("event-tracking");
-                // AdjustTest.addTestDirectory("exernal-device-id");
-                // AdjustTest.addTestDirectory("gdpr");
-                // AdjustTest.addTestDirectory("global-parameters");
-                // AdjustTest.addTestDirectory("google-kids");
-                // AdjustTest.addTestDirectory("init-malformed");
-                // AdjustTest.addTestDirectory("lifecycle");
-                // AdjustTest.addTestDirectory("link-shortener");
-                // AdjustTest.addTestDirectory("measurement-consent");
-                // AdjustTest.addTestDirectory("offline-mode");
-                // AdjustTest.addTestDirectory("parameters");
-                // AdjustTest.addTestDirectory("purchase-verification");
-                // AdjustTest.addTestDirectory("push-token");
-                // AdjustTest.addTestDirectory("queue-size");
-                // AdjustTest.addTestDirectory("retry-in");
-                // AdjustTest.addTestDirectory("sdk-prefix");
-                // AdjustTest.addTestDirectory("send-in-background");
-                // AdjustTest.addTestDirectory("session-callbacks");
-                // AdjustTest.addTestDirectory("session-count");
-                // AdjustTest.addTestDirectory("subscription");
-                // AdjustTest.addTestDirectory("third-party-sharing");
-                // AdjustTest.addTestDirectory("verify-track");
                 AdjustTest.startTestSession(baseUrl, controlUrl, sdkVersion, testCommandCallbackDelegate);
             });
         }
