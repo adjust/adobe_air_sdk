@@ -4,19 +4,19 @@
     <platforms>
         <platform name="Android-ARM">
             <applicationDeployment>
-                <nativeLibrary>adjust-android.jar</nativeLibrary>
+                <nativeLibrary>adjust-android.aar</nativeLibrary>
                 <initializer>com.adjust.sdk.AdjustExtension</initializer>
             </applicationDeployment>
         </platform>
         <platform name="Android-ARM64">
             <applicationDeployment>
-                <nativeLibrary>adjust-android.jar</nativeLibrary>
+                <nativeLibrary>adjust-android.aar</nativeLibrary>
                 <initializer>com.adjust.sdk.AdjustExtension</initializer>
             </applicationDeployment>
         </platform>
         <platform name="Android-x86">
             <applicationDeployment>
-                <nativeLibrary>adjust-android.jar</nativeLibrary>
+                <nativeLibrary>adjust-android.aar</nativeLibrary>
                 <initializer>com.adjust.sdk.AdjustExtension</initializer>
             </applicationDeployment>
         </platform>

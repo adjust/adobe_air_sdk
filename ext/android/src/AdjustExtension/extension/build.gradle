@@ -56,6 +56,6 @@ android {
 //}
 
 dependencies {
-    implementation files('libs/FlashRuntimeExtensions.jar')
+    compileOnly files('libs/FlashRuntimeExtensions.jar')
     implementation 'androidx.annotation:annotation:1.8.2'
 }

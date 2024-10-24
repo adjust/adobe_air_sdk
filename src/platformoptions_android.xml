@@ -1,5 +1,5 @@
 <platform xmlns="http://ns.adobe.com/air/extension/51.1">
     <packagedDependencies>
-        <packagedDependency>adjust-signature.jar</packagedDependency>
+        <packagedDependency>adjust-signature.aar</packagedDependency>
     </packagedDependencies>
 </platform>
