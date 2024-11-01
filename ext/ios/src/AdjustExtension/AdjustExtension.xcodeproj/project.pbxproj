@@ -19,7 +19,6 @@
 		9D33BF9A2CB7DA04003DBDC8 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D33BF992CB7DA04003DBDC8 /* AppTrackingTransparency.framework */; };
 		9DCBC7382CC66C8E004363AD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBC7372CC66C8E004363AD /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9DCBC73A2CC66C9A004363AD /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBC7392CC66C9A004363AD /* AdServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		9DCBC73C2CC67E2C004363AD /* AdjustSigSdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCBC73B2CC67E2B004363AD /* AdjustSigSdk.framework */; };
 		9DCED7FA1C8D9F45007C1574 /* AdjustSdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */; };
 /* End PBXBuildFile section */
 
@@ -65,7 +64,6 @@
 		9D33BF992CB7DA04003DBDC8 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = DEVELOPER_DIR; };
 		9DCBC7372CC66C8E004363AD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/iOSSupport/System/Library/Frameworks/StoreKit.framework; sourceTree = DEVELOPER_DIR; };
 		9DCBC7392CC66C9A004363AD /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/AdServices.framework; sourceTree = DEVELOPER_DIR; };
-		9DCBC73B2CC67E2B004363AD /* AdjustSigSdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdjustSigSdk.framework; path = include/Adjust/AdjustSigSdk.framework; sourceTree = "<group>"; };
 		9DCED7F91C8D9F45007C1574 /* AdjustSdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdjustSdk.framework; path = include/Adjust/AdjustSdk.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,7 +73,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9DCBC73A2CC66C9A004363AD /* AdServices.framework in Frameworks */,
-				9DCBC73C2CC67E2C004363AD /* AdjustSigSdk.framework in Frameworks */,
 				9D33BF982CB7D99A003DBDC8 /* AdSupport.framework in Frameworks */,
 				9D33BF9A2CB7DA04003DBDC8 /* AppTrackingTransparency.framework in Frameworks */,
 				9DCBC7382CC66C8E004363AD /* StoreKit.framework in Frameworks */,
@@ -117,7 +114,6 @@
 		96E1BBD51993872F004E270B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9DCBC73B2CC67E2B004363AD /* AdjustSigSdk.framework */,
 				9DCBC7392CC66C9A004363AD /* AdServices.framework */,
 				9DCBC7372CC66C8E004363AD /* StoreKit.framework */,
 				9D33BF992CB7DA04003DBDC8 /* AppTrackingTransparency.framework */,
@@ -328,6 +324,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -363,6 +360,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -385,7 +383,7 @@
 					"$(PROJECT_DIR)/AdjustExtension",
 					"$(PROJECT_DIR)/include/Adjust",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -408,7 +406,7 @@
 					"$(PROJECT_DIR)/AdjustExtension",
 					"$(PROJECT_DIR)/include/Adjust",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};

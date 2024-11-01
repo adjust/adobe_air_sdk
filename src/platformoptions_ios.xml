@@ -12,6 +12,6 @@
 
     <packagedDependencies>
         <packagedDependency>AdjustSdk.framework</packagedDependency>
-        <packagedDependency>AdjustSigSdk.framework</packagedDependency>
+        <packagedDependency>AdjustSigSdk.a</packagedDependency>
     </packagedDependencies>
 </platform>
