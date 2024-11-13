@@ -459,7 +459,7 @@ package com.adjust.sdk {
                 return;
             }
 
-            getExtensionContext.addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
             updateSkanConversionValueCallback = callback;
             getExtensionContext().call("updateSkanConversionValue", conversionValue, coarseValue, lockWindow);
         }
@@ -680,9 +680,15 @@ package com.adjust.sdk {
                 verifyAndTrackAppStorePurchaseCallback(purchaseAppStoreVerificationResultVerifyAndTrack);
             } else if (statusEvent.code == "adjust_getIdfa") {
                 var idfa:String = statusEvent.level;
+                if (idfa == "ADJ__NULL") {
+                    idfa = null;
+                }
                 getIdfaCallback(idfa);
             } else if (statusEvent.code == "adjust_getIdfv") {
                 var idfv:String = statusEvent.level;
+                if (idfv == "ADJ__NULL") {
+                    idfv = null;
+                }
                 getIdfvCallback(idfv);
             } else if (statusEvent.code == "adjust_skanUpdatedCallback") {
                 var parts:Array = statusEvent.level.split("__");
@@ -715,14 +721,25 @@ package com.adjust.sdk {
                 skanUpdatedData["lockWindow"] = lockWindow;
                 skanUpdatedData["error"] = error;
                 skanUpdatedCallback(skanUpdatedData);
+            } else if (statusEvent.code == "adjust_getAppTrackingStatus") {
+                var authorizationStatus:String = statusEvent.level;
+                if (authorizationStatus == "ADJ__NULL") {
+                    authorizationStatus = null;
+                }
+                getAppTrackingStatusCallback(authorizationStatus);
+            } else if (statusEvent.code == "adjust_requestAppTrackingAuthorization") {
+                authorizationStatus = statusEvent.level;
+                if (authorizationStatus == "ADJ__NULL") {
+                    authorizationStatus = null;
+                }
+                requestAppTrackingAuthorizationCallback(authorizationStatus);
+            } else if (statusEvent.code == "adjust_updateSkanConversionValue") {
+                error = statusEvent.level;
+                if (error == "ADJ__NULL") {
+                    error = null;
+                }
+                updateSkanConversionValueCallback(error);
             }
-            // TODO: add ios events
-            // else if (statusEvent.code == "adjust_authorizationStatus") {
-            //     var authorizationStatus:String = statusEvent.level;
-            //     getAppTrackingStatusCallback(authorizationStatus);
-            // }
-
-            // TODO: callbacks missing
         }
 
         private static function getEventSuccessFromResponse(response:String):AdjustEventSuccess {

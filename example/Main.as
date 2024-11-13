@@ -173,22 +173,6 @@ package {
         private static function GetIDs(Event:MouseEvent):void {
             trace ("Get IDs button tapped");
 
-            Adjust.getAdid(function (adid:String): void {
-                GetIDs.text = "Adid = " + adid;
-            });
-            /*
-            Adjust.getIdfa(function (idfa:String): void {
-                trace("IDFA = " + idfa);
-            });
-            Adjust.getIdfv(function (idfv:String): void {
-                trace("IDFV = " + idfv);
-            });
-            Adjust.getAmazonAdId(function (amazonAdId:String): void {
-                trace("Amazon Ad ID = " + amazonAdId);
-            });
-            Adjust.getGoogleAdId(function (googleAdId:String): void {
-                trace("Google Ad ID = " + googleAdId);
-            });
             Adjust.getAttribution(function (attribution:AdjustAttribution): void {
                 trace("Tracker token = " + attribution.getTrackerToken());
                 trace("Tracker name = " + attribution.getTrackerName());
@@ -202,7 +186,33 @@ package {
                 trace("Cost currency = " + attribution.getCostCurrency());
                 trace("FB install referrer = " + attribution.getFbInstallReferrer());
             });
-            */
+            Adjust.getAdid(function (adid:String): void {
+                trace("Adid = " + adid);
+            });
+            Adjust.getLastDeeplink(function (lastDeeplink:String): void {
+                trace("Last deeplink = " + lastDeeplink);
+            });
+            Adjust.getIdfa(function (idfa:String): void {
+                trace("IDFA = " + idfa);
+            });
+            Adjust.getIdfv(function (idfv:String): void {
+                trace("IDFV = " + idfv);
+            });
+            Adjust.getAppTrackingStatus(function (status:String): void {
+                trace("Authorization status = " + status);
+            });
+            Adjust.requestAppTrackingAuthorization(function (status:String): void {
+                trace("Authorization status = " + status);
+            });
+            Adjust.updateSkanConversionValue(6, "low", false, function (error:String): void {
+                trace("Error = " + error);
+            });
+            Adjust.getGoogleAdId(function (googleAdId:String): void {
+                trace("Google Ad ID = " + googleAdId);
+            });
+            Adjust.getAmazonAdId(function (amazonAdId:String): void {
+                trace("Amazon Ad ID = " + amazonAdId);
+            });
         }
 
         private function buildButton(number:int, text:String, clickFunction:Function):TextField {
