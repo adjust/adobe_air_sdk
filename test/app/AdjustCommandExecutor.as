@@ -312,7 +312,7 @@ package {
                     AdjustTest.addInfoToSend("tracker_name", attribution.getTrackerName());
                     AdjustTest.addInfoToSend("network", attribution.getNetwork());
                     AdjustTest.addInfoToSend("campaign", attribution.getCampaign());
-                    AdjustTest.addInfoToSend("adgroup", attribution.getAdGroup());
+                    AdjustTest.addInfoToSend("adgroup", attribution.getAdgroup());
                     AdjustTest.addInfoToSend("creative", attribution.getCreative());
                     AdjustTest.addInfoToSend("click_label", attribution.getClickLabel());
                     AdjustTest.addInfoToSend("cost_type", attribution.getCostType());
@@ -655,7 +655,7 @@ package {
                 AdjustTest.addInfoToSend("tracker_name", attribution.getTrackerName());
                 AdjustTest.addInfoToSend("network", attribution.getNetwork());
                 AdjustTest.addInfoToSend("campaign", attribution.getCampaign());
-                AdjustTest.addInfoToSend("adgroup", attribution.getAdGroup());
+                AdjustTest.addInfoToSend("adgroup", attribution.getAdgroup());
                 AdjustTest.addInfoToSend("creative", attribution.getCreative());
                 AdjustTest.addInfoToSend("click_label", attribution.getClickLabel());
                 AdjustTest.addInfoToSend("cost_type", attribution.getCostType());

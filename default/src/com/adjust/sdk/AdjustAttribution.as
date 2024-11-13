@@ -59,7 +59,7 @@ package com.adjust.sdk {
             return this.creative;
         }
 
-        public function getAdGroup():String {
+        public function getAdgroup():String {
             return this.adgroup;
         }
 
