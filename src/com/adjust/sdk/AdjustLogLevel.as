@@ -1,5 +1,5 @@
 package com.adjust.sdk {
-    public final class LogLevel {
+    public final class AdjustLogLevel {
         public static const VERBOSE:String = "verbose";
         public static const DEBUG:String = "debug";
         public static const INFO:String = "info";

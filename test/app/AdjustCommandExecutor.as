@@ -17,8 +17,8 @@ package {
     import com.adjust.sdk.AdjustPurchaseVerificationResult;
     import com.adjust.sdk.AdjustAppStoreSubscription;
     import com.adjust.sdk.AdjustPlayStoreSubscription;
-    import com.adjust.sdk.Environment;
-    import com.adjust.sdk.LogLevel;
+    import com.adjust.sdk.AdjustEnvironment;
+    import com.adjust.sdk.AdjustLogLevel;
     import com.adjust.test.AdjustTest;
 
     /* 
@@ -232,7 +232,7 @@ package {
                 var environment:String = getFirstParameterValue(params, "environment");
                 var appToken:String = getFirstParameterValue(params, "appToken");
                 adjustConfig = new AdjustConfig(appToken, environment);
-                adjustConfig.setLogLevel(LogLevel.VERBOSE);
+                adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
                 this.savedConfigs[configNumber] = adjustConfig;
             }
             if (params["logLevel"] != null) {

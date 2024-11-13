@@ -2,8 +2,8 @@ package {
     import com.adjust.sdk.Adjust;
     import com.adjust.sdk.AdjustConfig;
     import com.adjust.sdk.AdjustThirdPartySharing;
-    import com.adjust.sdk.Environment;
-    import com.adjust.sdk.LogLevel;
+    import com.adjust.sdk.AdjustEnvironment;
+    import com.adjust.sdk.AdjustLogLevel;
     import com.adjust.test.AdjustTest;
 
     import flash.display.Sprite;
@@ -12,7 +12,7 @@ package {
     public class Main extends Sprite {
         // Android: Make sure to use HTTPS with port 8443 with a physical device.
         // iOS: Make sure to use HTTP with port 8080 with a physical device.
-        public static var ipAddress:String = '192.168.8.166';
+        public static var ipAddress:String = '192.168.86.142';
         public static var baseUrl:String = 'http://' + ipAddress + ':8080';
         public static var gdprUrl:String = 'http://' + ipAddress + ':8080';
         public static var controlUrl:String = 'ws://' + ipAddress + ':1987';

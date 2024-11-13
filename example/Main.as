@@ -7,8 +7,8 @@ package {
     import com.adjust.sdk.AdjustSessionSuccess;
     import com.adjust.sdk.AdjustSessionFailure;
     import com.adjust.sdk.AdjustAttribution;
-    import com.adjust.sdk.Environment;
-    import com.adjust.sdk.LogLevel;
+    import com.adjust.sdk.AdjustEnvironment;
+    import com.adjust.sdk.AdjustLogLevel;
 
     import flash.display.SimpleButton;
     import flash.display.Sprite;
@@ -33,10 +33,10 @@ package {
             buildButton(6, "Get IDs", GetIDs);
 
             // -------- Adjust Configuration -------- //
-            var adjustConfig:AdjustConfig = new AdjustConfig("2fm9gkqubvpc", Environment.SANDBOX);
+            var adjustConfig:AdjustConfig = new AdjustConfig("2fm9gkqubvpc", AdjustEnvironment.SANDBOX);
 
             //adjustConfig.setDelayStart(3.0);
-            adjustConfig.setLogLevel(LogLevel.VERBOSE);
+            adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
             adjustConfig.setUserAgent("Custom Adjust User Agent");
             adjustConfig.setSendInBackground(true);
             adjustConfig.setDeviceKnown(true);
