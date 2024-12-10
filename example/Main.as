@@ -15,7 +15,9 @@ package {
     import flash.events.MouseEvent;
     import flash.system.Capabilities;
     import flash.text.TextField;
+    import flash.text.TextFormat;
     import flash.text.TextFieldAutoSize;
+    import flash.utils.Dictionary;
 
     public class Main extends Sprite {
         private static var IsEnabledTextField:TextField;
@@ -38,55 +40,69 @@ package {
             adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
 
             adjustConfig.setAttributionCallback(function (attribution:AdjustAttribution): void {
-                trace("Tracker token = " + attribution.getTrackerToken());
-                trace("Tracker name = " + attribution.getTrackerName());
-                trace("Campaign = " + attribution.getCampaign());
-                trace("Network = " + attribution.getNetwork());
-                trace("Creative = " + attribution.getCreative());
-                trace("Adgroup = " + attribution.getAdgroup());
-                trace("Click label = " + attribution.getClickLabel());
-                trace("Cost type = " + attribution.getCostType());
-                trace("Cost amount = " + isNaN(attribution.getCostAmount()) ? "NaN" : attribution.getCostAmount().toString());
-                trace("Cost currency = " + attribution.getCostCurrency());
-                trace("FB install referrer = " + attribution.getFbInstallReferrer());
+                var message:String = "Tracker token = " + attribution.getTrackerToken() + "\n" +
+                                     "Tracker name = " + attribution.getTrackerName() + "\n" +
+                                     "Campaign = " + attribution.getCampaign() + "\n" +
+                                     "Network = " + attribution.getNetwork() + "\n" +
+                                     "Creative = " + attribution.getCreative() + "\n" +
+                                     "Adgroup = " + attribution.getAdgroup() + "\n" +
+                                     "Click label = " + attribution.getClickLabel() + "\n" +
+                                     "Cost type = " + attribution.getCostType() + "\n" +
+                                     "Cost amount = " + (isNaN(attribution.getCostAmount()) ? "NaN" : attribution.getCostAmount().toString()) + "\n" +
+                                     "Cost currency = " + attribution.getCostCurrency() + "\n" +
+                                     "FB install referrer = " + attribution.getFbInstallReferrer();
+                showCustomAlert(message, "Attribution Callback");
             });
             adjustConfig.setEventSuccessCallback(function (eventSuccess:AdjustEventSuccess):void {
-                trace("Event tracking succeeded");
-                trace("Message = " + eventSuccess.getMessage());
-                trace("Timestamp = " + eventSuccess.getTimestamp());
-                trace("Adid = " + eventSuccess.getAdid());
-                trace("Event Token = " + eventSuccess.getEventToken());
-                trace("Callback Id = " + eventSuccess.getCallbackId());
-                trace("Json Response = " + eventSuccess.getJsonResponse());
+                var message:String = "Event tracking succeeded\n" +
+                                     "Message = " + eventSuccess.getMessage() + "\n" +
+                                     "Timestamp = " + eventSuccess.getTimestamp() + "\n" +
+                                     "Adid = " + eventSuccess.getAdid() + "\n" +
+                                     "Event Token = " + eventSuccess.getEventToken() + "\n" +
+                                     "Callback Id = " + eventSuccess.getCallbackId() + "\n" +
+                                     "Json Response = " + eventSuccess.getJsonResponse();
+                showCustomAlert(message, "Event Success Callback");
             });
             adjustConfig.setEventFailureCallback(function (eventFailure:AdjustEventFailure):void {
-                trace("Event tracking failed");
-                trace("Message = " + eventFailure.getMessage());
-                trace("Timestamp = " + eventFailure.getTimestamp());
-                trace("Adid = " + eventFailure.getAdid());
-                trace("Event Token = " + eventFailure.getEventToken());
-                trace("Callback Id = " + eventFailure.getCallbackId());
-                trace("Will Retry = " + eventFailure.getWillRetry().toString());
-                trace("Json Response = " + eventFailure.getJsonResponse());
+                var message:String = "Event tracking failed\n" +
+                                     "Message = " + eventFailure.getMessage() + "\n" +
+                                     "Timestamp = " + eventFailure.getTimestamp() + "\n" +
+                                     "Adid = " + eventFailure.getAdid() + "\n" +
+                                     "Event Token = " + eventFailure.getEventToken() + "\n" +
+                                     "Callback Id = " + eventFailure.getCallbackId() + "\n" +
+                                     "Will Retry = " + eventFailure.getWillRetry().toString() + "\n" +
+                                     "Json Response = " + eventFailure.getJsonResponse();
+                showCustomAlert(message, "Event Failure Callback");
             });
             adjustConfig.setSessionSuccessCallback(function (sessionSuccess:AdjustSessionSuccess): void {
-                trace("Session tracking succeeded");
-                trace("Message = " + sessionSuccess.getMessage());
-                trace("Timestamp = " + sessionSuccess.getTimestamp());
-                trace("Adid = " + sessionSuccess.getAdid());
-                trace("Json Response = " + sessionSuccess.getJsonResponse());
+                var message:String = "Session tracking succeeded\n" +
+                                     "Message = " + sessionSuccess.getMessage() + "\n" +
+                                     "Timestamp = " + sessionSuccess.getTimestamp() + "\n" +
+                                     "Adid = " + sessionSuccess.getAdid() + "\n" +
+                                     "Json Response = " + sessionSuccess.getJsonResponse();
+                showCustomAlert(message, "Session Success Callback");
             });
             adjustConfig.setSessionFailureCallback(function (sessionFailure:AdjustSessionFailure):void {
-                trace("Session tracking failed");
-                trace("Message = " + sessionFailure.getMessage());
-                trace("Timestamp = " + sessionFailure.getTimestamp());
-                trace("Adid = " + sessionFailure.getAdid());
-                trace("Will Retry = " + sessionFailure.getWillRetry().toString());
-                trace("Json Response = " + sessionFailure.getJsonResponse());
+                var message:String = "Session tracking failed\n" +
+                                     "Message = " + sessionFailure.getMessage() + "\n" +
+                                     "Timestamp = " + sessionFailure.getTimestamp() + "\n" +
+                                     "Adid = " + sessionFailure.getAdid() + "\n" +
+                                     "Will Retry = " + sessionFailure.getWillRetry().toString() + "\n" +
+                                     "Json Response = " + sessionFailure.getJsonResponse();
+                showCustomAlert(message, "Session Failure Callback");
             });
             adjustConfig.setDeferredDeeplinkCallback(function (deeplink:String):void {
-                trace("Received deferred deep link");
-                trace("Deep link = " + deeplink);
+                var message:String = "Received deferred deep link\n" +
+                                     "Deep link = " + deeplink;
+                showCustomAlert(message, "Deferred Deeplink Callback");
+            });
+            adjustConfig.setSkanUpdatedCallback(function (skanUpdatedData:Dictionary):void {
+                var message:String = "SKAN values updated\n" +
+                                     "Conversion value = " + skanUpdatedData["conversionValue"].toString() + "\n" +
+                                     "Coarse value = " + skanUpdatedData["coarseValue"] + "\n" +
+                                     "Lock window = " + skanUpdatedData["lockWindow"].toString() + "\n" +
+                                     "Error = " + skanUpdatedData["error"];
+                showCustomAlert(message, "SKAN Updated Callback");
             });
 
             Adjust.addGlobalCallbackParameter("scpk1", "scpv1");
@@ -97,6 +113,13 @@ package {
 
             Adjust.removeGlobalCallbackParameter("scpk1");
             Adjust.removeGlobalPartnerParameter("sppk2");
+
+            // adjustConfig.setUrlStrategy(["adjust.net.in", "adjust.com"], true, false);
+            // adjustConfig.setUrlStrategy(["adjust.world", "adjust.com"], true, false);
+            // adjustConfig.setUrlStrategy(["adjust.cn"], true, false);
+            // adjustConfig.setUrlStrategy(["eu.adjust.com"], true, true);
+            // adjustConfig.setUrlStrategy(["us.adjust.com"], true, true);
+            // adjustConfig.setUrlStrategy(["tr.adjust.com"], true, true);
 
             Adjust.initSdk(adjustConfig);
 
@@ -244,6 +267,58 @@ package {
             addChild(simpleButton);
 
             return textField;
+        }
+
+        private function showCustomAlert(message:String, title:String = "Alert"):void {
+            var alert:Sprite = new Sprite();
+            alert.graphics.beginFill(0xCCCCCC, 1);
+            alert.graphics.drawRect(0, 0, 300, 200);
+            alert.graphics.endFill();
+            alert.x = stage.stageWidth / 2 - 150;
+            alert.y = stage.stageHeight / 2 - 100;
+
+            var titleField:TextField = new TextField();
+            titleField.defaultTextFormat = new TextFormat("Arial", 16, 0x000000, true);
+            titleField.text = title;
+            titleField.width = 280;
+            titleField.height = 30;
+            titleField.x = 10;
+            titleField.y = 10;
+            titleField.selectable = false;
+            alert.addChild(titleField);
+
+            var messageField:TextField = new TextField();
+            messageField.defaultTextFormat = new TextFormat("Arial", 14, 0x000000);
+            messageField.text = message;
+            messageField.width = 280;
+            messageField.height = 100;
+            messageField.wordWrap = true;
+            messageField.x = 10;
+            messageField.y = 50;
+            messageField.selectable = false;
+            alert.addChild(messageField);
+
+            var closeButton:Sprite = new Sprite();
+            closeButton.graphics.beginFill(0x000000, 1);
+            closeButton.graphics.drawRect(0, 0, 80, 30);
+            closeButton.graphics.endFill();
+            closeButton.x = 110;
+            closeButton.y = 150;
+
+            var closeText:TextField = new TextField();
+            closeText.defaultTextFormat = new TextFormat("Arial", 14, 0xFFFFFF, true);
+            closeText.text = "Close";
+            closeText.width = 80;
+            closeText.height = 30;
+            closeText.mouseEnabled = false;
+            closeButton.addChild(closeText);
+
+            closeButton.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
+                stage.removeChild(alert);
+            });
+
+            alert.addChild(closeButton);
+            stage.addChild(alert);
         }
     }
 }
