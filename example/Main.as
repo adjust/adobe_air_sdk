@@ -114,13 +114,6 @@ package {
             Adjust.removeGlobalCallbackParameter("scpk1");
             Adjust.removeGlobalPartnerParameter("sppk2");
 
-            // adjustConfig.setUrlStrategy(["adjust.net.in", "adjust.com"], true, false);
-            // adjustConfig.setUrlStrategy(["adjust.world", "adjust.com"], true, false);
-            // adjustConfig.setUrlStrategy(["adjust.cn"], true, false);
-            // adjustConfig.setUrlStrategy(["eu.adjust.com"], true, true);
-            // adjustConfig.setUrlStrategy(["us.adjust.com"], true, true);
-            // adjustConfig.setUrlStrategy(["tr.adjust.com"], true, true);
-
             Adjust.initSdk(adjustConfig);
 
             // -------- Adjust Configuration -------- //

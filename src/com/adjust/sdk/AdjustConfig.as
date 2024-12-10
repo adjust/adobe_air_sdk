@@ -83,10 +83,10 @@ package com.adjust.sdk {
             this.externalDeviceId = externalDeviceId;
         }
 
-        public function setUrlStrategy(urlStrategyDomains:Array, isDataResidency:Boolean, useSubdomains:Boolean):void {
+        public function setUrlStrategy(urlStrategyDomains:Array, useSubdomains:Boolean, isDataResidency:Boolean):void {
             this.urlStrategyDomains = urlStrategyDomains;
-            this.isDataResidency = isDataResidency;
             this.useSubdomains = useSubdomains;
+            this.isDataResidency = isDataResidency;
         }
 
         public function enableCoppaCompliance():void {
