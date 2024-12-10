@@ -1,6 +1,6 @@
 ## Summary
 
-This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Adjust.com].
+This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [adjust.com](https://adjust.com).
 
 ## Table of contents
 
@@ -13,24 +13,19 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
    * [Android permissions](#android-permissions)
    * [Google Play Services](#google-play-services)
    * [Install referrer](#install-referrer)
-      * [Google Play Referrer API](#gpr-api)
-      * [Google Play Store intent](#gps-intent)
-      * [Huawei Referrer API](#huawei-referrer-api)
-   * [Proguard settings](#sdk-proguard)
 * [Additional features](#additional-features)
    * [AppTrackingTransparency framework](#ad-att-framework)
       * [App-tracking authorisation wrapper](#ad-ata-wrapper)
    * [SKAdNetwork framework](#ad-skadn-framework)
    * [Event tracking](#event-tracking)
       * [Revenue tracking](#revenue-tracking)
-      * [Revenue deduplication](#revenue-deduplication)
+      * [Event deduplication](#event-deduplication)
       * [Callback parameters](#callback-parameters)
       * [Partner parameters](#partner-parameters)
       * [Callback identifier](#callback-id)
-   * [Session parameters](#session-parameters)
-      * [Session callback parameters](#session-callback-parameters)
-      * [Session partner parameters](#session-partner-parameters)
-      * [Delay start](#delay-start)
+   * [Global parameters](#global-parameters)
+      * [Global callback parameters](#global-callback-parameters)
+      * [Global partner parameters](#global-partner-parameters)
    * [Attribution callback](#attribution-callback)
    * [Session and event callbacks](#session-event-callbacks)
    * [Disable tracking](#disable-tracking)
@@ -60,7 +55,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [Ad
 
 ## <a id="example-app"></a>Example app
 
-There is an example app inside the [`example` directory][example-app]. You can use the example app to see how the Adjust SDK can be integrated.
+There is an example app inside the [`example` directory](./example). You can use the example app to see how the Adjust SDK can be integrated.
 
 ## <a id="basic-integration"></a>Basic integration
 
@@ -68,7 +63,7 @@ These are the minimal steps required to integrate the Adjust SDK into your Adobe
 
 ### <a id="sdk-get"></a>Get the SDK
 
-Download the latest version from our [releases page][releases].
+Download the latest version from our [releases page](https://github.com/adjust/adjust_air_sdk/releases).
 
 ### <a id="sdk-add"></a>Add the SDK to your project
 
@@ -84,88 +79,70 @@ Add the downloaded Adjust SDK ANE file to your app. After this, add the Adjust S
 
 ### <a id="sdk-integrate"></a>Integrate the SDK into your app
 
-To start tracking with Adjust, you first need to initialize the SDK. Add the following code to your main Sprite.
+To start tracking with Adjust, you first need to initialize the SDK:
 
 ```actionscript
 import com.adjust.sdk.Adjust;
 import com.adjust.sdk.AdjustConfig;
-import com.adjust.sdk.Environment;
-import com.adjust.sdk.LogLevel;
+import com.adjust.sdk.AdjustEnvironment;
+import com.adjust.sdk.AdjustLogLevel;
 
-public class Example extends Sprite {
-    public function Example() {
-      var appToken:String = "{YourAppToken}";
-      var environment:String = Environment.SANDBOX;
-      
-        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
-        adjustConfig.setLogLevel(LogLevel.VERBOSE);
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
 
-        Adjust.start(adjustConfig);
-    }
-}
+Adjust.initSdk(adjustConfig);
 ```
 
-Replace `{YourAppToken}` with your app token. You can find this in your [dashboard].
+Replace `{YourAppToken}` with your app token. You can find this in your [dashboard](https://dash.adjust.com).
 
 Depending on whether you build your app for testing or for production, you must set `environment` with one of these values:
 
 ```actionscript
-var environment:String = Environment.SANDBOX;
-var environment:String = Environment.PRODUCTION;
+var environment:String = AdjustEnvironment.SANDBOX;
+var environment:String = AdjustEnvironment.PRODUCTION;
 ```
 
-**Important:** This value should be set to `Environment.SANDBOX` if and only if you or someone else is testing your app. Make sure to set the environment to `Environment.PRODUCTION` just before you publish the app. Set it back to `Environment.SANDBOX` when you start developing and testing it again.
+**Important:** This value should be set to `AdjustEnvironment.SANDBOX` if and only if you or someone else is testing your app. Make sure to set the environment to `AdjustEnvironment.PRODUCTION` just before you publish the app. Set it back to `AdjustEnvironment.SANDBOX` when you start developing and testing it again.
 
-We use this environment to distinguish between real traffic and test traffic from test devices. It is very important that you keep this value meaningful at all times! This is especially important if you are tracking revenue.
+We use this environment to distinguish between real traffic and test traffic from test devices. It is very important that you keep this value meaningful at all times!
 
 ### <a id="sdk-logging"></a>Adjust logging
 
 You can increase or decrease the amount of logs you see in tests by calling `setLogLevel` on your `AdjustConfig` instance with one of the following parameters:
 
 ```actionscript
-adjustConfig.setLogLevel(LogLevel.VERBOSE);     // enable all logging
-adjustConfig.setLogLevel(LogLevel.DEBUG);       // enable more logging
-adjustConfig.setLogLevel(LogLevel.INFO);        // the default
-adjustConfig.setLogLevel(LogLevel.WARN);        // disable info logging
-adjustConfig.setLogLevel(LogLevel.ERROR);       // disable warnings as well
-adjustConfig.setLogLevel(LogLevel.ASSERT);      // disable errors as well
-adjustConfig.setLogLevel(LogLevel.SUPPRESS);    // disable all log output
+adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);     // enable all logging
+adjustConfig.setLogLevel(AdjustLogLevel.DEBUG);       // enable more logging
+adjustConfig.setLogLevel(AdjustLogLevel.INFO);        // the default
+adjustConfig.setLogLevel(AdjustLogLevel.WARN);        // disable info logging
+adjustConfig.setLogLevel(AdjustLogLevel.ERROR);       // disable warnings as well
+adjustConfig.setLogLevel(AdjustLogLevel.ASSERT);      // disable errors as well
+adjustConfig.setLogLevel(AdjustLogLevel.SUPPRESS);    // disable all log output
 ```
 
 ### <a id="android-permissions"></a>Android permissions
 
-In order to use your Adobe AIR app for Android with our SDK, you must add needed permissions to the Android manifest file. In order to edit your Android manifest file, you need to perform following steps:
-
-- Open the application descriptor file, which is typically located at `src/{YourProjectName}-app.xml`.
-- Search for the `<android>` tag.
-- Edit between the `<manifest>`tag.
-
-You will need to add following permissions:
+The Adjust SDK includes the `com.google.android.gms.AD_ID` and `android.permission.INTERNET` permissions by default. You can remove the `com.google.android.gms.AD_ID` permission by adding a remove directive to your app's descriptor file if you need to make your app COPPA-compliant or if you don't target the Google Play Store.
 
 ```xml
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+<manifestAdditions>
+    <![CDATA[
+        <manifest>
+            <uses-permission android:name="com.google.android.gms.AD_ID" tools:node="remove" />
+        </manifest>
+    ]]>
+</manifestAdditions>
 ```
 
-#### <a id="gps-adid-permission"></a>Add permission to gather Google advertising ID
-
-If you are targeting Android 12 and above (API level 31), you need to add the `com.google.android.gms.AD_ID` permission to read the device's advertising ID. Add the following line to your Android manifest file to enable the permission.
-
-```xml
-<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
-```
-
-For more information, see [Google's `AdvertisingIdClient.Info` documentation](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid).
+See Google's [AdvertisingIdClient.Info](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid) documentation for more information about this permission.
 
 ### <a id="google-play-services"></a>Google Play Services
 
-Since 1st August 2014, all apps in the Google Play Store must use the [Google Advertising ID][google_ad_id] to uniquely identify devices. To allow the Adjust SDK to use the Google Advertising ID, you must integrate the [Google Play Services][google-play-services].
+To allow the Adjust SDK to use the Google Advertising ID, you must integrate the [Google Play Services](https://developers.google.com/android/guides/setup).
 
-In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other way) you can use `Google Play Services ANE`, which is provided by Adjust and is built to fit the needs of our SDK. You can find our Google Play Services ANE as part of release on our [releases page][releases].
+In case you don't already have Google Play Services added to your app (as part of some other ANE or in some other way) you can use `Google Play Services ANE`, which is provided by Adjust and is built to fit the needs of our SDK. You can find our Google Play Services ANE as part of release on our [releases page](https://github.com/adjust/adjust_air_sdk/releases).
 
-You will need to import the downloaded ANE into your app, and the Google Play Services needed by our SDK will be added. After this, add the Google Play Services extension to app descriptor file:
+You will need to import the downloaded ANE into your app, and the Google Play Services needed by our SDK will be added. After this, add the Google Play Services extension to app's descriptor file:
 
 ```xml
 <extensions>
@@ -175,26 +152,29 @@ You will need to import the downloaded ANE into your app, and the Google Play Se
 </extensions>
 ```
 
-After integrating Google Play Services into your app, add the following lines to your app's Android manifest file as part of 
-the `<manifest>` tag body:
+After integrating Google Play Services into your app, add the following lines to your app's Android manifest file as part of the `<manifest>` tag body:
 
 ```xml
-<meta-data
-    android:name="com.google.android.gms.version"
-    android:value="@integer/google_play_services_version"/>
+<manifestAdditions>
+    <![CDATA[
+        <manifest>
+            <application>
+                <meta-data
+                    android:name="com.google.android.gms.version"
+                    android:value="@integer/google_play_services_version"/>
+            </application>
+        </manifest>
+    ]]>
+</manifestAdditions>
 ```
 
 ### <a id="install-referrer"></a>Install referrer
 
-In order to correctly attribute an install of your Android app to its source, Adjust needs information about the **install referrer**. This can be obtained by using the **Google Install Referrer API** or by catching the **Google Play Store intent** with a broadcast receiver.
+In order to correctly attribute an install of your Android app to its source, Adjust needs information about the **install referrer**.
 
-**Important**: The Google Install Referrer API is newly introduced by Google with the express purpose of providing a more reliable and secure way of obtaining install referrer information and to aid attribution providers in the fight against click injection. It is **strongly advised** that you support this in your application. The Google Play Store intent is a less secure way of obtaining install referrer information. It will continue to exist in parallel with the new Google Install Referrer API temporarily, but it is set to be deprecated in future.
+In case you haven't added native install referrer dependency to your app (as part of some other ANE or in some other way), Adjust provides an install referrer ANE which is built to fit the needs of our SDK. You can find our Google install referrer ANE as part of the release on our [releases page](https://github.com/adjust/adjust_air_sdk/releases).
 
-#### <a id="gpr-api"></a>Google Install Referrer API
-
-Adjust provides an Install Referrer ANE which is built to fit the needs of our SDK. You can find our Google Install Referrer API as part of the release on our [releases page][releases].
-
-You will need to import the downloaded ANE into your app. After that, add the ANE extension to your app's XML descriptor file:
+You will need to import the downloaded ANE into your app. After that, add the ANE extension to your app's descriptor file:
 
 ```xml
 <extensions>
@@ -220,55 +200,6 @@ Also, make sure that you have added Android permission to allow the install refe
     </manifestAdditions> 
 </android>
 ```
-
-#### <a id="gps-intent"></a>Google Play Store intent
-
-The Google Play Store `INSTALL_REFERRER` intent should be captured with a broadcast receiver. Please, make sure to add Adjust broadcast receiver to your Android app's manifest file:
-
-```xml
-<android>
-    <manifestAdditions>
-        <![CDATA[ 
-        <-- ... -->
-            <receiver android:name="com.adjust.sdk.AdjustReferrerReceiver" 
-                      android:permission="android.permission.INSTALL_PACKAGES"
-                      android:exported="true" >
-                <intent-filter>
-                    <action android:name="com.android.vending.INSTALL_REFERRER" />
-                </intent-filter>
-            </receiver>
-        <-- ... --. 
-        ]]> 
-    </manifestAdditions> 
-</android>
-```
-
-Also, in case you are using your custom broadcast receiver, please make a call to the Adjust broadcast receiver as described in [here][custom-broadcast-receiver].
-
-#### <a id="huawei-referrer-api"></a>Huawei Referrer API
-
-As of v4.21.0, the Adjust SDK supports install tracking on Huawei devices with Huawei App Gallery version 10.4 and higher. No additional integration steps are needed to start using the Huawei Referrer API.
-
-### <a id="sdk-proguard"></a>Proguard settings
-
-If you are using Proguard, add these lines to your Proguard file:
-
-```
--keep class com.adjust.sdk.** { *; }
--keep class com.google.android.gms.common.ConnectionResult {
-    int SUCCESS;
-}
--keep class com.google.android.gms.ads.identifier.AdvertisingIdClient {
-    com.google.android.gms.ads.identifier.AdvertisingIdClient$Info getAdvertisingIdInfo(android.content.Context);
-}
--keep class com.google.android.gms.ads.identifier.AdvertisingIdClient$Info {
-    java.lang.String getId();
-    boolean isLimitAdTrackingEnabled();
-}
--keep public class com.android.installreferrer.** { *; }
-```
-
-If you are **not targeting the Google Play Store**, you can remove the `com.google.android.gms` rules.
 
 ## <a id="additional-features"></a>Additional features
 
@@ -297,7 +228,7 @@ The SDK has a built-in mechanism to receive an updated status after a user respo
 
 **Note**: This feature exists only in iOS platform.
 
-Adjust SDK offers the possibility to use it for requesting user authorization in accessing their app-related data. Adjust SDK has a wrapper built on top of the [requestTrackingAuthorizationWithCompletionHandler:](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorizationwith?language=objc) method, where you can as well define the callback method to get information about a user's choice. Also, with the use of this wrapper, as soon as a user responds to the pop-up dialog, it's then communicated back using your callback method. The SDK will also inform the backend of the user's choice. The `NSUInteger` value will be delivered via your callback method with the following meaning:
+Adjust SDK offers the possibility to use it for requesting user authorization in accessing their app-related data. Adjust SDK has a wrapper built on top of the [requestTrackingAuthorizationWithCompletionHandler:](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorizationwith?language=objc) method, where you can as well define the callback method to get information about a user's choice. Also, with the use of this wrapper, as soon as a user responds to the pop-up dialog, it's then communicated back using your callback method. The SDK will also inform the backend of the user's choice. The `int` value will be delivered via your callback method with the following meaning:
 
 - 0: `ATTrackingManagerAuthorizationStatusNotDetermined`
 - 1: `ATTrackingManagerAuthorizationStatusRestricted`
@@ -307,47 +238,26 @@ Adjust SDK offers the possibility to use it for requesting user authorization in
 To use this wrapper, you can call it as such:
 
 ```actionscript
-import com.adjust.sdk.Adjust;
-import com.adjust.sdk.AdjustConfig;
-import com.adjust.sdk.Environment;
-import com.adjust.sdk.LogLevel;
-
-public class Example extends Sprite {
-    public function Example() {
-      var appToken:String = "{YourAppToken}";
-      var environment:String = Environment.SANDBOX;
-      
-        var adjustConfig:AdjustConfig = new AdjustConfig(appToken, environment);
-        adjustConfig.setLogLevel(LogLevel.VERBOSE);
-
-        Adjust.start(adjustConfig);
-
-        Adjust.requestTrackingAuthorizationWithCompletionHandler(authorizationStatusDelegate);
-    }
-    
-    // ...
-    
-    private static function authorizationStatusDelegate(status:String):void {
-        trace("Status = " + status);
-    }
-}
+Adjust.requestAppTrackingAuthorization(function (status:int): void {
+    trace("Authorization status = " + status.toString());
+});
 ```
 
 ### <a id="ad-skadn-framework"></a>SKAdNetwork framework
 
 **Note**: This feature exists only in iOS platform.
 
-If you have implemented the Adjust iOS SDK v4.22.0 or above and your app is running on iOS 14 and above, the communication with SKAdNetwork will be set on by default, although you can choose to turn it off. When set on, Adjust automatically registers for SKAdNetwork attribution when the SDK is initialized. If events are set up in the Adjust dashboard to receive conversion values, the Adjust backend sends the conversion value data to the SDK. The SDK then sets the conversion value. After Adjust receives the SKAdNetwork callback data, it is then displayed in the dashboard.
+We automatically register for SKAdNetwork attribution when the SDK is initialized. If events are set up in the Adjust dashboard to receive conversion values, the Adjust backend sends the conversion value data to the SDK. The SDK then sets the conversion value. After Adjust receives the SKAdNetwork callback data, it is then displayed in the dashboard.
 
 In case you don't want the Adjust SDK to automatically communicate with SKAdNetwork, you can disable that by calling the following method on configuration object:
 
 ```actionscript
-adjustConfig.deactivateSKAdNetworkHandling();
+adjustConfig.disableSkanAttribution();
 ```
 
 ### <a id="event-tracking"></a>Event tracking
 
-You can tell Adjust about every event you want to track. Suppose you want to track every tap on a button. Simply create a new event token in your [dashboard]. Let's say that event token is `abc123`. You can add the following line in your button’s click handler method to track the click:
+You can tell Adjust about every event you want to track. Let's say that event token is `abc123`. You can add the following line in your button’s click handler method to track the click:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -356,34 +266,34 @@ Adjust.trackEvent(adjustEvent);
 
 ### <a id="revenue-tracking"></a>Revenue tracking
 
-If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track those revenues with events. Let's say a tap is worth €0.01. You could track the revenue event like this:
+If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track those revenues with events. Let's say a tap is worth €1.50. You could track the revenue event like this:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
-adjustEvent.setRevenue(0.01, "EUR");
+adjustEvent.setRevenue(1.50, "EUR");
 Adjust.trackEvent(adjustEvent);
 ```
 
-When you set a currency token, Adjust will automatically convert the incoming revenue into a reporting revenue of your choice. Read more about [currency conversion here][currency-conversion].
+### <a id="revenue-deduplication"></a>Event deduplication
 
-### <a id="revenue-deduplication"></a>Revenue deduplication
-
-You can also add an optional transaction ID to avoid tracking duplicate revenues. The last ten transaction IDs are remembered, and revenue events with duplicate transaction IDs are skipped. This is especially useful for in-app purchase tracking. See the example below.
-
-If you want to track in-app purchases, please make sure to call `trackEvent` only if the transaction is finished and the item is purchased. That way you can avoid tracking revenue that is not actually being generated.
+You can also add an optional deduplication ID to avoid tracking duplicate events. The last ten transaction IDs are remembered by default, and events with duplicate deduplication IDs are skipped. If you would like to make the Adjust SDK to remember more than last 10 transaction IDs, you can do that by passing the new limit to `setEventDeduplicationIdsMaxSize` method of the `AdjustConfig` instance:
 
 ```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
+adjustConfig.setEventDeduplicationIdsMaxSize(20);
+Adjust.initSdk(adjustConfig);
+
+// ...
+
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
-adjustEvent.setRevenue(0.01, "EUR");
-adjustEvent.setTransactionId("transactionId");
+adjustEvent.setDeduplicationId("deduplicationId");
 Adjust.trackEvent(adjustEvent);
 ```
-
-**Note**: Transaction ID is the iOS term; the unique identifier for successfully completed Android in-app purchases is named **Order ID**.
 
 ### <a id="callback-parameters"></a>Callback parameters
 
-You can also register a callback URL for that event in your [dashboard][dashboard], and we will send a GET request to that URL whenever the event gets tracked. In that case, you can also put some key-value pairs in an object and pass it to the `trackEvent` method. We will then append these named parameters to your callback URL.
+You can also register a callback URL for that event in your [dashboard](https://dash.adjust.com), and we will send a GET request to that URL whenever the event gets tracked. In that case, you can also put some key-value pairs in an object and pass it to the `trackEvent` method. We will then append these named parameters to your callback URL.
 
 For example, suppose you have registered the URL `http://www.adjust.com/callback` for your event with event token `abc123` and execute the following lines:
 
@@ -400,9 +310,7 @@ In this case we would track the event and send a request to:
 http://www.adjust.com/callback?key=value&foo=bar
 ```
 
-It should be mentioned that we support a variety of placeholders like `{idfa}` for iOS or `{gps_adid}` for Android that can be used as parameter values.  In the resulting callback, the `{idfa}` placeholder would be replaced with the ID for Advertisers of the current device for iOS and the `{gps_adid}` would be replaced with the Google Advertising ID of the current device for Android. Also note that we don't store any of your custom parameters, but only append them to your callbacks. If you haven't registered a callback for an event, these parameters won't even be read.
-
-You can read more about using URL callbacks, including a full list of available values, in our [callbacks guide][callbacks-guide].
+It should be mentioned that we support a variety of placeholders like `{idfa}` for iOS or `{gps_adid}` for Android that can be used as parameter values. In the resulting callback, the `{idfa}` placeholder would be replaced with the ID for Advertisers of the current device for iOS and the `{gps_adid}` would be replaced with the Google Advertising ID of the current device for Android. Also note that we don't store any of your custom parameters, but only append them to your callbacks. If you haven't registered a callback for an event, these parameters won't even be read.
 
 ### <a id="partner-parameters"></a>Partner parameters
 
@@ -417,8 +325,6 @@ adjustEvent.addPartnerParameter("foo", "bar");
 Adjust.trackEvent(adjustEvent);
 ```
 
-You can read more about special partners and these integrations in our [guide to special partners][special-partners].
-
 ### <a id="callback-id"></a>Callback identifier
 
 You can also add custom string identifier to each event you want to track. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully tracked or not. You can set this identifier by calling the `setCallbackId` method on your `AdjustEvent` instance:
@@ -429,75 +335,57 @@ adjustEvent.setCallbackId("Your-Custom-Id");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="session-parameters"></a>Session parameters
+### <a id="global-parameters"></a>Global parameters
 
-Some parameters are saved to be sent in every event and session of the Adjust SDK. Once you have added any of these parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice, there will be no effect.
+Some parameters are saved to be sent in every session, event, ad revenue and subscription request of the Adjust SDK. Once you have added any of these parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice, there will be no effect. These global parameters can be set before the Adjust SDK is launched to make sure they are sent even on install.
 
-These session parameters can be called before the Adjust SDK is launched to make sure they are sent even on install. If you need to send them with an install, but can only obtain the needed values after launch, it's possible to [delay](#delay-start) the first launch of the Adjust SDK to allow this behaviour.
+### <a id="global-callback-parameters"></a>Global callback parameters
 
-### <a id="session-callback-parameters"></a>Session callback parameters
-
-The same callback parameters that are registered for [events](#callback-parameters) can be also saved to be sent in every event or session of the Adjust SDK.
-
-The session callback parameters have a similar interface to the event callback parameters. Instead of adding the key and its value to an event, it's added through a call to method `addSessionCallbackParameter` of the `Adjust` instance:
+The global callback parameters have a similar interface to the event callback parameters. Instead of adding the key and its value to an event, it's added through a call to method `addGlobalCallbackParameter` of the `Adjust` instance:
 
 ```actionscript
-Adjust.addSessionCallbackParameter("foo", "bar");
+Adjust.addGlobalCallbackParameter("foo", "bar");
 ```
 
-The session callback parameters will be merged with the callback parameters added to an event. The callback parameters added to an event take precedence over the session callback parameters. Meaning that, when adding a callback parameter to an event with the same key to one added from the session, the value that prevails is the callback parameter added to the event.
+The global callback parameters will be merged with the callback parameters added to an event / ad revenue / subscription. The callback parameters added to any of these packages take precedence over the global callback parameters. Meaning that, when adding a callback parameter to any of these packages with the same key to one added globaly, the value that prevails is the callback parameter added any of these particular packages.
 
-It's possible to remove a specific session callback parameter by passing the desired key to the method `removeSessionCallbackParameter` of the `Adjust` instance.
+It's possible to remove a specific global callback parameter by passing the desired key to the method `removeGlobalCallbackParameter` of the `Adjust` instance.
 
 ```actionscript
-Adjust.removeSessionCallbackParameter("foo");
+Adjust.removeGlobalCallbackParameter("foo");
 ```
 
-If you wish to remove all keys and values from the session callback parameters, you can reset it with the method `resetSessionCallbackParameters` of the `Adjust` instance.
+If you wish to remove all keys and values from the global callback parameters, you can reset it with the method `removeGlobalCallbackParameters` of the `Adjust` instance.
 
 ```actionscript
-Adjust.resetSessionCallbackParameters();
+Adjust.removeGlobalCallbackParameters();
 ```
 
-### <a id="session-partner-parameters"></a>Session partner parameters
+### <a id="global-partner-parameters"></a>Global partner parameters
 
-In the same way that there are [session callback parameters](#session-callback-parameters) that are sent for every event or session of the Adjust SDK, there are also session partner parameters.
+In the same way that there are [global callback parameters](#session-callback-parameters) that are sent for every event or session of the Adjust SDK, there are also global partner parameters.
 
-These will be transmitted to network partners, for the integrations that have been activated in your Adjust [dashboard].
+These will be transmitted to network partners, for the integrations that have been activated in your Adjust [dashboard](https://dash.adjust.com).
 
-The session partner parameters have a similar interface to the event partner parameters. Instead of adding the key and its value to an event, it's added through a call to method `addSessionPartnerParameter` of the `Adjust` instance:
+The global partner parameters have a similar interface to the event / ad revenue / subscription partner parameters. Instead of adding the key and its value to an event, it's added through a call to method `addGlobalPartnerParameter` of the `Adjust` instance:
 
 ```actionscript
-Adjust.addSessionPartnerParameter("foo", "bar");
+Adjust.addGlobalPartnerParameter("foo", "bar");
 ```
 
-The session partner parameters will be merged with the partner parameters added to an event. The partner parameters added to an event take precedence over the session partner parameters. Meaning that, when adding a partner parameter to an event with the same key to one added from the session, the value that prevails is the partner parameter added to the event.
+The global partner parameters will be merged with the partner parameters added to an event / ad revenue / subscription. The partner parameters added to any of thes packages take precedence over the global partner parameters. Meaning that, when adding a partner parameter to any of these packages with the same key to one added globally, the value that prevails is the partner parameter added to any of these particular packages.
 
-It's possible to remove a specific session partner parameter by passing the desired key to the method `removeSessionPartnerParameter` of the `Adjust` instance.
+It's possible to remove a specific global partner parameter by passing the desired key to the method `removeGlobalPartnerParameter` of the `Adjust` instance.
 
 ```actionscript
-Adjust.removeSessionPartnerParameter("foo");
+Adjust.removeGlobalPartnerParameter("foo");
 ```
 
-If you wish to remove all keys and values from the session partner parameters, you can reset them with the method `resetSessionPartnerParameters` of the `Adjust` instance.
+If you wish to remove all keys and values from the global partner parameters, you can reset them with the method `removeGlobalPartnerParameters` of the `Adjust` instance.
 
 ```actionscript
-Adjust.resetSessionPartnerParameters();
+Adjust.removeGlobalPartnerParameters();
 ```
-
-### <a id="delay-start"></a>Delay start
-
-Delaying the start of the Adjust SDK allows your app some time to obtain session parameters, such as unique identifiers, to be sent on install.
-
-Set the initial delay time in seconds with the `setDelayStart` field of the `AdjustConfig` instance:
-
-```actionscript
-config.setDelayStart(5.5);
-```
-
-In this case, this will make the Adjust SDK not send the initial install session, or any event created, for 5.5 seconds. After this time period, or if you call the method `sendFirstPackages()` of the `Adjust` instance in the meantime, every session parameter will be added to the delayed install session and events, and the Adjust SDK will resume as usual.
-
-**The maximum delay start time of the Adjust SDK is 10 seconds**.
 
 ### <a id="attribution-callback"></a>Attribution callback
 
@@ -1096,12 +984,6 @@ private static function onInvoke(event:InvokeEvent):void {
 }
 ```
 
-
-[dashboard]:    http://adjust.com
-[adjust.com]:   http://adjust.com
-
-[releases]:             https://github.com/adjust/adjust_air_sdk/releases
-[example-app]:          example
 [google-ad-id]:         https://developer.android.com/google/play-services/id.html
 [currency-conversion]:  https://docs.adjust.com/en/event-tracking/#tracking-purchases-in-different-currencies
 [flash-builder]:        https://github.com/adjust/adobe_air_sdk/blob/master/doc/flash_builder.md
@@ -1129,7 +1011,7 @@ private static function onInvoke(event:InvokeEvent):void {
 
 The Adjust SDK is licensed under the MIT License.
 
-Copyright (c) 2012-2019 Adjust GmbH, http://www.adjust.com
+Copyright (c) 2012-Present Adjust GmbH, http://www.adjust.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
