@@ -722,17 +722,19 @@ package com.adjust.sdk {
                 skanUpdatedData["error"] = error;
                 skanUpdatedCallback(skanUpdatedData);
             } else if (statusEvent.code == "adjust_getAppTrackingStatus") {
-                var authorizationStatus:String = statusEvent.level;
-                if (authorizationStatus == "ADJ__NULL") {
-                    authorizationStatus = null;
+                var getAuthorizationStatus:int = -1;
+                var strAuthorizationStatus:String = statusEvent.level;
+                if (strAuthorizationStatus != "ADJ__NULL") {
+                    getAuthorizationStatus = parseInt(strAuthorizationStatus);
                 }
-                getAppTrackingStatusCallback(authorizationStatus);
+                getAppTrackingStatusCallback(getAuthorizationStatus);
             } else if (statusEvent.code == "adjust_requestAppTrackingAuthorization") {
-                authorizationStatus = statusEvent.level;
-                if (authorizationStatus == "ADJ__NULL") {
-                    authorizationStatus = null;
+                var requestAuthorizationStatus:int = -1;
+                strAuthorizationStatus = statusEvent.level;
+                if (strAuthorizationStatus != "ADJ__NULL") {
+                    requestAuthorizationStatus = parseInt(strAuthorizationStatus);
                 }
-                requestAppTrackingAuthorizationCallback(authorizationStatus);
+                requestAppTrackingAuthorizationCallback(requestAuthorizationStatus);
             } else if (statusEvent.code == "adjust_updateSkanConversionValue") {
                 error = statusEvent.level;
                 if (error == "ADJ__NULL") {

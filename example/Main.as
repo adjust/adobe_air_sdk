@@ -214,11 +214,11 @@ package {
             Adjust.getIdfv(function (idfv:String): void {
                 trace("IDFV = " + idfv);
             });
-            Adjust.getAppTrackingStatus(function (status:String): void {
-                trace("Authorization status = " + status);
+            Adjust.getAppTrackingStatus(function (status:int): void {
+                trace("Authorization status = " + status.toString());
             });
-            Adjust.requestAppTrackingAuthorization(function (status:String): void {
-                trace("Authorization status = " + status);
+            Adjust.requestAppTrackingAuthorization(function (status:int): void {
+                trace("Authorization status = " + status.toString());
             });
             Adjust.updateSkanConversionValue(6, "low", false, function (error:String): void {
                 trace("Error = " + error);
