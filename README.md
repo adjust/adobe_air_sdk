@@ -16,11 +16,19 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
    * [SDK signature](#sdk-signature)
 * [Additional features](#additional-features)
    * [Event tracking](#event-tracking)
-      * [Revenue tracking](#revenue-tracking)
+      * [Event revenue](#event-revenue)
       * [Event deduplication](#event-deduplication)
-      * [Callback parameters](#callback-parameters)
-      * [Partner parameters](#partner-parameters)
-      * [Callback identifier](#callback-id)
+      * [Event callback identifier](#event-callback-id)
+      * [Event callback parameters](#event-callback-parameters)
+      * [Event partner parameters](#event-partner-parameters)
+   * [Ad revenue tracking](#adrevenue-tracking)
+      * [Ad revenue amount](#adrevenue-amount)
+      * [Ad revenue network](#adrevenue-network)
+      * [Ad revenue unit](#adrevenue-unit)
+      * [Ad revenue placement](#adrevenue-placement)
+      * [Ad impressions count](#adrevenue-impressions)
+      * [Ad revenue callback parameters](#adrevenue-callback-parameters)
+      * [Ad revenue partner parameters](#adrevenue-partner-parameters)
    * [Global parameters](#global-parameters)
       * [Global callback parameters](#global-callback-parameters)
       * [Global partner parameters](#global-partner-parameters)
@@ -44,6 +52,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
    * [Background tracking](#background-tracking)
    * [Device IDs](#device-ids)
       * [iOS advertising identifier](#idfa)
+      * [iOS identifier for vendors](#idfv)
       * [Google Play Services advertising identifier](#gps-adid)
       * [Amazon advertising identifier](#fire-adid)
       * [Adjust device identifier](#adid)
@@ -227,7 +236,7 @@ var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="revenue-tracking"></a>Revenue tracking
+### <a id="event-revenue-tracking"></a>Event revenue
 
 If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track those revenues with events. Let's say a tap is worth €1.50. You could track the revenue event like this:
 
@@ -237,7 +246,7 @@ adjustEvent.setRevenue(1.50, "EUR");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="revenue-deduplication"></a>Event deduplication
+### <a id="event-deduplication"></a>Event deduplication
 
 You can also add an optional deduplication ID to avoid tracking duplicate events. The last ten transaction IDs are remembered by default, and events with duplicate deduplication IDs are skipped. If you would like to make the Adjust SDK to remember more than last 10 transaction IDs, you can do that by passing the new limit to `setEventDeduplicationIdsMaxSize` method of the `AdjustConfig` instance:
 
@@ -254,7 +263,17 @@ adjustEvent.setDeduplicationId("deduplicationId");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="callback-parameters"></a>Callback parameters
+### <a id="event-callback-id"></a>Event callback identifier
+
+You can also add custom string identifier to each event you want to track. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully tracked or not. You can set this identifier by calling the `setCallbackId` method on your `AdjustEvent` instance:
+
+```actionscript
+var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
+adjustEvent.setCallbackId("Your-Custom-Id");
+Adjust.trackEvent(adjustEvent);
+```
+
+### <a id="event-callback-parameters"></a>Event callback parameters
 
 You can also register a callback URL for that event in your [dashboard](https://dash.adjust.com), and we will send a GET request to that URL whenever the event gets tracked. In that case, you can also put some key-value pairs in an object and pass it to the `trackEvent` method. We will then append these named parameters to your callback URL.
 
@@ -275,7 +294,7 @@ http://www.adjust.com/callback?key=value&foo=bar
 
 It should be mentioned that we support a variety of placeholders like `{idfa}` for iOS or `{gps_adid}` for Android that can be used as parameter values. In the resulting callback, the `{idfa}` placeholder would be replaced with the ID for Advertisers of the current device for iOS and the `{gps_adid}` would be replaced with the Google Advertising ID of the current device for Android. Also note that we don't store any of your custom parameters, but only append them to your callbacks. If you haven't registered a callback for an event, these parameters won't even be read.
 
-### <a id="partner-parameters"></a>Partner parameters
+### <a id="event-partner-parameters"></a>Event partner parameters
 
 You can also add parameters for integrations that have been activated in your Adjust dashboard that can be transmitted to network partners.
 
@@ -288,14 +307,108 @@ adjustEvent.addPartnerParameter("foo", "bar");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="callback-id"></a>Callback identifier
+### <a id="adrevenue-tracking"></a>Ad revenue tracking
 
-You can also add custom string identifier to each event you want to track. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully tracked or not. You can set this identifier by calling the `setCallbackId` method on your `AdjustEvent` instance:
+You can record ad revenue for [supported network partners](https://help.adjust.com/en/article/ad-revenue) using the Adjust SDK.
+
+> Important: You need to perform some extra setup steps in your Adjust dashboard to measure ad revenue. Contact your Technical Account Manager or support@adjust.com to get started.
+
+To send ad revenue information with the Adjust SDK, you need to instantiate an `AdjustAdRevenue` object. This object contains variables that are sent to Adjust when ad revenue is recorded in your app.
+
+To instantiate an ad revenue object, create a new `AdjustAdRevenue` instance and pass the following parameters:
+
+- source (`String`): The source of the ad revenue. See the table below for available sources.
+
+| Argument                     | Ad revenue Source        |
+|------------------------------|--------------------------|
+| `"applovin_max_sdk"`         | AppLovin MAX            |
+| `"admob_sdk"`                | AdMob                   |
+| `"ironsource_sdk"`           | ironSource              |
+| `"admost_sdk"`               | AdMost                  |
+| `"unity_sdk"`                | Unity                   |
+| `"helium_chartboost_sdk"`    | Helium Chartboost       |
+| `"adx_sdk"`                  | Ad(X)                   |
+| `"tradplus_sdk"`             | TradPlus                |
+| `"topon_sdk"`                | TopOn                   |
+| `"publisher_sdk"`            | Generic source          |
+
+### <a id="adrevenue-amount"></a>Ad revenue amount
+
+To send the ad revenue amount, call the `setRevenue` method of your `AdjustAdRevenue` instance and pass the following arguments:
+
+- revenue (`Number`): The amount of revenue
+- currency (`String`): The 3 character [ISO 4217 code](https://www.iban.com/currency-codes) of your reporting currency
+
+> See also: Check the [guide to recording purchases in different currencies](https://help.adjust.com/en/article/currency-conversion) for more information.
 
 ```actionscript
-var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
-adjustEvent.setCallbackId("Your-Custom-Id");
-Adjust.trackEvent(adjustEvent);
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setRevenue(1.0, "EUR");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-network"></a>Ad revenue network
+
+To record the network associated with the ad revenue, call `setAdRevenueNetwork` method of your `AdjustAdRevenue` instance with the network name.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdRevenueNetwork("network1");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-unit"></a>Ad revenue unit
+
+To send the ad revenue unit, call `setAdRevenueUnit` method of your `AdjustAdRevenue` instance with the unit value.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdRevenueUnit("unit1");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-placement"></a>Ad revenue placement
+
+To send the ad revenue placement, call `setAdRevenuePlacement` method of your `AdjustAdRevenue` instance with the placement value.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdRevenuePlacement("banner");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-impressions"></a>Ad impressions count
+
+To send the number of recorded ad impressions, call `setAdImpressionsCount` method of your `AdjustAdRevenue` instance with the number of ad impressions.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdImpressionsCount(6);
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-callback-parameters"></a>Ad revenue callback parameters
+
+Similar to how one can set [event callback parameters](#event-callback-parameters), the same can be done for ad revenue:
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setRevenue(1.0, "EUR");
+adjustAdRevenue.setCalbackParameter("key", "value");
+adjustAdRevenue.setCalbackParameter("foo", "bar");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-partner-parameters"></a>Ad revenue partner parameters
+
+Similar to how one can set [event partner parameters](#event-partner-parameters), the same can be done for ad revenue:
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setRevenue(1.0, "EUR");
+adjustAdRevenue.addPartnerParameter("key", "value");
+adjustAdRevenue.addPartnerParameter("foo", "bar");
+Adjust.trackAdRevenue(adjustAdRevenue);
 ```
 
 ### <a id="global-parameters"></a>Global parameters
@@ -835,7 +948,7 @@ If nothing is set, sending in background is **disabled by default**.
 
 ### <a id="device-ids"></a>Device IDs
 
-Certain services (such as Google Analytics) require you to coordinate Device and Client IDs in order to prevent duplicate reporting.
+The Adjust SDK contains helper methods that return device information. Use these methods to add details to your callbacks and improve your reporting.
 
 ### <a id="idfa"></a>IDFA
 
@@ -844,6 +957,16 @@ To obtain the IDFA, call the function `getIdfa` of the `Adjust` class:
 ```as
 Adjust.getIdfa(function (idfa:String): void {
     trace("IDFA = " + idfa);
+});
+```
+
+### <a id="idfv"></a>IDFV
+
+To obtain the IDFV, call the function `getIdfv` of the `Adjust` class:
+
+```as
+Adjust.getIdfv(function (idfv:String): void {
+    trace("IDFV = " + idfv);
 });
 ```
 
