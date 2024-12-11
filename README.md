@@ -13,10 +13,8 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
    * [Android permissions](#android-permissions)
    * [Google Play Services](#google-play-services)
    * [Install referrer](#install-referrer)
+   * [SDK signature](#sdk-signature)
 * [Additional features](#additional-features)
-   * [AppTrackingTransparency framework](#ad-att-framework)
-      * [App-tracking authorisation wrapper](#ad-ata-wrapper)
-   * [SKAdNetwork framework](#ad-skadn-framework)
    * [Event tracking](#event-tracking)
       * [Revenue tracking](#revenue-tracking)
       * [Event deduplication](#event-deduplication)
@@ -30,13 +28,25 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
    * [Session and event callbacks](#session-event-callbacks)
    * [Disable tracking](#disable-tracking)
    * [Offline mode](#offline-mode)
-   * [GDPR right to be forgotten](#gdpr-forget-me)
+   * [Privacy features](#privacy-features)
+      * [GDPR right to be forgotten](#gdpr-forget-me)
+      * [Third party sharing](#third-party-sharing)
+      * [Disable third-party sharing for specific users](#disable-third-party-sharing)
+      * [Enable or re-enable third-party sharing for specific users](#enable-third-party-sharing)
+      * [Send granular options](#send-granular-options)
+      * [Manage Facebook Limited Data Use](#facebook-limited-data-use)
+      * [Provide consent data to Google (Digital Markets Act compliance)](#digital-markets-act)
+      * [Update partner sharing settings](#partner-sharing-settings)
+      * [Consent measurement for specific users](#measurement-consent)
+      * [COPPA compliance](#coppa-compliance)
+      * [Play Store kids apps](#play-store-kids-apps)
+      * [URL strategies](#url-strategies)
    * [Background tracking](#background-tracking)
    * [Device IDs](#device-ids)
-      * [iOS advertising identifier](#di-idfa)
-      * [Google Play Services advertising identifier](#di-gps-adid)
-      * [Amazon advertising identifier](#di-fire-adid)
-      * [Adjust device identifier](#di-adid)
+      * [iOS advertising identifier](#idfa)
+      * [Google Play Services advertising identifier](#gps-adid)
+      * [Amazon advertising identifier](#fire-adid)
+      * [Adjust device identifier](#adid)
    * [Set external device ID](#set-external-device-id)
    * [User attribution](#user-attribution)
    * [Push token](#push-token)
@@ -47,11 +57,14 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
       * [Deep linking setup for Android](#deeplinking-android)
       * [Deep linking setup for iOS](#deeplinking-ios)
       * [Reattribution via deep links](#deeplinking-reattribution)
+   * [AppTrackingTransparency framework](#att-framework)
+      * [App-tracking authorization wrapper](#att-wrapper)
+   * [SKAdNetwork framework](#skan-framework)
 * [License](#license)
 
 ## <a id="example-app"></a>Example app
 
-There is an example app inside the [`example` directory](./example). You can use the example app to see how the Adjust SDK can be integrated.
+An example app is included in the [`example` directory](./example). You can use the example app to see how the Adjust SDK can be integrated.
 
 ## <a id="basic-integration"></a>Basic integration
 
@@ -67,9 +80,9 @@ Add the downloaded Adjust SDK ANE file to your app. After this, add the Adjust S
 
 ```xml
 <extensions>
-    <!-- ... --->
+    <!-- ... -->
     <extensionID>com.adjust.sdk</extensionID>
-    <!-- ... --->
+    <!-- ... -->
 </extensions>
 ```
 
@@ -197,59 +210,13 @@ Also, make sure that you have added Android permission to allow the install refe
 </android>
 ```
 
+### <a id="sdk-signature"></a>SDK signature
+
+If you want to use the SDK signature library to secure communications between the Adjust SDK and Adjust's servers, follow the instructions in the [SDK signature guide on the Adjust Help Center](https://help.adjust.com/en/article/sdk-signature).
+
 ## <a id="additional-features"></a>Additional features
 
 You can take advantage of the following features once the Adjust SDK is integrated into your project.
-
-### <a id="ad-att-framework"></a>AppTrackingTransparency framework
-
-**Note**: This feature exists only in iOS platform.
-
-For each package sent, the Adjust backend receives one of the following four (4) states of consent for access to app-related data that can be used for tracking the user or the device:
-
-- Authorized
-- Denied
-- Not Determined
-- Restricted
-
-After a device receives an authorization request to approve access to app-related data, which is used for user device tracking, the returned status will either be Authorized or Denied.
-
-Before a device receives an authorization request for access to app-related data, which is used for tracking the user or device, the returned status will be Not Determined.
-
-If authorization to use app tracking data is restricted, the returned status will be Restricted.
-
-The SDK has a built-in mechanism to receive an updated status after a user responds to the pop-up dialog, in case you don't want to customize your displayed dialog pop-up. To conveniently and efficiently communicate the new state of consent to the backend, Adjust SDK offers a wrapper around the app tracking authorization method described in the following chapter, App-tracking authorization wrapper.
-
-### <a id="ad-ata-wrapper"></a>App-tracking authorisation wrapper
-
-**Note**: This feature exists only in iOS platform.
-
-Adjust SDK offers the possibility to use it for requesting user authorization in accessing their app-related data. Adjust SDK has a wrapper built on top of the [requestTrackingAuthorizationWithCompletionHandler:](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorizationwith?language=objc) method, where you can as well define the callback method to get information about a user's choice. Also, with the use of this wrapper, as soon as a user responds to the pop-up dialog, it's then communicated back using your callback method. The SDK will also inform the backend of the user's choice. The `int` value will be delivered via your callback method with the following meaning:
-
-- 0: `ATTrackingManagerAuthorizationStatusNotDetermined`
-- 1: `ATTrackingManagerAuthorizationStatusRestricted`
-- 2: `ATTrackingManagerAuthorizationStatusDenied`
-- 3: `ATTrackingManagerAuthorizationStatusAuthorized`
-
-To use this wrapper, you can call it as such:
-
-```actionscript
-Adjust.requestAppTrackingAuthorization(function (status:int): void {
-    trace("Authorization status = " + status.toString());
-});
-```
-
-### <a id="ad-skadn-framework"></a>SKAdNetwork framework
-
-**Note**: This feature exists only in iOS platform.
-
-We automatically register for SKAdNetwork attribution when the SDK is initialized. If events are set up in the Adjust dashboard to receive conversion values, the Adjust backend sends the conversion value data to the SDK. The SDK then sets the conversion value. After Adjust receives the SKAdNetwork callback data, it is then displayed in the dashboard.
-
-In case you don't want the Adjust SDK to automatically communicate with SKAdNetwork, you can disable that by calling the following method on configuration object:
-
-```actionscript
-adjustConfig.disableSkanAttribution();
-```
 
 ### <a id="event-tracking"></a>Event tracking
 
@@ -574,6 +541,10 @@ Conversely, you can deactivate the offline mode by calling `switchBackToOnlineMo
 
 Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
 
+### <a id="privacy-features"></a>Privacy features
+
+The Adjust SDK contains features that you can use to handle user privacy in your app.
+
 ### <a id="gdpr-forget-me"></a>GDPR right to be forgotten
 
 In accordance with article 17 of the EU's General Data Protection Regulation (GDPR), you can notify Adjust when a user has exercised their right to be forgotten. Calling the following method will instruct the Adjust SDK to communicate the user's choice to be forgotten to the Adjust backend:
@@ -583,6 +554,270 @@ Adjust.gdprForgetMe();
 ```
 
 Upon receiving this information, Adjust will erase the user's data and the Adjust SDK will stop tracking the user. No requests from this device will be sent to Adjust in the future.
+
+### <a id="third-party-sharing"></a>Third-party sharing for specific users
+
+You can notify Adjust when a user disables, enables, and re-enables data sharing with third-party partners.
+
+### <a id="disable-third-party-sharing"></a>Disable third-party sharing for specific users
+
+Call the following method to instruct the Adjust SDK to communicate the user's choice to disable data sharing to the Adjust backend:
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing("false");
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+Upon receiving this information, Adjust will block the sharing of that specific user's data to partners and the Adjust SDK will continue to work as usual.
+
+### <a id="enable-third-party-sharing">Enable or re-enable third-party sharing for specific users</a>
+
+Call the following method to instruct the Adjust SDK to communicate the user's choice to share data or change data sharing, to the Adjust backend:
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing("true");
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
+
+### <a id="send-granular-options">Send granular options</a>
+
+You can attach granular information when a user updates their third-party sharing preferences. Use this information to communicate more detail about a user’s decision. To do this, call the `addGranularOption` method like this:
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing(null);
+adjustThirdPartySharing.addGranularOption("partnerName", "key", "value");
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+The following partners are available:
+
+| Partner name              | String value                  |
+|---------------------------|-------------------------------|
+| AppleAds                  | apple_ads                     |
+| Facebook                  | facebook                      |
+| GoogleAds                 | adwords                       |
+| GoogleMarketingPlatform   | google_marketing_platform     |
+| Snapchat                  | snapchat                      |
+| Tencent                   | tencent                       |
+| TikTokSan                 | tiktok_san                    |
+| X (formerly Twitter)      | twitter                       |
+| YahooGemini               | yahoo_gemini                  |
+| YahooJapanSearch          | yahoo_japan_search            |
+
+### <a id="facebook-limited-data-use">Manage Facebook Limited Data Use</a>
+
+Facebook provides a feature called Limited Data Use (LDU) to comply with the California Consumer Privacy Act (CCPA). This feature enables you to notify Facebook when a California-based user is opted out of the sale of data. You can also use it if you want to opt all users out by default.
+
+You can update the Facebook LDU status by passing arguments to the `addGranularOption` method.
+
+| Parameter                        | Description                                                                 |
+|----------------------------------|-----------------------------------------------------------------------------|
+| `partner_name`                   | Use `facebook` to toggle LDU.                                              |
+| `data_processing_options_country`| The country in which the user is located.                                  |
+|                                  | - `0`: Request that Facebook use geolocation.                              |
+|                                  | - `1`: United States of America.                                           |
+| `data_processing_options_state`  | Notifies Facebook in which state the user is located.                      |
+|                                  | - `0`: Request that Facebook use geolocation.                              |
+|                                  | - `1000`: California.                                                      |
+|                                  | - `1001`: Colorado.                                                        |
+|                                  | - `1002`: Connecticut.                                                     |
+
+> Note: If you call this method with a 0 value for **either** `data_processing_options_country` or `data_processing_options_state`, the Adjust SDK passes **both** fields back as 0.
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing(null);
+adjustThirdPartySharing.addGranularOption("facebook", "data_processing_options_country", "1");
+adjustThirdPartySharing.addGranularOption("facebook", "data_processing_options_state", "1000");
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+### <a id="digital-markets-act">Provide consent data to Google (Digital Markets Act compliance)</a>
+
+> Important: Passing these options is required if you use Google Ads or Google Marketing Platform and have users located in the European Economic Area (EEA).
+
+To comply with the EU’s Digital Markets Act (DMA), Google Ads and the Google Marketing Platform require explicit consent to receive Adjust’s attribution requests to their APIs. To communicate this consent, you need to add the following granular options to your third party sharing instance for the partner `google_dma`.
+
+| Key                 | Value               | Description                                                                                                      |
+|---------------------|---------------------|------------------------------------------------------------------------------------------------------------------|
+| `eea`               | `1` (positive) \| `0` (negative) | Informs Adjust whether users installing the app are within the European Economic Area. Includes EU member states, Switzerland, Norway, Iceland, and Slovenia. |
+| `ad_personalization`| `1` (positive) \| `0` (negative) | Informs Adjust whether users consented with being served personalized ads via Google Ads and/or Google Marketing Platform. This parameter also informs the `npa` parameter reserved for Google Marketing Platform. |
+| `ad_user_data`      | `1` (positive) \| `0` (negative) | Informs Adjust whether users consented with their advertiser ID being leveraged for attribution purposes.         |
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing(null);
+adjustThirdPartySharing.addGranularOption("google_dma", "eea", "1");
+adjustThirdPartySharing.addGranularOption("google_dma", "ad_personalization", "1");
+adjustThirdPartySharing.addGranularOption("google_dma", "ad_user_data", "1");
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+### <a id="partner-sharing-settings">Update partner sharing settings</a>
+
+By default, Adjust shares all metrics with any partners you’ve configured in your app settings. You can use the Adjust SDK to update your third party sharing settings on a per-partner basis. To do this, call the `addPartnerSharingSetting` method with the following arguments:
+
+| Argument     | Data type | Description                                                |
+|--------------|-----------|------------------------------------------------------------|
+| `partnerName`| String    | The name of the partner. [Download the full list of available partners](https://assets.ctfassets.net/5s247im0esyq/5WvsJ7J7fGFUlfsFeGdalj/643651619adc3256acac7885ec60624d/modules.csv). |
+| `key`        | String    | The metric to share with the partner.                      |
+| `value`      | Boolean   | The user’s decision.                                       |
+
+You can use the `key` to specify which metrics you want to disable or re-enable. If you want to enable/disable sharing all metrics, you can use the `all` key. The full list of available metrics is available below:
+
+- `ad_revenue`
+- `all`
+- `attribution`
+- `update`
+- `att_update`
+- `cost_update`
+- `event`
+- `install`
+- `reattribution`
+- `reattribution_reinstall`
+- `reinstall`
+- `rejected_install`
+- `rejected_reattribution`
+- `sdk_click`
+- `sdk_info`
+- `session`
+- `subscription`
+- `uninstall`
+
+When you set a `false` value against a metric for a partner, Adjust stops sharing the metric with the partner.
+
+> Tip: If you only want to share a few metrics with a partner, you can pass the `all` key with a `false` value to disable all sharing and then pass individual metrics with a `true` value to limit what you share.
+
+Examples:
+
+If you want to stop sharing all metrics with a specific partner, pass the `all` key with a `false` value.
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing(null);
+adjustThirdPartySharing.addPartnerSharingSetting("PartnerA", "all", false);
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+To re-enable sharing, pass the `all` key with a `true` value.
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing(null);
+adjustThirdPartySharing.addPartnerSharingSetting("PartnerA", "all", true);
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+You can stop or start sharing specific metrics by calling the `addPartnerSharingSetting` method multiple times with different keys. For example, if you only want to share event information with a partner, you can pass:
+
+- `all` with a `false` value to disable sharing all information
+- `event` with a `true` value to enable event sharing
+
+> Note: Specific keys always take priority over `all`. If you pass `all` with other keys, the individual key values override the `all` setting.
+
+```actionscript
+var adjustThirdPartySharing:AdjustThirdPartySharing = new AdjustThirdPartySharing(null);
+adjustThirdPartySharing.addPartnerSharingSetting("PartnerA", "all", false);
+adjustThirdPartySharing.addPartnerSharingSetting("PartnerA", "event", true);
+Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+```
+
+### <a id="measurement-consent"></a>Consent measurement for specific users
+
+If you’re using [Data Privacy settings](https://help.adjust.com/en/article/manage-data-collection-and-retention) in your Adjust dashboard, you need to set up the Adjust SDK to work with them. This includes settings such as consent expiry period and user data retention period.
+
+To toggle this feature, call the `trackMeasurementConsent` method with the following argument:
+
+- `measurementConsent` (`Boolean`): Whether consent measurement is enabled (`true`) or not (`false`).
+
+When enabled, the SDK communicates the data privacy settings to Adjust’s servers. Adjust’s servers then applies your data privacy rules to the user. The Adjust SDK continues to work as expected.
+
+```actionscript
+Adjust.trackMeasurementConsent(true);
+```
+
+### <a id="coppa-compliance"></a>COPPA compliance
+
+f you need your app to be compliant with the Children’s Online Privacy Protection Act (COPPA), call the `enableCoppaCompliance` method on your `AdjustConfig` instance before initializing the SDK. This performs the following actions:
+
+1. Disables third-party sharing **before** the user launches their first `session`.
+2. Prevents the SDK from reading device and advertising IDs (for example: `gps_adid`, `idfa`, and `android_id`).
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+
+adjustConfig.enableCoppaCompliance();
+
+Adjust.initSdk(adjustConfig);
+```
+
+### <a id="play-store-kids-apps"></a>Play Store kids apps
+
+If your app targets users under the age of 13, and the install region **isn’t** the USA, you need to mark it as a Kids App. This prevents the SDK from reading device and advertising IDs (for example: `idfa`, `gps_adid` and `android_id`).
+
+To mark your app as a Play Store Kids App, call the `enablePlayStoreKidsCompliance` method on your `AdjustConfig` instance before initializing the SDK.
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+
+adjustConfig.enablePlayStoreKidsCompliance();
+
+Adjust.initSdk(adjustConfig);
+```
+
+### <a id="url-strategies"></a>URL strategies
+
+The URL strategy feature allows you to set either:
+
+- The country in which Adjust stores your data (data residency).
+- The endpoint to which the Adjust SDK sends traffic (URL strategy).
+
+This is useful if you’re operating in a country with strict privacy requirements. When you set your URL strategy, Adjust stores data in the selected data residency region or sends traffic to the chosen domain.
+
+To set your country of data residency, call the `setUrlStrategy` method on your `AdjustConfig` instance with the following parameters:
+
+- `urlStrategyDomains` (`List`): The country or countries of data residence, or the endpoints to which you want to send SDK traffic.
+- `shouldUseSubdomains` (`Boolean`): Whether the source should prefix a subdomain.
+- `isDataResidency` (`Boolean`): Whether the domain should be used for data residency.
+
+| URL strategy                | Main and fallback domain                           | Use sub domains | Is Data Residency |
+|-----------------------------|----------------------------------------------------|-----------------|-------------------|
+| EU data residency           | `["eu.adjust.com"]`                                  | `true`          | `true`            |
+| Turkish data residency      | `"[tr.adjust.com"]`                                  | `true`          | `true`            |
+| US data residency           | `"[us.adjust.com"]`                                  | `true`          | `true`            |
+| China global URL strategy   | `["adjust.world"`, `"adjust.com"]`                   | `true`          | `false`           |
+| China only URL strategy     | `["adjust.cn"]`                                      | `true`          | `false`           |
+| India URL strategy          | `["adjust.net.in"`, `"adjust.com"]`                  | `true`          | `false`           |
+
+Examples:
+
+```actionscript
+// India URL strategy
+adjustConfig.setUrlStrategy(["adjust.net.in", "adjust.com"], true, false);
+```
+
+```actionscript
+// China global URL strategy
+adjustConfig.setUrlStrategy(["adjust.world", "adjust.com"], true, false);
+```
+
+```actionscript
+// China only URL strategy
+adjustConfig.setUrlStrategy(["adjust.cn"], true, false);
+```
+
+```actionscript
+// EU data residency
+adjustConfig.setUrlStrategy(["eu.adjust.com"], true, true);
+```
+
+```actionscript
+// US data residency
+adjustConfig.setUrlStrategy(["us.adjust.com"], true, true);
+```
+
+```actionscript
+// Turkey data residency
+adjustConfig.setUrlStrategy(["tr.adjust.com"], true, true);
+```
 
 ### <a id="background-tracking"></a>Background tracking
 
@@ -602,7 +837,7 @@ If nothing is set, sending in background is **disabled by default**.
 
 Certain services (such as Google Analytics) require you to coordinate Device and Client IDs in order to prevent duplicate reporting.
 
-### <a id="di-idfa"></a>IDFA
+### <a id="idfa"></a>IDFA
 
 To obtain the IDFA, call the function `getIdfa` of the `Adjust` class:
 
@@ -612,7 +847,7 @@ Adjust.getIdfa(function (idfa:String): void {
 });
 ```
 
-### <a id="di-gps-adid"></a>Google advertising identifier
+### <a id="gps-adid"></a>Google advertising identifier
 
 To obtain Google advertising ID, call the function `getGoogleAdId` of the `Adjust` class:
 
@@ -622,7 +857,7 @@ Adjust.getGoogleAdId(function (googleAdId:String): void {
 });
 ```
 
-### <a id="di-fire-adid"></a>Amazon advertising identifier
+### <a id="fire-adid"></a>Amazon advertising identifier
 
 If you need to obtain the Amazon advertising ID, you can call the `getAmazonAdId` method of the `Adjust` class:
 
@@ -632,7 +867,7 @@ Adjust.getAmazonAdId(function (amazonAdId:String): void {
 });
 ```
 
-### <a id="di-adid"></a>Adjust device identifier
+### <a id="adid"></a>Adjust device identifier
 
 For every device with your app installed on it, the Adjust backend generates a unique **Adjust device identifier** (**adid**). In order to obtain this identifier, you can make a call to `getAdid` method of the `Adjust` class:
 
@@ -856,6 +1091,56 @@ private static function onInvoke(event:InvokeEvent):void {
     var adjustDeeplink:AdjustDeeplink = new AdjustDeeplink(deeplink);
     Adjust.processDeeplink(adjustDeeplink);
 }
+```
+
+### <a id="att-framework"></a>AppTrackingTransparency framework
+
+**Note**: This feature exists only in iOS platform.
+
+For each package sent, the Adjust backend receives one of the following four (4) states of consent for access to app-related data that can be used for tracking the user or the device:
+
+- Authorized
+- Denied
+- Not Determined
+- Restricted
+
+After a device receives an authorization request to approve access to app-related data, which is used for user device tracking, the returned status will either be Authorized or Denied.
+
+Before a device receives an authorization request for access to app-related data, which is used for tracking the user or device, the returned status will be Not Determined.
+
+If authorization to use app tracking data is restricted, the returned status will be Restricted.
+
+The SDK has a built-in mechanism to receive an updated status after a user responds to the pop-up dialog, in case you don't want to customize your displayed dialog pop-up. To conveniently and efficiently communicate the new state of consent to the backend, Adjust SDK offers a wrapper around the app tracking authorization method described in the following chapter, App-tracking authorization wrapper.
+
+### <a id="att-wrapper"></a>App-tracking authorisation wrapper
+
+**Note**: This feature exists only in iOS platform.
+
+Adjust SDK offers the possibility to use it for requesting user authorization in accessing their app-related data. Adjust SDK has a wrapper built on top of the [requestTrackingAuthorizationWithCompletionHandler:](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorizationwith?language=objc) method, where you can as well define the callback method to get information about a user's choice. Also, with the use of this wrapper, as soon as a user responds to the pop-up dialog, it's then communicated back using your callback method. The SDK will also inform the backend of the user's choice. The `int` value will be delivered via your callback method with the following meaning:
+
+- 0: `ATTrackingManagerAuthorizationStatusNotDetermined`
+- 1: `ATTrackingManagerAuthorizationStatusRestricted`
+- 2: `ATTrackingManagerAuthorizationStatusDenied`
+- 3: `ATTrackingManagerAuthorizationStatusAuthorized`
+
+To use this wrapper, you can call it as such:
+
+```actionscript
+Adjust.requestAppTrackingAuthorization(function (status:int): void {
+    trace("Authorization status = " + status.toString());
+});
+```
+
+### <a id="skan-framework"></a>SKAdNetwork framework
+
+**Note**: This feature exists only in iOS platform.
+
+We automatically register for SKAdNetwork attribution when the SDK is initialized. If events are set up in the Adjust dashboard to receive conversion values, the Adjust backend sends the conversion value data to the SDK. The SDK then sets the conversion value. After Adjust receives the SKAdNetwork callback data, it is then displayed in the dashboard.
+
+In case you don't want the Adjust SDK to automatically communicate with SKAdNetwork, you can disable that by calling the following method on configuration object:
+
+```actionscript
+adjustConfig.disableSkanAttribution();
 ```
 
 ## License
