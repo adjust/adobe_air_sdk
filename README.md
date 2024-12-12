@@ -5,7 +5,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
 ## Table of contents
 
 * [Example app](#example-app)
-* [Basic integration](#basic-integration)
+* [Integration guide](#integration-guide)
    * [Get the SDK](#sdk-get)
    * [Add the SDK to your project](#sdk-add)
    * [Integrate the SDK into your app](#sdk-integrate)
@@ -19,23 +19,16 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
       * [Event revenue](#event-revenue)
       * [Event deduplication](#event-deduplication)
       * [Event callback identifier](#event-callback-id)
-      * [Event callback parameters](#event-callback-parameters)
-      * [Event partner parameters](#event-partner-parameters)
-   * [Ad revenue tracking](#adrevenue-tracking)
-      * [Ad revenue amount](#adrevenue-amount)
-      * [Ad revenue network](#adrevenue-network)
-      * [Ad revenue unit](#adrevenue-unit)
-      * [Ad revenue placement](#adrevenue-placement)
-      * [Ad impressions count](#adrevenue-impressions)
-      * [Ad revenue callback parameters](#adrevenue-callback-parameters)
-      * [Ad revenue partner parameters](#adrevenue-partner-parameters)
-   * [Global parameters](#global-parameters)
-      * [Global callback parameters](#global-callback-parameters)
-      * [Global partner parameters](#global-partner-parameters)
-   * [Attribution callback](#attribution-callback)
-   * [Session and event callbacks](#session-event-callbacks)
-   * [Disable tracking](#disable-tracking)
-   * [Offline mode](#offline-mode)
+      * [Event callback parameters](#event-callback-params)
+      * [Event partner parameters](#event-partner-params)
+   * [User attribution](#user-attribution)
+      * [Attribution callback](#attribution-callback)
+      * [Get user attribution](#attribution-getter)
+   * [Preinstalled apps](#preinstalled-apps)
+      * [Deafult link token](#preinstall-default-link)
+   * [Global parameters](#global-params)
+      * [Global callback parameters](#global-callback-params)
+      * [Global partner parameters](#global-partner-params)
    * [Privacy features](#privacy-features)
       * [GDPR right to be forgotten](#gdpr-forget-me)
       * [Third party sharing](#third-party-sharing)
@@ -49,35 +42,61 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
       * [COPPA compliance](#coppa-compliance)
       * [Play Store kids apps](#play-store-kids-apps)
       * [URL strategies](#url-strategies)
-   * [Background tracking](#background-tracking)
-   * [Device IDs](#device-ids)
-      * [iOS advertising identifier](#idfa)
-      * [iOS identifier for vendors](#idfv)
-      * [Google Play Services advertising identifier](#gps-adid)
-      * [Amazon advertising identifier](#fire-adid)
-      * [Adjust device identifier](#adid)
-   * [Set external device ID](#set-external-device-id)
-   * [User attribution](#user-attribution)
-   * [Push token](#push-token)
-   * [Pre-installed trackers](#pre-installed-trackers)
    * [Deep linking](#deeplinking)
       * [Standard deep linking scenario](#deeplinking-standard)
       * [Deferred deep linking scenario](#deeplinking-deferred)
       * [Deep linking setup for Android](#deeplinking-android)
       * [Deep linking setup for iOS](#deeplinking-ios)
       * [Reattribution via deep links](#deeplinking-reattribution)
-   * [AppTrackingTransparency framework](#att-framework)
-      * [App-tracking authorization wrapper](#att-wrapper)
-   * [SKAdNetwork framework](#skan-framework)
+      * [Resolve Adjust short links](#short-links-resolution)
+      * [Get last processed deep link](#last-deeplink-getter)
+   * [App Tracking Transparency](#app-tracking-transparency)
+      * [ATT authorization wrapper](#att-wrapper)
+      * [Get current authorization status](#att-status-getter)
+      * [ATT prompt waiting interval](#att-waiting-interval)
+   * [SKAdNetwork and conversion values](#skan-framework)
+      * [Disable SKAdNetwork communication](#skan-disable)
+      * [Listen for changes to conversion values](#skan-update-callback)
+      * [Set up direct install postbacks](#skan-postbacks)
+   * [Ad revenue tracking](#adrevenue-tracking)
+      * [Ad revenue amount](#adrevenue-amount)
+      * [Ad revenue network](#adrevenue-network)
+      * [Ad revenue unit](#adrevenue-unit)
+      * [Ad revenue placement](#adrevenue-placement)
+      * [Ad impressions count](#adrevenue-impressions)
+      * [Ad revenue callback parameters](#adrevenue-callback-params)
+      * [Ad revenue partner parameters](#adrevenue-partner-params)
+   * [Purchase verification](#purchase-verification)
+      * [Verify purchase and record event](#verify-and-track)
+      * [Verify purchase only](#verify-only)
+   * [Send subscription information](#subscription-sending)
+      * [Subscription purchase date](#subscription-purchase-date)
+      * [Subscription region](#subscription-region)
+      * [Subscription callback parameters](#subscription-callback-params)
+      * [Subscription partner parameters](#subscription-partner-params)
+   * [Device IDs](#device-ids)
+      * [iOS advertising identifier](#idfa)
+      * [iOS identifier for vendors](#idfv)
+      * [Google Play Services advertising identifier](#gps-adid)
+      * [Amazon advertising identifier](#fire-adid)
+      * [Adjust device identifier](#adid)
+   * [Session and event callbacks](#session-event-callbacks)
+   * [Disable tracking](#disable-tracking)
+   * [Offline mode](#offline-mode)
+   * [Background tracking](#background-tracking)
+   * [External device ID](#external-device-id)
+   * [Push token](#push-token)
 * [License](#license)
 
 ## <a id="example-app"></a>Example app
 
 An example app is included in the [`example` directory](./example). You can use the example app to see how the Adjust SDK can be integrated.
 
-## <a id="basic-integration"></a>Basic integration
+## <a id="integration-guide"></a>Integration guide
 
-These are the minimal steps required to integrate the Adjust SDK into your Adobe AIR project.
+The Adjust Adobe AIR SDK enables you to record attribution, events, and more in your Adobe AIR app. Follow the steps in this guide to set up your app to work with the Adjust SDK.
+
+> Before you begin: The Adjust SDK supports iOS 12 or later and Android API level 21 (Lollipop) or later.
 
 ### <a id="sdk-get"></a>Get the SDK
 
@@ -273,7 +292,7 @@ adjustEvent.setCallbackId("Your-Custom-Id");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="event-callback-parameters"></a>Event callback parameters
+### <a id="event-callback-params"></a>Event callback parameters
 
 You can also register a callback URL for that event in your [dashboard](https://dash.adjust.com), and we will send a GET request to that URL whenever the event gets tracked. In that case, you can also put some key-value pairs in an object and pass it to the `trackEvent` method. We will then append these named parameters to your callback URL.
 
@@ -294,7 +313,7 @@ http://www.adjust.com/callback?key=value&foo=bar
 
 It should be mentioned that we support a variety of placeholders like `{idfa}` for iOS or `{gps_adid}` for Android that can be used as parameter values. In the resulting callback, the `{idfa}` placeholder would be replaced with the ID for Advertisers of the current device for iOS and the `{gps_adid}` would be replaced with the Google Advertising ID of the current device for Android. Also note that we don't store any of your custom parameters, but only append them to your callbacks. If you haven't registered a callback for an event, these parameters won't even be read.
 
-### <a id="event-partner-parameters"></a>Event partner parameters
+### <a id="event-partner-params"></a>Event partner parameters
 
 You can also add parameters for integrations that have been activated in your Adjust dashboard that can be transmitted to network partners.
 
@@ -307,161 +326,9 @@ adjustEvent.addPartnerParameter("foo", "bar");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="adrevenue-tracking"></a>Ad revenue tracking
+### <a id="user-attribution"></a>User attribution
 
-You can record ad revenue for [supported network partners](https://help.adjust.com/en/article/ad-revenue) using the Adjust SDK.
-
-> Important: You need to perform some extra setup steps in your Adjust dashboard to measure ad revenue. Contact your Technical Account Manager or support@adjust.com to get started.
-
-To send ad revenue information with the Adjust SDK, you need to instantiate an `AdjustAdRevenue` object. This object contains variables that are sent to Adjust when ad revenue is recorded in your app.
-
-To instantiate an ad revenue object, create a new `AdjustAdRevenue` instance and pass the following parameters:
-
-- source (`String`): The source of the ad revenue. See the table below for available sources.
-
-| Argument                     | Ad revenue Source        |
-|------------------------------|--------------------------|
-| `"applovin_max_sdk"`         | AppLovin MAX            |
-| `"admob_sdk"`                | AdMob                   |
-| `"ironsource_sdk"`           | ironSource              |
-| `"admost_sdk"`               | AdMost                  |
-| `"unity_sdk"`                | Unity                   |
-| `"helium_chartboost_sdk"`    | Helium Chartboost       |
-| `"adx_sdk"`                  | Ad(X)                   |
-| `"tradplus_sdk"`             | TradPlus                |
-| `"topon_sdk"`                | TopOn                   |
-| `"publisher_sdk"`            | Generic source          |
-
-### <a id="adrevenue-amount"></a>Ad revenue amount
-
-To send the ad revenue amount, call the `setRevenue` method of your `AdjustAdRevenue` instance and pass the following arguments:
-
-- revenue (`Number`): The amount of revenue
-- currency (`String`): The 3 character [ISO 4217 code](https://www.iban.com/currency-codes) of your reporting currency
-
-> See also: Check the [guide to recording purchases in different currencies](https://help.adjust.com/en/article/currency-conversion) for more information.
-
-```actionscript
-var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
-adjustAdRevenue.setRevenue(1.0, "EUR");
-Adjust.trackAdRevenue(adjustAdRevenue);
-```
-
-### <a id="adrevenue-network"></a>Ad revenue network
-
-To record the network associated with the ad revenue, call `setAdRevenueNetwork` method of your `AdjustAdRevenue` instance with the network name.
-
-```actionscript
-var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
-adjustAdRevenue.setAdRevenueNetwork("network1");
-Adjust.trackAdRevenue(adjustAdRevenue);
-```
-
-### <a id="adrevenue-unit"></a>Ad revenue unit
-
-To send the ad revenue unit, call `setAdRevenueUnit` method of your `AdjustAdRevenue` instance with the unit value.
-
-```actionscript
-var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
-adjustAdRevenue.setAdRevenueUnit("unit1");
-Adjust.trackAdRevenue(adjustAdRevenue);
-```
-
-### <a id="adrevenue-placement"></a>Ad revenue placement
-
-To send the ad revenue placement, call `setAdRevenuePlacement` method of your `AdjustAdRevenue` instance with the placement value.
-
-```actionscript
-var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
-adjustAdRevenue.setAdRevenuePlacement("banner");
-Adjust.trackAdRevenue(adjustAdRevenue);
-```
-
-### <a id="adrevenue-impressions"></a>Ad impressions count
-
-To send the number of recorded ad impressions, call `setAdImpressionsCount` method of your `AdjustAdRevenue` instance with the number of ad impressions.
-
-```actionscript
-var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
-adjustAdRevenue.setAdImpressionsCount(6);
-Adjust.trackAdRevenue(adjustAdRevenue);
-```
-
-### <a id="adrevenue-callback-parameters"></a>Ad revenue callback parameters
-
-Similar to how one can set [event callback parameters](#event-callback-parameters), the same can be done for ad revenue:
-
-```actionscript
-var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
-adjustAdRevenue.setRevenue(1.0, "EUR");
-adjustAdRevenue.setCalbackParameter("key", "value");
-adjustAdRevenue.setCalbackParameter("foo", "bar");
-Adjust.trackAdRevenue(adjustAdRevenue);
-```
-
-### <a id="adrevenue-partner-parameters"></a>Ad revenue partner parameters
-
-Similar to how one can set [event partner parameters](#event-partner-parameters), the same can be done for ad revenue:
-
-```actionscript
-var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
-adjustAdRevenue.setRevenue(1.0, "EUR");
-adjustAdRevenue.addPartnerParameter("key", "value");
-adjustAdRevenue.addPartnerParameter("foo", "bar");
-Adjust.trackAdRevenue(adjustAdRevenue);
-```
-
-### <a id="global-parameters"></a>Global parameters
-
-Some parameters are saved to be sent in every session, event, ad revenue and subscription request of the Adjust SDK. Once you have added any of these parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice, there will be no effect. These global parameters can be set before the Adjust SDK is launched to make sure they are sent even on install.
-
-### <a id="global-callback-parameters"></a>Global callback parameters
-
-The global callback parameters have a similar interface to the event callback parameters. Instead of adding the key and its value to an event, it's added through a call to method `addGlobalCallbackParameter` of the `Adjust` class:
-
-```actionscript
-Adjust.addGlobalCallbackParameter("foo", "bar");
-```
-
-The global callback parameters will be merged with the callback parameters added to an event / ad revenue / subscription. The callback parameters added to any of these packages take precedence over the global callback parameters. Meaning that, when adding a callback parameter to any of these packages with the same key to one added globaly, the value that prevails is the callback parameter added any of these particular packages.
-
-It's possible to remove a specific global callback parameter by passing the desired key to the method `removeGlobalCallbackParameter` of the `Adjust` class.
-
-```actionscript
-Adjust.removeGlobalCallbackParameter("foo");
-```
-
-If you wish to remove all keys and values from the global callback parameters, you can reset it with the method `removeGlobalCallbackParameters` of the `Adjust` class.
-
-```actionscript
-Adjust.removeGlobalCallbackParameters();
-```
-
-### <a id="global-partner-parameters"></a>Global partner parameters
-
-In the same way that there are [global callback parameters](#session-callback-parameters) that are sent for every event or session of the Adjust SDK, there are also global partner parameters.
-
-These will be transmitted to network partners, for the integrations that have been activated in your Adjust [dashboard](https://dash.adjust.com).
-
-The global partner parameters have a similar interface to the event / ad revenue / subscription partner parameters. Instead of adding the key and its value to an event, it's added through a call to method `addGlobalPartnerParameter` of the `Adjust` class:
-
-```actionscript
-Adjust.addGlobalPartnerParameter("foo", "bar");
-```
-
-The global partner parameters will be merged with the partner parameters added to an event / ad revenue / subscription. The partner parameters added to any of thes packages take precedence over the global partner parameters. Meaning that, when adding a partner parameter to any of these packages with the same key to one added globally, the value that prevails is the partner parameter added to any of these particular packages.
-
-It's possible to remove a specific global partner parameter by passing the desired key to the method `removeGlobalPartnerParameter` of the `Adjust` class.
-
-```actionscript
-Adjust.removeGlobalPartnerParameter("foo");
-```
-
-If you wish to remove all keys and values from the global partner parameters, you can reset them with the method `removeGlobalPartnerParameters` of the `Adjust` class.
-
-```actionscript
-Adjust.removeGlobalPartnerParameters();
-```
+Each recorded install is getting certain attribution assigned and also, during the app lifetime, the attribution can change.
 
 ### <a id="attribution-callback"></a>Attribution callback
 
@@ -508,151 +375,95 @@ The callback function will get called when the SDK receives final attribution da
 - `var costCurrency:String` the cost currency in case cost data is part of the attribution.
 - `var fbInsallReferrer:String` the FB install referrer value in case install is attributed to it.
 
-### <a id="session-event-callbacks"></a>Session and event callbacks
+### <a id="attribution-getter"></a>Get user attribution
 
-You can register a callback to be notified of successful and failed tracked events and/or sessions.
-
-Follow the same steps to implement the callback for successfully tracked events:
+If you want to access information about a user's current attribution whenever you need it, you can make a call to the `getAttribution` method of the `Adjust` class:
 
 ```actionscript
-import com.adjust.sdk.Adjust;
-import com.adjust.sdk.AdjustConfig;
-import com.adjust.sdk.AdjustEnvironment;
-import com.adjust.sdk.AdjustLogLevel;
-import com.adjust.sdk.AdjustAttribution;
+Adjust.getAttribution(function (attribution:AdjustAttribution): void {
+    trace("Tracker token = " + attribution.getTrackerToken());
+    trace("Tracker name = " + attribution.getTrackerName());
+    trace("Campaign = " + attribution.getCampaign());
+    trace("Network = " + attribution.getNetwork());
+    trace("Creative = " + attribution.getCreative());
+    trace("Adgroup = " + attribution.getAdgroup());
+    trace("Click label = " + attribution.getClickLabel());
+    trace("Cost type = " + attribution.getCostType());
+    trace("Cost amount = " + isNaN(attribution.getCostAmount()) ? "NaN" : attribution.getCostAmount().toString());
+    trace("Cost currency = " + attribution.getCostCurrency());
+    trace("FB install referrer = " + attribution.getFbInstallReferrer());
+});
+```
 
+**Note**: Information about current attribution is available after app installation has been tracked by the Adjust backend and the attribution callback has been initially triggered. From that moment on, the Adjust SDK has information about a user's attribution and you can access it with this method. So, **it is not possible** to access a user's attribution value before the SDK has been initialised and an attribution callback has been triggered.
+
+### <a id="preinstalled-apps"></a>Preinstalled apps
+
+You can use the Adjust SDK to record activity from apps that came preinstalled on a user’s device. This enables you to attribute these users to a custom defined campaign link instead to an organic one.
+
+### <a id="preinstall-default-link"></a>Default link token
+
+Configuring a default link token enables you to attribute all preinstalls to a predefined Adjust link. Adjust records all information against this token until the attribution source changes. To set this up, first you need to [create a new campaign link in Campaign Lab](https://help.adjust.com/en/article/links). After doing this, you need to invoke `setDefaultTracker` method of your `AdjustConfig` instance and pass a token you got generated for your campign link:
+
+```actionscript
 var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
-adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
-
-adjustConfig.setEventSuccessCallback(function (eventSuccess:AdjustEventSuccess):void {
-    trace("Event tracking success");
-    trace("Message = " + eventSuccess.getMessage());
-    trace("Timestamp = " + eventSuccess.getTimestamp());
-    trace("Adid = " + eventSuccess.getAdid());
-    trace("Event Token = " + eventSuccess.getEventToken());
-    trace("Callback Id = " + eventSuccess.getCallbackId());
-    trace("Json Response = " + eventSuccess.getJsonResponse());
-}
-
+adjustConfig.setDefaultTracker("{CampaignLinkToken}");
 Adjust.initSdk(adjustConfig);
 ```
 
-The callback function for failed tracked events:
+In case this approach is not applicable to your preinstall use case, please reach out to support@adjust.com to explore other ways of how the attribution for preinstalled apps can be handled.
+
+### <a id="global-params"></a>Global parameters
+
+Some parameters are saved to be sent in every session, event, ad revenue and subscription request of the Adjust SDK. Once you have added any of these parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice, there will be no effect. These global parameters can be set before the Adjust SDK is launched to make sure they are sent even on install.
+
+### <a id="global-callback-params"></a>Global callback parameters
+
+The global callback parameters have a similar interface to the event callback parameters. Instead of adding the key and its value to an event, it's added through a call to method `addGlobalCallbackParameter` of the `Adjust` class:
 
 ```actionscript
-import com.adjust.sdk.Adjust;
-import com.adjust.sdk.AdjustConfig;
-import com.adjust.sdk.AdjustEnvironment;
-import com.adjust.sdk.AdjustLogLevel;
-import com.adjust.sdk.AdjustAttribution;
-
-var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
-adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
-
-adjustConfig.setEventFailureCallback(function (eventFailure:AdjustEventFailure):void {
-    trace("Event tracking failure");
-    trace("Message = " + eventFailure.getMessage());
-    trace("Timestamp = " + eventFailure.getTimestamp());
-    trace("Adid = " + eventFailure.getAdid());
-    trace("Event Token = " + eventFailure.getEventToken());
-    trace("Callback Id = " + eventFailure.getCallbackId());
-    trace("Will Retry = " + eventFailure.getWillRetry().toString());
-    trace("Json Response = " + eventFailure.getJsonResponse());
-}
-
-Adjust.initSdk(adjustConfig);
+Adjust.addGlobalCallbackParameter("foo", "bar");
 ```
 
-For successfully tracked sessions:
+The global callback parameters will be merged with the callback parameters added to an event / ad revenue / subscription. The callback parameters added to any of these packages take precedence over the global callback parameters. Meaning that, when adding a callback parameter to any of these packages with the same key to one added globaly, the value that prevails is the callback parameter added any of these particular packages.
+
+It's possible to remove a specific global callback parameter by passing the desired key to the method `removeGlobalCallbackParameter` of the `Adjust` class.
 
 ```actionscript
-import com.adjust.sdk.Adjust;
-import com.adjust.sdk.AdjustConfig;
-import com.adjust.sdk.AdjustEnvironment;
-import com.adjust.sdk.AdjustLogLevel;
-import com.adjust.sdk.AdjustAttribution;
-
-var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
-adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
-
-adjustConfig.setSessionSuccessCallback(function (sessionSuccess:AdjustSessionSuccess): void {
-    trace("Session tracking success");
-    trace("Message = " + sessionSuccess.getMessage());
-    trace("Timestamp = " + sessionSuccess.getTimestamp());
-    trace("Adid = " + sessionSuccess.getAdid());
-    trace("Json Response = " + sessionSuccess.getJsonResponse());
-}
-
-Adjust.initSdk(adjustConfig);
+Adjust.removeGlobalCallbackParameter("foo");
 ```
 
-And for failed tracked sessions:
+If you wish to remove all keys and values from the global callback parameters, you can reset it with the method `removeGlobalCallbackParameters` of the `Adjust` class.
 
 ```actionscript
-import com.adjust.sdk.Adjust;
-import com.adjust.sdk.AdjustConfig;
-import com.adjust.sdk.AdjustEnvironment;
-import com.adjust.sdk.AdjustLogLevel;
-import com.adjust.sdk.AdjustAttribution;
-
-var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
-adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
-
-adjustConfig.setSessionFailureCallback(function (sessionFailure:AdjustSessionFailure):void {
-    trace("Session tracking failure");
-    trace("Message = " + sessionFailure.getMessage());
-    trace("Timestamp = " + sessionFailure.getTimestamp());
-    trace("Adid = " + sessionFailure.getAdid());
-    trace("Will Retry = " + sessionFailure.getWillRetry().toString());
-    trace("Json Response = " + sessionFailure.getJsonResponse());
-}
-
-Adjust.initSdk(adjustConfig);
+Adjust.removeGlobalCallbackParameters();
 ```
 
-The callback functions will be called after the SDK tries to send a package to the server. Within the callback, you have access to a response data object specifically for the callback. Here is a quick summary of the session response data properties:
+### <a id="global-partner-params"></a>Global partner parameters
 
-- `var message:String` the message from the server or the error logged by the SDK.
-- `var timestamp:String` timestamp from the server.
-- `var adid:String` a unique device identifier provided by Adjust.
-- `var jsonResponse:String` the JSON object with the response from the server.
+In the same way that there are [global callback parameters](#session-callback-params) that are sent for every event or session of the Adjust SDK, there are also global partner parameters.
 
-Both event response data objects contain:
+These will be transmitted to network partners, for the integrations that have been activated in your Adjust [dashboard](https://dash.adjust.com).
 
-- `var eventToken:String` the event token, if the package tracked was an event.
-- `var callbackId:String` the custom defined callback ID set on event object.
-
-And both event and session failed objects also contain:
-
-- `var willRetry:Boolean;` indicates there will be an attempt to resend the package at a later time.
-
-### <a id="disable-tracking"></a>Disable tracking
-
-You can disable the Adjust SDK from tracking by invoking the method `disable` of the `Adjust` class. This setting is **remembered between sessions**.
+The global partner parameters have a similar interface to the event / ad revenue / subscription partner parameters. Instead of adding the key and its value to an event, it's added through a call to method `addGlobalPartnerParameter` of the `Adjust` class:
 
 ```actionscript
-Adjust.disable();
+Adjust.addGlobalPartnerParameter("foo", "bar");
 ```
 
-You can verify if the Adjust SDK is currently active with the method `isEnabled` of the `Adjust` class. It is always possible to activate the Adjust SDK by invoking `enable` method of the `Adjust` class.
+The global partner parameters will be merged with the partner parameters added to an event / ad revenue / subscription. The partner parameters added to any of thes packages take precedence over the global partner parameters. Meaning that, when adding a partner parameter to any of these packages with the same key to one added globally, the value that prevails is the partner parameter added to any of these particular packages.
+
+It's possible to remove a specific global partner parameter by passing the desired key to the method `removeGlobalPartnerParameter` of the `Adjust` class.
 
 ```actionscript
-Adjust.enable();
+Adjust.removeGlobalPartnerParameter("foo");
 ```
 
-### <a id="offline-mode"></a>Offline mode
-
-You can put the Adjust SDK in offline mode to suspend transmission to our servers, while still retaining tracked data to be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many events while in offline mode.
-
-You can activate offline mode by calling the method `switchToOfflineMode` of the `Adjust` class.
+If you wish to remove all keys and values from the global partner parameters, you can reset them with the method `removeGlobalPartnerParameters` of the `Adjust` class.
 
 ```actionscript
-Adjust.switchToOfflineMode();
+Adjust.removeGlobalPartnerParameters();
 ```
-
-Conversely, you can deactivate the offline mode by calling `switchBackToOnlineMode` method of the `Adjust` class. When the Adjust SDK is put back in online mode, all saved information is sent to our servers with the correct timstamps.
-
-Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
 
 ### <a id="privacy-features"></a>Privacy features
 
@@ -932,155 +743,6 @@ adjustConfig.setUrlStrategy(["us.adjust.com"], true, true);
 adjustConfig.setUrlStrategy(["tr.adjust.com"], true, true);
 ```
 
-### <a id="background-tracking"></a>Background tracking
-
-The default behaviour of the Adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can change this in your `AdjustConfig` instance by calling the `enableSendingInBackground` method:
-
-```actionscript
-var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
-
-adjustConfig.enableSendingInBackground();
-
-Adjust.initSdk(adjustConfig);
-```
-
-If nothing is set, sending in background is **disabled by default**.
-
-### <a id="device-ids"></a>Device IDs
-
-The Adjust SDK contains helper methods that return device information. Use these methods to add details to your callbacks and improve your reporting.
-
-### <a id="idfa"></a>IDFA
-
-To obtain the IDFA, call the function `getIdfa` of the `Adjust` class:
-
-```as
-Adjust.getIdfa(function (idfa:String): void {
-    trace("IDFA = " + idfa);
-});
-```
-
-### <a id="idfv"></a>IDFV
-
-To obtain the IDFV, call the function `getIdfv` of the `Adjust` class:
-
-```as
-Adjust.getIdfv(function (idfv:String): void {
-    trace("IDFV = " + idfv);
-});
-```
-
-### <a id="gps-adid"></a>Google advertising identifier
-
-To obtain Google advertising ID, call the function `getGoogleAdId` of the `Adjust` class:
-
-```actionscript
-Adjust.getGoogleAdId(function (googleAdId:String): void {
-    trace("Google Ad ID = " + googleAdId);
-});
-```
-
-### <a id="fire-adid"></a>Amazon advertising identifier
-
-If you need to obtain the Amazon advertising ID, you can call the `getAmazonAdId` method of the `Adjust` class:
-
-```actionscript
-Adjust.getAmazonAdId(function (amazonAdId:String): void {
-    trace("Amazon Ad ID = " + amazonAdId);
-});
-```
-
-### <a id="adid"></a>Adjust device identifier
-
-For every device with your app installed on it, the Adjust backend generates a unique **Adjust device identifier** (**adid**). In order to obtain this identifier, you can make a call to `getAdid` method of the `Adjust` class:
-
-```actionscript
-Adjust.getAdid(function (adid:String): void {
-    trace("Adjust device ID = " + adid);
-});
-```
-
-**Note**: Information about the **adid** is available after app installation has been tracked by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialised and installation of your app has been successfully tracked.
-
-### <a id="set-external-device-id"></a>Set external device ID
-
-> **Note** If you want to use external device IDs, please contact your Adjust representative. They will talk you through the best approach for your use case.
-
-An external device identifier is a custom value that you can assign to a device or user. They can help you to recognize users across sessions and platforms. They can also help you to deduplicate installs by user so that a user isn't counted as multiple new installs.
-
-You can also use an external device ID as a custom identifier for a device. This can be useful if you use these identifiers elsewhere and want to keep continuity.
-
-Check out our [external device identifiers article](https://help.adjust.com/en/article/external-device-identifiers) for more information.
-
-To set an external device ID, assign the identifier to the `externalDeviceId` property of your `AdjustConfig` instance. Do this before you initialize the Adjust SDK.
-
-```actionscript
-adjustConfig.setExternalDeviceId("{Your-External-Device-Id}");
-
-Adjust.initSdk(adjustConfig);
-```
-
-> **Important**: You need to make sure this ID is **unique to the user or device** depending on your use-case. Using the same ID across different users or devices could lead to duplicated data. Talk to your Adjust representative for more information.
-
-If you want to use the external device ID in your business analytics, you can pass it as a session callback parameter. See the section on [session callback parameters](#session-callback-parameters) for more information.
-
-You can import existing external device IDs into Adjust. This ensures that the backend matches future data to your existing device records. If you want to do this, please contact your Adjust representative.
-
-### <a id="user-attribution"></a>User attribution
-
-As described in the [attribution callback section](#attribution-callback), this callback is triggered, providing you with information about a new attribution whenever it changes. If you want to access information about a user's current attribution whenever you need it, you can make a call to the `getAttribution` method of the `Adjust` class:
-
-```actionscript
-Adjust.getAttribution(function (attribution:AdjustAttribution): void {
-    trace("Tracker token = " + attribution.getTrackerToken());
-    trace("Tracker name = " + attribution.getTrackerName());
-    trace("Campaign = " + attribution.getCampaign());
-    trace("Network = " + attribution.getNetwork());
-    trace("Creative = " + attribution.getCreative());
-    trace("Adgroup = " + attribution.getAdgroup());
-    trace("Click label = " + attribution.getClickLabel());
-    trace("Cost type = " + attribution.getCostType());
-    trace("Cost amount = " + isNaN(attribution.getCostAmount()) ? "NaN" : attribution.getCostAmount().toString());
-    trace("Cost currency = " + attribution.getCostCurrency());
-    trace("FB install referrer = " + attribution.getFbInstallReferrer());
-});
-```
-
-**Note**: Information about current attribution is available after app installation has been tracked by the Adjust backend and the attribution callback has been initially triggered. From that moment on, the Adjust SDK has information about a user's attribution and you can access it with this method. So, **it is not possible** to access a user's attribution value before the SDK has been initialised and an attribution callback has been triggered.
-
-### <a id="push-token"></a>Push token
-
-To send us the push notification token, add the following call to Adjust **whenever you get your token in the app or when it gets updated**:
-
-```actionscript
-Adjust.setPushToken("YourPushNotificationToken");
-```
-
-Push tokens are used for Audience Builder and client callbacks, and they are required for the uninstall tracking feature.
-
-### <a id="pre-installed-trackers"></a>Pre-installed trackers
-
-If you want to use the Adjust SDK to recognize users that found your app pre-installed on their device, follow these steps.
-
-1. Create a new tracker in your [dashboard].
-2. Open your app delegate and add set the default tracker of your `adjust_config` instance:
-
-    ```actionscript
-    var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
-
-    adjustConfig.setDefaultTracker("{TrackerToken}");
-    
-    Adjust.initSdk(adjustConfig);
-    ```
-
-  Replace `{TrackerToken}` with the tracker token you created in step 2. In your source code, you should specify only the six-character token and not the entire URL.
-
-3. Build and run your app. You should see a line like the following in the app's log output:
-
-    ```
-    Default tracker: 'abc123'
-    ```
-
 ### <a id="deeplinking"></a>Deep linking
 
 If you are using the Adjust tracker URL with an option to deep link into your app from the URL, there is the possibility to get information about the deep link URL and its content. Hitting the URL can happen when the user has your app already installed (standard deep linking scenario) or if they don't have the app on their device (deferred deep linking scenario).
@@ -1196,7 +858,7 @@ Adjust enables you to run re-engagement campaigns through deep links.
 
 If you are using this feature, in order for your user to be properly reattributed, you need to make one additional call to the Adjust SDK in your app.
 
-Once you have received deep link content information in your app, add a call to the `Adjust.processDeeplink` method. By making this call, the Adjust SDK will try to find if there is any new attribution information inside of the deep link. If there is any, it will be sent to the Adjust backend. If your user should be reattributed due to a click on the adjust tracker URL with deep link content, you will see the [attribution callback](#attribution-callback) in your app being triggered with new attribution info for this user.
+Once you have received deep link content information in your app, add a call to the `processDeeplink` method. By making this call, the Adjust SDK will try to find if there is any new attribution information inside of the deep link. If there is any, it will be sent to the Adjust backend. If your user should be reattributed due to a click on the adjust tracker URL with deep link content, you will see the [attribution callback](#attribution-callback) in your app being triggered with new attribution info for this user.
 
 ```actionscript
 var app:NativeApplication = NativeApplication.nativeApplication;
@@ -1216,55 +878,758 @@ private static function onInvoke(event:InvokeEvent):void {
 }
 ```
 
-### <a id="att-framework"></a>AppTrackingTransparency framework
+### <a id="short-links-resolution"></a>Resolve Adjust short links
+
+To resolve an Adjust shortened deep link, instantiate an `AdjustDeeplink` object with your shortened deep link and pass it to the `processAndResolveDeeplink` method with a callback function. The callback function receives the resolved deep link as a `String`.
+
+```actionscript
+var adjustDeeplink:AdjustDeeplink = new AdjustDeeplink("shortened-deeplink");
+Adjust.processAndResolveDeeplink(adjustDeeplink, function (resolvedLink:String):void {
+    trace("Resolved link: " + resolvedLink);
+});
+```
+
+> Note: If the link passed to the `processAndResolveDeeplink` method was shortened, the callback function receives the extended original link. Otherwise, the callback function receives the link you passed.
+
+### <a id="last-deeplink-getter"></a>Get last processed deep link
+
+You can get the last deep link URL processed by the `processDeeplink` or `processAndResolveDeepLink` method by calling the `getLastDeeplink` method. This method returns the last processed deep link as a string.
+
+```actionscript
+Adjust.getLastDeeplink(function (lastDeeplink:String): void {
+    trace("Last deep link = " + lastDeeplink);
+});
+```
+
+### <a id="app-tracking-transparency"></a>App Tracking Transparency
+
+> Note: This feature exists only in iOS platform.
+
+If you want to record the device’s ID for Advertisers (IDFA), you must display a prompt to get your user’s authorization. To do this, you need to include Apple’s App Tracking Transparency (ATT) framework in your app. The Adjust SDK stores the user’s authorization status and sends it to Adjust’s servers with each request.
+
+Below, you can find the list of possible ATT status values:
+
+| Status                                    | Code | Description                                                          |
+|-------------------------------------------|------|----------------------------------------------------------------------|
+| `ATTrackingManagerAuthorizationStatusNotDetermined` | `0`  | The user hasn’t responded to the access prompt yet                   |
+| `ATTrackingManagerAuthorizationStatusRestricted`   | `1`  | Access to app-related data is blocked at the device level            |
+| `ATTrackingManagerAuthorizationStatusDenied`       | `2`  | The user has denied access to app-related data for device measurement |
+| `ATTrackingManagerAuthorizationStatusAuthorized`   | `3`  | The user has approved access to app-related data for device measurement |
+
+> Note: You might receive a status code of -1 if the SDK is unable to retrieve the ATT (App Tracking Transparency) status.
+
+### <a id="att-wrapper"></a>ATT authorization wrapper
 
 **Note**: This feature exists only in iOS platform.
 
-For each package sent, the Adjust backend receives one of the following four (4) states of consent for access to app-related data that can be used for tracking the user or the device:
+The Adjust SDK contains a wrapper around [Apple’s requestTrackingAuthorizationWithCompletionHandler: method](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorizationwith). You can use this wrapper if you don’t want to use the ATT prompt.
 
-- Authorized
-- Denied
-- Not Determined
-- Restricted
+The callback method triggers when your user responds to the consent dialog. This method sends the user’s consent status code to Adjust’s servers. You can define responses to each status code within the callback function.
 
-After a device receives an authorization request to approve access to app-related data, which is used for user device tracking, the returned status will either be Authorized or Denied.
+You must specify text content for the ATT. To do this, add your text to the `NSUserTrackingUsageDescription` key in your `Info.plist` file. This can be done by adding this entry to your app's descriptor file:
 
-Before a device receives an authorization request for access to app-related data, which is used for tracking the user or device, the returned status will be Not Determined.
+```xml
+<iPhone>
+  <InfoAdditions>
+    <![CDATA[
+    <key>NSUserTrackingUsageDescription</key>
+    <string>Your custom message explaning why is access to IDFA necessary.</string>
+    ]]>
+  </InfoAdditions>
+</iPhone>
+```
 
-If authorization to use app tracking data is restricted, the returned status will be Restricted.
-
-The SDK has a built-in mechanism to receive an updated status after a user responds to the pop-up dialog, in case you don't want to customize your displayed dialog pop-up. To conveniently and efficiently communicate the new state of consent to the backend, Adjust SDK offers a wrapper around the app tracking authorization method described in the following chapter, App-tracking authorization wrapper.
-
-### <a id="att-wrapper"></a>App-tracking authorisation wrapper
-
-**Note**: This feature exists only in iOS platform.
-
-Adjust SDK offers the possibility to use it for requesting user authorization in accessing their app-related data. Adjust SDK has a wrapper built on top of the [requestTrackingAuthorizationWithCompletionHandler:](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorizationwith?language=objc) method, where you can as well define the callback method to get information about a user's choice. Also, with the use of this wrapper, as soon as a user responds to the pop-up dialog, it's then communicated back using your callback method. The SDK will also inform the backend of the user's choice. The `int` value will be delivered via your callback method with the following meaning:
-
-- 0: `ATTrackingManagerAuthorizationStatusNotDetermined`
-- 1: `ATTrackingManagerAuthorizationStatusRestricted`
-- 2: `ATTrackingManagerAuthorizationStatusDenied`
-- 3: `ATTrackingManagerAuthorizationStatusAuthorized`
-
-To use this wrapper, you can call it as such:
+You can trigger ATT prompt via Adjust SDK wrapper method like this:
 
 ```actionscript
 Adjust.requestAppTrackingAuthorization(function (status:int): void {
+    switch (status) {
+        case 0:
+            // ATTrackingManagerAuthorizationStatusNotDetermined case
+            break;
+        case 1:
+            // ATTrackingManagerAuthorizationStatusRestricted case
+            break;
+        case 2:
+            // ATTrackingManagerAuthorizationStatusDenied case
+            break;
+        case 3:
+            // ATTrackingManagerAuthorizationStatusAuthorized case
+            break;
+        case -1:
+            // error case
+            break;
+    }
+});
+```
+
+### <a id="att-status-getter"></a>Get current authorization status
+
+You can retrieve a user’s current authorization status at any time. Call the `getAppTrackingAuthorizationStatus` method to return the authorization status code as an `int`.
+
+```actionscript
+Adjust.getAppTrackingAuthorizationStatus(function (status:int): void {
     trace("Authorization status = " + status.toString());
 });
 ```
 
-### <a id="skan-framework"></a>SKAdNetwork framework
+### <a id="att-waiting-interval"></a>ATT prompt waiting interval
 
-**Note**: This feature exists only in iOS platform.
-
-We automatically register for SKAdNetwork attribution when the SDK is initialized. If events are set up in the Adjust dashboard to receive conversion values, the Adjust backend sends the conversion value data to the SDK. The SDK then sets the conversion value. After Adjust receives the SKAdNetwork callback data, it is then displayed in the dashboard.
-
-In case you don't want the Adjust SDK to automatically communicate with SKAdNetwork, you can disable that by calling the following method on configuration object:
+If your app includes an onboarding process or a tutorial, you may want to delay sending your user’s ATT consent status until after the user has completed this process. To do this, you can call the `setAttConsentWaitingInterval` method of your `AdjustConfig` instance to delay the sending of data for up to **360 seconds** to give the user time to complete the initial onboarding. After the timeout ends or the user sets their consent status, the SDK sends all information it has recorded during the delay to Adjust’s servers along with the user’s consent status.
 
 ```actionscript
-adjustConfig.disableSkanAttribution();
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setAttConsentWaitingInterval(30);
+Adjust.initSdk(adjustConfig);
 ```
+
+* [SKAdNetwork and conversion values](#skan-framework)
+      * [Disable SKAdNetwork communication](#skan-disable)
+      * [Listen for changes to conversion values](#skan-update-callback)
+      * [Set up direct install postbacks](#skan-postbacks)
+
+### <a id="skan-framework"></a>SKAdNetwork and conversion values
+
+> Important: This feature is only available on devices running iOS 14 and above.
+
+SKAdNetwork is Apple’s attribution framework for app install and reinstall attribution. The SKAdNetwork workflow goes like this:
+
+1. Apple gathers attribution information and notifies the relevant ad network.
+2. The network sends a postback with this information to Adjust.
+3. Adjust displays SKAdNetwork data in [Datascape](https://help.adjust.com/en/suite/article/datascape).
+
+### <a id="skan-disable"></a>Disable SKAdNetwork communication
+
+The Adjust SDK communicates with SKAdNetwork by default. The SDK registers for `SKAdNetwork attribution upon initialization.
+
+You can control this behavior by calling `disableSkanAttribution` method of your `AdjustConfig` instance.
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.disableSkanAttribution();
+Adjust.initSdk(adjustConfig);
+```
+
+### <a id="skan-update-callback"></a>Listen for changes to conversion values
+
+If you use Adjust to manage conversion values, the Adjust’s servers send conversion value updates to the SDK. You can set up a delegate function to listen for these changes assigning a callback method for this on your `AdjustConfig` instance.
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setSkanUpdatedCallback(function (skanUpdatedData:Dictionary):void {
+    trace("SKAN values updated");
+    trace("Conversion value = " + skanUpdatedData["conversionValue"].toString());
+    trace("Coarse value = " + skanUpdatedData["coarseValue"]);
+    trace("Lock window = " + skanUpdatedData["lockWindow"].toString());
+    trace("Error = " + skanUpdatedData["error"]);
+});
+Adjust.initSdk(adjustConfig);
+```
+
+The callback function receives a postback from SKAdNetwork with the following properties:
+
+| Arguments      | Description                                                                                                                       |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `fine_value`   | The conversion value sent by Adjust’s servers                                                                                    |
+| `coarse_value` | The coarse conversion value. This value is used if your app doesn’t have sufficient installs to reach the privacy threshold.      |
+|                | - `none`                                                                                                                         |
+|                | - `low`                                                                                                                          |
+|                | - `medium`                                                                                                                       |
+|                | - `high`                                                                                                                         |
+|                | Apple sends `none` whenever none of the conditions that are set for `low`, `medium`, and `high` were met.                        |
+| `lock_window`  | Whether to send the postback before the conversion window ends. `1` indicates the postback will be sent before the window ends.   |
+|                | Defaults to `0` in SKAdNetwork 4.0 postbacks and `nil` in older SKAdNetwork versions.                                             |
+| `error`        | Contains the error message if an error occurred.                                                                                 |
+
+### <a id="skan-postbacks"></a>Set up direct install postbacks
+
+> Note: Direct install postbacks contain only SKAdNetwork information. Information such as campaign data isn’t included in these postbacks.
+
+You can configure your app to send a copy of winning SKAdNetwork callbacks to Adjust. This enables you to use SKAdNetwork information in your analytics.
+
+To set up direct install postbacks, you need to add the Adjust callback URL to your `Info.plist` file:
+
+```xml
+<iPhone>
+  <InfoAdditions>
+    <![CDATA[
+    <key>NSAdvertisingAttributionReportEndpoint</key>
+    <string>https://adjust-skadnetwork.com</string>
+    ]]>
+  </InfoAdditions>
+</iPhone>
+```
+
+> See also: See Apple’s guide on [Configuring an Advertised App](https://developer.apple.com/documentation/storekit/skadnetwork/configuring_an_advertised_app) for more information.
+
+### <a id="adrevenue-tracking"></a>Ad revenue tracking
+
+You can record ad revenue for [supported network partners](https://help.adjust.com/en/article/ad-revenue) using the Adjust SDK.
+
+> Important: You need to perform some extra setup steps in your Adjust dashboard to measure ad revenue. Contact your Technical Account Manager or support@adjust.com to get started.
+
+To send ad revenue information with the Adjust SDK, you need to instantiate an `AdjustAdRevenue` object. This object contains variables that are sent to Adjust when ad revenue is recorded in your app.
+
+To instantiate an ad revenue object, create a new `AdjustAdRevenue` instance and pass the following parameters:
+
+- source (`String`): The source of the ad revenue. See the table below for available sources.
+
+| Argument                     | Ad revenue Source        |
+|------------------------------|--------------------------|
+| `"applovin_max_sdk"`         | AppLovin MAX            |
+| `"admob_sdk"`                | AdMob                   |
+| `"ironsource_sdk"`           | ironSource              |
+| `"admost_sdk"`               | AdMost                  |
+| `"unity_sdk"`                | Unity                   |
+| `"helium_chartboost_sdk"`    | Helium Chartboost       |
+| `"adx_sdk"`                  | Ad(X)                   |
+| `"tradplus_sdk"`             | TradPlus                |
+| `"topon_sdk"`                | TopOn                   |
+| `"publisher_sdk"`            | Generic source          |
+
+### <a id="adrevenue-amount"></a>Ad revenue amount
+
+To send the ad revenue amount, call the `setRevenue` method of your `AdjustAdRevenue` instance and pass the following arguments:
+
+- revenue (`Number`): The amount of revenue
+- currency (`String`): The 3 character [ISO 4217 code](https://www.iban.com/currency-codes) of your reporting currency
+
+> See also: Check the [guide to recording purchases in different currencies](https://help.adjust.com/en/article/currency-conversion) for more information.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setRevenue(1.0, "EUR");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-network"></a>Ad revenue network
+
+To record the network associated with the ad revenue, call `setAdRevenueNetwork` method of your `AdjustAdRevenue` instance with the network name.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdRevenueNetwork("network1");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-unit"></a>Ad revenue unit
+
+To send the ad revenue unit, call `setAdRevenueUnit` method of your `AdjustAdRevenue` instance with the unit value.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdRevenueUnit("unit1");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-placement"></a>Ad revenue placement
+
+To send the ad revenue placement, call `setAdRevenuePlacement` method of your `AdjustAdRevenue` instance with the placement value.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdRevenuePlacement("banner");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-impressions"></a>Ad impressions count
+
+To send the number of recorded ad impressions, call `setAdImpressionsCount` method of your `AdjustAdRevenue` instance with the number of ad impressions.
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setAdImpressionsCount(6);
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-callback-params"></a>Ad revenue callback parameters
+
+Similar to how one can set [event callback parameters](#event-callback-params), the same can be done for ad revenue:
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setRevenue(1.0, "EUR");
+adjustAdRevenue.setCalbackParameter("key", "value");
+adjustAdRevenue.setCalbackParameter("foo", "bar");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="adrevenue-partner-params"></a>Ad revenue partner parameters
+
+Similar to how one can set [event partner parameters](#event-partner-params), the same can be done for ad revenue:
+
+```actionscript
+var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
+adjustAdRevenue.setRevenue(1.0, "EUR");
+adjustAdRevenue.addPartnerParameter("key", "value");
+adjustAdRevenue.addPartnerParameter("foo", "bar");
+Adjust.trackAdRevenue(adjustAdRevenue);
+```
+
+### <a id="purchase-verification"></a>Purchase verification
+
+If you’ve enabled [purchase verification](https://help.adjust.com/en/article/purchase-verification), you can use the Adjust SDK to request App Store or Google Play Store purchase verification. There are two ways to verify purchases with the Adjust SDK.
+
+### <a id="verify-and-track"></a>Verify purchase and record event
+
+With this approach, you will be performing verification of your purchase and having an event tracked for that verification. This will give you an overview later in the dashboard on the events (and assigned revenue) based on whether verification was successful or not.
+
+In order to do this, you need to complete your in-app purchase and then pass parameters that Adjust SDK needs out of that purchase in order to be able to try to verify the purchase. Once you have obtained the verification parameters the SDK needs, you can perform verification and tracking of an event by calling `verifyAndTrackAppStorePurchase` or `verifyAndTrackPlayStorePurchase` methods.
+
+Next to revenue and currency of the purchase, you need to obtain the following parameters as well:
+
+- Product ID (for both, App Store and Play Store purchases)
+- Transaction ID (for App Store purchases)
+- Purchase token (for Play Store purchases)
+
+```actionscript
+// perform App Store in-app purchase
+
+// create an event with purchase parameters attached
+var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
+adjustEvent.setRevenue(1.50, "EUR");
+adjustEvent.setProductId("product-id");
+adjustEvent.setTransactionId("transaction-id");
+
+// call verifyAndTrackAppStorePurchase method
+Adjust.verifyAndTrackAppStorePurchase(adjustEvent,
+    function (verificationResult:AdjustPurchaseVerificationResult):void {
+    trace("Verification status" + verificationResult.getVerificationStatus());
+    trace("Message" + verificationResult.getMessage());
+    trace("Code" + verificationResult.getCode().toString());
+});
+```
+
+```actionscript
+// perform Play Store in-app purchase
+
+// create an event with purchase parameters attached
+var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
+adjustEvent.setRevenue(1.50, "EUR");
+adjustEvent.setProductId("product-id");
+adjustEvent.setPurchaseToken("purchase-token");
+
+// call verifyAndTrackPlayStorePurchase method
+Adjust.verifyAndTrackPlayStorePurchase(adjustEvent,
+    function (verificationResult:AdjustPurchaseVerificationResult):void {
+    trace("Verification status" + verificationResult.getVerificationStatus());
+    trace("Message" + verificationResult.getMessage());
+    trace("Code" + verificationResult.getCode().toString());
+});
+```
+
+### <a id="verify-only"></a>Verify purchase only
+
+In case you don't want to see revenue events being automatically tracked once you verify the purchase, but you are instead interested in just getting the information on the validity of the purchase, you can also perform only the verification of the purchase. For this, you need to create instances of `AdjustAppStorePurchase` (for App Store purchases) and `AdjustPlayStorePurchase` (for Play Store purchases) classes and invoke `verifyAppStorePurchase` and `verifyPlayStorePurchase` methods.
+
+```actionscript
+// perform App Store in-app purchase
+
+// create an instance of AdjustAppStorePurchase
+var appStorePurchase:AdjustAppStorePurchase = new AdjustAppStorePurchase("product-id", "transaction-id");
+
+// call verifyAppStorePurchase
+Adjust.verifyAppStorePurchase(appStorePurchase,
+    function (verificationResult:AdjustPurchaseVerificationResult):void {
+    trace("Verification status" + verificationResult.getVerificationStatus());
+    trace("Message" + verificationResult.getMessage());
+    trace("Code" + verificationResult.getCode().toString());
+});
+```
+
+```actionscript
+// perform Play Store in-app purchase
+
+// create an instance of AdjustPlayStorePurchase
+var playStorePurchase:AdjustPlayStorePurchase = new AdjustPlayStorePurchase("product-id", "purchase-token");
+
+// call verifyPlayStorePurchase
+Adjust.verifyPlayStorePurchase(playStorePurchase,
+    function (verificationResult:AdjustPurchaseVerificationResult):void {
+    trace("Verification status" + verificationResult.getVerificationStatus());
+    trace("Message" + verificationResult.getMessage());
+    trace("Code" + verificationResult.getCode().toString());
+});
+```
+
+* [Send subscription information](#subscription-sending)
+      * [Subscription purchase date](#subscription-purchase-date)
+      * [Subscription region](#subscription-region)
+      * [Subscription callback parameters](#subscription-callback-params)
+      * [Subscription partner parameters](#subscription-partner-params)
+
+### <a id="subscription-sending"></a>Send subscription information
+
+> Important: The following steps only set up subscription measurement within the Adjust SDK. To enable the feature, follow the steps at [Set up subscriptions for your app](https://help.adjust.com/en/article/set-up-subscriptions-for-your-app).
+
+You can record App Store and Play Store subscriptions and verify their validity with the Adjust SDK. After the user purchases a subscription, create an `AdjustAppStoreSubscription` or `AdjustPlayStoreSubscription` instance containing the details.
+
+```actionscript
+// App Store subscription
+var appStoreSubscription:AdjustAppStoreSubscription = new AdjustAppStoreSubscription(
+    "price",
+    "currency",
+    "transactionId");
+Adjust.trackAppStoreSubscription(appStoreSubscription);
+```
+
+```actionscript
+// Play Store subscription
+var playStoreSubscription:AdjustPlayStoreSubscription = new AdjustPlayStoreSubscription(
+    "price",
+    "currency",
+    "sku",
+    "orderId",
+    "signature",
+    "purchaseToken");
+Adjust.trackPlayStoreSubscription(playStoreSubscription);
+```
+
+Subscription tracking parameters for App Store subscription:
+
+- [price](https://developer.apple.com/documentation/storekit/product/price)
+- currency (you need to pass [currencyCode](https://developer.apple.com/documentation/foundation/nslocale/1642836-currencycode?language=objc))
+- [transactionId](https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411288-transactionidentifier?language=objc)
+- [transactionDate](https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411273-transactiondate?language=objc)
+- salesRegion (you need to pass [countryCode](https://developer.apple.com/documentation/foundation/nslocale/1643060-countrycode?language=objc) of the [priceLocale](https://developer.apple.com/documentation/storekit/skproduct/1506145-pricelocale?language=objc) object)
+
+Subscription tracking parameters for Play Store subscription:
+
+- [price](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpriceamountmicros)
+- [currency](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpricecurrencycode)
+- [sku](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getsku)
+- [orderId](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getorderid)
+- [signature](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getsignature)
+- [purchaseToken](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getpurchasetoken)
+- [purchaseTime](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getpurchasetime)
+
+> Note: All the links behind the parameters are pointing to fields one needs to obtain from native iOS and Android in-app purchases API. In-app purchases on Adobe AIR platform are being done with usage of some plugins which are wrapping the native API and can therefore have these fields exposed under different names or, in bad case scenario, not provide some of these fields at all. In case you are having issues in understanding how to properly pass these fields based on what your Adobe AIR plugin is sending you back, feel free contact us about it.
+
+### <a id="subscription-purchase-date"></a>Subscription purchase date
+
+You can record the date on which the user purchased a subscription. The SDK returns this data for you to report on.
+
+```actionscript
+// App Store subscription
+var appStoreSubscription:AdjustAppStoreSubscription = new AdjustAppStoreSubscription(
+    "price",
+    "currency",
+    "transactionId");
+appStoreSubscription.setTransactionDate("transactionDate");
+Adjust.trackAppStoreSubscription(appStoreSubscription);
+```
+
+```actionscript
+// Play Store subscription
+var playStoreSubscription:AdjustPlayStoreSubscription = new AdjustPlayStoreSubscription(
+    "price",
+    "currency",
+    "sku",
+    "orderId",
+    "signature",
+    "purchaseToken");
+playStoreSubscription.setPurchaseDate("purchaseDate");
+Adjust.trackPlayStoreSubscription(playStoreSubscription);
+```
+
+### <a id="subscription-region"></a>Subscription region
+
+> Note: This is feature is iOS only.
+
+You can record the region in which the user purchased a subscription. To do this, call the `setSalesRegion` method of your `AdjustAppStoreSubscription` instance to the country code as a string. This needs to be formatted as the [countryCode](https://developer.apple.com/documentation/storekit/storefront/3792000-countrycode) of the [Storefront](https://developer.apple.com/documentation/storekit/storefront) object.
+
+```actionscript
+// App Store subscription
+var appStoreSubscription:AdjustAppStoreSubscription = new AdjustAppStoreSubscription(
+    "price",
+    "currency",
+    "transactionId");
+appStoreSubscription.setSalesRegion("salesRegion");
+Adjust.trackAppStoreSubscription(appStoreSubscription);
+```
+
+### <a id="subscription-callback-params"></a>Subscription callback parameters
+
+Similar to how one can set [event callback parameters](#event-callback-params), the same can be done for subscriptions:
+
+```actionscript
+// App Store subscription
+var appStoreSubscription:AdjustAppStoreSubscription = new AdjustAppStoreSubscription(
+    "price",
+    "currency",
+    "transactionId");
+appStoreSubscription.setCalbackParameter("key", "value");
+appStoreSubscription.setCalbackParameter("foo", "bar");
+Adjust.trackAppStoreSubscription(appStoreSubscription);
+```
+
+### <a id="subscription-partner-params"></a>Subscription partner parameters
+
+Similar to how one can set [event partner parameters](#event-partner-params), the same can be done for subscriptions:
+
+```actionscript
+// Play Store subscription
+var playStoreSubscription:AdjustPlayStoreSubscription = new AdjustPlayStoreSubscription(
+    "price",
+    "currency",
+    "sku",
+    "orderId",
+    "signature",
+    "purchaseToken");
+playStoreSubscription.setCalbackParameter("key", "value");
+playStoreSubscription.setCalbackParameter("foo", "bar");
+Adjust.trackPlayStoreSubscription(playStoreSubscription);
+```
+
+### <a id="device-ids"></a>Device IDs
+
+The Adjust SDK contains helper methods that return device information. Use these methods to add details to your callbacks and improve your reporting.
+
+### <a id="idfa"></a>IDFA
+
+To obtain the IDFA, call the function `getIdfa` of the `Adjust` class:
+
+```as
+Adjust.getIdfa(function (idfa:String): void {
+    trace("IDFA = " + idfa);
+});
+```
+
+### <a id="idfv"></a>IDFV
+
+To obtain the IDFV, call the function `getIdfv` of the `Adjust` class:
+
+```as
+Adjust.getIdfv(function (idfv:String): void {
+    trace("IDFV = " + idfv);
+});
+```
+
+### <a id="gps-adid"></a>Google advertising identifier
+
+To obtain Google advertising ID, call the function `getGoogleAdId` of the `Adjust` class:
+
+```actionscript
+Adjust.getGoogleAdId(function (googleAdId:String): void {
+    trace("Google Ad ID = " + googleAdId);
+});
+```
+
+### <a id="fire-adid"></a>Amazon advertising identifier
+
+If you need to obtain the Amazon advertising ID, you can call the `getAmazonAdId` method of the `Adjust` class:
+
+```actionscript
+Adjust.getAmazonAdId(function (amazonAdId:String): void {
+    trace("Amazon Ad ID = " + amazonAdId);
+});
+```
+
+### <a id="adid"></a>Adjust device identifier
+
+For every device with your app installed on it, the Adjust backend generates a unique **Adjust device identifier** (**adid**). In order to obtain this identifier, you can make a call to `getAdid` method of the `Adjust` class:
+
+```actionscript
+Adjust.getAdid(function (adid:String): void {
+    trace("Adjust device ID = " + adid);
+});
+```
+
+**Note**: Information about the **adid** is available after app installation has been tracked by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialised and installation of your app has been successfully tracked.
+
+### <a id="session-event-callbacks"></a>Session and event callbacks
+
+You can register a callback to be notified of successful and failed tracked events and/or sessions.
+
+Follow the same steps to implement the callback for successfully tracked events:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.AdjustEnvironment;
+import com.adjust.sdk.AdjustLogLevel;
+import com.adjust.sdk.AdjustAttribution;
+
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
+
+adjustConfig.setEventSuccessCallback(function (eventSuccess:AdjustEventSuccess):void {
+    trace("Event tracking success");
+    trace("Message = " + eventSuccess.getMessage());
+    trace("Timestamp = " + eventSuccess.getTimestamp());
+    trace("Adid = " + eventSuccess.getAdid());
+    trace("Event Token = " + eventSuccess.getEventToken());
+    trace("Callback Id = " + eventSuccess.getCallbackId());
+    trace("Json Response = " + eventSuccess.getJsonResponse());
+}
+
+Adjust.initSdk(adjustConfig);
+```
+
+The callback function for failed tracked events:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.AdjustEnvironment;
+import com.adjust.sdk.AdjustLogLevel;
+import com.adjust.sdk.AdjustAttribution;
+
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
+
+adjustConfig.setEventFailureCallback(function (eventFailure:AdjustEventFailure):void {
+    trace("Event tracking failure");
+    trace("Message = " + eventFailure.getMessage());
+    trace("Timestamp = " + eventFailure.getTimestamp());
+    trace("Adid = " + eventFailure.getAdid());
+    trace("Event Token = " + eventFailure.getEventToken());
+    trace("Callback Id = " + eventFailure.getCallbackId());
+    trace("Will Retry = " + eventFailure.getWillRetry().toString());
+    trace("Json Response = " + eventFailure.getJsonResponse());
+}
+
+Adjust.initSdk(adjustConfig);
+```
+
+For successfully tracked sessions:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.AdjustEnvironment;
+import com.adjust.sdk.AdjustLogLevel;
+import com.adjust.sdk.AdjustAttribution;
+
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
+
+adjustConfig.setSessionSuccessCallback(function (sessionSuccess:AdjustSessionSuccess): void {
+    trace("Session tracking success");
+    trace("Message = " + sessionSuccess.getMessage());
+    trace("Timestamp = " + sessionSuccess.getTimestamp());
+    trace("Adid = " + sessionSuccess.getAdid());
+    trace("Json Response = " + sessionSuccess.getJsonResponse());
+}
+
+Adjust.initSdk(adjustConfig);
+```
+
+And for failed tracked sessions:
+
+```actionscript
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.AdjustEnvironment;
+import com.adjust.sdk.AdjustLogLevel;
+import com.adjust.sdk.AdjustAttribution;
+
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
+
+adjustConfig.setSessionFailureCallback(function (sessionFailure:AdjustSessionFailure):void {
+    trace("Session tracking failure");
+    trace("Message = " + sessionFailure.getMessage());
+    trace("Timestamp = " + sessionFailure.getTimestamp());
+    trace("Adid = " + sessionFailure.getAdid());
+    trace("Will Retry = " + sessionFailure.getWillRetry().toString());
+    trace("Json Response = " + sessionFailure.getJsonResponse());
+}
+
+Adjust.initSdk(adjustConfig);
+```
+
+The callback functions will be called after the SDK tries to send a package to the server. Within the callback, you have access to a response data object specifically for the callback. Here is a quick summary of the session response data properties:
+
+- `var message:String` the message from the server or the error logged by the SDK.
+- `var timestamp:String` timestamp from the server.
+- `var adid:String` a unique device identifier provided by Adjust.
+- `var jsonResponse:String` the JSON object with the response from the server.
+
+Both event response data objects contain:
+
+- `var eventToken:String` the event token, if the package tracked was an event.
+- `var callbackId:String` the custom defined callback ID set on event object.
+
+And both event and session failed objects also contain:
+
+- `var willRetry:Boolean;` indicates there will be an attempt to resend the package at a later time.
+
+### <a id="disable-tracking"></a>Disable tracking
+
+You can disable the Adjust SDK from tracking by invoking the method `disable` of the `Adjust` class. This setting is **remembered between sessions**.
+
+```actionscript
+Adjust.disable();
+```
+
+You can verify if the Adjust SDK is currently active with the method `isEnabled` of the `Adjust` class. It is always possible to activate the Adjust SDK by invoking `enable` method of the `Adjust` class.
+
+```actionscript
+Adjust.enable();
+```
+
+### <a id="offline-mode"></a>Offline mode
+
+You can put the Adjust SDK in offline mode to suspend transmission to our servers, while still retaining tracked data to be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many events while in offline mode.
+
+You can activate offline mode by calling the method `switchToOfflineMode` of the `Adjust` class.
+
+```actionscript
+Adjust.switchToOfflineMode();
+```
+
+Conversely, you can deactivate the offline mode by calling `switchBackToOnlineMode` method of the `Adjust` class. When the Adjust SDK is put back in online mode, all saved information is sent to our servers with the correct timstamps.
+
+Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
+
+### <a id="background-tracking"></a>Background tracking
+
+The default behaviour of the Adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can change this in your `AdjustConfig` instance by calling the `enableSendingInBackground` method:
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+
+adjustConfig.enableSendingInBackground();
+
+Adjust.initSdk(adjustConfig);
+```
+
+If nothing is set, sending in background is **disabled by default**.
+
+### <a id="external-device-id"></a>Set external device ID
+
+> **Note** If you want to use external device IDs, please contact your Adjust representative. They will talk you through the best approach for your use case.
+
+An external device identifier is a custom value that you can assign to a device or user. They can help you to recognize users across sessions and platforms. They can also help you to deduplicate installs by user so that a user isn't counted as multiple new installs.
+
+You can also use an external device ID as a custom identifier for a device. This can be useful if you use these identifiers elsewhere and want to keep continuity.
+
+Check out our [external device identifiers article](https://help.adjust.com/en/article/external-device-identifiers) for more information.
+
+To set an external device ID, assign the identifier to the `externalDeviceId` property of your `AdjustConfig` instance. Do this before you initialize the Adjust SDK.
+
+```actionscript
+adjustConfig.setExternalDeviceId("{Your-External-Device-Id}");
+
+Adjust.initSdk(adjustConfig);
+```
+
+> **Important**: You need to make sure this ID is **unique to the user or device** depending on your use-case. Using the same ID across different users or devices could lead to duplicated data. Talk to your Adjust representative for more information.
+
+If you want to use the external device ID in your business analytics, you can pass it as a session callback parameter. See the section on [session callback parameters](#session-callback-params) for more information.
+
+You can import existing external device IDs into Adjust. This ensures that the backend matches future data to your existing device records. If you want to do this, please contact your Adjust representative.
+
+### <a id="push-token"></a>Push token
+
+To send us the push notification token, add the following call to Adjust **whenever you get your token in the app or when it gets updated**:
+
+```actionscript
+Adjust.setPushToken("YourPushNotificationToken");
+```
+
+Push tokens are used for Audience Builder and client callbacks, and they are required for the uninstall tracking feature.
 
 ## License
 
