@@ -1088,16 +1088,16 @@ FREObject ADJgetIdfv(FREContext ctx, void* funcData, uint32_t argc, FREObject ar
     return returnValue;
 }
 
-FREObject ADJgetAppTrackingStatus(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
+FREObject ADJgetAppTrackingAuthorizationStatus(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     if (argc == 0) {
         int appTrackingStatus = [Adjust appTrackingAuthorizationStatus];
         NSString *strAppTrackingStatus = [NSString stringWithFormat:@"%d", appTrackingStatus];
         const char* cResponseData = [strAppTrackingStatus UTF8String];
         FREDispatchStatusEventAsync(ctx,
-                (const uint8_t *)"adjust_getAppTrackingStatus",
+                (const uint8_t *)"adjust_getAppTrackingAuthorizationStatus",
                 (const uint8_t *)cResponseData);
     } else {
-        NSLog(@"AdjustFunction: Bridge 'getAppTrackingStatus' method triggered with wrong number of arguments");
+        NSLog(@"AdjustFunction: Bridge 'getAppTrackingAuthorizationStatus' method triggered with wrong number of arguments");
     }
     
     FREObject returnValue;

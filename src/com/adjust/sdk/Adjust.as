@@ -31,7 +31,7 @@ package com.adjust.sdk {
 
         private static var getIdfaCallback:Function;
         private static var getIdfvCallback:Function;
-        private static var getAppTrackingStatusCallback:Function;
+        private static var getAppTrackingAuthorizationStatusCallback:Function;
         private static var requestAppTrackingAuthorizationCallback:Function;
         private static var verifyAppStorePurchaseCallback:Function;
         private static var verifyAndTrackAppStorePurchaseCallback:Function;
@@ -427,15 +427,15 @@ package com.adjust.sdk {
             getExtensionContext().call("getIdfv");
         }
 
-        public static function getAppTrackingStatus(callback:Function):void {
+        public static function getAppTrackingAuthorizationStatus(callback:Function):void {
             if (!getExtensionContext()) {
                 trace(errorMessage);
                 return;
             }
 
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-            getAppTrackingStatusCallback = callback;
-            getExtensionContext().call("getAppTrackingStatus");
+            getAppTrackingAuthorizationStatusCallback = callback;
+            getExtensionContext().call("getAppTrackingAuthorizationStatus");
         }
 
         public static function requestAppTrackingAuthorization(callback:Function):void {
@@ -601,7 +601,7 @@ package com.adjust.sdk {
 
             getIdfaCallback = null;
             getIdfvCallback = null;
-            getAppTrackingStatusCallback = null;
+            getAppTrackingAuthorizationStatusCallback = null;
             requestAppTrackingAuthorizationCallback = null;
             verifyAppStorePurchaseCallback = null;
             verifyAndTrackAppStorePurchaseCallback = null;
@@ -721,13 +721,13 @@ package com.adjust.sdk {
                 skanUpdatedData["lockWindow"] = lockWindow;
                 skanUpdatedData["error"] = error;
                 skanUpdatedCallback(skanUpdatedData);
-            } else if (statusEvent.code == "adjust_getAppTrackingStatus") {
+            } else if (statusEvent.code == "adjust_getAppTrackingAuthorizationStatus") {
                 var getAuthorizationStatus:int = -1;
                 var strAuthorizationStatus:String = statusEvent.level;
                 if (strAuthorizationStatus != "ADJ__NULL") {
                     getAuthorizationStatus = parseInt(strAuthorizationStatus);
                 }
-                getAppTrackingStatusCallback(getAuthorizationStatus);
+                getAppTrackingAuthorizationStatusCallback(getAuthorizationStatus);
             } else if (statusEvent.code == "adjust_requestAppTrackingAuthorization") {
                 var requestAuthorizationStatus:int = -1;
                 strAuthorizationStatus = statusEvent.level;

@@ -56,7 +56,7 @@ void AdjustFREContextInitializer(
     setNamedFunction(&func[26], (const uint8_t*)"verifyAndTrackAppStorePurchase", &ADJverifyAndTrackAppStorePurchase);
     setNamedFunction(&func[27], (const uint8_t*)"getIdfa", &ADJgetIdfa);
     setNamedFunction(&func[28], (const uint8_t*)"getIdfv", &ADJgetIdfv);
-    setNamedFunction(&func[29], (const uint8_t*)"getAppTrackingStatus", &ADJgetAppTrackingStatus);
+    setNamedFunction(&func[29], (const uint8_t*)"getAppTrackingAuthorizationStatus", &ADJgetAppTrackingAuthorizationStatus);
     setNamedFunction(&func[30], (const uint8_t*)"requestAppTrackingAuthorization", &ADJrequestAppTrackingAuthorization);
     setNamedFunction(&func[31], (const uint8_t*)"updateSkanConversionValue", &ADJupdateSkanConversionValue);
     // android only
