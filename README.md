@@ -25,7 +25,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
       * [Attribution callback](#attribution-callback)
       * [Get user attribution](#attribution-getter)
    * [Preinstalled apps](#preinstalled-apps)
-      * [Deafult link token](#preinstall-default-link)
+      * [Default link token](#preinstall-default-link)
    * [Global parameters](#global-params)
       * [Global callback parameters](#global-callback-params)
       * [Global partner parameters](#global-partner-params)
@@ -933,7 +933,7 @@ You must specify text content for the ATT. To do this, add your text to the `NSU
   <InfoAdditions>
     <![CDATA[
     <key>NSUserTrackingUsageDescription</key>
-    <string>Your custom message explaning why is access to IDFA necessary.</string>
+    <string>Your custom message explaining why is access to IDFA necessary.</string>
     ]]>
   </InfoAdditions>
 </iPhone>
@@ -1149,8 +1149,8 @@ Similar to how one can set [event callback parameters](#event-callback-params), 
 ```actionscript
 var adjustAdRevenue:AdjustAdRevenue = new AdjustAdRevenue("applovin_max_sdk");
 adjustAdRevenue.setRevenue(1.0, "EUR");
-adjustAdRevenue.setCalbackParameter("key", "value");
-adjustAdRevenue.setCalbackParameter("foo", "bar");
+adjustAdRevenue.setCallbackParameter("key", "value");
+adjustAdRevenue.setCallbackParameter("foo", "bar");
 Adjust.trackAdRevenue(adjustAdRevenue);
 ```
 
@@ -1358,8 +1358,8 @@ var appStoreSubscription:AdjustAppStoreSubscription = new AdjustAppStoreSubscrip
     "price",
     "currency",
     "transactionId");
-appStoreSubscription.setCalbackParameter("key", "value");
-appStoreSubscription.setCalbackParameter("foo", "bar");
+appStoreSubscription.setCallbackParameter("key", "value");
+appStoreSubscription.setCallbackParameter("foo", "bar");
 Adjust.trackAppStoreSubscription(appStoreSubscription);
 ```
 
@@ -1376,8 +1376,8 @@ var playStoreSubscription:AdjustPlayStoreSubscription = new AdjustPlayStoreSubsc
     "orderId",
     "signature",
     "purchaseToken");
-playStoreSubscription.setCalbackParameter("key", "value");
-playStoreSubscription.setCalbackParameter("foo", "bar");
+playStoreSubscription.setCallbackParameter("key", "value");
+playStoreSubscription.setCallbackParameter("foo", "bar");
 Adjust.trackPlayStoreSubscription(playStoreSubscription);
 ```
 
@@ -1579,7 +1579,7 @@ You can activate offline mode by calling the method `switchToOfflineMode` of the
 Adjust.switchToOfflineMode();
 ```
 
-Conversely, you can deactivate the offline mode by calling `switchBackToOnlineMode` method of the `Adjust` class. When the Adjust SDK is put back in online mode, all saved information is sent to our servers with the correct timstamps.
+Conversely, you can deactivate the offline mode by calling `switchBackToOnlineMode` method of the `Adjust` class. When the Adjust SDK is put back in online mode, all saved information is sent to our servers with the correct timestamps.
 
 Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
 
