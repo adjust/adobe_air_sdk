@@ -830,8 +830,8 @@ package {
                 eventNumber = parseInt(eventName.substr(eventName.length - 1));
             }
             var adjustEvent:AdjustEvent = this.savedEvents[eventNumber];
-            // Adjust.verifyAndTrackPlayStorePurchase(
-            Adjust.verifyAndTrackAppStorePurchase(
+            Adjust.verifyAndTrackPlayStorePurchase(
+            // Adjust.verifyAndTrackAppStorePurchase(
                 adjustEvent,
                 function (verificationResult:AdjustPurchaseVerificationResult):void {
                 AdjustTest.addInfoToSend("verification_status", verificationResult.getVerificationStatus());
