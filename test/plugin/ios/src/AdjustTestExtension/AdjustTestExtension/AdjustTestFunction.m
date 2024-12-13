@@ -2,8 +2,8 @@
 //  AdjustTestFunction.m
 //  AdjustTestExtension
 //
-//  Created by Abdullah Obaied (@obaied) on 20th February 2018.
-//  Copyright © 2012-2018 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 20th February 2018.
+//  Copyright © 2018-Present Adjust GmbH. All rights reserved.
 //
 
 #import "AdjustTestFunction.h"
@@ -131,6 +131,12 @@ FREObject ADJaddTestDirectory(FREContext ctx, void* funcData, uint32_t argc, FRE
         NSLog(@"AdjustTestExtension: Bridge addTestDirectory method triggered with wrong number of arguments");
     }
 
+    FREObject return_value;
+    FRENewObjectFromBool(true, &return_value);
+    return return_value;
+}
+
+FREObject ADJsetTestConnectionOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]) {
     FREObject return_value;
     FRENewObjectFromBool(true, &return_value);
     return return_value;

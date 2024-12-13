@@ -24,7 +24,8 @@ public class PackageFactory {
                                                               final ActivityState activityState,
                                                               final AdjustConfig adjustConfig,
                                                               final DeviceInfo deviceInfo,
-                                                              final SessionParameters sessionParameters) {
+                                                              final GlobalParameters globalParameters,
+                                                             final ActivityHandler.InternalState internalState) {
         if (rawReferrer == null || rawReferrer.length() == 0) {
             return null;
         }
@@ -56,7 +57,8 @@ public class PackageFactory {
                 activityState,
                 adjustConfig,
                 deviceInfo,
-                sessionParameters);
+                globalParameters,
+                internalState);
 
         if (clickPackageBuilder == null) {
             return null;
@@ -72,11 +74,12 @@ public class PackageFactory {
     }
 
     public static ActivityPackage buildDeeplinkSdkClickPackage(final Uri url,
-                                                              final long clickTime,
-                                                              final ActivityState activityState,
-                                                              final AdjustConfig adjustConfig,
-                                                              final DeviceInfo deviceInfo,
-                                                              final SessionParameters sessionParameters) {
+                                                               final long clickTime,
+                                                               final ActivityState activityState,
+                                                               final AdjustConfig adjustConfig,
+                                                               final DeviceInfo deviceInfo,
+                                                               final GlobalParameters globalParameters,
+                                                               final ActivityHandler.InternalState internalState) {
         if (url == null) {
             return null;
         }
@@ -87,19 +90,35 @@ public class PackageFactory {
             return null;
         }
 
-        AdjustFactory.getLogger().verbose("Url to parse (%s)", url);
+        String urlStringDecoded;
+
+        try {
+            urlStringDecoded = URLDecoder.decode(urlString, ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            urlStringDecoded = urlString;
+            AdjustFactory.getLogger().error("Deeplink url decoding failed due to UnsupportedEncodingException. Message: (%s)", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            urlStringDecoded = urlString;
+            AdjustFactory.getLogger().error("Deeplink url decoding failed due to IllegalArgumentException. Message: (%s)", e.getMessage());
+        } catch (Exception e) {
+            urlStringDecoded = urlString;
+            AdjustFactory.getLogger().error("Deeplink url decoding failed. Message: (%s)", e.getMessage());
+        }
+
+        AdjustFactory.getLogger().verbose("Url to parse (%s)", urlStringDecoded);
 
         UrlQuerySanitizer querySanitizer = new UrlQuerySanitizer();
         querySanitizer.setUnregisteredParameterValueSanitizer(UrlQuerySanitizer.getAllButNulLegal());
         querySanitizer.setAllowUnregisteredParamaters(true);
-        querySanitizer.parseUrl(urlString);
+        querySanitizer.parseUrl(urlStringDecoded);
 
         PackageBuilder clickPackageBuilder = queryStringClickPackageBuilder(
                 querySanitizer.getParameterList(),
                 activityState,
                 adjustConfig,
                 deviceInfo,
-                sessionParameters);
+                globalParameters,
+                internalState);
 
         if (clickPackageBuilder == null) {
             return null;
@@ -118,15 +137,17 @@ public class PackageFactory {
                                                                       final ActivityState activityState,
                                                                       final AdjustConfig adjustConfig,
                                                                       final DeviceInfo deviceInfo,
-                                                                      final SessionParameters sessionParameters) {
+                                                                      final GlobalParameters globalParameters,
+                                                                      final ActivityHandler.InternalState internalState) {
         long now = System.currentTimeMillis();
 
         PackageBuilder clickPackageBuilder = new PackageBuilder(
                 adjustConfig,
                 deviceInfo,
                 activityState,
-                sessionParameters,
+                globalParameters,
                 now);
+        clickPackageBuilder.internalState = internalState;
 
         clickPackageBuilder.referrer = referrerDetails.installReferrer;
         clickPackageBuilder.clickTimeInSeconds = referrerDetails.referrerClickTimestampSeconds;
@@ -135,6 +156,7 @@ public class PackageFactory {
         clickPackageBuilder.installBeginTimeServerInSeconds = referrerDetails.installBeginTimestampServerSeconds;
         clickPackageBuilder.installVersion = referrerDetails.installVersion;
         clickPackageBuilder.googlePlayInstant = referrerDetails.googlePlayInstant;
+        clickPackageBuilder.isClick = referrerDetails.isClick;
         clickPackageBuilder.referrerApi = referrerApi;
 
         ActivityPackage clickPackage = clickPackageBuilder.buildClickPackage(Constants.INSTALL_REFERRER);
@@ -147,7 +169,7 @@ public class PackageFactory {
                                                                  final ActivityState activityState,
                                                                  final AdjustConfig adjustConfig,
                                                                  final DeviceInfo deviceInfo,
-                                                                 final SessionParameters sessionParameters) {
+                                                                 final GlobalParameters globalParameters) {
         if (preinstallPayload == null || preinstallPayload.length() == 0) {
             return null;
         }
@@ -158,7 +180,7 @@ public class PackageFactory {
                 adjustConfig,
                 deviceInfo,
                 activityState,
-                sessionParameters,
+                globalParameters,
                 now);
 
         clickPackageBuilder.preinstallPayload = preinstallPayload;
@@ -174,7 +196,8 @@ public class PackageFactory {
             final ActivityState activityState,
             final AdjustConfig adjustConfig,
             final DeviceInfo deviceInfo,
-            final SessionParameters sessionParameters) {
+            final GlobalParameters globalParameters,
+            final ActivityHandler.InternalState internalState) {
         if (queryList == null) {
             return null;
         }
@@ -204,9 +227,10 @@ public class PackageFactory {
                 adjustConfig,
                 deviceInfo,
                 activityState,
-                sessionParameters,
+                globalParameters,
                 now);
 
+        builder.internalState = internalState;
         builder.extraParameters = queryStringParameters;
         builder.attribution = queryStringAttribution;
         builder.reftag = reftag;

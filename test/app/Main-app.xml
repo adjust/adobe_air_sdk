@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<application xmlns="http://ns.adobe.com/air/application/33.1"> 
+<application xmlns="http://ns.adobe.com/air/application/51.1"> 
   <id>com.adjust.examples</id> 
-  <versionNumber>4.28.1</versionNumber> 
+  <versionNumber>5.0.0</versionNumber> 
   <filename>Adjust AIR SDK Test</filename> 
 
   <initialWindow>
@@ -19,6 +19,8 @@
   <iPhone>
     <InfoAdditions>
       <![CDATA[
+      <key>MinimumOSVersion</key>
+      <string>12.0</string>
       <key>CFBundleURLTypes</key>
       <array>
         <dict>
@@ -39,10 +41,6 @@
       <![CDATA[ 
       <manifest android:installLocation="auto">
         <uses-permission android:name="android.permission.INTERNET"/>
-        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-        <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-        <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
         <application>
           <activity>
             <intent-filter>
@@ -61,15 +59,6 @@
           <!-- <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/> -->
-
-          <receiver
-            android:name="com.adjust.sdk.AdjustReferrerReceiver"
-            android:permission="android.permission.INSTALL_PACKAGES"
-            android:exported="true">
-            <intent-filter>
-              <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-          </receiver>
         </application>
       </manifest>
       ]]> 

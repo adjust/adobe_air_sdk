@@ -2,8 +2,8 @@
 //  AdjustTestFunction.h
 //  AdjustTestExtension
 //
-//  Created by Abdullah Obaied (@obaied) on 20th February 2018.
-//  Copyright © 2012-2018 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 20th February 2018.
+//  Copyright © 2018-Present Adjust GmbH. All rights reserved.
 //
 
 #import "FlashRuntimeExtensions.h"
@@ -18,3 +18,5 @@ FREObject ADJaddInfoToSend(FREContext ctx, void* funcData, uint32_t argc, FREObj
 FREObject ADJsendInfoToServer(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJaddTest(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJaddTestDirectory(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+// dummy stub to match android method signature
+FREObject ADJsetTestConnectionOptions(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);

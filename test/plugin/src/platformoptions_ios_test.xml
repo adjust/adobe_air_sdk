@@ -1,5 +1,5 @@
-<platform xmlns="http://ns.adobe.com/air/extension/33.1">
-    <sdkVersion>8.0</sdkVersion>
+<platform xmlns="http://ns.adobe.com/air/extension/51.1">
+    <sdkVersion>12.0</sdkVersion>
     <linkerOptions>
         <option>-liconv</option>
     </linkerOptions>

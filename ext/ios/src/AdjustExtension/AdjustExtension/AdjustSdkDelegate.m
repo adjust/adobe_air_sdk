@@ -2,8 +2,8 @@
 //  AdjustSdkDelegate.m
 //  Adjust SDK
 //
-//  Created by Abdullah Obaied (@obaied) on 15th December 2016.
-//  Copyright (c) 2016-2018 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 15th December 2016.
+//  Copyright (c) 2016-Present Adjust GmbH. All rights reserved.
 //
 
 #import <objc/runtime.h>
@@ -17,13 +17,14 @@ static AdjustSdkDelegate *defaultInstance = nil;
 @implementation AdjustSdkDelegate
 
 + (id)getInstanceWithSwizzleOfAttributionCallback:(BOOL)swizzleAttributionCallback
-                           eventSucceededCallback:(BOOL)swizzleEventSucceededCallback
-                              eventFailedCallback:(BOOL)swizzleEventFailedCallback
-                         sessionSucceededCallback:(BOOL)swizzleSessionSucceededCallback
-                            sessionFailedCallback:(BOOL)swizzleSessionFailedCallback
+                             eventSuccessCallback:(BOOL)swizzleEventSuccessCallback
+                             eventFailureCallback:(BOOL)swizzleEventFailureCallback
+                           sessionSuccessCallback:(BOOL)swizzleSessionSuccessCallback
+                           sessionFailureCallback:(BOOL)swizzleSessionFailureCallback
                          deferredDeeplinkCallback:(BOOL)swizzleDeferredDeeplinkCallback
+                              skanUpdatedCallback:(BOOL)swizzleSkanUpdatedCallback
                      shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                                   withFREContext:(FREContext *)freContext {
+                                    withFREContext:(FREContext *)freContext {
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
         
@@ -32,25 +33,29 @@ static AdjustSdkDelegate *defaultInstance = nil;
             [defaultInstance swizzleCallbackMethod:@selector(adjustAttributionChanged:)
                                   swizzledSelector:@selector(adjustAttributionChangedWannabe:)];
         }
-        if (swizzleEventSucceededCallback) {
+        if (swizzleEventSuccessCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustEventTrackingSucceeded:)
                                   swizzledSelector:@selector(adjustEventTrackingSucceededWannabe:)];
         }
-        if (swizzleEventFailedCallback) {
+        if (swizzleEventFailureCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustEventTrackingFailed:)
                                   swizzledSelector:@selector(adjustEventTrackingFailedWannabe:)];
         }
-        if (swizzleSessionSucceededCallback) {
+        if (swizzleSessionSuccessCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustSessionTrackingSucceeded:)
                                   swizzledSelector:@selector(adjustSessionTrackingSucceededWannabe:)];
         }
-        if (swizzleSessionFailedCallback) {
+        if (swizzleSessionFailureCallback) {
             [defaultInstance swizzleCallbackMethod:@selector(adjustSessionTrackingFailed:)
                                   swizzledSelector:@selector(adjustSessionTrackingFailedWananbe:)];
         }
         if (swizzleDeferredDeeplinkCallback) {
-            [defaultInstance swizzleCallbackMethod:@selector(adjustDeeplinkResponse:)
-                                  swizzledSelector:@selector(adjustDeeplinkResponseWannabe:)];
+            [defaultInstance swizzleCallbackMethod:@selector(adjustDeferredDeeplinkReceived:)
+                                  swizzledSelector:@selector(adjustDeferredDeeplinkReceivedWannabe:)];
+        }
+        if (swizzleSkanUpdatedCallback) {
+            [defaultInstance swizzleCallbackMethod:@selector(adjustSkanUpdatedWithConversionData:)
+                                  swizzledSelector:@selector(adjustSkanUpdatedWithConversionDataWannabe:)];
         }
 
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
@@ -78,7 +83,7 @@ static AdjustSdkDelegate *defaultInstance = nil;
         return;
     }
 
-    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
+    NSString *attributionString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
                                    @"trackerToken", attribution.trackerToken,
                                    @"trackerName", attribution.trackerName,
                                    @"campaign", attribution.campaign,
@@ -86,13 +91,12 @@ static AdjustSdkDelegate *defaultInstance = nil;
                                    @"creative", attribution.creative,
                                    @"adgroup", attribution.adgroup,
                                    @"clickLabel", attribution.clickLabel,
-                                   @"adid", attribution.adid,
                                    @"costType", attribution.costType,
                                    @"costAmount", attribution.costAmount == nil ? nil : [attribution.costAmount stringValue],
                                    @"costCurrency", attribution.costCurrency];
     const char* cResponseData = [attributionString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
-            (const uint8_t *)"adjust_attributionData",
+            (const uint8_t *)"adjust_attributionCallback",
             (const uint8_t *)cResponseData);
 }
 
@@ -103,22 +107,23 @@ static AdjustSdkDelegate *defaultInstance = nil;
 
     NSString *stringJsonResponse = nil;
     if (eventSuccess.jsonResponse != nil) {
-        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:eventSuccess.jsonResponse options:0 error:nil];
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:eventSuccess.jsonResponse
+                                                                   options:0
+                                                                     error:nil];
         stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
                                                       length:[dataJsonResponse length]
                                                     encoding:NSUTF8StringEncoding];
     }
-
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
                                  @"message", eventSuccess.message,
-                                 @"timeStamp", eventSuccess.timeStamp,
+                                 @"timestamp", eventSuccess.timestamp,
                                  @"adid", eventSuccess.adid,
                                  @"eventToken", eventSuccess.eventToken,
                                  @"callbackId", eventSuccess.callbackId,
                                  @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
-            (const uint8_t *)"adjust_eventTrackingSucceeded",
+            (const uint8_t *)"adjust_eventSuccessCallback",
             (const uint8_t *)cResponseData);
 }
 
@@ -129,15 +134,16 @@ static AdjustSdkDelegate *defaultInstance = nil;
 
     NSString *stringJsonResponse = nil;
     if (eventFailed.jsonResponse != nil) {
-        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:eventFailed.jsonResponse options:0 error:nil];
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:eventFailed.jsonResponse
+                                                                   options:0
+                                                                     error:nil];
         stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
                                                       length:[dataJsonResponse length]
                                                     encoding:NSUTF8StringEncoding];
     }
-
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
                                  @"message", eventFailed.message,
-                                 @"timeStamp", eventFailed.timeStamp,
+                                 @"timestamp", eventFailed.timestamp,
                                  @"adid", eventFailed.adid,
                                  @"eventToken", eventFailed.eventToken,
                                  @"callbackId", eventFailed.callbackId,
@@ -145,7 +151,7 @@ static AdjustSdkDelegate *defaultInstance = nil;
                                  @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
-            (const uint8_t *)"adjust_eventTrackingFailed",
+            (const uint8_t *)"adjust_eventFailureCallback",
             (const uint8_t *)cResponseData);
 }
 
@@ -157,20 +163,21 @@ static AdjustSdkDelegate *defaultInstance = nil;
 
     NSString *stringJsonResponse = nil;
     if (sessionSuccess.jsonResponse != nil) {
-        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:sessionSuccess.jsonResponse options:0 error:nil];
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:sessionSuccess.jsonResponse
+                                                                   options:0
+                                                                     error:nil];
         stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
                                                       length:[dataJsonResponse length]
                                                     encoding:NSUTF8StringEncoding];
     }
-
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@",
                                  @"message", sessionSuccess.message,
-                                 @"timeStamp", sessionSuccess.timeStamp,
+                                 @"timestamp", sessionSuccess.timestamp,
                                  @"adid", sessionSuccess.adid,
                                  @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
-            (const uint8_t *)"adjust_sessionTrackingSucceeded",
+            (const uint8_t *)"adjust_sessionSuccessCallback",
             (const uint8_t *)cResponseData);
 }
 
@@ -181,31 +188,44 @@ static AdjustSdkDelegate *defaultInstance = nil;
 
     NSString *stringJsonResponse = nil;
     if (sessionFailed.jsonResponse != nil) {
-        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:sessionFailed.jsonResponse options:0 error:nil];
+        NSData *dataJsonResponse = [NSJSONSerialization dataWithJSONObject:sessionFailed.jsonResponse
+                                                                   options:0
+                                                                     error:nil];
         stringJsonResponse = [[NSString alloc] initWithBytes:[dataJsonResponse bytes]
                                                       length:[dataJsonResponse length]
                                                     encoding:NSUTF8StringEncoding];
     }
-
     NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@__%@==%@",
                                  @"message", sessionFailed.message,
-                                 @"timeStamp", sessionFailed.timeStamp,
+                                 @"timestamp", sessionFailed.timestamp,
                                  @"adid", sessionFailed.adid,
                                  @"willRetry", sessionFailed.willRetry ? @"true" : @"false",
                                  @"jsonResponse", stringJsonResponse];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
-            (const uint8_t *)"adjust_sessionTrackingFailed",
+            (const uint8_t *)"adjust_sessionFailureCallback",
             (const uint8_t *)cResponseData);
 }
 
-- (BOOL)adjustDeeplinkResponseWannabe:(NSURL *)deeplink {
+- (BOOL)adjustDeferredDeeplinkReceivedWannabe:(NSURL *)deeplink {
     NSString *formattedString = [NSString stringWithFormat:@"%@", deeplink.absoluteString];
     const char* cResponseData = [formattedString UTF8String];
     FREDispatchStatusEventAsync(*_adjustFREContext,
-            (const uint8_t *)"adjust_deferredDeeplink",
+            (const uint8_t *)"adjust_deferredDeeplinkCallback",
             (const uint8_t *)cResponseData);
     return _shouldLaunchDeferredDeeplink;
+}
+
+- (void)adjustSkanUpdatedWithConversionDataWannabe:(nonnull NSDictionary<NSString *, NSString *> *)data {
+    NSString *formattedString = [NSString stringWithFormat:@"%@==%@__%@==%@__%@==%@__%@==%@",
+                                 @"conversionValue", data[@"conversion_value"],
+                                 @"coarseValue", data[@"coarse_value"],
+                                 @"lockWindow", data[@"lock_window"],
+                                 @"error", data[@"error"]];
+    const char* cResponseData = [formattedString UTF8String];
+    FREDispatchStatusEventAsync(*_adjustFREContext,
+            (const uint8_t *)"adjust_skanUpdatedCallback",
+            (const uint8_t *)cResponseData);
 }
 
 - (void)swizzleCallbackMethod:(SEL)originalSelector

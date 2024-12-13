@@ -1,11 +1,10 @@
-<platform xmlns="http://ns.adobe.com/air/extension/33.1">
-    <sdkVersion>8.0</sdkVersion>
+<platform xmlns="http://ns.adobe.com/air/extension/51.1">
+    <sdkVersion>12.0</sdkVersion>
     <linkerOptions>
-        <option>-ios_version_min 8.0</option>
-        <option>-framework AdSupport</option>
-        <option>-framework iAd</option>
-        <option>-framework CoreTelephony</option>
-        <option>-framework StoreKit</option>
+        <option>-ios_version_min 12.0</option>
+        <option>-weak_framework AdSupport</option>
+        <option>-weak_framework AdServices</option>
+        <option>-weak_framework StoreKit</option>
         <option>-weak_framework AppTrackingTransparency</option>
         <option>-liconv</option>
         <option>-lclang_rt.ios</option>
@@ -13,5 +12,6 @@
 
     <packagedDependencies>
         <packagedDependency>AdjustSdk.framework</packagedDependency>
+        <packagedDependency>AdjustSigSdk.a</packagedDependency>
     </packagedDependencies>
 </platform>

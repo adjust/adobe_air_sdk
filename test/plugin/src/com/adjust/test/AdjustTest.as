@@ -1,5 +1,4 @@
 package com.adjust.test {
-    import flash.desktop.NativeApplication;
     import flash.events.*;
     import flash.external.ExtensionContext;
 
@@ -51,6 +50,11 @@ package com.adjust.test {
             trace("[AdjustTest]: 'addTestDirectory' invoked!");
             trace("[AdjustTest]: 'testDirToAdd' = " + testDirToAdd);
             getExtensionContext().call("addTestDirectory", testDirToAdd);
+        }
+
+        public static function setTestConnectionOptions():void {
+            trace("[AdjustTest]: 'setTestConnectionOptions' invoked!");
+            getExtensionContext().call("setTestConnectionOptions");
         }
 
         private static function extensionResponseCallback(statusEvent:StatusEvent):void {

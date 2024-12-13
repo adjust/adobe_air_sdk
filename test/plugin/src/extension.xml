@@ -1,6 +1,6 @@
-<extension xmlns="http://ns.adobe.com/air/extension/33.1">
+<extension xmlns="http://ns.adobe.com/air/extension/51.1">
     <id>com.adjust.test</id>
-    <versionNumber>4.28.0</versionNumber>
+    <versionNumber>5.0.0</versionNumber>
     <platforms>
         <platform name="Android-ARM">
             <applicationDeployment>

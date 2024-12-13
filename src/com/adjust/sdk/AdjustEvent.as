@@ -1,53 +1,83 @@
 package com.adjust.sdk {
     public class AdjustEvent {
+        private var eventToken:String;
         private var revenue:Number;
         private var currency:String;
-        private var eventToken:String;
         private var callbackId:String;
-        private var transactionId:String;
+        private var deduplicationId:String;
+        private var productId:String;
         private var partnerParameters:Array;
         private var callbackParameters:Array;
-        // iOS only.
-        private var receipt:String;
-        private var isReceiptSet:Boolean;
+        // ios only
+        private var transactionId:String;
+        // android only
+        private var purchaseToken:String;
 
         public function AdjustEvent(eventToken:String) {
-            this.isReceiptSet = false;
             this.eventToken = eventToken;
             this.partnerParameters = new Array();
             this.callbackParameters = new Array();
         }
+
+        // common
 
         public function setRevenue(revenue:Number, currency:String):void {
             this.revenue = revenue;
             this.currency = currency;
         }
 
-        public function addCallbackParameter(key:String, value:String):void {
-            this.callbackParameters.push(key);
-            this.callbackParameters.push(value);
-        }
-
-        public function addPartnerParameter(key:String, value:String):void {
-            this.partnerParameters.push(key);
-            this.partnerParameters.push(value);
-        }
-
         public function setCallbackId(callbackId:String):void {
             this.callbackId = callbackId;
         }
+
+        public function setDeduplicationId(deduplicationId:String):void {
+            this.deduplicationId = deduplicationId;
+        }
+
+        public function setProductId(productId:String):void {
+            this.productId = productId;
+        }
+
+        public function addCallbackParameter(key:String, value:String):void {
+            if (key == null) {
+                this.callbackParameters.push("ADJ__NULL");
+            } else {
+                this.callbackParameters.push(key);
+            }
+            if (value == null) {
+                this.callbackParameters.push("ADJ__NULL");
+            } else {
+                this.callbackParameters.push(value);
+            }
+        }
+
+        public function addPartnerParameter(key:String, value:String):void {
+            if (key == null) {
+                this.partnerParameters.push("ADJ__NULL");
+            } else {
+                this.partnerParameters.push(key);
+            }
+            if (value == null) {
+                this.partnerParameters.push("ADJ__NULL");
+            } else {
+                this.partnerParameters.push(value);
+            }
+        }
+
+        // ios only
 
         public function setTransactionId(transactionId:String):void {
             this.transactionId = transactionId;
         }
 
-        public function setReceiptForTransactionId(receipt:String, transactionId:String):void {
-            this.receipt = receipt;
-            this.transactionId = transactionId;
-            this.isReceiptSet = true;
+        // android only
+
+        public function setPurchaseToken(purchaseToken:String):void {
+            this.purchaseToken = purchaseToken;
         }
 
-        // Getters.
+        // getters
+
         public function getEventToken():String {
             return this.eventToken;
         }
@@ -60,6 +90,18 @@ package com.adjust.sdk {
             return this.revenue;
         }
 
+        public function getCallbackId():String {
+            return this.callbackId;
+        }
+
+        public function getDeduplicationId():String {
+            return this.deduplicationId;
+        }
+
+        public function getProductId():String {
+            return this.productId;
+        }
+
         public function getCallbackParameters():Array {
             return this.callbackParameters;
         }
@@ -68,20 +110,12 @@ package com.adjust.sdk {
             return this.partnerParameters;
         }
 
-        public function getCallbackId():String {
-            return this.callbackId;
-        }
-
         public function getTransactionId():String {
             return this.transactionId;
         }
 
-        public function getReceipt():String {
-            return this.receipt;
-        }
-
-        public function getIsReceiptSet():Boolean {
-            return this.isReceiptSet;
+        public function getPurchaseToken():String {
+            return this.purchaseToken;
         }
     }
 }

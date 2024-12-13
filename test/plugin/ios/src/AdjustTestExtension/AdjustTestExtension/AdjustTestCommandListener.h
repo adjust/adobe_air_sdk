@@ -2,8 +2,8 @@
 //  AdjustTestCommandListener.h
 //  AdjustTestExtension
 //
-//  Created by Abdullah Obaied (@obaied) on 20th February 2018.
-//  Copyright © 2012-2018 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 20th February 2018.
+//  Copyright © 2018-Present Adjust GmbH. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

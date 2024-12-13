@@ -14,7 +14,8 @@ public enum ActivityKind {
     DISABLE_THIRD_PARTY_SHARING,
     SUBSCRIPTION,
     THIRD_PARTY_SHARING,
-    MEASUREMENT_CONSENT;
+    MEASUREMENT_CONSENT,
+    PURCHASE_VERIFICATION;
 
     public static ActivityKind fromString(String string) {
         if ("session".equals(string)) {
@@ -29,8 +30,6 @@ public enum ActivityKind {
             return INFO;
         } else if ("gdpr".equals(string)) {
             return GDPR;
-        } else if ("disable_third_party_sharing".equals(string)) {
-            return DISABLE_THIRD_PARTY_SHARING;
         } else if ("ad_revenue".equals(string)) {
             return AD_REVENUE;
         } else if ("subscription".equals(string)) {
@@ -39,6 +38,8 @@ public enum ActivityKind {
             return THIRD_PARTY_SHARING;
         } else if ("measurement_consent".equals(string)) {
             return MEASUREMENT_CONSENT;
+        } else if ("purchase_verification".equals(string)) {
+            return PURCHASE_VERIFICATION;
         } else {
             return UNKNOWN;
         }
@@ -59,8 +60,6 @@ public enum ActivityKind {
                 return "info";
             case GDPR:
                 return "gdpr";
-            case DISABLE_THIRD_PARTY_SHARING:
-                return "disable_third_party_sharing";
             case AD_REVENUE:
                 return "ad_revenue";
             case SUBSCRIPTION:
@@ -69,6 +68,8 @@ public enum ActivityKind {
                 return "third_party_sharing";
             case MEASUREMENT_CONSENT:
                 return "measurement_consent";
+            case PURCHASE_VERIFICATION:
+                return "purchase_verification";
             default:
                 return "unknown";
         }

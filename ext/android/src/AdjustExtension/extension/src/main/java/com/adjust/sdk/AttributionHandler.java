@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AttributionHandler implements IAttributionHandler,
@@ -232,7 +231,7 @@ public class AttributionHandler implements IAttributionHandler,
         }
 
         // Create attribution package before sending attribution request.
-        ActivityPackage attributionPackage = buildAndGetAttributionPackage();
+        ActivityPackage attributionPackage = buildAndGetAttributionPackage(activityHandlerWeakRef.get().getInternalState());
         logger.verbose("%s", attributionPackage.getExtendedString());
 
         Map<String, String> sendingParameters = generateSendingParametersI();
@@ -254,15 +253,17 @@ public class AttributionHandler implements IAttributionHandler,
         return sendingParameters;
     }
 
-    private ActivityPackage buildAndGetAttributionPackage() {
+    private ActivityPackage buildAndGetAttributionPackage(ActivityHandler.InternalState internalState) {
         long now = System.currentTimeMillis();
         IActivityHandler activityHandler = activityHandlerWeakRef.get();
         PackageBuilder packageBuilder = new PackageBuilder(
                 activityHandler.getAdjustConfig(),
                 activityHandler.getDeviceInfo(),
                 activityHandler.getActivityState(),
-                activityHandler.getSessionParameters(),
+                activityHandler.getGlobalParameters(),
                 now);
+        packageBuilder.internalState = internalState;
+
         ActivityPackage activityPackage = packageBuilder.buildAttributionPackage(lastInitiatedBy);
         lastInitiatedBy = null;
         return activityPackage;

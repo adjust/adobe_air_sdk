@@ -2,6 +2,7 @@ package com.adjust.sdk;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,62 +12,43 @@ public class AdjustConfig {
     String basePath;
     String gdprPath;
     String subscriptionPath;
+    String purchaseVerificationPath;
     Context context;
     String appToken;
     String environment;
     String processName;
     String sdkPrefix;
-    boolean eventBufferingEnabled;
     String defaultTracker;
     OnAttributionChangedListener onAttributionChangedListener;
-    Boolean deviceKnown;
-    Class deepLinkComponent;
     OnEventTrackingSucceededListener onEventTrackingSucceededListener;
     OnEventTrackingFailedListener onEventTrackingFailedListener;
     OnSessionTrackingSucceededListener onSessionTrackingSucceededListener;
     OnSessionTrackingFailedListener onSessionTrackingFailedListener;
-    OnDeeplinkResponseListener onDeeplinkResponseListener;
-    boolean sendInBackground;
-    Double delayStart;
+    OnDeferredDeeplinkResponseListener onDeferredDeeplinkResponseListener;
+    boolean isSendingInBackgroundEnabled;
     AdjustInstance.PreLaunchActions preLaunchActions;
     ILogger logger;
-    String userAgent;
     String pushToken;
     Boolean startEnabled;
     boolean startOffline;
-    String secretId;
-    String appSecret;
     String externalDeviceId;
-    boolean preinstallTrackingEnabled;
-    Boolean needsCost;
-    String urlStrategy;
+    boolean isPreinstallTrackingEnabled;
+    Boolean isCostDataInAttributionEnabled;
+    List<String> urlStrategyDomains;
+    boolean useSubdomains;
+    boolean isDataResidency;
+    String preinstallFilePath;
+    boolean coppaComplianceEnabled;
+    boolean playStoreKidsComplianceEnabled;
+    String fbAppId;
+    boolean isDeviceIdsReadingOnceEnabled;
+    OnDeeplinkResolvedListener cachedDeeplinkResolutionCallback;
+    ArrayList<OnAdidReadListener> cachedAdidReadCallbacks = new ArrayList<>();
+    Integer eventDeduplicationIdsMaxSize;
+    ArrayList<OnAttributionReadListener> cachedAttributionReadCallbacks = new ArrayList<>();
 
     public static final String ENVIRONMENT_SANDBOX = "sandbox";
     public static final String ENVIRONMENT_PRODUCTION = "production";
-
-    public static final String URL_STRATEGY_INDIA = "url_strategy_india";
-    public static final String URL_STRATEGY_CHINA = "url_strategy_china";
-    public static final String DATA_RESIDENCY_EU = "data_residency_eu";
-
-    public static final String AD_REVENUE_MOPUB = "mopub";
-    public static final String AD_REVENUE_ADMOB = "admob";
-    public static final String AD_REVENUE_FB_NATIVE_AD = "facebook_native_ad";
-    public static final String AD_REVENUE_FB_AUDIENCE_NETWORK = "facebook_audience_network";
-    public static final String AD_REVENUE_IRONSOURCE = "ironsource";
-    public static final String AD_REVENUE_FYBER = "fyber";
-    public static final String AD_REVENUE_AERSERV = "aerserv";
-    public static final String AD_REVENUE_APPODEAL = "appodeal";
-    public static final String AD_REVENUE_ADINCUBE = "adincube";
-    public static final String AD_REVENUE_FUSE_POWERED = "fusepowered";
-    public static final String AD_REVENUE_ADDAPTR = "addapptr";
-    public static final String AD_REVENUE_MILLENNIAL_MEDITATION = "millennial_mediation";
-    public static final String AD_REVENUE_FLURRY = "flurry";
-    public static final String AD_REVENUE_ADMOST = "admost";
-    public static final String AD_REVENUE_DELTADNA = "deltadna";
-    public static final String AD_REVENUE_UPSIGHT = "upsight";
-    public static final String AD_REVENUE_UNITYADS = "unityads";
-    public static final String AD_REVENUE_ADTOAPP = "adtoapp";
-    public static final String AD_REVENUE_TAPDAQ = "tapdaq";
 
     public AdjustConfig(Context context, String appToken, String environment) {
         init(context, appToken, environment, false);
@@ -81,7 +63,7 @@ public class AdjustConfig {
         logger = AdjustFactory.getLogger();
         // default values
         if (allowSuppressLogLevel && AdjustConfig.ENVIRONMENT_PRODUCTION.equals(environment)) {
-            setLogLevel(LogLevel.SUPRESS, environment);
+            setLogLevel(LogLevel.SUPPRESS, environment);
         } else {
             setLogLevel(LogLevel.INFO, environment);
         }
@@ -96,47 +78,85 @@ public class AdjustConfig {
         this.environment = environment;
 
         // default values
-        this.eventBufferingEnabled = false;
-        this.sendInBackground = false;
-        this.preinstallTrackingEnabled = false;
-    }
-
-    public void setEventBufferingEnabled(Boolean eventBufferingEnabled) {
-        if (eventBufferingEnabled == null) {
-            this.eventBufferingEnabled = false;
-            return;
-        }
-        this.eventBufferingEnabled = eventBufferingEnabled;
-    }
-
-    public void setSendInBackground(boolean sendInBackground) {
-        this.sendInBackground = sendInBackground;
+        this.isSendingInBackgroundEnabled = false;
+        this.isPreinstallTrackingEnabled = false;
+        this.isDeviceIdsReadingOnceEnabled = false;
+        this.coppaComplianceEnabled = false;
+        this.playStoreKidsComplianceEnabled = false;
     }
 
     public void setLogLevel(LogLevel logLevel) {
         setLogLevel(logLevel, environment);
     }
 
+    private void setLogLevel(LogLevel logLevel, String environment) {
+        logger.setLogLevel(logLevel, AdjustConfig.ENVIRONMENT_PRODUCTION.equals(environment));
+    }
+
     public void setSdkPrefix(String sdkPrefix) {
         this.sdkPrefix = sdkPrefix;
     }
 
-    public void setProcessName(String processName) { this.processName = processName; }
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
 
     public void setDefaultTracker(String defaultTracker) {
         this.defaultTracker = defaultTracker;
     }
 
+    public void setExternalDeviceId(String externalDeviceId) {
+        this.externalDeviceId = externalDeviceId;
+    }
+
+    public void setPreinstallFilePath(String preinstallFilePath) {
+        this.preinstallFilePath = preinstallFilePath;
+    }
+
+    public void enableCoppaCompliance() {
+        this.coppaComplianceEnabled = true;
+    }
+
+    public void enablePlayStoreKidsCompliance() {
+        this.playStoreKidsComplianceEnabled = true;
+    }
+
+    public void setFbAppId(String fbAppId) {
+        this.fbAppId = fbAppId;
+    }
+
+    public void setEventDeduplicationIdsMaxSize(Integer eventDeduplicationIdsMaxSize) {
+        this.eventDeduplicationIdsMaxSize = eventDeduplicationIdsMaxSize;
+    }
+
+    public void setUrlStrategy(List<String> domains, boolean useSubdomains, boolean isDataResidency) {
+        if (domains == null || domains.isEmpty()) {
+            logger.error("Invalid URL strategy domains array");
+            return;
+        }
+        this.urlStrategyDomains = domains;
+        this.useSubdomains = useSubdomains;
+        this.isDataResidency = isDataResidency;
+    }
+
+    public void enablePreinstallTracking() {
+        this.isPreinstallTrackingEnabled = true;
+    }
+
+    public void enableCostDataInAttribution() {
+        this.isCostDataInAttributionEnabled = true;
+    }
+
+    public void enableSendingInBackground() {
+        this.isSendingInBackgroundEnabled = true;
+    }
+
+    public void enableDeviceIdsReadingOnce() {
+        this.isDeviceIdsReadingOnceEnabled = true;
+    }
+
     public void setOnAttributionChangedListener(OnAttributionChangedListener onAttributionChangedListener) {
         this.onAttributionChangedListener = onAttributionChangedListener;
-    }
-
-    public void setDeviceKnown(boolean deviceKnown) {
-        this.deviceKnown = deviceKnown;
-    }
-
-    public void setDeepLinkComponent(Class deepLinkComponent) {
-        this.deepLinkComponent = deepLinkComponent;
     }
 
     public void setOnEventTrackingSucceededListener(OnEventTrackingSucceededListener onEventTrackingSucceededListener) {
@@ -155,64 +175,104 @@ public class AdjustConfig {
         this.onSessionTrackingFailedListener = onSessionTrackingFailedListener;
     }
 
-    public void setOnDeeplinkResponseListener(OnDeeplinkResponseListener onDeeplinkResponseListener) {
-        this.onDeeplinkResponseListener = onDeeplinkResponseListener;
+    public void setOnDeferredDeeplinkResponseListener(OnDeferredDeeplinkResponseListener onDeferredDeeplinkResponseListener) {
+        this.onDeferredDeeplinkResponseListener = onDeferredDeeplinkResponseListener;
     }
 
-    public void setDelayStart(double delayStart) {
-        this.delayStart = delayStart;
+    public Context getContext() {
+        return context;
     }
 
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
+    public String getAppToken() {
+        return appToken;
     }
 
-    public void setAppSecret(long secretId, long info1, long info2, long info3, long info4) {
-        this.secretId = Util.formatString("%d", secretId);
-        this.appSecret = Util.formatString("%d%d%d%d", info1, info2, info3, info4);
+    public String getEnvironment() {
+        return environment;
     }
 
-    @Deprecated
-    public void setReadMobileEquipmentIdentity(boolean readMobileEquipmentIdentity) {
-        logger.warn("This method has been deprecated and shouldn't be used anymore");
+    public String getProcessName() {
+        return processName;
     }
 
-    public void setExternalDeviceId(String externalDeviceId) {
-        this.externalDeviceId = externalDeviceId;
+    public String getSdkPrefix() {
+        return sdkPrefix;
     }
 
-    public void setPreinstallTrackingEnabled(boolean preinstallTrackingEnabled) {
-        this.preinstallTrackingEnabled = preinstallTrackingEnabled;
+    public String getDefaultTracker() {
+        return defaultTracker;
     }
 
-    public void setNeedsCost(boolean needsCost) {
-        this.needsCost = needsCost;
+    public String getExternalDeviceId() {
+        return externalDeviceId;
     }
 
-    public boolean isValid() {
-        if (!checkAppToken(appToken)) return false;
-        if (!checkEnvironment(environment)) return false;
-        if (!checkContext(context)) return false;
-
-        return true;
+    public boolean isPreinstallTrackingEnabled() {
+        return isPreinstallTrackingEnabled;
     }
 
-    public void setUrlStrategy(String urlStrategy) {
-        if (urlStrategy == null || urlStrategy.isEmpty()) {
-            logger.error("Invalid url strategy");
-            return;
-        }
-        if (!urlStrategy.equals(URL_STRATEGY_INDIA)
-                && !urlStrategy.equals(URL_STRATEGY_CHINA)
-                && !urlStrategy.equals(DATA_RESIDENCY_EU))
-        {
-            logger.warn("Unrecognised url strategy %s", urlStrategy);
-        }
-        this.urlStrategy = urlStrategy;
+    public Boolean getCostDataInAttributionEnabled() {
+        return isCostDataInAttributionEnabled;
     }
 
-    private void setLogLevel(LogLevel logLevel, String environment) {
-        logger.setLogLevel(logLevel, AdjustConfig.ENVIRONMENT_PRODUCTION.equals(environment));
+    public boolean isSendingInBackgroundEnabled() {
+        return isSendingInBackgroundEnabled;
+    }
+
+    public Integer getEventDeduplicationIdsMaxSize() {
+        return eventDeduplicationIdsMaxSize;
+    }
+
+    public List<String> getUrlStrategyDomains() {
+        return urlStrategyDomains;
+    }
+
+    public String getPreinstallFilePath() {
+        return preinstallFilePath;
+    }
+
+    public boolean isCoppaComplianceEnabled() {
+        return coppaComplianceEnabled;
+    }
+
+    public boolean isPlayStoreKidsComplianceEnabled() {
+        return playStoreKidsComplianceEnabled;
+    }
+
+    public String getFbAppId() {
+        return fbAppId;
+    }
+
+    public boolean isDeviceIdsReadingOnceEnabled() {
+        return isDeviceIdsReadingOnceEnabled;
+    }
+
+    public OnAttributionChangedListener getOnAttributionChangedListener() {
+        return onAttributionChangedListener;
+    }
+
+    public OnEventTrackingSucceededListener getOnEventTrackingSucceededListener() {
+        return onEventTrackingSucceededListener;
+    }
+
+    public OnEventTrackingFailedListener getOnEventTrackingFailedListener() {
+        return onEventTrackingFailedListener;
+    }
+
+    public OnSessionTrackingSucceededListener getOnSessionTrackingSucceededListener() {
+        return onSessionTrackingSucceededListener;
+    }
+
+    public OnSessionTrackingFailedListener getOnSessionTrackingFailedListener() {
+        return onSessionTrackingFailedListener;
+    }
+
+    public OnDeferredDeeplinkResponseListener getOnDeeplinkResponseListener() {
+        return onDeferredDeeplinkResponseListener;
+    }
+
+    public ILogger getLogger() {
+        return logger;
     }
 
     private boolean checkContext(Context context) {
@@ -265,5 +325,18 @@ public class AdjustConfig {
 
         logger.error("Unknown environment '%s'", environment);
         return false;
+    }
+
+    public boolean isValid() {
+        if (!checkAppToken(appToken)) {
+            return false;
+        }
+        if (!checkEnvironment(environment)) {
+            return false;
+        }
+        if (!checkContext(context)) {
+            return false;
+        }
+        return true;
     }
 }

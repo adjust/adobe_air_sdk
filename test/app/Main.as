@@ -1,5 +1,9 @@
 package {
     import com.adjust.sdk.Adjust;
+    import com.adjust.sdk.AdjustConfig;
+    import com.adjust.sdk.AdjustThirdPartySharing;
+    import com.adjust.sdk.AdjustEnvironment;
+    import com.adjust.sdk.AdjustLogLevel;
     import com.adjust.test.AdjustTest;
 
     import flash.display.Sprite;
@@ -8,9 +12,9 @@ package {
     public class Main extends Sprite {
         // Android: Make sure to use HTTPS with port 8443 with a physical device.
         // iOS: Make sure to use HTTP with port 8080 with a physical device.
-        public static var ipAddress:String = '192.168.86.75';
-        public static var baseUrl:String = 'http://' + ipAddress + ':8080';
-        public static var gdprUrl:String = 'http://' + ipAddress + ':8080';
+        public static var ipAddress:String = '192.168.86.142';
+        public static var baseUrl:String = 'https://' + ipAddress + ':8443';
+        public static var gdprUrl:String = 'https://' + ipAddress + ':8443';
         public static var controlUrl:String = 'ws://' + ipAddress + ':1987';
 
         private static var commandExecutor:CommandExecutor;
@@ -18,7 +22,9 @@ package {
         public function Main() {
             commandExecutor = new CommandExecutor(baseUrl);
             trace('[ADJUST][TEST-APP]: Starting Adjust test application session!');
-            AdjustTest.startTestSession(baseUrl, controlUrl, Adjust.getSdkVersion(), testCommandCallbackDelegate);
+            Adjust.getSdkVersion(function (sdkVersion:String):void {
+                AdjustTest.startTestSession(baseUrl, controlUrl, sdkVersion, testCommandCallbackDelegate);
+            });
         }
 
         private static function testCommandCallbackDelegate(json:String):void {

@@ -7,10 +7,10 @@ package com.adjust.sdk {
         private var creative:String;
         private var adgroup:String;
         private var clickLabel:String;
-        private var adid:String;
         private var costType:String;
-        private var costAmount:String;
+        private var costAmount:Number;
         private var costCurrency:String;
+        private var fbInstallReferrer:String;
 
         public function AdjustAttribution(
             trackerToken:String,
@@ -20,10 +20,10 @@ package com.adjust.sdk {
             creative:String,
             adgroup:String,
             clickLabel:String,
-            adid:String,
             costType:String,
-            costAmount:String,
-            costCurrency:String) {
+            costAmount:Number,
+            costCurrency:String,
+            fbInstallReferrer:String) {
             this.trackerToken = trackerToken;
             this.trackerName = trackerName;
             this.campaign = campaign;
@@ -31,13 +31,14 @@ package com.adjust.sdk {
             this.creative = creative;
             this.adgroup = adgroup;
             this.clickLabel = clickLabel;
-            this.adid = adid;
             this.costType = costType;
             this.costAmount = costAmount;
             this.costCurrency = costCurrency;
+            this.fbInstallReferrer = fbInstallReferrer;
         }
 
-        // Getters
+        // getters
+
         public function getTrackerToken():String {
             return this.trackerToken;
         }
@@ -58,7 +59,7 @@ package com.adjust.sdk {
             return this.creative;
         }
 
-        public function getAdGroup():String {
+        public function getAdgroup():String {
             return this.adgroup;
         }
 
@@ -66,20 +67,20 @@ package com.adjust.sdk {
             return this.clickLabel;
         }
 
-        public function getAdid():String {
-            return this.adid;
-        }
-
         public function getCostType():String {
             return this.costType;
         }
 
-        public function getCostAmount():String {
+        public function getCostAmount():Number {
             return this.costAmount;
         }
 
         public function getCostCurrency():String {
             return this.costCurrency;
+        }
+
+        public function getFbInstallReferrer():String {
+            return this.fbInstallReferrer;
         }
     }
 }

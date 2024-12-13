@@ -13,7 +13,10 @@ public class AdjustEvent {
     Map<String, String> callbackParameters;
     Map<String, String> partnerParameters;
     String orderId;
+    String deduplicationId;
     String callbackId;
+    String productId;
+    String purchaseToken;
 
     private static ILogger logger = AdjustFactory.getLogger();
 
@@ -64,12 +67,64 @@ public class AdjustEvent {
         this.orderId = orderId;
     }
 
+    public void setDeduplicationId(String deduplicationId) {
+        this.deduplicationId = deduplicationId;
+    }
+
     public void setCallbackId(String callbackId) {
         this.callbackId = callbackId;
     }
 
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public void setPurchaseToken(String purchaseToken) {
+        this.purchaseToken = purchaseToken;
+    }
+
     public boolean isValid() {
         return eventToken != null;
+    }
+
+    public String getEventToken() {
+        return eventToken;
+    }
+
+    public Double getRevenue() {
+        return revenue;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public Map<String, String> getCallbackParameters() {
+        return callbackParameters;
+    }
+
+    public Map<String, String> getPartnerParameters() {
+        return partnerParameters;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public String getDeduplicationId() {
+        return deduplicationId;
+    }
+
+    public String getCallbackId() {
+        return callbackId;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public String getPurchaseToken() {
+        return purchaseToken;
     }
 
     private static boolean checkEventToken(String eventToken, ILogger logger) {

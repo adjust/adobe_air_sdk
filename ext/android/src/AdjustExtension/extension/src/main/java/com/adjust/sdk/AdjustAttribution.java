@@ -7,6 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamField;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by pfms on 07/11/14.
@@ -21,10 +23,10 @@ public class AdjustAttribution implements Serializable {
             new ObjectStreamField("adgroup", String.class),
             new ObjectStreamField("creative", String.class),
             new ObjectStreamField("clickLabel", String.class),
-            new ObjectStreamField("adid", String.class),
             new ObjectStreamField("costType", String.class),
             new ObjectStreamField("costAmount", Double.class),
             new ObjectStreamField("costCurrency", String.class),
+            new ObjectStreamField("fbInstallReferrer", String.class),
     };
 
     public String trackerToken;
@@ -34,46 +36,10 @@ public class AdjustAttribution implements Serializable {
     public String adgroup;
     public String creative;
     public String clickLabel;
-    public String adid;
     public String costType;
     public Double costAmount;
     public String costCurrency;
-
-    public static AdjustAttribution fromJson(JSONObject jsonObject, String adid, String sdkPlatform) {
-        if (jsonObject == null) return null;
-
-        AdjustAttribution attribution = new AdjustAttribution();
-
-        if ("unity".equals(sdkPlatform)) {
-            // Unity platform.
-            attribution.trackerToken = jsonObject.optString("tracker_token", "");
-            attribution.trackerName = jsonObject.optString("tracker_name", "");
-            attribution.network = jsonObject.optString("network", "");
-            attribution.campaign = jsonObject.optString("campaign", "");
-            attribution.adgroup = jsonObject.optString("adgroup", "");
-            attribution.creative = jsonObject.optString("creative", "");
-            attribution.clickLabel = jsonObject.optString("click_label", "");
-            attribution.adid = adid != null ? adid : "";
-            attribution.costType = jsonObject.optString("cost_type", "");
-            attribution.costAmount = jsonObject.optDouble("cost_amount", 0);
-            attribution.costCurrency = jsonObject.optString("cost_currency", "");
-        } else {
-            // Rest of all platforms.
-            attribution.trackerToken = jsonObject.optString("tracker_token");
-            attribution.trackerName = jsonObject.optString("tracker_name");
-            attribution.network = jsonObject.optString("network");
-            attribution.campaign = jsonObject.optString("campaign");
-            attribution.adgroup = jsonObject.optString("adgroup");
-            attribution.creative = jsonObject.optString("creative");
-            attribution.clickLabel = jsonObject.optString("click_label");
-            attribution.adid = adid;
-            attribution.costType = jsonObject.optString("cost_type");
-            attribution.costAmount = jsonObject.optDouble("cost_amount");
-            attribution.costCurrency = jsonObject.optString("cost_currency");
-        }
-
-        return attribution;
-    }
+    public String fbInstallReferrer;
 
     @Override
     public boolean equals(Object other) {
@@ -89,28 +55,45 @@ public class AdjustAttribution implements Serializable {
         if (!Util.equalString(adgroup, otherAttribution.adgroup)) return false;
         if (!Util.equalString(creative, otherAttribution.creative)) return false;
         if (!Util.equalString(clickLabel, otherAttribution.clickLabel)) return false;
-        if (!Util.equalString(adid, otherAttribution.adid)) return false;
         if (!Util.equalString(costType, otherAttribution.costType)) return false;
         if (!Util.equalsDouble(costAmount, otherAttribution.costAmount)) return false;
         if (!Util.equalString(costCurrency, otherAttribution.costCurrency)) return false;
+        if (!Util.equalString(fbInstallReferrer, otherAttribution.fbInstallReferrer)) return false;
 
         return true;
+    }
+
+    public Map<String, String> toMap() {
+        Map<String, String> fields = new HashMap<>();
+        if (trackerToken != null) fields.put("trackerToken", trackerToken);
+        if (trackerName != null) fields.put("trackerName", trackerName);
+        if (network != null) fields.put("network", network);
+        if (campaign != null) fields.put("campaign", campaign);
+        if (adgroup != null) fields.put("adgroup", adgroup);
+        if (creative != null) fields.put("creative", creative);
+        if (clickLabel != null) fields.put("clickLabel", clickLabel);
+        if (costType != null) fields.put("costType", costType);
+        if (costAmount != null) fields.put("costAmount", costAmount.toString());
+        if (costCurrency != null) fields.put("costCurrency", costCurrency);
+        if (fbInstallReferrer != null) fields.put("fbInstallReferrer", fbInstallReferrer);
+
+        return fields;
     }
 
     @Override
     public int hashCode() {
         int hashCode = 17;
-        hashCode = 37 * hashCode + Util.hashString(trackerToken);
-        hashCode = 37 * hashCode + Util.hashString(trackerName);
-        hashCode = 37 * hashCode + Util.hashString(network);
-        hashCode = 37 * hashCode + Util.hashString(campaign);
-        hashCode = 37 * hashCode + Util.hashString(adgroup);
-        hashCode = 37 * hashCode + Util.hashString(creative);
-        hashCode = 37 * hashCode + Util.hashString(clickLabel);
-        hashCode = 37 * hashCode + Util.hashString(adid);
-        hashCode = 37 * hashCode + Util.hashString(costType);
-        hashCode = 37 * hashCode + Util.hashDouble(costAmount);
-        hashCode = 37 * hashCode + Util.hashString(costCurrency);
+        hashCode = Util.hashString(trackerToken, hashCode);
+        hashCode = Util.hashString(trackerName, hashCode);
+        hashCode = Util.hashString(network, hashCode);
+        hashCode = Util.hashString(campaign, hashCode);
+        hashCode = Util.hashString(adgroup, hashCode);
+        hashCode = Util.hashString(creative, hashCode);
+        hashCode = Util.hashString(clickLabel, hashCode);
+        hashCode = Util.hashString(costType, hashCode);
+        hashCode = Util.hashDouble(costAmount, hashCode);
+        hashCode = Util.hashString(costCurrency, hashCode);
+        hashCode = Util.hashString(fbInstallReferrer, hashCode);
 
         return hashCode;
     }
@@ -118,9 +101,9 @@ public class AdjustAttribution implements Serializable {
     @Override
     public String toString() {
         return Util.formatString(
-                "tt:%s tn:%s net:%s cam:%s adg:%s cre:%s cl:%s adid:%s ct:%s ca:%.2f cc:%s",
+                "tt:%s tn:%s net:%s cam:%s adg:%s cre:%s cl:%s ct:%s ca:%.2f cc:%s fir:%s",
                 trackerToken, trackerName, network, campaign, adgroup, creative, clickLabel,
-                adid, costType, costAmount, costCurrency);
+                costType, costAmount, costCurrency, fbInstallReferrer);
     }
 
     private void writeObject(ObjectOutputStream stream) throws IOException {

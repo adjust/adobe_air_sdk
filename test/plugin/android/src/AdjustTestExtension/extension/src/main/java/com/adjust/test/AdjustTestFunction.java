@@ -1,5 +1,7 @@
 package com.adjust.test;
 
+import com.adjust.test_options.TestConnectionOptions;
+
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,9 @@ public class AdjustTestFunction implements FREFunction {
         if (functionName == AdjustTestContext.AddTestDirectory) {
             return AddTestDirectory(freContext, freObjects);
         }
+        if (functionName == AdjustTestContext.SetTestConnectionOptions) {
+            return SetTestConnectionOptions(freContext, freObjects);
+        }
         return null;
     }
 
@@ -48,7 +53,11 @@ public class AdjustTestFunction implements FREFunction {
             String baseUrl = freObjects[0].getAsString();
             String controlUrl = freObjects[1].getAsString();
             String clientSdk = freObjects[2].getAsString();
-            testLibrary = new TestLibrary(baseUrl, controlUrl, new CommandListener());
+            testLibrary = new TestLibrary(
+                baseUrl,
+                controlUrl,
+                freContext.getActivity().getApplicationContext(),
+                new CommandListener());
             for (int i = 0; i < selectedTests.size(); i++) {
                 testLibrary.addTest(selectedTests.get(i));
             }
@@ -149,6 +158,16 @@ public class AdjustTestFunction implements FREFunction {
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace(); 
         } catch (FREWrongThreadException e) { 
+            Log.e(TAG, e.getMessage()); 
+            e.printStackTrace(); 
+        } 
+        return null;
+    }
+
+    private FREObject SetTestConnectionOptions(FREContext freContext, FREObject[] freObjects) {
+        try {
+            TestConnectionOptions.setTestConnectionOptions();
+        } catch (IllegalStateException e) { 
             Log.e(TAG, e.getMessage()); 
             e.printStackTrace(); 
         } 

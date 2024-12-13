@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<application xmlns="http://ns.adobe.com/air/application/33.1"> 
+<application xmlns="http://ns.adobe.com/air/application/51.1"> 
   <id>com.adjust.examples</id> 
-  <versionNumber>4.28.0</versionNumber> 
+  <versionNumber>5.0.0</versionNumber> 
   <filename>Adjust AIR SDK Demo</filename> 
 
   <initialWindow>
@@ -40,10 +40,6 @@
       <![CDATA[ 
       <manifest android:installLocation="auto">
         <uses-permission android:name="android.permission.INTERNET"/>
-        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-        <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-        <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
         <application>
           <activity>
             <intent-filter>
@@ -57,15 +53,6 @@
               <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
           </activity>
-
-          <receiver
-            android:name="com.adjust.sdk.AdjustReferrerReceiver"
-            android:permission="android.permission.INSTALL_PACKAGES"
-            android:exported="true">
-            <intent-filter>
-              <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-          </receiver>
         </application>
       </manifest>
       ]]> 

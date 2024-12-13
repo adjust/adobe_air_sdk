@@ -3,7 +3,7 @@
 //  Adjust SDK
 //
 //  Created by Pedro Silva (@nonelse) on 7th August 2014.
-//  Copyright (c) 2014-2018 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2014-Present Adjust GmbH. All rights reserved.
 //
 
 #import "AdjustFREUtils.h"

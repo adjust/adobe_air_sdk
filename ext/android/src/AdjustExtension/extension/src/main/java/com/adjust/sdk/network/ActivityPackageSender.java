@@ -1,14 +1,18 @@
 package com.adjust.sdk.network;
 
+import android.content.Context;
 import android.net.Uri;
 
 import com.adjust.sdk.ActivityKind;
 import com.adjust.sdk.ActivityPackage;
 import com.adjust.sdk.AdjustAttribution;
 import com.adjust.sdk.AdjustFactory;
+import com.adjust.sdk.AdjustSigner;
 import com.adjust.sdk.Constants;
 import com.adjust.sdk.ILogger;
+import com.adjust.sdk.PackageBuilder;
 import com.adjust.sdk.ResponseData;
+import com.adjust.sdk.SharedPreferencesManager;
 import com.adjust.sdk.TrackingState;
 import com.adjust.sdk.Util;
 import com.adjust.sdk.scheduler.SingleThreadCachedScheduler;
@@ -31,6 +35,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -40,6 +46,7 @@ public class ActivityPackageSender implements IActivityPackageSender {
     private String basePath;
     private String gdprPath;
     private String subscriptionPath;
+    private String purchaseVerificationPath;
     private String clientSdk;
 
     private ILogger logger;
@@ -47,30 +54,34 @@ public class ActivityPackageSender implements IActivityPackageSender {
     private UrlStrategy urlStrategy;
     private IHttpsURLConnectionProvider httpsURLConnectionProvider;
     private IConnectionOptions connectionOptions;
+    private Context context;
 
-    public ActivityPackageSender(final String adjustUrlStrategy,
+    public ActivityPackageSender(final List<String> urlStrategyDomains,
+                                 final boolean useSubdomains,
                                  final String basePath,
                                  final String gdprPath,
                                  final String subscriptionPath,
-                                 final String clientSdk)
+                                 final String purchaseVerificationPath,
+                                 final String clientSdk,
+                                 final Context context)
     {
         this.basePath = basePath;
         this.gdprPath = gdprPath;
         this.subscriptionPath = subscriptionPath;
+        this.purchaseVerificationPath = purchaseVerificationPath;
         this.clientSdk = clientSdk;
+        this.context = context;
 
         logger = AdjustFactory.getLogger();
-
         executor = new SingleThreadCachedScheduler("ActivityPackageSender");
-
         urlStrategy = new UrlStrategy(
                 AdjustFactory.getBaseUrl(),
                 AdjustFactory.getGdprUrl(),
                 AdjustFactory.getSubscriptionUrl(),
-                adjustUrlStrategy);
-
+                AdjustFactory.getPurchaseVerificationUrl(),
+                urlStrategyDomains,
+                useSubdomains);
         httpsURLConnectionProvider = AdjustFactory.getHttpsURLConnectionProvider();
-
         connectionOptions = AdjustFactory.getConnectionOptions();
     }
 
@@ -95,8 +106,10 @@ public class ActivityPackageSender implements IActivityPackageSender {
         boolean retryToSend;
         ResponseData responseData;
         do {
+            Map<String, String> signedParameters = signParameters(activityPackage, sendingParameters);
+
             responseData =
-                    ResponseData.buildResponseData(activityPackage, sendingParameters);
+                    ResponseData.buildResponseData(activityPackage, sendingParameters, signedParameters);
 
             tryToGetResponse(responseData);
 
@@ -104,6 +117,38 @@ public class ActivityPackageSender implements IActivityPackageSender {
         } while (retryToSend);
 
         return responseData;
+    }
+
+    private Map<String, String> signParameters(final ActivityPackage activityPackage,
+                                               final Map<String, String> sendingParameters) {
+        Map<String, String> packageParams = new HashMap<>(activityPackage.getParameters());
+        packageParams.putAll(sendingParameters);
+
+        Map<String, String> extraParams = new HashMap<>();
+
+        extraParams.put("client_sdk", activityPackage.getClientSdk());
+        extraParams.put("activity_kind", activityPackage.getActivityKind().toString());
+
+        String endpoint = urlStrategy.targetUrlByActivityKind(activityPackage.getActivityKind());
+        extraParams.put("endpoint", endpoint);
+
+        JSONObject controlParams = SharedPreferencesManager.getDefaultInstance(context).getControlParamsJson();
+        if (controlParams != null) {
+            Iterator<String> keys = controlParams.keys();
+
+            while (keys.hasNext()) {
+                String key = keys.next();
+                try {
+                    if (controlParams.get(key) instanceof String) {
+                        extraParams.put(key, (String) controlParams.get(key));
+                    }
+                } catch (JSONException e) {
+                    logger.error("JSONException while iterating control params");
+                }
+            }
+        }
+
+        return AdjustSigner.sign(packageParams, extraParams, context, logger);
     }
 
     private boolean shouldRetryToSend(final ResponseData responseData) {
@@ -127,18 +172,22 @@ public class ActivityPackageSender implements IActivityPackageSender {
         DataOutputStream dataOutputStream = null;
 
         try {
-            ActivityPackage activityPackage = responseData.activityPackage;
-            Map<String, String> sendingParameters = responseData.sendingParameters;
+            String authorizationHeader = extractAuthorizationHeader(responseData.signedParameters);
+            logger.verbose("authorizationHeader: %s", authorizationHeader);
 
             boolean shouldUseGET =
                     responseData.activityPackage.getActivityKind() == ActivityKind.ATTRIBUTION;
             final String urlString;
             if (shouldUseGET) {
-                extractEventCallbackId(activityPackage.getParameters());
-
-                urlString = generateUrlStringForGET(activityPackage, sendingParameters);
+                urlString = generateUrlStringForGET(responseData.activityPackage.getActivityKind(),
+                                                    responseData.activityPackage.getPath(),
+                                                    responseData.activityPackage.getParameters(),
+                                                    responseData.sendingParameters,
+                                                    responseData.signedParameters);
             } else {
-                urlString = generateUrlStringForPOST(activityPackage);
+                urlString = generateUrlStringForPOST(responseData.activityPackage.getActivityKind(),
+                                                     responseData.activityPackage.getPath(),
+                                                     responseData.signedParameters);
             }
 
             final URL url = new URL(urlString);
@@ -146,9 +195,8 @@ public class ActivityPackageSender implements IActivityPackageSender {
                     httpsURLConnectionProvider.generateHttpsURLConnection(url);
 
             // get and apply connection options (default or for tests)
-            connectionOptions.applyConnectionOptions(connection, activityPackage.getClientSdk());
+            connectionOptions.applyConnectionOptions(connection, clientSdk);
 
-            String authorizationHeader = buildAuthorizationHeader(activityPackage);
             if (authorizationHeader != null) {
                 connection.setRequestProperty("Authorization", authorizationHeader);
             }
@@ -156,10 +204,10 @@ public class ActivityPackageSender implements IActivityPackageSender {
             if (shouldUseGET) {
                 dataOutputStream = configConnectionForGET(connection);
             } else {
-                extractEventCallbackId(activityPackage.getParameters());
-
-                dataOutputStream =
-                        configConnectionForPOST(connection, activityPackage, sendingParameters);
+                dataOutputStream = configConnectionForPOST(connection,
+                                                           responseData.activityPackage.getParameters(),
+                                                           responseData.sendingParameters,
+                                                           responseData.signedParameters);
             }
 
             // read connection response
@@ -174,37 +222,44 @@ public class ActivityPackageSender implements IActivityPackageSender {
             //  a JSON response *AND* does not contain a retry_in
             responseData.willRetry =
                     responseData.jsonResponse == null  || responseData.retryIn != null;
+
+            if (responseData.jsonResponse == null) {
+                responseData.activityPackage.addError(ErrorCodes.NULL_JSON_RESPONSE);
+            } else if (responseData.retryIn != null) {
+                responseData.activityPackage.addError(ErrorCodes.SERVER_RETRY_IN);
+            }
+
         } catch (final UnsupportedEncodingException exception) {
 
-            localError(exception, "Failed to encode parameters", responseData);
+            localError(exception, "Failed to encode parameters", responseData, ErrorCodes.UNSUPPORTED_ENCODING_EXCEPTION);
 
         } catch (final MalformedURLException exception) {
 
-            localError(exception, "Malformed URL", responseData);
+            localError(exception, "Malformed URL", responseData, ErrorCodes.MALFORMED_URL_EXCEPTION);
 
         } catch (final ProtocolException exception) {
 
-            localError(exception, "Protocol Error", responseData);
+            localError(exception, "Protocol Error", responseData, ErrorCodes.PROTOCOL_EXCEPTION);
 
         } catch (final SocketTimeoutException exception) {
 
             // timeout is remote/network related -> did not fail locally
-            remoteError(exception, "Request timed out", responseData);
+            remoteError(exception, "Request timed out", responseData, ErrorCodes.SOCKET_TIMEOUT_EXCEPTION);
 
         } catch (final SSLHandshakeException exception) {
 
             // failed due certificate from the server -> did not fail locally
-            remoteError(exception, "Certificate failed", responseData);
+            remoteError(exception, "Certificate failed", responseData, ErrorCodes.SSL_HANDSHAKE_EXCEPTION);
 
         } catch (final IOException exception) {
 
             // IO is the network -> did not fail locally
-            remoteError(exception, "Request failed", responseData);
+            remoteError(exception, "Request failed", responseData, ErrorCodes.IO_EXCEPTION);
 
         } catch (final Throwable t) {
 
             // not sure if error is local or not -> assume it is local
-            localError(t, "Sending SDK package", responseData);
+            localError(t, "Sending SDK package", responseData, ErrorCodes.THROWABLE);
 
         } finally {
             try {
@@ -221,16 +276,18 @@ public class ActivityPackageSender implements IActivityPackageSender {
         }
     }
 
-    private void localError(Throwable throwable, String description, ResponseData responseData) {
+    private void localError(Throwable throwable, String description, ResponseData responseData, int errorCode) {
         String finalMessage = errorMessage(throwable, description, responseData.activityPackage);
 
         logger.error(finalMessage);
         responseData.message = finalMessage;
 
         responseData.willRetry = false;
+
+        responseData.activityPackage.addError(errorCode);
     }
 
-    private void remoteError(Throwable throwable, String description, ResponseData responseData) {
+    private void remoteError(Throwable throwable, String description, ResponseData responseData, Integer errorCode) {
         String finalMessage = errorMessage(throwable, description, responseData.activityPackage)
                 + " Will retry later";
 
@@ -238,6 +295,8 @@ public class ActivityPackageSender implements IActivityPackageSender {
         responseData.message = finalMessage;
 
         responseData.willRetry = true;
+
+        responseData.activityPackage.addError(errorCode);
     }
 
     private String errorMessage(final Throwable throwable,
@@ -249,51 +308,63 @@ public class ActivityPackageSender implements IActivityPackageSender {
         return Util.formatString("%s. (%s)", failureMessage, reasonString);
     }
 
-    private String generateUrlStringForGET(final ActivityPackage activityPackage,
-                                           final Map<String, String> sendingParameters)
+    private String generateUrlStringForGET(final ActivityKind activityKind,
+                                           final String activityPackagePath,
+                                           final Map<String, String> activityPackageParameters,
+                                           final Map<String, String> sendingParameters,
+                                           final Map<String, String> signedParameters)
             throws MalformedURLException
     {
-        String targetUrl = urlStrategy.targetUrlByActivityKind(activityPackage.getActivityKind());
+        String targetUrl = extractTargetUrl(signedParameters, activityKind, urlStrategy);
 
         // extra path, if present, has the format '/X/Y'
         String urlWithPath =
-                urlWithExtraPathByActivityKind(activityPackage.getActivityKind(), targetUrl);
+                urlWithExtraPathByActivityKind(activityKind, targetUrl);
 
         final URL urlObject = new URL(urlWithPath);
         final Uri.Builder uriBuilder = new Uri.Builder();
         uriBuilder.scheme(urlObject.getProtocol());
         uriBuilder.encodedAuthority(urlObject.getAuthority());
         uriBuilder.path(urlObject.getPath());
-        uriBuilder.appendPath(activityPackage.getPath());
+        uriBuilder.appendPath(activityPackagePath);
 
         logger.debug("Making request to url: %s", uriBuilder.toString());
 
-        for (final Map.Entry<String, String> entry : activityPackage.getParameters().entrySet()) {
-            uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
-        }
-
-        if (sendingParameters != null) {
-            for (final Map.Entry<String, String> entry: sendingParameters.entrySet()) {
+        if (signedParameters != null && !signedParameters.isEmpty()) {
+            for (final Map.Entry<String, String> entry : signedParameters.entrySet()) {
                 uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
+            }
+        } else {
+            if (activityPackageParameters != null) {
+                for (final Map.Entry<String, String> entry : activityPackageParameters.entrySet()) {
+                    uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
+                }
+            }
+
+            if (sendingParameters != null) {
+                for (final Map.Entry<String, String> entry : sendingParameters.entrySet()) {
+                    uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
+                }
             }
         }
 
         return uriBuilder.build().toString();
     }
 
-    private String generateUrlStringForPOST(final ActivityPackage activityPackage)
+    private String generateUrlStringForPOST(final ActivityKind activityKind,
+                                            final String activityPackagePath,
+                                            final Map<String, String> signedParameters)
     {
-        String targetUrl =
-                urlStrategy.targetUrlByActivityKind(activityPackage.getActivityKind());
+        String targetUrl = extractTargetUrl(signedParameters, activityKind, urlStrategy);
 
         // extra path, if present, has the format '/X/Y'
         String urlWithPath =
-                urlWithExtraPathByActivityKind(activityPackage.getActivityKind(), targetUrl);
+                urlWithExtraPathByActivityKind(activityKind, targetUrl);
 
 
         // 'targetUrl' does not end with '/', but activity package paths that are sent by POST
         //  do start with '/', so it's not added om between
-        String urlString = Util.formatString("%s%s", urlWithPath, activityPackage.getPath());
+        String urlString = Util.formatString("%s%s", urlWithPath, activityPackagePath);
 
         logger.debug("Making request to url : %s", urlString);
 
@@ -307,6 +378,8 @@ public class ActivityPackageSender implements IActivityPackageSender {
             return gdprPath != null ? targetUrl + gdprPath : targetUrl;
         } else if (activityKind == ActivityKind.SUBSCRIPTION) {
             return subscriptionPath != null ? targetUrl + subscriptionPath : targetUrl;
+        } else if (activityKind == ActivityKind.PURCHASE_VERIFICATION) {
+            return purchaseVerificationPath != null ? targetUrl + purchaseVerificationPath : targetUrl;
         } else {
             return basePath != null ? targetUrl + basePath : targetUrl;
         }
@@ -322,8 +395,9 @@ public class ActivityPackageSender implements IActivityPackageSender {
     }
 
     private DataOutputStream configConnectionForPOST(final HttpsURLConnection connection,
-                                                     final ActivityPackage activityPackage,
-                                                     final Map<String, String> sendingParameters)
+                                                     final Map<String, String> activityPackageParameters,
+                                                     final Map<String, String> sendingParameters,
+                                                     final Map<String, String> signedParameters)
             throws ProtocolException,
             UnsupportedEncodingException,
             IOException
@@ -339,8 +413,9 @@ public class ActivityPackageSender implements IActivityPackageSender {
 
         // build POST body
         final String postBodyString = generatePOSTBodyString(
-                activityPackage.getParameters(),
-                sendingParameters);
+                activityPackageParameters,
+                sendingParameters,
+                signedParameters);
 
         if (postBodyString == null) {
             return null;
@@ -355,17 +430,23 @@ public class ActivityPackageSender implements IActivityPackageSender {
     }
 
     private String generatePOSTBodyString(final Map<String, String> parameters,
-                                          final Map<String, String> sendingParameters)
+                                          final Map<String, String> sendingParameters,
+                                          final Map<String, String> signedParameters)
             throws UnsupportedEncodingException
     {
-        if (parameters.isEmpty()) {
-            return null;
-        }
-
         final StringBuilder postStringBuilder = new StringBuilder();
 
-        injectParametersToPOSTStringBuilder(parameters, postStringBuilder);
-        injectParametersToPOSTStringBuilder(sendingParameters, postStringBuilder);
+        if (signedParameters!= null && !signedParameters.isEmpty()) {
+            injectParametersToPOSTStringBuilder(signedParameters, postStringBuilder);
+        } else {
+            if (parameters != null && !parameters.isEmpty()){
+                injectParametersToPOSTStringBuilder(parameters, postStringBuilder);
+            }
+
+            if (sendingParameters != null && !sendingParameters.isEmpty()) {
+                injectParametersToPOSTStringBuilder(sendingParameters, postStringBuilder);
+            }
+        }
 
         // delete last added &
         if (postStringBuilder.length() > 0
@@ -450,6 +531,10 @@ public class ActivityPackageSender implements IActivityPackageSender {
 
         parseResponse(responseData, responseString);
 
+        if (responseData.controlParams != null) {
+            SharedPreferencesManager.getDefaultInstance(context).saveControlParams(responseData.controlParams);
+        }
+
         final String responseMessage = responseData.message;
         if (responseMessage == null) {
             return responseCode;
@@ -475,6 +560,7 @@ public class ActivityPackageSender implements IActivityPackageSender {
         // convert string response to JSON object
         try {
             jsonResponse = new JSONObject(responseString);
+
         } catch (final JSONException jsonException) {
             String errorMessage = errorMessage(jsonException,
                     "Failed to parse JSON response",
@@ -504,195 +590,26 @@ public class ActivityPackageSender implements IActivityPackageSender {
         responseData.continueIn = UtilNetworking.extractJsonLong(jsonResponse, "continue_in");
 
         JSONObject attributionJson = jsonResponse.optJSONObject("attribution");
-        responseData.attribution = AdjustAttribution.fromJson(
+        responseData.attribution = Util.attributionFromJson(
                 attributionJson,
-                responseData.adid,
                 Util.getSdkPrefixPlatform(clientSdk));
+
+        responseData.resolvedDeeplink = UtilNetworking.extractJsonString(jsonResponse,"resolved_click_url");
+        responseData.controlParams = jsonResponse.optJSONObject("control_params");
     }
 
-    private String buildAuthorizationHeader(final ActivityPackage activityPackage) {
-        Map<String, String> parameters = activityPackage.getParameters();
-        String activityKindString = activityPackage.getActivityKind().toString();
-
-        String secretId = extractSecretId(parameters);
-        String headersId = extractHeadersId(parameters);
-        String signature = extractSignature(parameters);
-        String algorithm = extractAlgorithm(parameters);
-        String nativeVersion = extractNativeVersion(parameters);
-
-        String authorizationHeader = buildAuthorizationHeaderV2(signature, secretId,
-                headersId, algorithm, nativeVersion);
-        if (authorizationHeader != null) {
-            return authorizationHeader;
-        }
-
-        String appSecret = extractAppSecret(parameters);
-        return buildAuthorizationHeaderV1(parameters, appSecret, secretId, activityKindString);
+    private static String extractAuthorizationHeader(final Map<String, String> parameters) {
+        return parameters.remove("authorization");
     }
 
-    private String buildAuthorizationHeaderV1(final Map<String, String> parameters,
-                                              final String appSecret,
-                                              final String secretId,
-                                              final String activityKindString)
-    {
-        // check if the secret exists and it's not empty
-        if (appSecret == null || appSecret.length() == 0) {
-            return null;
-        }
-        String appSecretName = "app_secret";
-
-        Map<String, String> signatureDetails = getSignature(parameters, activityKindString, appSecret);
-
-        String algorithm = "sha256";
-        String signature = Util.sha256(signatureDetails.get("clear_signature"));
-        String fields = signatureDetails.get("fields");
-
-        String secretIdHeader = Util.formatString("secret_id=\"%s\"", secretId);
-        String signatureHeader = Util.formatString("signature=\"%s\"", signature);
-        String algorithmHeader = Util.formatString("algorithm=\"%s\"", algorithm);
-        String fieldsHeader = Util.formatString("headers=\"%s\"", fields);
-
-        String authorizationHeader = Util.formatString("Signature %s,%s,%s,%s",
-                secretIdHeader, signatureHeader, algorithmHeader, fieldsHeader);
-        logger.verbose("authorizationHeader: %s", authorizationHeader);
-
-        return authorizationHeader;
-    }
-
-    private String buildAuthorizationHeaderV2(final String signature,
-                                              final String secretId,
-                                              final String headersId,
-                                              final String algorithm,
-                                              final String nativeVersion)
-    {
-        if (secretId == null || signature == null || headersId == null) {
-            return null;
+    private static String extractTargetUrl(final Map<String, String> parameters,
+                                           final ActivityKind activityKind,
+                                           final UrlStrategy urlStrategy) {
+        String targetUrl = parameters.remove("endpoint");
+        if (targetUrl != null) {
+            return targetUrl;
         }
 
-        String signatureHeader = Util.formatString("signature=\"%s\"", signature);
-        String secretIdHeader  = Util.formatString("secret_id=\"%s\"", secretId);
-        String idHeader        = Util.formatString("headers_id=\"%s\"", headersId);
-        String algorithmHeader = Util.formatString("algorithm=\"%s\"", algorithm != null ? algorithm : "adj1");
-        String nativeVersionHeader = Util.formatString("native_version=\"%s\"", nativeVersion != null ? nativeVersion : "");
-
-        String authorizationHeader = Util.formatString("Signature %s,%s,%s,%s,%s",
-                signatureHeader, secretIdHeader, algorithmHeader, idHeader, nativeVersionHeader);
-
-        logger.verbose("authorizationHeader: %s", authorizationHeader);
-
-        return authorizationHeader;
-    }
-
-    private Map<String, String> getSignature(final Map<String, String> parameters,
-                                             final String activityKindString,
-                                             final String appSecret)
-    {
-        String activityKindName = "activity_kind";
-        String activityKindValue = activityKindString;
-
-        String createdAtName = "created_at";
-        String createdAt = parameters.get(createdAtName);
-
-        String deviceIdentifierName = getValidIdentifier(parameters);
-        String deviceIdentifier = parameters.get(deviceIdentifierName);
-
-        String sourceName = "source";
-        String sourceValue = parameters.get(sourceName);
-
-        String payloadName = "payload";
-        String payloadValue = parameters.get(payloadName);
-
-        Map<String, String> signatureParams = new HashMap<String, String>();
-
-        signatureParams.put("app_secret", appSecret);
-        signatureParams.put(createdAtName, createdAt);
-        signatureParams.put(activityKindName, activityKindValue);
-        signatureParams.put(deviceIdentifierName, deviceIdentifier);
-
-        if (sourceValue != null) {
-            signatureParams.put(sourceName, sourceValue);
-        }
-
-        if (payloadValue != null) {
-            signatureParams.put(payloadName, payloadValue);
-        }
-
-        String fields = "";
-        String clearSignature = "";
-
-        for (Map.Entry<String, String> entry : signatureParams.entrySet())  {
-            if (entry.getValue() != null) {
-                fields += entry.getKey() + " ";
-                clearSignature += entry.getValue();
-            }
-        }
-
-        // Remove last empty space.
-        fields = fields.substring(0, fields.length() - 1);
-
-        HashMap<String, String> signature = new HashMap<String, String>();
-
-        signature.put("clear_signature", clearSignature);
-        signature.put("fields", fields);
-
-        return signature;
-    }
-
-    private String getValidIdentifier(final Map<String, String> parameters) {
-        String googleAdIdName = "gps_adid";
-        String fireAdIdName = "fire_adid";
-        String androidIdName = "android_id";
-        String macSha1Name = "mac_sha1";
-        String macMd5Name = "mac_md5";
-        String androidUUIDName= "android_uuid";
-
-        if (parameters.get(googleAdIdName) != null) {
-            return googleAdIdName;
-        }
-        if (parameters.get(fireAdIdName) != null) {
-            return fireAdIdName;
-        }
-        if (parameters.get(androidIdName) != null) {
-            return androidIdName;
-        }
-        if (parameters.get(macSha1Name) != null) {
-            return macSha1Name;
-        }
-        if (parameters.get(macMd5Name) != null) {
-            return macMd5Name;
-        }
-        if (parameters.get(androidUUIDName) != null) {
-            return androidUUIDName;
-        }
-
-        return null;
-    }
-
-    private static String extractAppSecret(final Map<String, String> parameters) {
-        return parameters.remove("app_secret");
-    }
-
-    private static String extractSecretId(final Map<String, String> parameters) {
-        return parameters.remove("secret_id");
-    }
-
-    private static String extractSignature(final Map<String, String> parameters) {
-        return parameters.remove("signature");
-    }
-
-    private static String extractAlgorithm(final Map<String, String> parameters) {
-        return parameters.remove("algorithm");
-    }
-
-    private static String extractNativeVersion(final Map<String, String> parameters) {
-        return parameters.remove("native_version");
-    }
-
-    private static String extractHeadersId(final Map<String, String> parameters) {
-        return parameters.remove("headers_id");
-    }
-
-    private static void extractEventCallbackId(final Map<String, String> parameters) {
-        parameters.remove("event_callback_id");
+        return urlStrategy.targetUrlByActivityKind(activityKind);
     }
 }

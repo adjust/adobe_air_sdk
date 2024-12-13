@@ -1,22 +1,41 @@
 package com.adjust.sdk {
     import flash.events.*;
-    import flash.desktop.NativeApplication;
+    import flash.utils.Dictionary;
     import flash.external.ExtensionContext;
 
     public class Adjust extends EventDispatcher {
-        private static var sdkPrefix:String = "adobe_air4.28.0";
-        private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'start' method";
+        private static var sdkPrefix:String = "adobe_air5.0.0";
+        private static var errorMessage:String = "Adjust: SDK not started. Start it manually using the 'initSdk' method";
 
-        private static var hasSdkStarted:Boolean = false;
         private static var extensionContext:ExtensionContext = null;
-        private static var attributionCallbackDelegate:Function;
-        private static var googleAdIdCallbackDelegate:Function;
-        private static var eventTrackingSucceededDelegate:Function;
-        private static var eventTrackingFailedDelegate:Function;
-        private static var sessionTrackingSucceededDelegate:Function;
-        private static var sessionTrackingFailedDelegate:Function;
-        private static var deferredDeeplinkDelegate:Function;
-        private static var authorizationStatusDelegate:Function;
+
+        private static var attributionCallback:Function;
+        private static var eventSuccessCallback:Function;
+        private static var eventFailureCallback:Function;
+        private static var sessionSuccessCallback:Function;
+        private static var sessionFailureCallback:Function;
+        private static var deferredDeeplinkCallback:Function;
+        private static var skanUpdatedCallback:Function;
+
+        private static var isEnabledCalback:Function;
+        private static var getAdidCallback:Function;
+        private static var getAttributionCallback:Function;
+        private static var getSdkVersionCallbak:Function;
+        private static var getLastDeeplinkCallback:Function;
+        private static var processAndResolveDeeplinkCallback:Function;
+        
+        private static var getGoogleAdIdCallback:Function;
+        private static var getAmazonAdIdCallback:Function;
+        private static var verifyPlayStorePurchaseCallback:Function;
+        private static var verifyAndTrackPlayStorePurchaseCallback:Function;
+
+        private static var getIdfaCallback:Function;
+        private static var getIdfvCallback:Function;
+        private static var getAppTrackingAuthorizationStatusCallback:Function;
+        private static var requestAppTrackingAuthorizationCallback:Function;
+        private static var verifyAppStorePurchaseCallback:Function;
+        private static var verifyAndTrackAppStorePurchaseCallback:Function;
+        private static var updateSkanConversionValueCallback:Function;
 
         private static function getExtensionContext():ExtensionContext {
             if (extensionContext != null) {
@@ -25,72 +44,99 @@ package com.adjust.sdk {
             return extensionContext = ExtensionContext.createExtensionContext("com.adjust.sdk", null);
         }
 
-        public static function start(adjustConfig:AdjustConfig):void {
-            if (hasSdkStarted) {
-                trace("Adjust warning: SDK already started");
+        // common
+
+        public static function initSdk(adjustConfig:AdjustConfig):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
                 return;
             }
 
-            hasSdkStarted = true;
-
-            var app:NativeApplication = NativeApplication.nativeApplication;
-            app.addEventListener(Event.ACTIVATE, onResume);
-            app.addEventListener(Event.DEACTIVATE, onPause);
-            app.addEventListener(InvokeEvent.INVOKE, onInvoke);
-
-            attributionCallbackDelegate = adjustConfig.getAttributionCallbackDelegate();
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
 
-            eventTrackingSucceededDelegate = adjustConfig.getEventTrackingSucceededDelegate();
-            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            attributionCallback = adjustConfig.getAttributionCallback();
+            eventSuccessCallback = adjustConfig.getEventSuccessCallback();
+            eventFailureCallback = adjustConfig.getEventFailureCallback();
+            sessionSuccessCallback = adjustConfig.getSessionSuccessCallback();
+            sessionFailureCallback = adjustConfig.getSessionFailureCallback();
+            deferredDeeplinkCallback = adjustConfig.getDeferredDeeplinkCallback();
+            skanUpdatedCallback = adjustConfig.getSkanUpdatedCallback();
 
-            eventTrackingFailedDelegate = adjustConfig.getEventTrackingFailedDelegate();
-            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().call("initSdk",
+                // common
+                adjustConfig.getAppToken(), // [0]
+                adjustConfig.getEnvironment(), // [1]
+                adjustConfig.getLogLevel(),  // [2]
+                sdkPrefix, // [3]
+                adjustConfig.getDefaultTracker(), // [4]
+                adjustConfig.getExternalDeviceId(), // [5]
+                adjustConfig.getIsCoppaComplianceEnabled(), // [6]
+                adjustConfig.getIsSendingInBackgroundEnabled(), // [7]
+                adjustConfig.getIsDeferredDeeplinkOpeningEnabled(), // [8]
+                adjustConfig.getIsCostDataInAttributionEnabled(), // [9]
+                adjustConfig.getIsDeviceIdsReadingOnceEnabled(), // [10]
+                adjustConfig.getAttributionCallback() != null, // [11]
+                adjustConfig.getEventSuccessCallback() != null, // [12]
+                adjustConfig.getEventFailureCallback() != null, // [13]
+                adjustConfig.getSessionSuccessCallback() != null, // [14]
+                adjustConfig.getSessionFailureCallback() != null, // [15]
+                adjustConfig.getDeferredDeeplinkCallback() != null, // [16]
+                adjustConfig.getEventDedupliactionIdsMaxSize() > -1 ?
+                    adjustConfig.getEventDedupliactionIdsMaxSize() : null, // [17]
+                adjustConfig.getUrlStrategyDomains(), // [18]
+                adjustConfig.getUseSubdomains(), // [19]
+                adjustConfig.getIsDataResidency(), // [20]
+                // android only
+                adjustConfig.getFbAppId(), // [21]
+                adjustConfig.getProcessName(), // [22]
+                adjustConfig.getPreinstallFilePath(), // [23]
+                adjustConfig.getIsPreinstallTrackingEnabled(), // [24]
+                adjustConfig.getIsPlayStoreKidsComplianceEnabled(), // [25]
+                // ios only
+                adjustConfig.getIsLinkMeEnabled(), // [26]
+                adjustConfig.getIsAdServicesEnabled(), // [27]
+                adjustConfig.getIsIdfaReadingEnabled(), // [28]
+                adjustConfig.getIsIdfvReadingEnabled(), // [29]
+                adjustConfig.getIsSkanAttributionEnabled(), // [30]
+                adjustConfig.getAttConsentWaitingInterval() > -1 ?
+                    adjustConfig.getAttConsentWaitingInterval() : null, // [31]
+                adjustConfig.getSkanUpdatedCallback() != null); // [32]
+        }
 
-            sessionTrackingSucceededDelegate = adjustConfig.getSessionTrackingSucceededDelegate();
-            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+        public static function enable():void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
 
-            sessionTrackingFailedDelegate = adjustConfig.getSessionTrackingFailedDelegate();
-            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getExtensionContext().call("enable");
+        }
 
-            deferredDeeplinkDelegate = adjustConfig.getDeferredDeeplinkDelegate();
-            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+        public static function disable():void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
 
-            getExtensionContext().call("onCreate", 
-                    adjustConfig.getAppToken(), 
-                    adjustConfig.getEnvironment(),
-                    adjustConfig.getLogLevel(), 
-                    adjustConfig.getEventBufferingEnabled(),
-                    adjustConfig.getAttributionCallbackDelegate() != null, 
-                    adjustConfig.getEventTrackingSucceededDelegate() != null, 
-                    adjustConfig.getEventTrackingFailedDelegate() != null, 
-                    adjustConfig.getSessionTrackingSucceededDelegate() != null, 
-                    adjustConfig.getSessionTrackingFailedDelegate() != null, 
-                    adjustConfig.getDeferredDeeplinkDelegate() != null, 
-                    adjustConfig.getDefaultTracker(),
-                    sdkPrefix,
-                    adjustConfig.getShouldLaunchDeeplink(),
-                    adjustConfig.getProcessName(),
-                    adjustConfig.getDelayStart(),
-                    adjustConfig.getUserAgent(),
-                    adjustConfig.getSendInBackground(),
-                    adjustConfig.getSecretId(),
-                    adjustConfig.getInfo1(),
-                    adjustConfig.getInfo2(),
-                    adjustConfig.getInfo3(),
-                    adjustConfig.getInfo4(),
-                    adjustConfig.getIsDeviceKnown(),
-                    adjustConfig.getReadMobileEquipmentIdentity(),
-                    adjustConfig.getExternalDeviceId(),
-                    adjustConfig.getAllowiAdInfoReading(),
-                    adjustConfig.getAllowIdfaReading(),
-                    adjustConfig.getUrlStrategy(),
-                    adjustConfig.getNeedsCost(),
-                    adjustConfig.getSkAdNetworkHandling(),
-                    adjustConfig.getPreinstallTrackingEnabled());
+            getExtensionContext().call("disable");
+        }
 
-            // For now, call onResume after onCreate.
-            getExtensionContext().call("onResume");
+        public static function switchToOfflineMode():void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("switchToOfflineMode");
+        }
+
+        public static function switchBackToOnlineMode():void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("switchBackToOnlineMode");
         }
 
         public static function trackEvent(adjustEvent:AdjustEvent):void {
@@ -99,177 +145,602 @@ package com.adjust.sdk {
                 return;
             }
 
-            getExtensionContext().call("trackEvent", 
-                    adjustEvent.getEventToken(),
-                    adjustEvent.getCurrency(),
-                    adjustEvent.getRevenue(),
-                    adjustEvent.getCallbackParameters(),
-                    adjustEvent.getPartnerParameters(),
-                    adjustEvent.getCallbackId(),
-                    adjustEvent.getTransactionId(),
-                    adjustEvent.getReceipt(),
-                    adjustEvent.getIsReceiptSet());
+            getExtensionContext().call("trackEvent",
+                // common
+                adjustEvent.getEventToken(), // [0]
+                adjustEvent.getRevenue(), // [1]
+                adjustEvent.getCurrency(), // [2]
+                adjustEvent.getCallbackId(), // [3]
+                adjustEvent.getDeduplicationId(), // [4]
+                adjustEvent.getProductId(), // [5]
+                adjustEvent.getCallbackParameters(), // [6]
+                adjustEvent.getPartnerParameters(), // [7]
+                // ios only
+                adjustEvent.getTransactionId(), // [8]
+                // android only
+                adjustEvent.getPurchaseToken()); // [9]
         }
 
-        public static function setEnabled(enabled:Boolean):void {
-            getExtensionContext().call("setEnabled", enabled);
+        public static function trackAdRevenue(adjustAdRevenue:AdjustAdRevenue):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("trackAdRevenue",
+                adjustAdRevenue.getSource(), // [0]
+                adjustAdRevenue.getRevenue(), // [1]
+                adjustAdRevenue.getCurrency(), // [2]
+                adjustAdRevenue.getAdImpressionsCount(), // [3]
+                adjustAdRevenue.getAdRevenueNetwork(), // [4]
+                adjustAdRevenue.getAdRevenueUnit(), // [5]
+                adjustAdRevenue.getAdRevenuePlacement(), // [6]
+                adjustAdRevenue.getCallbackParameters(), // [7]
+                adjustAdRevenue.getPartnerParameters()); // [8]
         }
 
-        public static function isEnabled():Boolean {
-            var isEnabled:int = int (getExtensionContext().call("isEnabled"));
-            return isEnabled;
+        public static function trackThirdPartySharing(adjustThirdPartySharing:AdjustThirdPartySharing):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("trackThirdPartySharing",
+                adjustThirdPartySharing.getIsEnabled(), // [0]
+                adjustThirdPartySharing.getGranularOptions(), // [1]
+                adjustThirdPartySharing.getPartnerSharingSettings()); // [2]
         }
 
-        public static function onResume(event:Event):void {
-            getExtensionContext().call("onResume");
+        public static function trackMeasurementConsent(measurementConsent:Boolean):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("trackMeasurementConsent", measurementConsent);
         }
 
-        public static function onPause(event:Event):void {
-            getExtensionContext().call("onPause");
+        public static function processDeeplink(adjustDeeplink:AdjustDeeplink):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("processDeeplink", adjustDeeplink.getDeeplink());
         }
 
-        public static function appWillOpenUrl(url:String):void {
-            getExtensionContext().call("appWillOpenUrl", url);
+        public static function processAndResolveDeeplink(
+            adjustDeeplink:AdjustDeeplink,
+            callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            processAndResolveDeeplinkCallback = callback;
+            getExtensionContext().call("processAndResolveDeeplink",
+                adjustDeeplink.getDeeplink()); // [0]
         }
 
-        public static function setOfflineMode(isOffline:Boolean):void {
-            getExtensionContext().call("setOfflineMode", isOffline);
-        }
+        public static function setPushToken(pushToken:String):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
 
-        public static function setReferrer(referrer:String):void {
-            getExtensionContext().call("setReferrer", referrer);
-        }
-
-        public static function setDeviceToken(token:String):void {
-            getExtensionContext().call("setDeviceToken", token);
-        }
-
-        public static function getIdfa():String {
-            var idfa:String = String (getExtensionContext().call("getIdfa"));
-            return idfa;
-        }
-
-        public static function getAdid():String {
-            var adid:String = String (getExtensionContext().call("getAdid"));
-            return adid;
-        }
-
-        public static function getAttribution():AdjustAttribution {
-            var attributionString:String = String (getExtensionContext().call("getAttribution"));
-            var attribution:AdjustAttribution = getAttributionFromResponse(attributionString);
-            return attribution;
-        }
-
-        public static function getGoogleAdId(callback:Function):void {
-            googleAdIdCallbackDelegate = callback;
-            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-            getExtensionContext().call("getGoogleAdId");
-        }
-
-        public static function getAmazonAdId():String {
-            var adid:String = String (getExtensionContext().call("getAmazonAdId"));
-            return adid;
-        }
-
-        public static function getSdkVersion():String {
-            var sdkVersion:String = sdkPrefix + "@" + String (getExtensionContext().call("getSdkVersion"));
-            return sdkVersion;
-        }
-
-        public static function addSessionCallbackParameter(key:String, value:String):void {
-            getExtensionContext().call("addSessionCallbackParameter", key, value);
-        }
-
-        public static function addSessionPartnerParameter(key:String, value:String):void {
-            getExtensionContext().call("addSessionPartnerParameter", key, value);
-        }
-
-        public static function removeSessionCallbackParameter(key:String):void {
-            getExtensionContext().call("removeSessionCallbackParameter", key);
-        }
-
-        public static function removeSessionPartnerParameter(key:String):void {
-            getExtensionContext().call("removeSessionPartnerParameter", key);
-        }
-
-        public static function resetSessionCallbackParameters():void {
-            getExtensionContext().call("resetSessionCallbackParameters");
-        }
-
-        public static function resetSessionPartnerParameters():void {
-            getExtensionContext().call("resetSessionPartnerParameters");
-        }
-
-        public static function sendFirstPackages():void {
-            getExtensionContext().call("sendFirstPackages");
+            getExtensionContext().call("setPushToken", pushToken);
         }
 
         public static function gdprForgetMe():void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
             getExtensionContext().call("gdprForgetMe");
         }
 
-        public static function trackAdRevenue(source:String, payload:String):void {
-            getExtensionContext().call("trackAdRevenue", source, payload);
+        public static function addGlobalCallbackParameter(key:String, value:String):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("addGlobalCallbackParameter", key, value);
         }
 
-        public static function disableThirdPartySharing():void {
-            getExtensionContext().call("disableThirdPartySharing");
+        public static function removeGlobalCallbackParameter(key:String):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("removeGlobalCallbackParameter", key);
         }
 
-        public static function requestTrackingAuthorizationWithCompletionHandler(callback:Function):void {
-            authorizationStatusDelegate = callback;
+        public static function removeGlobalCallbackParameters():void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("removeGlobalCallbackParameters");
+        }
+
+        public static function addGlobalPartnerParameter(key:String, value:String):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("addGlobalPartnerParameter", key, value);
+        }
+
+        public static function removeGlobalPartnerParameter(key:String):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("removeGlobalPartnerParameter", key);
+        }
+
+        public static function removeGlobalPartnerParameters():void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("removeGlobalPartnerParameters");
+        }
+
+        public static function isEnabled(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            isEnabledCalback = callback;
+            getExtensionContext().call("isEnabled");
+        }
+
+        public static function getAdid(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getAdidCallback = callback;
+            getExtensionContext().call("getAdid");
+        }
+
+        public static function getAttribution(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getAttributionCallback = callback;
+            getExtensionContext().call("getAttribution");
+        }
+
+        public static function getSdkVersion(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
             getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
-            getExtensionContext().call("requestTrackingAuthorizationWithCompletionHandler");
+            getSdkVersionCallbak = callback;
+            getExtensionContext().call("getSdkVersion");
+        }
+
+        public static function getLastDeeplink(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getLastDeeplinkCallback = callback;
+            getExtensionContext().call("getLastDeeplink");
+        }
+
+        // ios only
+
+        public static function trackAppStoreSubscription(adjustAppStoreSubscription:AdjustAppStoreSubscription):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("trackAppStoreSubscription",
+                adjustAppStoreSubscription.getPrice(), // [0]
+                adjustAppStoreSubscription.getCurrency(), // [1]
+                adjustAppStoreSubscription.getTransactionId(), // [2]
+                adjustAppStoreSubscription.getTransactionDate(), // [3]
+                adjustAppStoreSubscription.getSalesRegion(), // [4]
+                adjustAppStoreSubscription.getCallbackParameters(), // [5]
+                adjustAppStoreSubscription.getPartnerParameters()); // [6]
+        }
+
+        public static function verifyAppStorePurchase(
+            adjustAppStorePurchase:AdjustAppStorePurchase,
+            callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            verifyAppStorePurchaseCallback = callback;
+            getExtensionContext().call("verifyAppStorePurchase",
+                adjustAppStorePurchase.getProductId(), // [0]
+                adjustAppStorePurchase.getTransactionId()); // [1]
+        }
+
+        public static function verifyAndTrackAppStorePurchase(
+            adjustEvent:AdjustEvent,
+            callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            verifyAndTrackAppStorePurchaseCallback = callback;
+            getExtensionContext().call("verifyAndTrackAppStorePurchase",
+                // common
+                adjustEvent.getEventToken(), // [0]
+                adjustEvent.getRevenue(), // [1]
+                adjustEvent.getCurrency(), // [2]
+                adjustEvent.getCallbackId(), // [3]
+                adjustEvent.getDeduplicationId(), // [4]
+                adjustEvent.getProductId(), // [5]
+                adjustEvent.getCallbackParameters(), // [6]
+                adjustEvent.getPartnerParameters(), // [7]
+                // ios only
+                adjustEvent.getTransactionId(), // [8]
+                // android only
+                adjustEvent.getPurchaseToken()); // [9]
+        }
+
+        public static function getIdfa(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getIdfaCallback = callback;
+            getExtensionContext().call("getIdfa");
+        }
+
+        public static function getIdfv(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getIdfvCallback = callback;
+            getExtensionContext().call("getIdfv");
+        }
+
+        public static function getAppTrackingAuthorizationStatus(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getAppTrackingAuthorizationStatusCallback = callback;
+            getExtensionContext().call("getAppTrackingAuthorizationStatus");
+        }
+
+        public static function requestAppTrackingAuthorization(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            requestAppTrackingAuthorizationCallback = callback;
+            getExtensionContext().call("requestAppTrackingAuthorization");
+        }
+
+        public static function updateSkanConversionValue(
+            conversionValue:int,
+            coarseValue:String,
+            lockWindow:Boolean,
+            callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            updateSkanConversionValueCallback = callback;
+            getExtensionContext().call("updateSkanConversionValue", conversionValue, coarseValue, lockWindow);
+        }
+
+        // android only
+
+        public static function trackPlayStoreSubscription(adjustPlayStoreSubscription:AdjustPlayStoreSubscription):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().call("trackPlayStoreSubscription",
+                adjustPlayStoreSubscription.getPrice(), // [0]
+                adjustPlayStoreSubscription.getCurrency(), // [1]
+                adjustPlayStoreSubscription.getSku(), // [2]
+                adjustPlayStoreSubscription.getOrderId(), // [3]
+                adjustPlayStoreSubscription.getSignature(), // [4]
+                adjustPlayStoreSubscription.getPurchaseToken(), // [5]
+                adjustPlayStoreSubscription.getPurchaseTime(), // [6]
+                adjustPlayStoreSubscription.getCallbackParameters(), // [7]
+                adjustPlayStoreSubscription.getPartnerParameters()); // [8]
+        }
+
+        public static function verifyPlayStorePurchase(
+            adjustPlayStorePurchase:AdjustPlayStorePurchase,
+            callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            verifyPlayStorePurchaseCallback = callback;
+            getExtensionContext().call("verifyPlayStorePurchase",
+                adjustPlayStorePurchase.getProductId(), // [0]
+                adjustPlayStorePurchase.getPurchaseToken()); // [1]
+        }
+
+        public static function verifyAndTrackPlayStorePurchase(
+            adjustEvent:AdjustEvent,
+            callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            verifyAndTrackPlayStorePurchaseCallback = callback;
+            getExtensionContext().call("verifyAndTrackPlayStorePurchase",
+                // common
+                adjustEvent.getEventToken(), // [0]
+                adjustEvent.getRevenue(), // [1]
+                adjustEvent.getCurrency(), // [2]
+                adjustEvent.getCallbackId(), // [3]
+                adjustEvent.getDeduplicationId(), // [4]
+                adjustEvent.getProductId(), // [5]
+                adjustEvent.getCallbackParameters(), // [6]
+                adjustEvent.getPartnerParameters(), // [7]
+                // ios only
+                adjustEvent.getTransactionId(), // [8]
+                // android only
+                adjustEvent.getPurchaseToken()); // [9]
+        }
+
+        public static function getGoogleAdId(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getGoogleAdIdCallback = callback;
+            getExtensionContext().call("getGoogleAdId");
+        }
+
+        public static function getAmazonAdId(callback:Function):void {
+            if (!getExtensionContext()) {
+                trace(errorMessage);
+                return;
+            }
+
+            getExtensionContext().addEventListener(StatusEvent.STATUS, extensionResponseDelegate);
+            getAmazonAdIdCallback = callback;
+            getExtensionContext().call("getAmazonAdId");
+        }
+
+        // testing only
+
+        public static function onResume():void {
+            getExtensionContext().call("onResume");
+        }
+
+        public static function onPause():void {
+            getExtensionContext().call("onPause");
         }
 
         public static function setTestOptions(testOptions:AdjustTestOptions):void {
             getExtensionContext().call("setTestOptions", 
-                    testOptions.hasContext,
-                    testOptions.baseUrl,
-                    testOptions.basePath,
-                    testOptions.gdprUrl,
-                    testOptions.gdprPath,
-                    testOptions.useTestConnectionOptions,
-                    testOptions.timerIntervalInMilliseconds,
-                    testOptions.timerStartInMilliseconds,
-                    testOptions.sessionIntervalInMilliseconds,
-                    testOptions.subsessionIntervalInMilliseconds,
-                    testOptions.teardown,
-                    testOptions.tryInstallReferrer,
-                    testOptions.noBackoffWait,
-                    testOptions.iAdFrameworkEnabled);
+                testOptions.testUrlOverwrite, // [0]
+                testOptions.extraPath, // [1]
+                testOptions.timerIntervalInMilliseconds, // [2]
+                testOptions.timerStartInMilliseconds, // [3]
+                testOptions.sessionIntervalInMilliseconds, // [4]
+                testOptions.subsessionIntervalInMilliseconds, // [5]
+                testOptions.attStatus, // [6]
+                testOptions.idfa, // [7]
+                testOptions.noBackoffWait, // [8]
+                testOptions.adServicesFrameworkEnabled, // [9]
+                testOptions.teardown, // [10]
+                testOptions.deleteState, // [11]
+                testOptions.ignoreSystemLifecycleBootstrap); // [12]
         }
 
         public static function teardown():void {
-            hasSdkStarted = false;
             getExtensionContext().call("teardown");
+
+            extensionContext = null;
+            
+            attributionCallback = null;
+            eventSuccessCallback = null;
+            eventFailureCallback = null;
+            sessionSuccessCallback = null;
+            sessionFailureCallback = null;
+            deferredDeeplinkCallback = null;
+            skanUpdatedCallback = null;
+
+            isEnabledCalback = null;
+            getAdidCallback = null;
+            getAttributionCallback = null;
+            getSdkVersionCallbak = null;
+            getLastDeeplinkCallback = null;
+            processAndResolveDeeplinkCallback = null;
+        
+            getGoogleAdIdCallback = null;
+            getAmazonAdIdCallback = null;
+            verifyPlayStorePurchaseCallback = null;
+            verifyAndTrackPlayStorePurchaseCallback = null;
+
+            getIdfaCallback = null;
+            getIdfvCallback = null;
+            getAppTrackingAuthorizationStatusCallback = null;
+            requestAppTrackingAuthorizationCallback = null;
+            verifyAppStorePurchaseCallback = null;
+            verifyAndTrackAppStorePurchaseCallback = null;
+            updateSkanConversionValueCallback = null;
         }
 
+        // private and helper methods
+
         private static function extensionResponseDelegate(statusEvent:StatusEvent):void {
-            if (statusEvent.code == "adjust_attributionData") {
+            if (statusEvent.code == "adjust_attributionCallback") {
                 var attribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
-                attributionCallbackDelegate(attribution);
-            } else if (statusEvent.code == "adjust_eventTrackingSucceeded") {
+                attributionCallback(attribution);
+            } else if (statusEvent.code == "adjust_eventSuccessCallback") {
                 var eventSuccess:AdjustEventSuccess = getEventSuccessFromResponse(statusEvent.level);
-                eventTrackingSucceededDelegate(eventSuccess);
-            } else if (statusEvent.code == "adjust_eventTrackingFailed") {
-                var eventFail:AdjustEventFailure = getEventFailFromResponse(statusEvent.level);
-                eventTrackingFailedDelegate(eventFail);
-            } else if (statusEvent.code == "adjust_sessionTrackingSucceeded") {
+                eventSuccessCallback(eventSuccess);
+            } else if (statusEvent.code == "adjust_eventFailureCallback") {
+                var eventFailure:AdjustEventFailure = getEventFailFromResponse(statusEvent.level);
+                eventFailureCallback(eventFailure);
+            } else if (statusEvent.code == "adjust_sessionSuccessCallback") {
                 var sessionSuccess:AdjustSessionSuccess = getSessionSuccessFromResponse(statusEvent.level);
-                sessionTrackingSucceededDelegate(sessionSuccess);
-            } else if (statusEvent.code == "adjust_sessionTrackingFailed") {
-                var sessionFail:AdjustSessionFailure = getSessionFailFromResponse(statusEvent.level);
-                sessionTrackingFailedDelegate(sessionFail);
-            } else if (statusEvent.code == "adjust_deferredDeeplink") {
+                sessionSuccessCallback(sessionSuccess);
+            } else if (statusEvent.code == "adjust_sessionFailureCallback") {
+                var sessionFailure:AdjustSessionFailure = getSessionFailFromResponse(statusEvent.level);
+                sessionFailureCallback(sessionFailure);
+            } else if (statusEvent.code == "adjust_deferredDeeplinkCallback") {
                 var uri:String = getDeferredDeeplinkFromResponse(statusEvent.level);
-                deferredDeeplinkDelegate(uri);
-            } else if (statusEvent.code == "adjust_googleAdId") {
+                deferredDeeplinkCallback(uri);
+            } else if (statusEvent.code == "adjust_isEnabled") {
+                var isEnabled:String = statusEvent.level;
+                isEnabledCalback(isEnabled == "true");
+            } else if (statusEvent.code == "adjust_getAdid") {
+                var adid:String = statusEvent.level;
+                getAdidCallback(adid);
+            } else if (statusEvent.code == "adjust_getAttribution") {
+                var getAttribution:AdjustAttribution = getAttributionFromResponse(statusEvent.level);
+                getAttributionCallback(getAttribution);
+            } else if (statusEvent.code == "adjust_getSdkVersion") {
+                var sdkVersion:String = statusEvent.level;
+                getSdkVersionCallbak(sdkPrefix + "@" + sdkVersion);
+            } else if (statusEvent.code == "adjust_getLastDeeplink") {
+                var lastDeeplink:String = statusEvent.level;
+                if (lastDeeplink == "ADJ__NULL") {
+                    lastDeeplink = null;
+                }
+                getLastDeeplinkCallback(lastDeeplink);
+            } else if (statusEvent.code == "adjust_getGoogleAdId") {
                 var googleAdId:String = statusEvent.level;
-                googleAdIdCallbackDelegate(googleAdId);
-            } else if (statusEvent.code == "adjust_authorizationStatus") {
-                var authorizationStatus:String = statusEvent.level;
-                authorizationStatusDelegate(authorizationStatus);
+                if (googleAdId == "ADJ__NULL") {
+                    googleAdId = null;
+                }
+                getGoogleAdIdCallback(googleAdId);
+            } else if (statusEvent.code == "adjust_getAmazonAdId") {
+                var amazonAdId:String = statusEvent.level;
+                if (amazonAdId == "ADJ__NULL") {
+                    amazonAdId = null;
+                }
+                getAmazonAdIdCallback(amazonAdId);
+            } else if (statusEvent.code == "adjust_verifyPlayStorePurchase") {
+                var purchasePlayStoreVerificationResultVerify:AdjustPurchaseVerificationResult = 
+                getPurchaseVerificationResultFromResponse(statusEvent.level);
+                verifyPlayStorePurchaseCallback(purchasePlayStoreVerificationResultVerify);
+            } else if (statusEvent.code == "adjust_verifyAndTrackPlayStorePurchase") {
+                var purchasePlayStoreVerificationResultVerifyAndTrack:AdjustPurchaseVerificationResult = 
+                getPurchaseVerificationResultFromResponse(statusEvent.level);
+                verifyAndTrackPlayStorePurchaseCallback(purchasePlayStoreVerificationResultVerifyAndTrack);
+            } else if (statusEvent.code == "adjust_processAndResolveDeeplink") {
+                var resolvedLink:String = statusEvent.level;
+                processAndResolveDeeplinkCallback(resolvedLink);
+            } else if (statusEvent.code == "adjust_verifyAppStorePurchase") {
+                var purchaseAppStoreVerificationResultVerify:AdjustPurchaseVerificationResult = 
+                getPurchaseVerificationResultFromResponse(statusEvent.level);
+                verifyAppStorePurchaseCallback(purchaseAppStoreVerificationResultVerify);
+            } else if (statusEvent.code == "adjust_verifyAndTrackAppStorePurchase") {
+                var purchaseAppStoreVerificationResultVerifyAndTrack:AdjustPurchaseVerificationResult = 
+                getPurchaseVerificationResultFromResponse(statusEvent.level);
+                verifyAndTrackAppStorePurchaseCallback(purchaseAppStoreVerificationResultVerifyAndTrack);
+            } else if (statusEvent.code == "adjust_getIdfa") {
+                var idfa:String = statusEvent.level;
+                if (idfa == "ADJ__NULL") {
+                    idfa = null;
+                }
+                getIdfaCallback(idfa);
+            } else if (statusEvent.code == "adjust_getIdfv") {
+                var idfv:String = statusEvent.level;
+                if (idfv == "ADJ__NULL") {
+                    idfv = null;
+                }
+                getIdfvCallback(idfv);
+            } else if (statusEvent.code == "adjust_skanUpdatedCallback") {
+                var parts:Array = statusEvent.level.split("__");
+
+                var conversionValue:int;
+                var coarseValue:String;
+                var lockWindow:Boolean;
+                var error:String;
+
+                for (var i:int = 0; i < parts.length; i++) {
+                    var field:Array = parts[i].split("==");
+                    var key:String = field[0];
+                    var value:String = field[1];
+
+                    if (key == "conversionValue") {
+                        conversionValue = parseInt(value);
+                    } else if (key == "coarseValue") {
+                        coarseValue = value;
+                    } else if (key == "lockWindow") {
+                        var tempVal:String = value;
+                        lockWindow = tempVal == "true";
+                    } else if (key == "error") {
+                        error = value;
+                    }
+                }
+
+                var skanUpdatedData:Dictionary = new Dictionary();
+                skanUpdatedData["conversionValue"] = conversionValue;
+                skanUpdatedData["coarseValue"] = coarseValue;
+                skanUpdatedData["lockWindow"] = lockWindow;
+                skanUpdatedData["error"] = error;
+                skanUpdatedCallback(skanUpdatedData);
+            } else if (statusEvent.code == "adjust_getAppTrackingAuthorizationStatus") {
+                var getAuthorizationStatus:int = -1;
+                var strAuthorizationStatus:String = statusEvent.level;
+                if (strAuthorizationStatus != "ADJ__NULL") {
+                    getAuthorizationStatus = parseInt(strAuthorizationStatus);
+                }
+                getAppTrackingAuthorizationStatusCallback(getAuthorizationStatus);
+            } else if (statusEvent.code == "adjust_requestAppTrackingAuthorization") {
+                var requestAuthorizationStatus:int = -1;
+                strAuthorizationStatus = statusEvent.level;
+                if (strAuthorizationStatus != "ADJ__NULL") {
+                    requestAuthorizationStatus = parseInt(strAuthorizationStatus);
+                }
+                requestAppTrackingAuthorizationCallback(requestAuthorizationStatus);
+            } else if (statusEvent.code == "adjust_updateSkanConversionValue") {
+                error = statusEvent.level;
+                if (error == "ADJ__NULL") {
+                    error = null;
+                }
+                updateSkanConversionValueCallback(error);
             }
         }
 
@@ -289,7 +760,7 @@ package com.adjust.sdk {
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timeStamp") {
+                } else if (key == "timestamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
@@ -322,7 +793,7 @@ package com.adjust.sdk {
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timeStamp") {
+                } else if (key == "timestamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
@@ -338,7 +809,7 @@ package com.adjust.sdk {
                 }
             }
 
-            return new AdjustEventFailure(message, timestamp, adid, eventToken, callbackId, jsonResponse, willRetry);
+            return new AdjustEventFailure(message, timestamp, adid, eventToken, callbackId, willRetry, jsonResponse);
         }
 
         private static function getSessionSuccessFromResponse(response:String):AdjustSessionSuccess {
@@ -355,7 +826,7 @@ package com.adjust.sdk {
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timeStamp") {
+                } else if (key == "timestamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
@@ -382,7 +853,7 @@ package com.adjust.sdk {
 
                 if (key == "message") {
                     message = value;
-                } else if (key == "timeStamp") {
+                } else if (key == "timestamp") {
                     timestamp = value;
                 } else if (key == "adid") {
                     adid = value;
@@ -395,7 +866,7 @@ package com.adjust.sdk {
 
             }
 
-            return new AdjustSessionFailure(message, timestamp, adid, jsonResponse, willRetry);
+            return new AdjustSessionFailure(message, timestamp, adid, willRetry, jsonResponse);
         }
 
 
@@ -411,10 +882,10 @@ package com.adjust.sdk {
             var creative:String;
             var adgroup:String;
             var clickLabel:String;
-            var adid:String;
             var costType:String;
-            var costAmount:String;
+            var costAmount:Number;
             var costCurrency:String;
+            var fbInstallReferrer:String;
             var parts:Array = response.split("__");
 
             for (var i:int = 0; i < parts.length; i++) {
@@ -436,14 +907,14 @@ package com.adjust.sdk {
                     adgroup = value;
                 } else if (key == "clickLabel") {
                     clickLabel = value;
-                } else if (key == "adid") {
-                    adid = value;
                 } else if (key == "costType") {
                     costType = value;
                 } else if (key == "costAmount") {
-                    costAmount = value;
+                    costAmount = Number(value);
                 } else if (key == "costCurrency") {
                     costCurrency = value;
+                } else if (key == "fbInstallReferrer") {
+                    fbInstallReferrer = value;
                 }
             }
 
@@ -455,19 +926,33 @@ package com.adjust.sdk {
                 creative,
                 adgroup,
                 clickLabel,
-                adid,
                 costType,
                 costAmount,
-                costCurrency);
+                costCurrency,
+                fbInstallReferrer);
         }
 
-        private static function onInvoke(event:InvokeEvent):void {
-            if (event.arguments.length == 0) {
-                return;
+        private static function getPurchaseVerificationResultFromResponse(response:String):AdjustPurchaseVerificationResult {
+            var verificationStatus:String;
+            var message:String;
+            var code:Number;
+            var parts:Array = response.split("__");
+
+            for (var i:int = 0; i < parts.length; i++) {
+                var field:Array = parts[i].split("==");
+                var key:String = field[0];
+                var value:String = field[1];
+
+                if (key == "verificationStatus") {
+                    verificationStatus = value;
+                } else if (key == "message") {
+                    message = value;
+                } else if (key == "code") {
+                    code = Number(value);
+                }
             }
 
-            var argument:String = event.arguments[0];
-            appWillOpenUrl(argument);
+            return new AdjustPurchaseVerificationResult(code, message, verificationStatus);
         }
     }
 }

@@ -16,12 +16,13 @@ package com.adjust.sdk {
             this.jsonResponse = jsonResponse;
         }
 
-        // Getters.
+        // getters
+
         public function getMessage():String {
             return this.message;
         }
 
-        public function getTimeStamp():String {
+        public function getTimestamp():String {
             return this.timestamp;
         }
 

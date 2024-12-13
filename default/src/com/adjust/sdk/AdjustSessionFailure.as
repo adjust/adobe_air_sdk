@@ -1,31 +1,31 @@
 package com.adjust.sdk {
     public class AdjustSessionFailure {
-        private var willRetry:Boolean;
-
         private var adid:String;
         private var message:String;
         private var timestamp:String;
+        private var willRetry:Boolean;
         private var jsonResponse:String;
 
         public function AdjustSessionFailure(
             message:String,
             timestamp:String,
             adid:String,
-            jsonResponse:String,
-            willRetry:Boolean) {
+            willRetry:Boolean,
+            jsonResponse:String) {
             this.adid = adid;
             this.message = message;
             this.timestamp = timestamp;
-            this.jsonResponse = jsonResponse;
             this.willRetry = willRetry;
+            this.jsonResponse = jsonResponse;
         }
 
-        // Getters
+        // getters
+
         public function getMessage():String {
             return this.message;
         }
 
-        public function getTimeStamp():String {
+        public function getTimestamp():String {
             return this.timestamp;
         }
 
@@ -33,12 +33,12 @@ package com.adjust.sdk {
             return this.adid;
         }
 
-        public function getJsonResponse():String {
-            return this.jsonResponse;
-        }
-
         public function getWillRetry():Boolean {
             return this.willRetry;
+        }
+
+        public function getJsonResponse():String {
+            return this.jsonResponse;
         }
     }
 }
