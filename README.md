@@ -15,7 +15,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
    * [Install referrer](#install-referrer)
    * [SDK signature](#sdk-signature)
 * [Additional features](#additional-features)
-   * [Event tracking](#event-tracking)
+   * [Send event information](#event-sending)
       * [Event revenue](#event-revenue)
       * [Event deduplication](#event-deduplication)
       * [Event callback identifier](#event-callback-id)
@@ -58,7 +58,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
       * [Disable SKAdNetwork communication](#skan-disable)
       * [Listen for changes to conversion values](#skan-update-callback)
       * [Set up direct install postbacks](#skan-postbacks)
-   * [Ad revenue tracking](#adrevenue-tracking)
+   * [Record ad revenue information](#adrevenue-recording)
       * [Ad revenue amount](#adrevenue-amount)
       * [Ad revenue network](#adrevenue-network)
       * [Ad revenue unit](#adrevenue-unit)
@@ -67,7 +67,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
       * [Ad revenue callback parameters](#adrevenue-callback-params)
       * [Ad revenue partner parameters](#adrevenue-partner-params)
    * [Purchase verification](#purchase-verification)
-      * [Verify purchase and record event](#verify-and-track)
+      * [Verify purchase and record event](#verify-and-record)
       * [Verify purchase only](#verify-only)
    * [Send subscription information](#subscription-sending)
       * [Subscription purchase date](#subscription-purchase-date)
@@ -81,9 +81,9 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
       * [Amazon advertising identifier](#fire-adid)
       * [Adjust device identifier](#adid)
    * [Session and event callbacks](#session-event-callbacks)
-   * [Disable tracking](#disable-tracking)
+   * [Disable the SDK](#disable-sdk)
    * [Offline mode](#offline-mode)
-   * [Background tracking](#background-tracking)
+   * [Sending from background](#background-sending)
    * [External device ID](#external-device-id)
    * [Push token](#push-token)
 * [License](#license)
@@ -116,7 +116,7 @@ Add the downloaded Adjust SDK ANE file to your app. After this, add the Adjust S
 
 ### <a id="sdk-integrate"></a>Integrate the SDK into your app
 
-To start tracking with Adjust, you first need to initialize the SDK:
+In order to start the Adjust SDK, initialize your config object with your app token and the environment you want to run your application in.
 
 ```actionscript
 import com.adjust.sdk.Adjust;
@@ -246,18 +246,18 @@ If you want to use the SDK signature library to secure communications between th
 
 You can take advantage of the following features once the Adjust SDK is integrated into your project.
 
-### <a id="event-tracking"></a>Event tracking
+### <a id="event-sending"></a>Send event information
 
-You can tell Adjust about every event you want to track. Let's say that event token is `abc123`. You can add the following line in your button’s click handler method to track the click:
+You can tell Adjust about every event you want to record. Let's say that event token is `abc123`. You can add the following line in your button’s click handler method to record the click:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
 Adjust.trackEvent(adjustEvent);
 ```
 
-### <a id="event-revenue-tracking"></a>Event revenue
+### <a id="event-revenue"></a>Event revenue
 
-If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track those revenues with events. Let's say a tap is worth €1.50. You could track the revenue event like this:
+If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can record those revenues with events. Let's say a tap is worth €1.50. You could record the revenue event like this:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -267,7 +267,7 @@ Adjust.trackEvent(adjustEvent);
 
 ### <a id="event-deduplication"></a>Event deduplication
 
-You can also add an optional deduplication ID to avoid tracking duplicate events. The last ten transaction IDs are remembered by default, and events with duplicate deduplication IDs are skipped. If you would like to make the Adjust SDK to remember more than last 10 transaction IDs, you can do that by passing the new limit to `setEventDeduplicationIdsMaxSize` method of the `AdjustConfig` instance:
+You can also add an optional deduplication ID to avoid recording duplicate events. The last ten transaction IDs are remembered by default, and events with duplicate deduplication IDs are skipped. If you would like to make the Adjust SDK to remember more than last 10 transaction IDs, you can do that by passing the new limit to `setEventDeduplicationIdsMaxSize` method of the `AdjustConfig` instance:
 
 ```actionscript
 var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
@@ -284,7 +284,7 @@ Adjust.trackEvent(adjustEvent);
 
 ### <a id="event-callback-id"></a>Event callback identifier
 
-You can also add custom string identifier to each event you want to track. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully tracked or not. You can set this identifier by calling the `setCallbackId` method on your `AdjustEvent` instance:
+You can also add custom string identifier to each event you want to record. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully recorded or not. You can set this identifier by calling the `setCallbackId` method on your `AdjustEvent` instance:
 
 ```actionscript
 var adjustEvent:AdjustEvent = new AdjustEvent("abc123");
@@ -294,7 +294,7 @@ Adjust.trackEvent(adjustEvent);
 
 ### <a id="event-callback-params"></a>Event callback parameters
 
-You can also register a callback URL for that event in your [dashboard](https://dash.adjust.com), and we will send a GET request to that URL whenever the event gets tracked. In that case, you can also put some key-value pairs in an object and pass it to the `trackEvent` method. We will then append these named parameters to your callback URL.
+You can also register a callback URL for that event in your [dashboard](https://dash.adjust.com), and we will send a GET request to that URL whenever the event gets recorded. In that case, you can also put some key-value pairs in an object and pass it to the `trackEvent` method. We will then append these named parameters to your callback URL.
 
 For example, suppose you have registered the URL `http://www.adjust.com/callback` for your event with event token `abc123` and execute the following lines:
 
@@ -305,7 +305,7 @@ adjustEvent.addCallbackParameter("foo", "bar");
 Adjust.trackEvent(adjustEvent);
 ```
 
-In this case we would track the event and send a request to:
+In this case we would record the event and send a request to:
 
 ```
 http://www.adjust.com/callback?key=value&foo=bar
@@ -363,8 +363,8 @@ Adjust.initSdk(adjustConfig);
 
 The callback function will get called when the SDK receives final attribution data. Within the callback function you have access to the `attribution` parameter. Here is a quick summary of its properties:
 
-- `var trackerToken:String` the tracker token of the current attribution.
-- `var trackerName:String` the tracker name of the current attribution.
+- `var trackerToken:String` the campaign link token of the current attribution.
+- `var trackerName:String` the campaign link name of the current attribution.
 - `var network:String` the network grouping level of the current attribution.
 - `var campaign:String` the campaign grouping level of the current attribution.
 - `var adgroup:String` the ad group grouping level of the current attribution.
@@ -395,7 +395,7 @@ Adjust.getAttribution(function (attribution:AdjustAttribution): void {
 });
 ```
 
-**Note**: Information about current attribution is available after app installation has been tracked by the Adjust backend and the attribution callback has been initially triggered. From that moment on, the Adjust SDK has information about a user's attribution and you can access it with this method. So, **it is not possible** to access a user's attribution value before the SDK has been initialised and an attribution callback has been triggered.
+**Note**: Information about current attribution is available after app installation has been recorded by the Adjust backend and the attribution callback has been initially triggered. From that moment on, the Adjust SDK has information about a user's attribution and you can access it with this method. So, **it is not possible** to access a user's attribution value before the SDK has been initialised and an attribution callback has been triggered.
 
 ### <a id="preinstalled-apps"></a>Preinstalled apps
 
@@ -477,7 +477,7 @@ In accordance with article 17 of the EU's General Data Protection Regulation (GD
 Adjust.gdprForgetMe();
 ```
 
-Upon receiving this information, Adjust will erase the user's data and the Adjust SDK will stop tracking the user. No requests from this device will be sent to Adjust in the future.
+Upon receiving this information, Adjust will erase the user's data and no requests from this device will be sent to Adjust in the future.
 
 ### <a id="third-party-sharing"></a>Third-party sharing for specific users
 
@@ -745,7 +745,7 @@ adjustConfig.setUrlStrategy(["tr.adjust.com"], true, true);
 
 ### <a id="deeplinking"></a>Deep linking
 
-If you are using the Adjust tracker URL with an option to deep link into your app from the URL, there is the possibility to get information about the deep link URL and its content. Hitting the URL can happen when the user has your app already installed (standard deep linking scenario) or if they don't have the app on their device (deferred deep linking scenario).
+If you are using the Adjust campaign link URL with an option to deep link into your app from the URL, there is the possibility to get information about the deep link URL and its content. Hitting the URL can happen when the user has your app already installed (standard deep linking scenario) or if they don't have the app on their device (deferred deep linking scenario).
 
 ### <a id="deeplinking-standard"></a>Standard deep linking scenario
 
@@ -858,7 +858,7 @@ Adjust enables you to run re-engagement campaigns through deep links.
 
 If you are using this feature, in order for your user to be properly reattributed, you need to make one additional call to the Adjust SDK in your app.
 
-Once you have received deep link content information in your app, add a call to the `processDeeplink` method. By making this call, the Adjust SDK will try to find if there is any new attribution information inside of the deep link. If there is any, it will be sent to the Adjust backend. If your user should be reattributed due to a click on the adjust tracker URL with deep link content, you will see the [attribution callback](#attribution-callback) in your app being triggered with new attribution info for this user.
+Once you have received deep link content information in your app, add a call to the `processDeeplink` method. By making this call, the Adjust SDK will try to find if there is any new attribution information inside of the deep link. If there is any, it will be sent to the Adjust backend. If your user should be reattributed due to a click on the Adjust campaign link URL with deep link content, you will see the [attribution callback](#attribution-callback) in your app being triggered with new attribution info for this user.
 
 ```actionscript
 var app:NativeApplication = NativeApplication.nativeApplication;
@@ -983,11 +983,6 @@ adjustConfig.setAttConsentWaitingInterval(30);
 Adjust.initSdk(adjustConfig);
 ```
 
-* [SKAdNetwork and conversion values](#skan-framework)
-      * [Disable SKAdNetwork communication](#skan-disable)
-      * [Listen for changes to conversion values](#skan-update-callback)
-      * [Set up direct install postbacks](#skan-postbacks)
-
 ### <a id="skan-framework"></a>SKAdNetwork and conversion values
 
 > Important: This feature is only available on devices running iOS 14 and above.
@@ -1062,7 +1057,7 @@ To set up direct install postbacks, you need to add the Adjust callback URL to y
 
 > See also: See Apple’s guide on [Configuring an Advertised App](https://developer.apple.com/documentation/storekit/skadnetwork/configuring_an_advertised_app) for more information.
 
-### <a id="adrevenue-tracking"></a>Ad revenue tracking
+### <a id="adrevenue-recording"></a>Record ad revenue information
 
 You can record ad revenue for [supported network partners](https://help.adjust.com/en/article/ad-revenue) using the Adjust SDK.
 
@@ -1170,11 +1165,11 @@ Adjust.trackAdRevenue(adjustAdRevenue);
 
 If you’ve enabled [purchase verification](https://help.adjust.com/en/article/purchase-verification), you can use the Adjust SDK to request App Store or Google Play Store purchase verification. There are two ways to verify purchases with the Adjust SDK.
 
-### <a id="verify-and-track"></a>Verify purchase and record event
+### <a id="verify-and-record"></a>Verify purchase and record event
 
-With this approach, you will be performing verification of your purchase and having an event tracked for that verification. This will give you an overview later in the dashboard on the events (and assigned revenue) based on whether verification was successful or not.
+With this approach, you will be performing verification of your purchase and having an event recorded for that verification. This will give you an overview later in the dashboard on the events (and assigned revenue) based on whether verification was successful or not.
 
-In order to do this, you need to complete your in-app purchase and then pass parameters that Adjust SDK needs out of that purchase in order to be able to try to verify the purchase. Once you have obtained the verification parameters the SDK needs, you can perform verification and tracking of an event by calling `verifyAndTrackAppStorePurchase` or `verifyAndTrackPlayStorePurchase` methods.
+In order to do this, you need to complete your in-app purchase and then pass parameters that Adjust SDK needs out of that purchase in order to be able to try to verify the purchase. Once you have obtained the verification parameters the SDK needs, you can perform verification and recording of an event by calling `verifyAndTrackAppStorePurchase` or `verifyAndTrackPlayStorePurchase` methods.
 
 Next to revenue and currency of the purchase, you need to obtain the following parameters as well:
 
@@ -1220,7 +1215,7 @@ Adjust.verifyAndTrackPlayStorePurchase(adjustEvent,
 
 ### <a id="verify-only"></a>Verify purchase only
 
-In case you don't want to see revenue events being automatically tracked once you verify the purchase, but you are instead interested in just getting the information on the validity of the purchase, you can also perform only the verification of the purchase. For this, you need to create instances of `AdjustAppStorePurchase` (for App Store purchases) and `AdjustPlayStorePurchase` (for Play Store purchases) classes and invoke `verifyAppStorePurchase` and `verifyPlayStorePurchase` methods.
+In case you don't want to see revenue events being automatically recorded once you verify the purchase, but you are instead interested in just getting the information on the validity of the purchase, you can also perform only the verification of the purchase. For this, you need to create instances of `AdjustAppStorePurchase` (for App Store purchases) and `AdjustPlayStorePurchase` (for Play Store purchases) classes and invoke `verifyAppStorePurchase` and `verifyPlayStorePurchase` methods.
 
 ```actionscript
 // perform App Store in-app purchase
@@ -1252,12 +1247,6 @@ Adjust.verifyPlayStorePurchase(playStorePurchase,
 });
 ```
 
-* [Send subscription information](#subscription-sending)
-      * [Subscription purchase date](#subscription-purchase-date)
-      * [Subscription region](#subscription-region)
-      * [Subscription callback parameters](#subscription-callback-params)
-      * [Subscription partner parameters](#subscription-partner-params)
-
 ### <a id="subscription-sending"></a>Send subscription information
 
 > Important: The following steps only set up subscription measurement within the Adjust SDK. To enable the feature, follow the steps at [Set up subscriptions for your app](https://help.adjust.com/en/article/set-up-subscriptions-for-your-app).
@@ -1285,7 +1274,7 @@ var playStoreSubscription:AdjustPlayStoreSubscription = new AdjustPlayStoreSubsc
 Adjust.trackPlayStoreSubscription(playStoreSubscription);
 ```
 
-Subscription tracking parameters for App Store subscription:
+Subscription parameters for App Store subscription:
 
 - [price](https://developer.apple.com/documentation/storekit/product/price)
 - currency (you need to pass [currencyCode](https://developer.apple.com/documentation/foundation/nslocale/1642836-currencycode?language=objc))
@@ -1293,7 +1282,7 @@ Subscription tracking parameters for App Store subscription:
 - [transactionDate](https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411273-transactiondate?language=objc)
 - salesRegion (you need to pass [countryCode](https://developer.apple.com/documentation/foundation/nslocale/1643060-countrycode?language=objc) of the [priceLocale](https://developer.apple.com/documentation/storekit/skproduct/1506145-pricelocale?language=objc) object)
 
-Subscription tracking parameters for Play Store subscription:
+Subscription parameters for Play Store subscription:
 
 - [price](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpriceamountmicros)
 - [currency](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpricecurrencycode)
@@ -1435,13 +1424,13 @@ Adjust.getAdid(function (adid:String): void {
 });
 ```
 
-**Note**: Information about the **adid** is available after app installation has been tracked by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialised and installation of your app has been successfully tracked.
+**Note**: Information about the **adid** is available after app installation has been recorded by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialised and installation of your app has been successfully recorded.
 
 ### <a id="session-event-callbacks"></a>Session and event callbacks
 
-You can register a callback to be notified of successful and failed tracked events and/or sessions.
+You can register a callback to be notified of successful and failed recorded events and/or sessions.
 
-Follow the same steps to implement the callback for successfully tracked events:
+Follow the same steps to implement the callback for successfully recorded events:
 
 ```actionscript
 import com.adjust.sdk.Adjust;
@@ -1454,7 +1443,7 @@ var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnviron
 adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
 
 adjustConfig.setEventSuccessCallback(function (eventSuccess:AdjustEventSuccess):void {
-    trace("Event tracking success");
+    trace("Event recording success");
     trace("Message = " + eventSuccess.getMessage());
     trace("Timestamp = " + eventSuccess.getTimestamp());
     trace("Adid = " + eventSuccess.getAdid());
@@ -1466,7 +1455,7 @@ adjustConfig.setEventSuccessCallback(function (eventSuccess:AdjustEventSuccess):
 Adjust.initSdk(adjustConfig);
 ```
 
-The callback function for failed tracked events:
+The callback function for failed recorded events:
 
 ```actionscript
 import com.adjust.sdk.Adjust;
@@ -1479,7 +1468,7 @@ var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnviron
 adjustConfig.setLogLevel(AdjustLogLevel.VERBOSE);
 
 adjustConfig.setEventFailureCallback(function (eventFailure:AdjustEventFailure):void {
-    trace("Event tracking failure");
+    trace("Event recording failure");
     trace("Message = " + eventFailure.getMessage());
     trace("Timestamp = " + eventFailure.getTimestamp());
     trace("Adid = " + eventFailure.getAdid());
@@ -1492,7 +1481,7 @@ adjustConfig.setEventFailureCallback(function (eventFailure:AdjustEventFailure):
 Adjust.initSdk(adjustConfig);
 ```
 
-For successfully tracked sessions:
+For successfully recorded sessions:
 
 ```actionscript
 import com.adjust.sdk.Adjust;
@@ -1515,7 +1504,7 @@ adjustConfig.setSessionSuccessCallback(function (sessionSuccess:AdjustSessionSuc
 Adjust.initSdk(adjustConfig);
 ```
 
-And for failed tracked sessions:
+And for failed recorded sessions:
 
 ```actionscript
 import com.adjust.sdk.Adjust;
@@ -1548,16 +1537,16 @@ The callback functions will be called after the SDK tries to send a package to t
 
 Both event response data objects contain:
 
-- `var eventToken:String` the event token, if the package tracked was an event.
+- `var eventToken:String` the event token, if the package recorded was an event.
 - `var callbackId:String` the custom defined callback ID set on event object.
 
 And both event and session failed objects also contain:
 
 - `var willRetry:Boolean;` indicates there will be an attempt to resend the package at a later time.
 
-### <a id="disable-tracking"></a>Disable tracking
+### <a id="disable-sdk"></a>Disable the SDK
 
-You can disable the Adjust SDK from tracking by invoking the method `disable` of the `Adjust` class. This setting is **remembered between sessions**.
+You can disable the Adjust SDK from recording any activity by invoking the method `disable` of the `Adjust` class. This setting is **remembered between sessions**.
 
 ```actionscript
 Adjust.disable();
@@ -1571,7 +1560,7 @@ Adjust.enable();
 
 ### <a id="offline-mode"></a>Offline mode
 
-You can put the Adjust SDK in offline mode to suspend transmission to our servers, while still retaining tracked data to be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many events while in offline mode.
+You can put the Adjust SDK in offline mode to suspend transmission to our servers, while still retaining recorded data to be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many events while in offline mode.
 
 You can activate offline mode by calling the method `switchToOfflineMode` of the `Adjust` class.
 
@@ -1581,9 +1570,9 @@ Adjust.switchToOfflineMode();
 
 Conversely, you can deactivate the offline mode by calling `switchBackToOnlineMode` method of the `Adjust` class. When the Adjust SDK is put back in online mode, all saved information is sent to our servers with the correct timestamps.
 
-Unlike disabling tracking, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
+Unlike disabling the SDK, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
 
-### <a id="background-tracking"></a>Background tracking
+### <a id="background-sending"></a>Sending from background 
 
 The default behaviour of the Adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can change this in your `AdjustConfig` instance by calling the `enableSendingInBackground` method:
 
@@ -1629,9 +1618,9 @@ To send us the push notification token, add the following call to Adjust **whene
 Adjust.setPushToken("YourPushNotificationToken");
 ```
 
-Push tokens are used for Audience Builder and client callbacks, and they are required for the uninstall tracking feature.
+Push tokens are used for Audience Builder and client callbacks, and they are required for the uninstall detection feature.
 
-## License
+## <a id="license"></a>License
 
 The Adjust SDK is licensed under the MIT License.
 
