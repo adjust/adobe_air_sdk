@@ -44,7 +44,7 @@ FREObject ADJverifyAppStorePurchase(FREContext ctx, void* funcData, uint32_t arg
 FREObject ADJverifyAndTrackAppStorePurchase(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJgetIdfa(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJgetIdfv(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
-FREObject ADJgetAppTrackingStatus(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
+FREObject ADJgetAppTrackingAuthorizationStatus(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJrequestAppTrackingAuthorization(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 FREObject ADJupdateSkanConversionValue(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[]);
 // android only

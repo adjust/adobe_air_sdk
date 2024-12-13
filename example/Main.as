@@ -214,7 +214,7 @@ package {
             Adjust.getIdfv(function (idfv:String): void {
                 trace("IDFV = " + idfv);
             });
-            Adjust.getAppTrackingStatus(function (status:int): void {
+            Adjust.getAppTrackingAuthorizationStatus(function (status:int): void {
                 trace("Authorization status = " + status.toString());
             });
             Adjust.requestAppTrackingAuthorization(function (status:int): void {
