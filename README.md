@@ -86,6 +86,7 @@ This is the Adobe AIR SDK of Adjust™. You can read more about Adjust™ at [ad
    * [Sending from background](#background-sending)
    * [External device ID](#external-device-id)
    * [Push token](#push-token)
+   * [Disable AdServices information reading](#disable-ad-services)
 * [License](#license)
 
 ## <a id="example-app"></a>Example app
@@ -1619,6 +1620,20 @@ Adjust.setPushToken("YourPushNotificationToken");
 ```
 
 Push tokens are used for Audience Builder and client callbacks, and they are required for the uninstall detection feature.
+
+### <a id="disable-ad-services"></a>Disable AdServices information reading
+
+> Note: This is iOS only feature.
+
+The SDK is enabled by default to try to communicate with `AdServices.framework` on iOS in order to try to obtain attribution token which is later being used for handling Apple Search Ads attribution. In case you would not like Adjust to show information from Apple Search Ads campaigns, you can disable this in the SDK by invoking `disableAdServices` method of your `AdjustConfig` instance:
+
+```actionscript
+var adjustConfig:AdjustConfig = new AdjustConfig("{YourAppToken}", AdjustEnvironment.SANDBOX);
+
+adjustConfig.disableAdServices();
+
+Adjust.initSdk(adjustConfig);
+```
 
 ## <a id="license"></a>License
 
